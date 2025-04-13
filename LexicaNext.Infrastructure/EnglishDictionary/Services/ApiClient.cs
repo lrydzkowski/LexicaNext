@@ -33,7 +33,7 @@ internal class ApiClient : IScopedService, IApiClient
 
     public async Task<string?> GetPageAsync(string word, CancellationToken cancellationToken = default)
     {
-        HttpClient client = _httpClientFactory.CreateClient(nameof(EnglishDictionaryHealthCheck));
+        HttpClient client = _httpClientFactory.CreateClient(nameof(EnglishDictionaryHttpClient));
 
         string requestPath = _options.Path.Replace(Constants.WordPlaceholder, word);
         using HttpRequestMessage requestMessage = new(HttpMethod.Get, requestPath);
@@ -58,12 +58,12 @@ internal class ApiClient : IScopedService, IApiClient
             return null;
         }
 
-        return await responseMessage.GetResponseAsync<string?>();
+        return await responseMessage.GetResponseMessageAsync();
     }
 
     public async Task<byte[]?> DownloadFileAsync(string relativePath, CancellationToken cancellationToken = default)
     {
-        HttpClient client = _httpClientFactory.CreateClient(nameof(EnglishDictionaryHealthCheck));
+        HttpClient client = _httpClientFactory.CreateClient(nameof(EnglishDictionaryHttpClient));
 
         using HttpRequestMessage requestMessage = new(HttpMethod.Get, relativePath);
 

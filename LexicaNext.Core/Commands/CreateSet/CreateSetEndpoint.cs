@@ -7,6 +7,7 @@ using LexicaNext.Core.Common.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LexicaNext.Core.Commands.CreateSet;
 
@@ -16,24 +17,24 @@ public static class CreateSetEndpoint
 
     public static void MapCreateSetEndpoint(this WebApplication app)
     {
-        app.MapPost("/sets/{setId}", HandleAsync).WithName(Name);
+        app.MapPost("/sets", HandleAsync).WithName(Name).RequireAuthorization();
     }
 
     private static async Task<Results<ProblemHttpResult, Ok<CreateSetResponse>>> HandleAsync(
-        CreateSetRequest createSetRequest,
+        [AsParameters] CreateSetRequest request,
         IValidator<CreateSetRequest> validator,
         ICreateSetCommandMapper createSetCommandMapper,
         ICreateSetRepository createSetRepository,
         CancellationToken cancellationToken
     )
     {
-        ValidationResult? validationResult = await validator.ValidateAsync(createSetRequest, cancellationToken);
+        ValidationResult? validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {
             return TypedResults.Problem(validationResult.ToProblemDetails());
         }
 
-        CreateSetCommand command = createSetCommandMapper.Map(createSetRequest);
+        CreateSetCommand command = createSetCommandMapper.Map(request);
         Guid setId = await createSetRepository.CreateSetAsync(command, cancellationToken);
         CreateSetResponse response = new()
         {
@@ -45,6 +46,12 @@ public static class CreateSetEndpoint
 }
 
 public class CreateSetRequest
+{
+    [FromBody]
+    public CreateSetRequestPayload? Payload { get; init; }
+}
+
+public class CreateSetRequestPayload
 {
     public string SetName { get; init; } = "";
 

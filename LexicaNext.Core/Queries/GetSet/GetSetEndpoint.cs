@@ -13,7 +13,7 @@ public static class GetSetEndpoint
 
     public static void MapGetSetEndpoint(this WebApplication app)
     {
-        app.MapGet("/sets/{setId}", HandleAsync).WithName(Name);
+        app.MapGet("/sets/{setId}", HandleAsync).WithName(Name).RequireAuthorization();
     }
 
     private static async Task<Results<NotFound, Ok<GetSetResponse>>> HandleAsync(
@@ -23,7 +23,12 @@ public static class GetSetEndpoint
         CancellationToken cancellationToken
     )
     {
-        Set? set = await getSetRepository.GetSetAsync(request.SetId, cancellationToken);
+        if (!Guid.TryParse(request.SetId, out Guid setId))
+        {
+            return TypedResults.NotFound();
+        }
+
+        Set? set = await getSetRepository.GetSetAsync(setId, cancellationToken);
         if (set is null)
         {
             return TypedResults.NotFound();
@@ -37,7 +42,7 @@ public static class GetSetEndpoint
 
 public class GetSetRequest
 {
-    public Guid SetId { get; init; }
+    public string SetId { get; init; } = "";
 }
 
 public class GetSetResponse

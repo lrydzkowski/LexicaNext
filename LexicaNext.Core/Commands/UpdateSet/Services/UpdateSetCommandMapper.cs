@@ -28,9 +28,9 @@ internal class UpdateSetCommandMapper
     {
         return new UpdateSetCommand
         {
-            SetId = request.SetId,
-            SetName = request.SetName.Trim(),
-            Entries = Map(request.Entries)
+            SetId = Guid.Parse(request.SetId),
+            SetName = request.Payload?.SetName.Trim() ?? "",
+            Entries = Map(request.Payload?.Entries ?? [])
         };
     }
 

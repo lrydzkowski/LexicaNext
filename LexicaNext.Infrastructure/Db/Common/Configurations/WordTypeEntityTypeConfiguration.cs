@@ -45,27 +45,27 @@ internal class WordTypeEntityTypeConfiguration : IEntityTypeConfiguration<WordTy
         builder.HasData(
             new WordTypeEntity
             {
-                WordTypeId = Guid.CreateVersion7(),
+                WordTypeId = new Guid("0196294e-9a78-735e-9186-2607dbb3e33a"),
                 Name = WordType.None.ToString()
             },
             new WordTypeEntity
             {
-                WordTypeId = Guid.CreateVersion7(),
+                WordTypeId = new Guid("0196294e-9a78-73b5-947e-fb739d73808c"),
                 Name = WordType.Noun.ToString()
             },
             new WordTypeEntity
             {
-                WordTypeId = Guid.CreateVersion7(),
+                WordTypeId = new Guid("0196294e-9a78-74d8-8430-4ebdfd46cf68"),
                 Name = WordType.Verb.ToString()
             },
             new WordTypeEntity
             {
-                WordTypeId = Guid.CreateVersion7(),
+                WordTypeId = new Guid("0196294e-9a78-7573-9db1-47b3d0ee9eae"),
                 Name = WordType.Adjective.ToString()
             },
             new WordTypeEntity
             {
-                WordTypeId = Guid.CreateVersion7(),
+                WordTypeId = new Guid("0196294e-9a78-7e0a-b3b2-9c653699e41e"),
                 Name = WordType.Adverb.ToString()
             }
         );

@@ -6,15 +6,32 @@ using LexicaNext.Core.Common.Models;
 
 namespace LexicaNext.Core.Commands.CreateSet.Services;
 
-internal class CreateSetRequestValidator : AbstractValidator<CreateSetRequest>
+public class CreateSetRequestValidator : AbstractValidator<CreateSetRequest>
 {
     private readonly ICreateSetRepository _createSetRepository;
-    private readonly IValidator<EntryDto> _entryDtoValidator;
 
-    public CreateSetRequestValidator(ICreateSetRepository createSetRepository, IValidator<EntryDto> entryDtoValidator)
+    public CreateSetRequestValidator(ICreateSetRepository createSetRepository)
     {
         _createSetRepository = createSetRepository;
-        _entryDtoValidator = entryDtoValidator;
+
+        AddValidationForPayload();
+    }
+
+    private void AddValidationForPayload()
+    {
+        RuleFor(request => request.Payload!)
+            .NotNull()
+            .SetValidator(new CreateSetRequestPayloadValidator(_createSetRepository));
+    }
+}
+
+internal class CreateSetRequestPayloadValidator : AbstractValidator<CreateSetRequestPayload>
+{
+    private readonly ICreateSetRepository _createSetRepository;
+
+    public CreateSetRequestPayloadValidator(ICreateSetRepository createSetRepository)
+    {
+        _createSetRepository = createSetRepository;
 
         AddValidationForSetName();
         AddValidationForEntries();
@@ -60,11 +77,11 @@ internal class CreateSetRequestValidator : AbstractValidator<CreateSetRequest>
             )
             .WithMessage("'{PropertyName}' cannot contain repeated words.")
             .WithErrorCode(ValidationErrorCodes.UniquenessValidator);
-        RuleForEach(request => request.Entries).SetValidator(_entryDtoValidator);
+        RuleForEach(request => request.Entries).SetValidator(new EntryDtoValidator());
     }
 }
 
-public class EntryDtoValidator : AbstractValidator<EntryDto>
+internal class EntryDtoValidator : AbstractValidator<EntryDto>
 {
     public EntryDtoValidator()
     {

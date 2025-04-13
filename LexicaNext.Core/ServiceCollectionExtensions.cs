@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Reflection;
+using FluentValidation;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,14 +35,14 @@ public static class ServiceCollectionExtensions
     {
         return services.Scan(
             scan => scan
-                .FromApplicationDependencies()
-                .AddClasses(classes => classes.AssignableTo<ITransientService>())
+                .FromAssemblyDependencies(Assembly.GetEntryAssembly()!)
+                .AddClasses(classes => classes.AssignableTo<ITransientService>(), false)
                 .AsImplementedInterfaces()
                 .WithTransientLifetime()
-                .AddClasses(classes => classes.AssignableTo<IScopedService>())
+                .AddClasses(classes => classes.AssignableTo<IScopedService>(), false)
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
-                .AddClasses(classes => classes.AssignableTo<ISingletonService>())
+                .AddClasses(classes => classes.AssignableTo<ISingletonService>(), false)
                 .AsImplementedInterfaces()
                 .WithSingletonLifetime()
         );
@@ -49,9 +50,6 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddFluentValidation(this IServiceCollection services)
     {
-        return services.AddValidatorsFromAssemblyContaining(
-            typeof(ServiceCollectionExtensions),
-            includeInternalTypes: true
-        )!;
+        return services.AddValidatorsFromAssemblyContaining(typeof(ServiceCollectionExtensions))!;
     }
 }

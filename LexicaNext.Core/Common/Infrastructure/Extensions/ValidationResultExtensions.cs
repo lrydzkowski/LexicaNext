@@ -17,7 +17,7 @@ internal static class ValidationResultExtensions
             Detail = "One or more validation errors occurred.",
             Extensions = new Dictionary<string, object?>
             {
-                ["Errors"] = validationResult.Errors.Select(
+                ["errors"] = validationResult.Errors.Select(
                         error => new
                         {
                             error.PropertyName,

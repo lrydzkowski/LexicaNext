@@ -5,30 +5,44 @@ using LexicaNext.Core.Common.Models;
 
 namespace LexicaNext.Core.Commands.UpdateSet.Services;
 
-internal class UpdateSetCommandValidator : AbstractValidator<UpdateSetRequest>
+public class UpdateSetRequestValidator : AbstractValidator<UpdateSetRequest>
 {
-    private readonly IValidator<EntryDto> _entryDtoValidator;
     private readonly IUpdateSetRepository _updateSetRepository;
 
-    public UpdateSetCommandValidator(IUpdateSetRepository updateSetRepository, IValidator<EntryDto> entryDtoValidator)
+    public UpdateSetRequestValidator(IUpdateSetRepository updateSetRepository)
     {
         _updateSetRepository = updateSetRepository;
-        _entryDtoValidator = entryDtoValidator;
 
-        AddValidationForSetId();
-        AddValidationForSetName();
-        AddValidationForEntries();
+        AddValidationForPayload();
     }
 
-    private void AddValidationForSetId()
+    private void AddValidationForPayload()
     {
-        RuleFor(request => request.SetId)
-            .MustAsync(
-                async (setId, cancellationToken) => await _updateSetRepository.SetExistsAsync(setId, cancellationToken)
-            )
-            .WithName(nameof(UpdateSetRequest.SetId))
-            .WithMessage("Set with the given id ('{PropertyValue}') doesn't exist.")
-            .WithErrorCode(ValidationErrorCodes.ExistenceValidator);
+        RuleFor(request => request.Payload!)
+            .NotNull()
+            .SetValidator(
+                x =>
+                {
+                    Guid.TryParse(x.SetId, out Guid parsedSetId);
+
+                    return new UpdateSetRequestPayloadValidator(parsedSetId, _updateSetRepository);
+                }
+            );
+    }
+}
+
+internal class UpdateSetRequestPayloadValidator : AbstractValidator<UpdateSetRequestPayload>
+{
+    private readonly Guid _setId;
+    private readonly IUpdateSetRepository _updateSetRepository;
+
+    public UpdateSetRequestPayloadValidator(Guid setId, IUpdateSetRepository updateSetRepository)
+    {
+        _setId = setId;
+        _updateSetRepository = updateSetRepository;
+
+        AddValidationForSetName();
+        AddValidationForEntries();
     }
 
     private void AddValidationForSetName()
@@ -37,7 +51,7 @@ internal class UpdateSetCommandValidator : AbstractValidator<UpdateSetRequest>
             .NotEmpty()
             .MaximumLength(200)
             .DependentRules(AddValidationForSetNameUniqueness)
-            .WithName(nameof(UpdateSetRequest.SetName));
+            .WithName(nameof(UpdateSetRequestPayload.SetName));
     }
 
     private void AddValidationForSetNameUniqueness()
@@ -49,17 +63,16 @@ internal class UpdateSetCommandValidator : AbstractValidator<UpdateSetRequest>
                     bool setWithNameExists =
                         await _updateSetRepository.SetExistsAsync(
                             updateSetRequest.SetName,
-                            updateSetRequest.SetId,
+                            _setId,
                             cancellationToken
                         );
 
                     return !setWithNameExists;
                 }
             )
-            .WithName(nameof(UpdateSetRequest.SetName))
+            .WithName(nameof(UpdateSetRequestPayload.SetName))
             .WithMessage("'{PropertyName}' with the given name ('{PropertyValue}') exists.")
             .WithErrorCode(ValidationErrorCodes.UniquenessValidator);
-        ;
     }
 
     private void AddValidationForEntries()
@@ -76,11 +89,11 @@ internal class UpdateSetCommandValidator : AbstractValidator<UpdateSetRequest>
             )
             .WithMessage("'{PropertyName}' cannot contain repeated words.")
             .WithErrorCode(ValidationErrorCodes.UniquenessValidator);
-        RuleForEach(request => request.Entries).SetValidator(_entryDtoValidator);
+        RuleForEach(request => request.Entries).SetValidator(new EntryDtoValidator());
     }
 }
 
-public class EntryDtoValidator : AbstractValidator<EntryDto>
+internal class EntryDtoValidator : AbstractValidator<EntryDto>
 {
     public EntryDtoValidator()
     {

@@ -13,10 +13,11 @@ public static class SortExtensions
         Dictionary<string, string>? fieldNamesMapping = null
     )
     {
-        if (!fieldsAvailableToSort.ContainsIgnoreCase(sorting.FieldName!))
+        if (sorting.FieldName is not null && !fieldsAvailableToSort.ContainsIgnoreCase(sorting.FieldName))
         {
             return query;
         }
+
 
         sorting = PrepareSortingParameters(sorting, defaultSortingFieldName, fieldNamesMapping);
         string sortOrderQuery = sorting.Order == SortingOrder.Ascending ? "" : " desc";

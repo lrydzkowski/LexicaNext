@@ -18,7 +18,7 @@ public static class GetSetsEndpoint
 
     public static void MapGetSetsEndpoint(this WebApplication app)
     {
-        app.MapGet("/sets", HandleAsync).WithName(Name);
+        app.MapGet("/sets", HandleAsync).WithName(Name).RequireAuthorization();
     }
 
     private static async Task<Results<ProblemHttpResult, Ok<GetSetsResponse>>> HandleAsync(
@@ -51,16 +51,16 @@ public static class GetSetsEndpoint
 public class GetSetsRequest
 {
     [FromQuery(Name = "page")]
-    public int Page { get; init; } = 1;
+    public int Page => 1;
 
     [FromQuery(Name = "pageSize")]
-    public int PageSize { get; init; } = 100;
+    public int PageSize => 100;
 
     [FromQuery(Name = "sortingFieldName")]
     public string? SortingFieldName { get; init; }
 
     [FromQuery(Name = "sortingOrder")]
-    public string SortingOrder { get; init; } = "asc";
+    public string SortingOrder => "asc";
 
     [FromQuery(Name = "searchQuery")]
     public string? SearchQuery { get; init; }

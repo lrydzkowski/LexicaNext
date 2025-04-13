@@ -4,7 +4,7 @@ using LexicaNext.Core.Common.Models;
 
 namespace LexicaNext.Core.Queries.GetRecording.Services;
 
-internal class GetRecordingRequestValidator : AbstractValidator<GetRecordingRequest>
+public class GetRecordingRequestValidator : AbstractValidator<GetRecordingRequest>
 {
     public GetRecordingRequestValidator()
     {

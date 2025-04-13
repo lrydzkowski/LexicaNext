@@ -6,13 +6,12 @@ using LexicaNext.Core.Queries.GetRecording;
 using LexicaNext.Core.Queries.GetSet;
 using LexicaNext.Core.Queries.GetSets;
 using LexicaNext.Infrastructure;
+using LexicaNext.WebApp;
 using Scalar.AspNetCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddProblemDetails();
-
-builder.Services.AddOpenApi();
+builder.Services.AddWebAppServices();
 builder.Services.AddCoreServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 

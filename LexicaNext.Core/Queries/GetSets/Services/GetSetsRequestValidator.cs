@@ -4,7 +4,7 @@ using LexicaNext.Core.Common.Infrastructure.Models;
 
 namespace LexicaNext.Core.Queries.GetSets.Services;
 
-internal class GetSetsRequestValidator : AbstractValidator<GetSetsRequest>
+public class GetSetsRequestValidator : AbstractValidator<GetSetsRequest>
 {
     public GetSetsRequestValidator()
     {
@@ -15,7 +15,7 @@ internal class GetSetsRequestValidator : AbstractValidator<GetSetsRequest>
 
     private void AddValidationForPage()
     {
-        RuleFor(request => request.Page).GreaterThan(1).WithName(nameof(GetSetsRequest.Page));
+        RuleFor(request => request.Page).GreaterThanOrEqualTo(1).WithName(nameof(GetSetsRequest.Page));
     }
 
     private void AddValidationForPageSize()

@@ -5,7 +5,7 @@ namespace LexicaNext.Core.Common.Mappers;
 
 public interface IWordTypeMapper
 {
-    WordType Map(string wordType);
+    WordType Map(string? wordType);
 
     string Map(WordType wordType);
 }
@@ -13,7 +13,7 @@ public interface IWordTypeMapper
 internal class WordTypeMapper
     : ISingletonService, IWordTypeMapper
 {
-    public WordType Map(string wordType)
+    public WordType Map(string? wordType)
     {
         return wordType switch
         {

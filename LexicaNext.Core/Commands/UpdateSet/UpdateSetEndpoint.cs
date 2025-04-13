@@ -7,6 +7,7 @@ using LexicaNext.Core.Common.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LexicaNext.Core.Commands.UpdateSet;
 
@@ -16,24 +17,35 @@ public static class UpdateSetEndpoint
 
     public static void MapUpdateSetEndpoint(this WebApplication app)
     {
-        app.MapGet("/sets/{setId}", HandleAsync).WithName(Name);
+        app.MapPut("/sets/{setId}", HandleAsync).WithName(Name).RequireAuthorization();
     }
 
-    private static async Task<Results<ProblemHttpResult, NoContent>> HandleAsync(
-        UpdateSetRequest updateSetRequest,
+    private static async Task<Results<NotFound, ProblemHttpResult, NoContent>> HandleAsync(
+        [AsParameters] UpdateSetRequest request,
         IValidator<UpdateSetRequest> validator,
         IUpdateSetCommandMapper updateSetCommandMapper,
         IUpdateSetRepository updateSetRepository,
         CancellationToken cancellationToken
     )
     {
-        ValidationResult? validationResult = await validator.ValidateAsync(updateSetRequest, cancellationToken);
+        if (!Guid.TryParse(request.SetId, out Guid setId))
+        {
+            return TypedResults.NotFound();
+        }
+
+        bool exists = await updateSetRepository.SetExistsAsync(setId, cancellationToken);
+        if (!exists)
+        {
+            return TypedResults.NotFound();
+        }
+
+        ValidationResult? validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {
             return TypedResults.Problem(validationResult.ToProblemDetails());
         }
 
-        UpdateSetCommand command = updateSetCommandMapper.Map(updateSetRequest);
+        UpdateSetCommand command = updateSetCommandMapper.Map(request);
         await updateSetRepository.UpdateSetAsync(command, cancellationToken);
 
         return TypedResults.NoContent();
@@ -42,8 +54,14 @@ public static class UpdateSetEndpoint
 
 public class UpdateSetRequest
 {
-    public Guid SetId { get; set; }
+    public string SetId { get; set; } = "";
 
+    [FromBody]
+    public UpdateSetRequestPayload? Payload { get; init; }
+}
+
+public class UpdateSetRequestPayload
+{
     public string SetName { get; set; } = "";
 
     public List<EntryDto> Entries { get; set; } = [];

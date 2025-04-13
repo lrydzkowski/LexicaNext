@@ -15,11 +15,11 @@ public static class GetRecordingEndpoint
 
     public static void MapGetRecordingEndpoint(this WebApplication app)
     {
-        app.MapGet("/recordings/{word}", HandleAsync).WithName(Name);
+        app.MapGet("/recordings/{word}", HandleAsync).WithName(Name).RequireAuthorization();
     }
 
     private static async Task<Results<FileContentHttpResult, NotFound>> HandleAsync(
-        GetRecordingRequest request,
+        [AsParameters] GetRecordingRequest request,
         IWordTypeMapper wordTypeMapper,
         IRecordingMetaData recordingMetaData,
         IRecordingStorage recordingStorage,
@@ -28,7 +28,7 @@ public static class GetRecordingEndpoint
     )
     {
         string word = request.Word.Trim();
-        WordType wordType = wordTypeMapper.Map(word);
+        WordType wordType = wordTypeMapper.Map(request.WordType?.Trim());
 
         string? fileName = await recordingMetaData.GetFileNameAsync(word, wordType, cancellationToken);
         if (fileName is not null)

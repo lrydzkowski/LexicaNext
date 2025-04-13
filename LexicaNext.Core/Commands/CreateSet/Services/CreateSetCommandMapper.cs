@@ -28,8 +28,8 @@ internal class CreateSetCommandMapper
     {
         return new CreateSetCommand
         {
-            SetName = request.SetName.Trim(),
-            Entries = Map(request.Entries)
+            SetName = request.Payload?.SetName?.Trim() ?? "",
+            Entries = Map(request.Payload?.Entries ?? [])
         };
     }
 

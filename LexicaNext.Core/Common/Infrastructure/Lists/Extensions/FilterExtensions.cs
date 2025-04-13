@@ -8,7 +8,8 @@ public static class FilterExtensions
 {
     private static ParsingConfig DynamicLinqParsingConfig { get; } = new()
     {
-        ResolveTypesBySimpleName = true
+        ResolveTypesBySimpleName = true,
+        AllowEqualsAndToStringMethodsOnObject = true
     };
 
     public static IQueryable<T> Filter<T>(

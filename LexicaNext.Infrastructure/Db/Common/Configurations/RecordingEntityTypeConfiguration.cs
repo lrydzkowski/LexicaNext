@@ -41,7 +41,6 @@ internal class RecordingEntityTypeConfiguration : IEntityTypeConfiguration<Recor
     {
         builder.Property(entity => entity.RecordingId)
             .HasColumnName("recording_id")
-            .ValueGeneratedOnAdd()
             .IsRequired();
 
         builder.Property(entity => entity.Word)

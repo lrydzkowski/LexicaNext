@@ -11,16 +11,21 @@ public static class DeleteSetEndpoint
 
     public static void MapDeleteSetEndpoint(this WebApplication app)
     {
-        app.MapDelete("/sets/{setId}", HandleAsync).WithName(Name);
+        app.MapDelete("/sets/{setId}", HandleAsync).WithName(Name).RequireAuthorization();
     }
 
-    private static async Task<NoContent> HandleAsync(
-        DeleteSetRequest request,
+    private static async Task<Results<NotFound, NoContent>> HandleAsync(
+        [AsParameters] DeleteSetRequest request,
         IDeleteSetRepository deleteSetRepository,
         CancellationToken cancellationToken
     )
     {
-        await deleteSetRepository.DeleteSetAsync(request.SetId, cancellationToken);
+        if (!Guid.TryParse(request.SetId, out Guid setId))
+        {
+            return TypedResults.NotFound();
+        }
+
+        await deleteSetRepository.DeleteSetAsync(setId, cancellationToken);
 
         return TypedResults.NoContent();
     }
@@ -28,5 +33,5 @@ public static class DeleteSetEndpoint
 
 public class DeleteSetRequest
 {
-    public Guid SetId { get; init; }
+    public string SetId { get; init; } = "";
 }
