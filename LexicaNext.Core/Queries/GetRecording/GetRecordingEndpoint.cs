@@ -15,7 +15,7 @@ public static class GetRecordingEndpoint
 
     public static void MapGetRecordingEndpoint(this WebApplication app)
     {
-        app.MapGet("/recordings/{word}", HandleAsync).WithName(Name).RequireAuthorization();
+        app.MapGet("/api/recordings/{word}", HandleAsync).WithName(Name).RequireAuthorization();
     }
 
     private static async Task<Results<FileContentHttpResult, NotFound>> HandleAsync(

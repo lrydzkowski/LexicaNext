@@ -17,7 +17,7 @@ public static class UpdateSetEndpoint
 
     public static void MapUpdateSetEndpoint(this WebApplication app)
     {
-        app.MapPut("/sets/{setId}", HandleAsync).WithName(Name).RequireAuthorization();
+        app.MapPut("/api/sets/{setId}", HandleAsync).WithName(Name).RequireAuthorization();
     }
 
     private static async Task<Results<NotFound, ProblemHttpResult, NoContent>> HandleAsync(

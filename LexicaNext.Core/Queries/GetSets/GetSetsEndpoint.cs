@@ -18,7 +18,7 @@ public static class GetSetsEndpoint
 
     public static void MapGetSetsEndpoint(this WebApplication app)
     {
-        app.MapGet("/sets", HandleAsync).WithName(Name).RequireAuthorization();
+        app.MapGet("/api/sets", HandleAsync).WithName(Name).RequireAuthorization();
     }
 
     private static async Task<Results<ProblemHttpResult, Ok<GetSetsResponse>>> HandleAsync(

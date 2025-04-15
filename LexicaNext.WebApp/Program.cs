@@ -26,6 +26,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseExceptionHandler();
 app.UseStatusCodePages();
+app.UseStaticFiles();
 
 app.MapGetSetEndpoint();
 app.MapGetSetsEndpoint();
@@ -33,5 +34,7 @@ app.MapCreateSetEndpoint();
 app.MapDeleteSetEndpoint();
 app.MapUpdateSetEndpoint();
 app.MapGetRecordingEndpoint();
+
+app.MapFallbackToFile("index.html");
 
 app.Run();
