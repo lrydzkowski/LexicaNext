@@ -1,16 +1,15 @@
 name: Build and Deploy
-run-name: ${{ github.repository }} - ${{ github.run_id }}
 
 on:
   push:
     branches:
       - master
   workflow_dispatch:
-      
+
 env:
   REGISTRY: ghcr.io
   APP_IMAGE_NAME: lrydzkowski/lexica-next
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,14 +17,14 @@ jobs:
     permissions:
       contents: write
       packages: write
-    
+
     steps:
       - name: Generate version tag
-        run: echo "VERSION_TAG=$(date -u +'%Y%m%d-%H%M%Sz')" >> $GITHUB_ENV
-        
+        run: echo "VERSION_TAG=$(date + '%Y%m%d-%H%M%S')" >> $GITHUB_ENV
+
       - name: Show the version tag
         run: echo ${{ env.VERSION_TAG }}
-        
+
       - name: Checkout the repository
         uses: actions/checkout@v3
 
@@ -34,35 +33,36 @@ jobs:
         with:
           dotnet-version: 9.0.x
 
-      - name: Install dependencies
+      - name: Install API dependencies
         run: dotnet restore
 
-      - name: Install .NET Tools
-        run: dotnet tool restore
+      - name: Restore .NET tools
+        run: dotnet tool restore --tool-manifest AsyncJobsTemplate.WebApi/.config/dotnet-tools.json
 
-      - name: Build
+      - name: Build API
         run: dotnet build --configuration Release --no-restore
 
-      - name: Run tests
+      - name: Run API tests
         run: dotnet test --no-restore --verbosity normal
-        
-      - name: Sign in to the Container registry
+
+      - name: Sign in to the container registry
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Build an application docker image
-        id: docker_app_build
+
+      - name: Build APP docker image
+        id: docker_api_build
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ./LexicaNext.WebApp/Dockerfile
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.APP_IMAGE_NAME }}:latest,${{ env.REGISTRY }}/${{ env.APP_IMAGE_NAME }}:${{ env.VERSION_TAG }}
-          
-      - uses: mathieudutour/github-tag-action@v6.1
+
+      - name: Set tag
+        uses: mathieudutour/github-tag-action@v6.1
         with:
           custom_tag: ${{ env.VERSION_TAG }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -80,12 +80,13 @@ jobs:
       name: 'dev'
 
     steps:
-      - name: Echo Version Tag
+      - name: Echo version tag
         run: echo ${{ needs.build.outputs.version_tag }}
 
-      - name: Deploy
+      - name: Deploy APP
         uses: fjogeleit/http-request-action@v1
         with:
           url: 'https://r-systems-cloud.com/api/hooks/lexica-next'
           method: 'GET'
-          customHeaders: '{"x-api-key": "${{ secrets.DEPLOY_API_KEY }}"}'
+          customHeaders: '{"x-api-key": "${{ secrets.DEPLOY_APP_KEY }}"}'
+          timeout: 300000
