@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  APP_IMAGE_NAME: lrydzkowski/LexicaNext
+  APP_IMAGE_NAME: lrydzkowski/lexica-next
 
 jobs:
   build:
@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Generate version tag
-        run: echo "VERSION_TAG=$(date + '%Y%m%d-%H%M%S')" >> $GITHUB_ENV
+        run: echo "VERSION_TAG=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
 
       - name: Show the version tag
         run: echo ${{ env.VERSION_TAG }}
