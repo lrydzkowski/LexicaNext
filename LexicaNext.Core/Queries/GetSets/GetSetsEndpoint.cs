@@ -18,7 +18,7 @@ public static class GetSetsEndpoint
 
     public static void MapGetSetsEndpoint(this WebApplication app)
     {
-        app.MapGet("/sets", HandleAsync).WithName(Name).RequireAuthorization();
+        app.MapGet("/api/sets", HandleAsync).WithName(Name).RequireAuthorization();
     }
 
     private static async Task<Results<ProblemHttpResult, Ok<GetSetsResponse>>> HandleAsync(
@@ -41,7 +41,8 @@ public static class GetSetsEndpoint
         ListInfo<SetRecordDto> setRecordsDto = setRecordMapper.Map(setRecords);
         GetSetsResponse response = new()
         {
-            Sets = setRecordsDto
+            Count = setRecordsDto.Count,
+            Data = setRecordsDto.Data
         };
 
         return TypedResults.Ok(response);
@@ -68,7 +69,9 @@ public class GetSetsRequest
 
 public class GetSetsResponse
 {
-    public ListInfo<SetRecordDto> Sets { get; init; } = new();
+    public int Count { get; init; }
+
+    public List<SetRecordDto> Data { get; init; } = [];
 }
 
 public class SetRecordDto

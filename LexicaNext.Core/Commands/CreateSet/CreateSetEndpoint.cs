@@ -17,7 +17,7 @@ public static class CreateSetEndpoint
 
     public static void MapCreateSetEndpoint(this WebApplication app)
     {
-        app.MapPost("/sets", HandleAsync).WithName(Name).RequireAuthorization();
+        app.MapPost("/api/sets", HandleAsync).WithName(Name).RequireAuthorization();
     }
 
     private static async Task<Results<ProblemHttpResult, Ok<CreateSetResponse>>> HandleAsync(

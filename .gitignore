@@ -403,3 +403,6 @@ FodyWeavers.xsd
 
 # Verify
 *.received.*
+
+LexicaNext.WebApp/wwwroot/*
+!LexicaNext.WebApp/wwwroot/.gitkeep
