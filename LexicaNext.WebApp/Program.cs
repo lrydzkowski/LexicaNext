@@ -2,6 +2,7 @@ using LexicaNext.Core;
 using LexicaNext.Core.Commands.CreateSet;
 using LexicaNext.Core.Commands.DeleteSet;
 using LexicaNext.Core.Commands.UpdateSet;
+using LexicaNext.Core.Queries.GetAppStatus;
 using LexicaNext.Core.Queries.GetRecording;
 using LexicaNext.Core.Queries.GetSet;
 using LexicaNext.Core.Queries.GetSets;
@@ -28,6 +29,7 @@ app.UseExceptionHandler();
 app.UseStatusCodePages();
 app.UseStaticFiles();
 
+app.MapGetAppStatusEndpoint();
 app.MapGetSetEndpoint();
 app.MapGetSetsEndpoint();
 app.MapCreateSetEndpoint();

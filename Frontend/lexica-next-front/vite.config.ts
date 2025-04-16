@@ -13,6 +13,7 @@ export default defineConfig(({ command }) => {
       outDir: outputDir,
       sourcemap: true,
     },
+    envDir: './env-config',
     server: isProduction
       ? undefined
       : {
