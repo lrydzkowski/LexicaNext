@@ -406,3 +406,5 @@ FodyWeavers.xsd
 
 LexicaNext.WebApp/wwwroot/*
 !LexicaNext.WebApp/wwwroot/.gitkeep
+
+compose.yaml
