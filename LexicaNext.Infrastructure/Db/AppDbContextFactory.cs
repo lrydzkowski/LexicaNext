@@ -17,18 +17,13 @@ internal class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     private DbContextOptionsBuilder<AppDbContext> GetDbContextOptionsBuilder()
     {
         IConfigurationRoot config = new ConfigurationBuilder().AddUserSecrets<AppDbContext>().Build();
-        IConfigurationProvider secretProvider = config.Providers.First();
-        DbContextOptionsBuilder<AppDbContext> builder = new();
-
+        IConfigurationProvider? secretProvider = config.Providers.FirstOrDefault();
         string? postgresConnectionString = GetConnectionString(
             secretProvider,
             nameof(ConnectionStringsOptions.AppPostgresDb)
         );
-        if (!IsConnectionStringCorrect(postgresConnectionString))
-        {
-            throw new Exception("There is no connection string in user secrets.");
-        }
 
+        DbContextOptionsBuilder<AppDbContext> builder = new();
         builder.UseNpgsql(
             postgresConnectionString,
             x => x.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)
@@ -37,18 +32,18 @@ internal class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
         return builder;
     }
 
-    private string? GetConnectionString(IConfigurationProvider secretProvider, string optionName)
+    private string? GetConnectionString(IConfigurationProvider? secretProvider, string optionName)
     {
+        if (secretProvider is null)
+        {
+            return null;
+        }
+
         secretProvider.TryGet(
             $"{ConnectionStringsOptions.Position}:{optionName}",
             out string? connectionString
         );
 
         return connectionString;
-    }
-
-    private bool IsConnectionStringCorrect(string? connectionString)
-    {
-        return !string.IsNullOrWhiteSpace(connectionString);
     }
 }
