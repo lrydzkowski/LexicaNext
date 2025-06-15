@@ -4,6 +4,7 @@ using LexicaNext.Core.Commands.CreateSet.Interfaces;
 using LexicaNext.Core.Commands.CreateSet.Models;
 using LexicaNext.Core.Commands.CreateSet.Services;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Core.Queries.GetSet;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -20,7 +21,7 @@ public static class CreateSetEndpoint
         app.MapPost("/api/sets", HandleAsync).WithName(Name).RequireAuthorization();
     }
 
-    private static async Task<Results<ProblemHttpResult, Ok<CreateSetResponse>>> HandleAsync(
+    private static async Task<Results<ProblemHttpResult, CreatedAtRoute<CreateSetResponse>>> HandleAsync(
         [AsParameters] CreateSetRequest request,
         IValidator<CreateSetRequest> validator,
         ICreateSetCommandMapper createSetCommandMapper,
@@ -41,7 +42,7 @@ public static class CreateSetEndpoint
             SetId = setId
         };
 
-        return TypedResults.Ok(response);
+        return TypedResults.CreatedAtRoute(response, GetSetEndpoint.Name, new { setId });
     }
 }
 

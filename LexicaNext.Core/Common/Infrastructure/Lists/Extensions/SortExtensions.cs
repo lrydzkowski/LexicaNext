@@ -10,6 +10,7 @@ public static class SortExtensions
         List<string> fieldsAvailableToSort,
         Sorting sorting,
         string defaultSortingFieldName,
+        SortingOrder defaultSortingOrder = SortingOrder.Ascending,
         Dictionary<string, string>? fieldNamesMapping = null
     )
     {
@@ -19,7 +20,7 @@ public static class SortExtensions
         }
 
 
-        sorting = PrepareSortingParameters(sorting, defaultSortingFieldName, fieldNamesMapping);
+        sorting = PrepareSortingParameters(sorting, defaultSortingFieldName, defaultSortingOrder, fieldNamesMapping);
         string sortOrderQuery = sorting.Order == SortingOrder.Ascending ? "" : " desc";
         string sortQuery = $"{sorting.FieldName}{sortOrderQuery}, {defaultSortingFieldName} asc";
         query = query.OrderBy(sortQuery);
@@ -30,6 +31,7 @@ public static class SortExtensions
     private static Sorting PrepareSortingParameters(
         Sorting sorting,
         string defaultSortingFieldName,
+        SortingOrder defaultSortingOrder,
         Dictionary<string, string>? fieldNamesMapping = null
     )
     {
@@ -38,7 +40,7 @@ public static class SortExtensions
             return new Sorting
             {
                 FieldName = defaultSortingFieldName,
-                Order = SortingOrder.Ascending
+                Order = defaultSortingOrder
             };
         }
 
