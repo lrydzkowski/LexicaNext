@@ -46,8 +46,11 @@ internal class SetsRepository
     )
     {
         bool setExists = await _dbContext.Sets.AsNoTracking()
-            .Where(x => x.Name.ToLower() == setName.ToLower() && (ignoreSetId == null || x.SetId != ignoreSetId))
-            .Select(x => x.Name)
+            .Where(
+                entity => entity.Name.ToLower() == setName.ToLower()
+                          && (ignoreSetId == null || entity.SetId != ignoreSetId)
+            )
+            .Select(entity => entity.Name)
             .AnyAsync(cancellationToken);
 
         return setExists;
@@ -133,11 +136,13 @@ internal class SetsRepository
         CancellationToken cancellationToken = default
     )
     {
+        string defaultSortingFieldName = "setId";
+        SortingOrder defaultSortingOrder = SortingOrder.Descending;
         List<string> fieldsAvailableToSort = ["setId", "name", "createdAt"];
         List<string> fieldsAvailableToFilter = ["name", "createdAt"];
 
         IQueryable<SetEntity> query = _dbContext.Sets.AsNoTracking()
-            .Sort(fieldsAvailableToSort, listParameters.Sorting, "setId")
+            .Sort(fieldsAvailableToSort, listParameters.Sorting, defaultSortingFieldName, defaultSortingOrder)
             .Filter(fieldsAvailableToFilter, listParameters.Search);
         List<SetRecord> sets = await query
             .Paginate(listParameters.Pagination)

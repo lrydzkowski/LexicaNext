@@ -71,7 +71,7 @@ internal class UpdateSetRequestPayloadValidator : AbstractValidator<UpdateSetReq
                 }
             )
             .WithName(nameof(UpdateSetRequestPayload.SetName))
-            .WithMessage("'{PropertyName}' with the given name ('{PropertyValue}') exists.")
+            .WithMessage(x => $"'{{PropertyName}}' with the given name ('{x.SetName}') exists.")
             .WithErrorCode(ValidationErrorCodes.UniquenessValidator);
     }
 

@@ -23,6 +23,7 @@ public static class GetSetsEndpoint
 
     private static async Task<Results<ProblemHttpResult, Ok<GetSetsResponse>>> HandleAsync(
         [AsParameters] GetSetsRequest getSetsRequest,
+        IGetSetsRequestProcessor processor,
         IValidator<GetSetsRequest> validator,
         IListParametersMapper listParametersMapper,
         IGetSetsRepository getSetsRepository,
@@ -30,6 +31,7 @@ public static class GetSetsEndpoint
         CancellationToken cancellationToken
     )
     {
+        getSetsRequest = processor.Process(getSetsRequest);
         ValidationResult? validationResult = await validator.ValidateAsync(getSetsRequest, cancellationToken);
         if (!validationResult.IsValid)
         {
@@ -52,16 +54,16 @@ public static class GetSetsEndpoint
 public class GetSetsRequest
 {
     [FromQuery(Name = "page")]
-    public int Page => 1;
+    public int? Page { get; init; }
 
     [FromQuery(Name = "pageSize")]
-    public int PageSize => 100;
+    public int? PageSize { get; init; }
 
     [FromQuery(Name = "sortingFieldName")]
     public string? SortingFieldName { get; init; }
 
     [FromQuery(Name = "sortingOrder")]
-    public string SortingOrder => "asc";
+    public string? SortingOrder { get; init; }
 
     [FromQuery(Name = "searchQuery")]
     public string? SearchQuery { get; init; }

@@ -1,7 +1,11 @@
+using FluentValidation;
+using FluentValidation.Results;
+using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Mappers;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetRecording.Interfaces;
+using LexicaNext.Core.Queries.GetRecording.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -18,8 +22,10 @@ public static class GetRecordingEndpoint
         app.MapGet("/api/recordings/{word}", HandleAsync).WithName(Name).RequireAuthorization();
     }
 
-    private static async Task<Results<FileContentHttpResult, NotFound>> HandleAsync(
+    private static async Task<Results<ProblemHttpResult, FileContentHttpResult, NotFound>> HandleAsync(
         [AsParameters] GetRecordingRequest request,
+        IGetRecordingRequestProcessor processor,
+        IValidator<GetRecordingRequest> validator,
         IWordTypeMapper wordTypeMapper,
         IRecordingMetaData recordingMetaData,
         IRecordingStorage recordingStorage,
@@ -27,8 +33,15 @@ public static class GetRecordingEndpoint
         CancellationToken cancellationToken
     )
     {
-        string word = request.Word.Trim();
-        WordType wordType = wordTypeMapper.Map(request.WordType?.Trim());
+        request = processor.Process(request);
+        ValidationResult? validationResult = await validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.Problem(validationResult.ToProblemDetails());
+        }
+
+        string word = request.Word;
+        WordType wordType = wordTypeMapper.Map(request.WordType);
 
         string? fileName = await recordingMetaData.GetFileNameAsync(word, wordType, cancellationToken);
         if (fileName is not null)
@@ -65,8 +78,8 @@ public static class GetRecordingEndpoint
 
 public class GetRecordingRequest
 {
-    public string Word { get; init; } = "";
+    public string Word { get; set; } = "";
 
     [FromQuery(Name = "wordType")]
-    public string? WordType { get; init; }
+    public string? WordType { get; set; }
 }

@@ -1921,6 +1921,7 @@ dotnet_diagnostic.IDE0290.severity = none
 resharper_convert_to_primary_constructor_highlighting = none
 
 resharper_csharp_place_attribute_on_same_line = never
+resharper_place_single_method_argument_lambda_on_same_line = false
 
 # Verify settings
 [*.{received,verified}.{json,txt,xml}]

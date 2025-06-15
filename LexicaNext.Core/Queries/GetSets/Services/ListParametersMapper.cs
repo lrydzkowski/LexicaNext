@@ -17,12 +17,12 @@ internal class ListParametersMapper
         {
             Pagination = new Pagination
             {
-                Page = request.Page,
-                PageSize = request.PageSize
+                Page = request.Page ?? 1,
+                PageSize = request.PageSize ?? 25
             },
             Sorting = new Sorting
             {
-                FieldName = request.SortingFieldName?.Trim(),
+                FieldName = request.SortingFieldName,
                 Order = MapToSortingOrder(request.SortingOrder)
             },
             Search = new Search
@@ -32,7 +32,7 @@ internal class ListParametersMapper
         };
     }
 
-    private SortingOrder MapToSortingOrder(string sortingOrder)
+    private SortingOrder MapToSortingOrder(string? sortingOrder)
     {
         return sortingOrder switch
         {

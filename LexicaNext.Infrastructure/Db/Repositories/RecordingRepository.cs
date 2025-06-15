@@ -23,9 +23,11 @@ internal class RecordingRepository : IScopedService, IRecordingMetaData
         CancellationToken cancellationToken = default
     )
     {
-        Guid wordTypeId = await GetWordTypeIdAsync(wordType, cancellationToken);
         string? fileName = await _dbContext.Recordings.AsNoTracking()
-            .Where(recordingEntity => recordingEntity.Word == word && recordingEntity.WordTypeId == wordTypeId)
+            .Where(recordingEntity => recordingEntity.Word == word
+                                      && recordingEntity.WordType != null
+                                      && recordingEntity.WordType.Name == wordType.ToString()
+            )
             .Select(recordingEntity => recordingEntity.FileName)
             .FirstOrDefaultAsync(cancellationToken);
 

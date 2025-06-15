@@ -39,9 +39,9 @@ public static class SortingOrderConstants
 
     public static readonly IReadOnlyList<string> All = [Ascending, Descending];
 
-    public static bool IsCorrect(string sortingOrder)
+    public static bool IsCorrect(string? sortingOrder)
     {
-        return All.ContainsIgnoreCase(sortingOrder);
+        return sortingOrder is not null && All.ContainsIgnoreCase(sortingOrder);
     }
 
     public static string Serialize()
