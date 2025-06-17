@@ -1,3 +1,5 @@
+using Microsoft.OpenApi.Models;
+
 namespace LexicaNext.WebApp;
 
 internal static class ServiceCollectionExtensions
@@ -21,6 +23,25 @@ internal static class ServiceCollectionExtensions
                     (document, _, _) =>
                     {
                         document.Servers = [];
+
+                        OpenApiSecurityScheme scheme = new()
+                        {
+                            BearerFormat = "JSON Web Token",
+                            Description = "Bearer authentication using a JWT.",
+                            Scheme = "bearer",
+                            Type = SecuritySchemeType.Http,
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        };
+
+                        document.Components ??= new OpenApiComponents();
+                        document.Components.SecuritySchemes ??= new Dictionary<string, OpenApiSecurityScheme>();
+                        document.Components.SecuritySchemes[scheme.Reference.Id] = scheme;
+                        document.SecurityRequirements ??= [];
+                        document.SecurityRequirements.Add(new OpenApiSecurityRequirement { [scheme] = [] });
 
                         return Task.CompletedTask;
                     }

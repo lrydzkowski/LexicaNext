@@ -18,7 +18,14 @@ public static class GetSetsEndpoint
 
     public static void MapGetSetsEndpoint(this WebApplication app)
     {
-        app.MapGet("/api/sets", HandleAsync).WithName(Name).RequireAuthorization();
+        app.MapGet("/api/sets", HandleAsync)
+            .WithName(Name)
+            .WithSummary("Return the list of sets")
+            .Produces<GetSetsResponse>()
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
     }
 
     private static async Task<Results<ProblemHttpResult, Ok<GetSetsResponse>>> HandleAsync(

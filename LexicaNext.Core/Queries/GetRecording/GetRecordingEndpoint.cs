@@ -19,7 +19,14 @@ public static class GetRecordingEndpoint
 
     public static void MapGetRecordingEndpoint(this WebApplication app)
     {
-        app.MapGet("/api/recordings/{word}", HandleAsync).WithName(Name).RequireAuthorization();
+        app.MapGet("/api/recordings/{word}", HandleAsync)
+            .WithName(Name)
+            .WithSummary("Return an audio recording for the pronunciation of the given word")
+            .Produces<FileContentHttpResult>()
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
     }
 
     private static async Task<Results<ProblemHttpResult, FileContentHttpResult, NotFound>> HandleAsync(
