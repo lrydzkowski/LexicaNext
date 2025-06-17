@@ -11,7 +11,14 @@ public static class DeleteSetEndpoint
 
     public static void MapDeleteSetEndpoint(this WebApplication app)
     {
-        app.MapDelete("/api/sets/{setId}", HandleAsync).WithName(Name).RequireAuthorization();
+        app.MapDelete("/api/sets/{setId}", HandleAsync)
+            .WithName(Name)
+            .WithSummary("Delete an existing set")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
     }
 
     private static async Task<Results<NotFound, NoContent>> HandleAsync(

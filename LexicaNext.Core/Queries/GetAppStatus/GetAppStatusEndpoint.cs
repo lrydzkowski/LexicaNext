@@ -10,7 +10,11 @@ public static class GetAppStatusEndpoint
 
     public static void MapGetAppStatusEndpoint(this WebApplication app)
     {
-        app.MapGet("/api/status", Handle).WithName(Name);
+        app.MapGet("/api/status", Handle)
+            .WithName(Name)
+            .WithSummary("Return the status of the application")
+            .Produces<GetAppStatusResponse>()
+            .Produces(StatusCodes.Status500InternalServerError);
     }
 
     private static Ok<GetAppStatusResponse> Handle(CancellationToken cancellationToken)

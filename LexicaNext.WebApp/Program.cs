@@ -8,7 +8,6 @@ using LexicaNext.Core.Queries.GetSet;
 using LexicaNext.Core.Queries.GetSets;
 using LexicaNext.Infrastructure;
 using LexicaNext.WebApp;
-using Scalar.AspNetCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +20,7 @@ WebApplication app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.UseSwaggerUI(options => { options.SwaggerEndpoint("/openapi/v1.json", "v1"); });
 }
 
 app.UseHttpsRedirection();

@@ -17,7 +17,15 @@ public static class UpdateSetEndpoint
 
     public static void MapUpdateSetEndpoint(this WebApplication app)
     {
-        app.MapPut("/api/sets/{setId}", HandleAsync).WithName(Name).RequireAuthorization();
+        app.MapPut("/api/sets/{setId}", HandleAsync)
+            .WithName(Name)
+            .WithSummary("Update an existing set")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
     }
 
     private static async Task<Results<NotFound, ProblemHttpResult, NoContent>> HandleAsync(

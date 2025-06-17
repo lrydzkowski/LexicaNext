@@ -13,7 +13,14 @@ public static class GetSetEndpoint
 
     public static void MapGetSetEndpoint(this WebApplication app)
     {
-        app.MapGet("/api/sets/{setId}", HandleAsync).WithName(Name).RequireAuthorization();
+        app.MapGet("/api/sets/{setId}", HandleAsync)
+            .WithName(Name)
+            .WithSummary("Return a set represented by the given id")
+            .Produces<GetSetResponse>()
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
     }
 
     private static async Task<Results<NotFound, Ok<GetSetResponse>>> HandleAsync(

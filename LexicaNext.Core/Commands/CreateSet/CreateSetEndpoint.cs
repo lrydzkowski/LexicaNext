@@ -18,7 +18,14 @@ public static class CreateSetEndpoint
 
     public static void MapCreateSetEndpoint(this WebApplication app)
     {
-        app.MapPost("/api/sets", HandleAsync).WithName(Name).RequireAuthorization();
+        app.MapPost("/api/sets", HandleAsync)
+            .WithName(Name)
+            .WithSummary("Create a new set")
+            .Produces<CreateSetResponse>()
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
     }
 
     private static async Task<Results<ProblemHttpResult, CreatedAtRoute<CreateSetResponse>>> HandleAsync(
