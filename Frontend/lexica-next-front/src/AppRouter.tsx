@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
-import { Layout } from './Layout';
+import { Layout } from './components/layout/Layout';
 import { About } from './pages/About';
 import { Home } from './pages/Home';
 import { SetFullMode } from './pages/sets/modes/SetFullMode';
