@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { Button, Container, Group, Paper, Stack, Text, Title } from '@mantine/core';
+import { Button, Container, Paper, Stack, Text, Title } from '@mantine/core';
 
 export function SignIn() {
   const navigate = useNavigate();

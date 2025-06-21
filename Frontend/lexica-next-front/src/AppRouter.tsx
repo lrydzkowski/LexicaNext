@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { Layout } from './components/layout/Layout';
-import { About } from './pages/About';
 import { Home } from './pages/Home';
 import { SetFullMode } from './pages/sets/modes/SetFullMode';
 import { SetOnlyOpenQuestionsMode } from './pages/sets/modes/SetOnlyOpenQuestionsMode';
@@ -18,7 +17,6 @@ export function AppRouter() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="sign-in" element={<SignIn />} />
-          <Route path="about" element={<About />} />
 
           <Route path="sets" element={<Sets />}>
             <Route path="new" element={<SetNew />} />

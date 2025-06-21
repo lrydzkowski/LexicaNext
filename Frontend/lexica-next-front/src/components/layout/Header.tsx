@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router';
-import { Box, Burger, Divider, Drawer, Flex, Group, ScrollArea, Text } from '@mantine/core';
+import { Box, Burger, Divider, Drawer, Group, ScrollArea, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import classes from './Header.module.css';
 
@@ -8,7 +8,6 @@ const items = [
   { label: 'Home', href: '/' },
   { label: 'Sets', href: '/sets' },
   { label: 'New Set', href: '/sets/new' },
-  { label: 'About', href: '/about' },
 ];
 
 export function Header() {
