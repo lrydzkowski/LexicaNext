@@ -122,7 +122,7 @@ export function SetEdit() {
 
   return (
     <>
-      <Container size="md">
+      <Container p={0}>
         <Stack gap="lg">
           <Group>
             <ActionIcon variant="subtle" onClick={() => navigate('/sets')} aria-label="Go back to sets">

@@ -88,8 +88,8 @@ export function SetNew() {
 
   return (
     <>
-      <Container size="md">
-        <Stack gap="lg">
+      <Container p={0}>
+        <Stack gap="sm">
           <Group>
             <ActionIcon variant="subtle" onClick={() => navigate('/sets')} aria-label="Go back to sets">
               <IconArrowLeft size={16} />
@@ -141,7 +141,7 @@ export function SetNew() {
                             color="red"
                             variant="light"
                             onClick={() => removeEntry(entryIndex)}
-                            mt="xl"
+                            mt="1.5rem"
                             aria-label={`Remove entry ${entryIndex + 1}`}>
                             <IconTrash size={16} />
                           </ActionIcon>

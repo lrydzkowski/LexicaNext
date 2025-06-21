@@ -231,14 +231,14 @@ export function SetOnlyOpenQuestionsMode() {
 
   return (
     <>
-      <Container size="md">
+      <Container p={0}>
         <Stack gap="lg">
           <Group>
             <ActionIcon variant="subtle" onClick={() => navigate('/sets')} aria-label="Go back to sets">
               <IconArrowLeft size={16} />
             </ActionIcon>
             <div style={{ flex: 1 }}>
-              <Title order={2} mb="sm" mt="sm">
+              <Title order={2} mt="sm">
                 Open Questions Mode
               </Title>
               <Text c="dimmed" fz={{ base: 'sm', md: 'md' }}>

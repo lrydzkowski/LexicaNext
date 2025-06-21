@@ -178,7 +178,7 @@ export function Sets() {
 
   return (
     <>
-      <Container p={{ base: 0 }}>
+      <Container p={0}>
         <Stack gap="lg">
           <Group justify="space-between" align="center" wrap="wrap">
             <Title order={2} mb="sm" mt="sm">

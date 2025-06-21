@@ -88,14 +88,14 @@ export function SetContent() {
 
   return (
     <>
-      <Container size="xl">
+      <Container p={0}>
         <Stack gap="lg">
           <Group>
             <ActionIcon variant="subtle" onClick={() => navigate('/sets')} aria-label="Go back to sets">
               <IconArrowLeft size={16} />
             </ActionIcon>
             <div style={{ flex: 1 }}>
-              <Title order={2} mb="sm" mt="sm">
+              <Title order={2} mt="sm">
                 Content Mode
               </Title>
               <Text c="dimmed" fz={{ base: 'sm', md: 'md' }}>
@@ -116,7 +116,7 @@ export function SetContent() {
 
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
               {set.entries.map((entry, index) => (
-                <Card key={index} shadow="sm" padding={{ base: 'sm', md: 'lg' }} withBorder>
+                <Card key={index} withBorder>
                   <Stack gap="md">
                     <Group justify="space-between" wrap="nowrap">
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -155,7 +155,7 @@ export function SetContent() {
             </SimpleGrid>
           </Paper>
 
-          <Paper shadow="sm" p={{ base: 'sm', md: 'md' }}>
+          <Card withBorder>
             <Stack gap="md">
               <Text fz={{ base: 'md', md: 'lg' }} fw={600}>
                 Set Information
@@ -193,7 +193,7 @@ export function SetContent() {
                 </Group>
               </Group>
             </Stack>
-          </Paper>
+          </Card>
         </Stack>
       </Container>
     </>
