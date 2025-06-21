@@ -12,7 +12,7 @@ const items = [
 export function Header() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
 
-  const appTitle = 'Lexica Next';
+  const appTitle = 'LexicaNext';
   const navigationLinks = items.map((item) => (
     <NavLink
       key={item.href + '-desktop'}

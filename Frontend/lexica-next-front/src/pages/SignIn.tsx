@@ -23,7 +23,7 @@ export function SignIn() {
           <Stack gap="lg">
             <div>
               <Title order={2} mb="sm" ta="center">
-                Welcome to Lexica Next
+                Welcome to LexicaNext
               </Title>
               <Text c="dimmed" fz={{ base: 'md', md: 'lg' }} ta="center">
                 Master English vocabulary with our interactive learning modes. Create custom word sets and practice with
