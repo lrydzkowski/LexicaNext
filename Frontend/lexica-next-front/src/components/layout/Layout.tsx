@@ -12,7 +12,7 @@ export function Layout() {
         </Container>
       </AppShell.Header>
       <AppShell.Main>
-        <Container size="md">
+        <Container size="md" p={0}>
           <Breadcrumbs />
           <Outlet />
         </Container>

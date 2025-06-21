@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router';
-import { Box, Burger, Divider, Drawer, Group, ScrollArea, Text, Title } from '@mantine/core';
+import { Box, Burger, Divider, Drawer, Group, ScrollArea, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import classes from './Header.module.css';
 
