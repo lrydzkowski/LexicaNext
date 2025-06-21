@@ -177,7 +177,7 @@ export const api = {
   },
 
   // Get recording for word (mock implementation)
-  getRecording: async (word: string, wordType?: string): Promise<string> => {
+  getRecording: async (word: string /*, wordType?: string*/): Promise<string> => {
     await new Promise((resolve) => setTimeout(resolve, 200));
 
     // In a real implementation, this would return an audio URL
