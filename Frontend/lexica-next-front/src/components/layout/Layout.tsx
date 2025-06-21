@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router';
 import { AppShell, Container } from '@mantine/core';
+import { Breadcrumbs } from './Breadcrumbs';
 import { Header } from './Header';
 
 export function Layout() {
@@ -12,6 +13,7 @@ export function Layout() {
       </AppShell.Header>
       <AppShell.Main>
         <Container size="md">
+          <Breadcrumbs />
           <Outlet />
         </Container>
       </AppShell.Main>
