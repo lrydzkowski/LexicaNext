@@ -68,13 +68,13 @@ export function Breadcrumbs() {
       href = undefined;
     }
 
-    breadcrumbItems.push({ title, href });
-  }
+    breadcrumbItems.push({ title, href });  }
 
-  // Don't show breadcrumbs on home page
-  if (pathSegments.length === 0) {
+  // Don't show breadcrumbs on home page or sign-in page
+  if (pathSegments.length === 0 || location.pathname === '/sign-in') {
     return null;
   }
+
   const items = breadcrumbItems.map((item, index) => {
     if (item.href) {
       return (
