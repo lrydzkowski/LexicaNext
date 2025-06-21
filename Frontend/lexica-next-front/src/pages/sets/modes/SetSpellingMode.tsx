@@ -70,7 +70,7 @@ export function SetSpellingMode() {
     const currentEntry = entries[currentEntryIndex];
     try {
       // This is a mock implementation. In a real app, you'd use the actual audio API
-      const audioUrl = await api.getRecording(currentEntry.word, currentEntry.wordType);
+      // const audioUrl = await api.getRecording(currentEntry.word, currentEntry.wordType);
 
       // For demo purposes, we'll use speech synthesis
       const utterance = new SpeechSynthesisUtterance(currentEntry.word);

@@ -152,7 +152,7 @@ export function SetNew() {
                         <Text size="sm" fw={500} mb="xs">
                           Translations
                         </Text>
-                        {entry.translations.map((translation, translationIndex) => (
+                        {entry.translations.map((_, translationIndex) => (
                           <Group key={translationIndex} mb="xs" wrap="nowrap">
                             <TextInput
                               placeholder="Enter translation..."

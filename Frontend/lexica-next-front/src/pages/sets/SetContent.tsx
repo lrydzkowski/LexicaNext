@@ -46,7 +46,7 @@ export function SetContent() {
     fetchSet();
   }, [setId]);
 
-  const playAudio = async (word: string, wordType: string) => {
+  const playAudio = async (word: string /*, wordType: string*/) => {
     try {
       // Mock implementation using speech synthesis
       const utterance = new SpeechSynthesisUtterance(word);
@@ -130,7 +130,7 @@ export function SetContent() {
                       <ActionIcon
                         variant="light"
                         color="blue"
-                        onClick={() => playAudio(entry.word, entry.wordType)}
+                        onClick={() => playAudio(entry.word /*, entry.wordType*/)}
                         aria-label={`Play pronunciation of ${entry.word}`}
                         style={{ flexShrink: 0 }}>
                         <IconVolume size={16} />
