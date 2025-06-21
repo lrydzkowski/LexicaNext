@@ -168,17 +168,30 @@ export function SetEdit() {
                             { value: 'other', label: 'Other' },
                           ]}
                           size="md"
+                          w={{ base: '100%', md: 200 }}
                           {...form.getInputProps(`entries.${entryIndex}.wordType`)}
                         />
                         {form.values.entries.length > 1 && (
-                          <ActionIcon
-                            color="red"
-                            variant="light"
-                            onClick={() => removeEntry(entryIndex)}
-                            mt="xl"
-                            aria-label={`Remove entry ${entryIndex + 1}`}>
-                            <IconTrash size={16} />
-                          </ActionIcon>
+                          <>
+                            <ActionIcon
+                              color="red"
+                              variant="light"
+                              onClick={() => removeEntry(entryIndex)}
+                              mt={{ base: '0', md: '1.4rem' }}
+                              visibleFrom="sm"
+                              aria-label={`Remove entry ${entryIndex + 1}`}>
+                              <IconTrash size={16} />
+                            </ActionIcon>
+                            <Button
+                              color="red"
+                              variant="light"
+                              size="xs"
+                              hiddenFrom="sm"
+                              leftSection={<IconTrash size={14} />}
+                              onClick={() => removeEntry(entryIndex)}>
+                              Remove Translation
+                            </Button>
+                          </>
                         )}
                       </Group>
 
