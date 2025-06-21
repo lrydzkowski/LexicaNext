@@ -68,7 +68,8 @@ export function Breadcrumbs() {
       href = undefined;
     }
 
-    breadcrumbItems.push({ title, href });  }
+    breadcrumbItems.push({ title, href });
+  }
 
   // Don't show breadcrumbs on home page or sign-in page
   if (pathSegments.length === 0 || location.pathname === '/sign-in') {
@@ -92,7 +93,7 @@ export function Breadcrumbs() {
   });
 
   return (
-    <MantineBreadcrumbs separator="/" mb="lg" mt="sm">
+    <MantineBreadcrumbs separator="/" mb="sm" mt={0}>
       {items}
     </MantineBreadcrumbs>
   );

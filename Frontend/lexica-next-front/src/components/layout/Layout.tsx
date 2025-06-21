@@ -6,8 +6,8 @@ import { Header } from './Header';
 export function Layout() {
   return (
     <AppShell header={{ height: 70 }} padding="md">
-      <AppShell.Header>
-        <Container size="md">
+      <AppShell.Header px="md">
+        <Container size="md" p={0}>
           <Header />
         </Container>
       </AppShell.Header>

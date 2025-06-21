@@ -180,7 +180,7 @@ export function Sets() {
     <>
       <Container p={{ base: 0 }}>
         <Stack gap="lg">
-          <Group justify="space-between" align="flex-start" wrap="wrap">
+          <Group justify="space-between" align="center" wrap="wrap">
             <Title order={2} mb="sm" mt="sm">
               My Vocabulary Sets
             </Title>
