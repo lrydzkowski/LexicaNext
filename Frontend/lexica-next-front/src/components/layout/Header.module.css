@@ -1,0 +1,44 @@
+.header {
+  height: 70px;
+}
+
+.burgerButton {
+  position: absolute;
+  right: var(--mantine-spacing-md);
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-left: var(--mantine-spacing-lg);
+  padding-right: var(--mantine-spacing-lg);
+  text-decoration: none;
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+  font-weight: 500;
+  font-size: var(--mantine-font-size-md);
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    height: 48px;
+    width: 100%;
+    padding-left: var(--mantine-spacing-md);
+    padding-right: var(--mantine-spacing-md);
+  }
+
+  @mixin hover {
+    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+  }
+}
+
+.link:focus-visible {
+  outline-offset: -1px;
+  outline-color: var(--mantine-primary-color-filled);
+}
+
+.active {
+  background-color: light-dark(var(--mantine-color-blue-0), var(--mantine-color-blue-9));
+}
+
+.drawer :global(.mantine-Drawer-close) {
+  margin-right: var(--mantine-spacing-sm);
+}

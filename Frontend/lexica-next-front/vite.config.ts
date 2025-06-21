@@ -1,5 +1,5 @@
 import * as process from 'process';
-import react from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
@@ -9,6 +9,11 @@ export default defineConfig(({ command }) => {
 
   return {
     plugins: [react()],
+    resolve: {
+      alias: {
+        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
+      },
+    },
     build: {
       outDir: outputDir,
       sourcemap: true,
