@@ -32,3 +32,7 @@
   outline-offset: -1px;
   outline-color: var(--mantine-primary-color-filled);
 }
+
+.active {
+  background-color: light-dark(var(--mantine-color-blue-0), var(--mantine-color-blue-9));
+}

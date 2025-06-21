@@ -9,6 +9,11 @@ export default defineConfig(({ command }) => {
 
   return {
     plugins: [react()],
+    resolve: {
+      alias: {
+        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
+      },
+    },
     build: {
       outDir: outputDir,
       sourcemap: true,

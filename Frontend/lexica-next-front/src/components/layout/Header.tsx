@@ -7,22 +7,26 @@ const items = [
   { label: 'Sign In', href: '/sign-in' },
   { label: 'Home', href: '/' },
   { label: 'Sets', href: '/sets' },
-  { label: 'New Set', href: '/sets/new' },
 ];
 
 export function Header() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
 
   const appTitle = 'Lexica Next';
-
   const navigationLinks = items.map((item) => (
-    <NavLink key={item.href + '-desktop'} to={item.href} className={classes.link}>
+    <NavLink
+      key={item.href + '-desktop'}
+      to={item.href}
+      className={({ isActive }) => `${classes.link} ${isActive ? classes.active : ''}`}>
       {item.label}
     </NavLink>
   ));
 
   const mobileNavigationLinks = items.map((item) => (
-    <NavLink key={item.href + '-mobile'} to={item.href} className={classes.link}>
+    <NavLink
+      key={item.href + '-mobile'}
+      to={item.href}
+      className={({ isActive }) => `${classes.link} ${isActive ? classes.active : ''}`}>
       {item.label}
     </NavLink>
   ));

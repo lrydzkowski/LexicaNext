@@ -1,4 +1,5 @@
-import { Container, Group, Paper, Stack, Text, Title } from '@mantine/core';
+import { IconBooks, IconBrain, IconHeadphones, IconTarget } from '@tabler/icons-react';
+import { Container, Group, Paper, Stack, Text, ThemeIcon, Title } from '@mantine/core';
 
 export function Home() {
   return (
@@ -6,7 +7,7 @@ export function Home() {
       <Container p={{ base: 0 }}>
         <Stack gap="xl">
           <div>
-            <Title order={2} mb="sm">
+            <Title order={2} mb="sm" mt="sm">
               About LexicaNext
             </Title>
             <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
@@ -21,6 +22,9 @@ export function Home() {
             </Title>
             <Stack gap="lg">
               <Group align="flex-start" wrap="nowrap">
+                <ThemeIcon size="lg" color="blue" style={{ flexShrink: 0 }}>
+                  <IconHeadphones size={20} />
+                </ThemeIcon>
                 <div>
                   <Text fw={600} fz={{ base: 'md', md: 'lg' }}>
                     Spelling Mode
@@ -32,6 +36,9 @@ export function Home() {
               </Group>
 
               <Group align="flex-start" wrap="nowrap">
+                <ThemeIcon size="lg" color="teal" style={{ flexShrink: 0 }}>
+                  <IconBrain size={20} />
+                </ThemeIcon>
                 <div>
                   <Text fw={600} fz={{ base: 'md', md: 'lg' }}>
                     Full Mode
@@ -43,6 +50,9 @@ export function Home() {
               </Group>
 
               <Group align="flex-start" wrap="nowrap">
+                <ThemeIcon size="lg" color="orange" style={{ flexShrink: 0 }}>
+                  <IconTarget size={20} />
+                </ThemeIcon>
                 <div>
                   <Text fw={600} fz={{ base: 'md', md: 'lg' }}>
                     Open Questions Mode
@@ -54,6 +64,9 @@ export function Home() {
               </Group>
 
               <Group align="flex-start" wrap="nowrap">
+                <ThemeIcon size="lg" color="grape" style={{ flexShrink: 0 }}>
+                  <IconBooks size={20} />
+                </ThemeIcon>
                 <div>
                   <Text fw={600} fz={{ base: 'md', md: 'lg' }}>
                     Content Mode

@@ -18,14 +18,13 @@ export function AppRouter() {
           <Route index element={<Home />} />
           <Route path="sign-in" element={<SignIn />} />
 
-          <Route path="sets" element={<Sets />}>
-            <Route path="new" element={<SetNew />} />
-            <Route path=":setId/edit" element={<SetEdit />} />
-            <Route path=":setId/spelling-mode" element={<SetSpellingMode />} />
-            <Route path=":setId/full-mode" element={<SetFullMode />} />
-            <Route path=":setId/only-open-questions-mode" element={<SetOnlyOpenQuestionsMode />} />
-            <Route path=":setId/content" element={<SetContent />} />
-          </Route>
+          <Route path="sets" element={<Sets />} />
+          <Route path="sets/new" element={<SetNew />} />
+          <Route path="sets/:setId/edit" element={<SetEdit />} />
+          <Route path="sets/:setId/content" element={<SetContent />} />
+          <Route path="sets/:setId/spelling-mode" element={<SetSpellingMode />} />
+          <Route path="sets/:setId/only-open-questions-mode" element={<SetOnlyOpenQuestionsMode />} />
+          <Route path="sets/:setId/full-mode" element={<SetFullMode />} />
         </Route>
       </Routes>
     </BrowserRouter>
