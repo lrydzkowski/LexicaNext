@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router';
-import { Box, Burger, Divider, Drawer, Group, ScrollArea, Title } from '@mantine/core';
+import { Box, Burger, Divider, Drawer, Group, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import classes from './Header.module.css';
 
@@ -21,12 +21,12 @@ export function Header() {
       {item.label}
     </NavLink>
   ));
-
   const mobileNavigationLinks = items.map((item) => (
     <NavLink
       key={item.href + '-mobile'}
       to={item.href}
-      className={({ isActive }) => `${classes.link} ${isActive ? classes.active : ''}`}>
+      className={({ isActive }) => `${classes.link} ${isActive ? classes.active : ''}`}
+      onClick={closeDrawer}>
       {item.label}
     </NavLink>
   ));
@@ -47,21 +47,22 @@ export function Header() {
 
           <Burger className={classes.burgerButton} opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
         </Group>
-      </header>
-
+      </header>{' '}
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}
         size="100%"
-        padding="md"
-        title={appTitle}
+        padding={0}
+        className={classes.drawer}
+        title={
+          <Title px="md" order={1} size="h2" fw={700} c="blue">
+            {appTitle}
+          </Title>
+        }
         hiddenFrom="sm"
         zIndex={1000000}>
-        <ScrollArea h="calc(100vh - 80px" mx="-md">
-          <Divider mb="sm" />
-
-          {mobileNavigationLinks}
-        </ScrollArea>
+        <Divider mb="sm" />
+        {mobileNavigationLinks}
       </Drawer>
     </Box>
   );
