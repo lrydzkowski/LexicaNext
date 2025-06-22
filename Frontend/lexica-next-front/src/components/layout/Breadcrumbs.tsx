@@ -26,33 +26,19 @@ export function Breadcrumbs() {
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const [setName, setSetName] = useState<string>('');
 
-  // Known routes for our app
-  const knownRoutes = [
-    /^\/$/, // Home
-    /^\/sign-in$/, // Sign in
-    /^\/sets$/, // Sets list
-    /^\/sets\/new$/, // New set
-    /^\/sets\/\d+\/edit$/, // Edit set
-    /^\/sets\/\d+\/content$/, // Set content
-    /^\/sets\/\d+\/spelling-mode$/, // Spelling mode
-    /^\/sets\/\d+\/full-mode$/, // Full mode
-    /^\/sets\/\d+\/only-open-questions-mode$/, // Open questions mode
-  ];
-
-  // Check if current path matches any known route
-  const isKnownRoute = knownRoutes.some((pattern) => pattern.test(location.pathname));
-
   // Fetch set name if we have a setId
   useEffect(() => {
     const fetchSetName = async () => {
-      if (params.setId) {
-        try {
-          const response = await api.getSet(params.setId);
-          setSetName(response.name);
-        } catch (error) {
-          console.error('Failed to fetch set name:', error);
-          setSetName('Unknown Set');
-        }
+      if (!params.setId) {
+        return;
+      }
+
+      try {
+        const response = await api.getSet(params.setId);
+        setSetName(response.name);
+      } catch (error) {
+        console.error('Failed to fetch set name:', error);
+        setSetName(params.setId);
       }
     };
 
@@ -68,28 +54,19 @@ export function Breadcrumbs() {
     let title: string;
     let href: string | undefined;
 
-    // Handle dynamic segments (like setId)
     if (segment.match(/^\d+$/) || segment === params.setId) {
       title = setName || 'Loading...';
-      // For set pages, link back to the sets list
-      href = '/sets';
     } else {
       title = routeMap[segment] || segment;
       href = currentPath;
     }
 
     const isLast = i === pathSegments.length - 1;
-    // Don't make the last item clickable, and don't make set name clickable if it's a set action page
     if (isLast || (segment === params.setId && i < pathSegments.length - 1)) {
       href = undefined;
     }
 
     breadcrumbItems.push({ title, href });
-  }
-
-  // Don't show breadcrumbs on home page, sign-in page, or 404 pages (unknown routes)
-  if (pathSegments.length === 0 || location.pathname === '/sign-in' || !isKnownRoute) {
-    return null;
   }
 
   const items = breadcrumbItems.map((item, index) => {
@@ -99,13 +76,13 @@ export function Breadcrumbs() {
           {item.title}
         </Anchor>
       );
-    } else {
-      return (
-        <Text key={index} size="sm" c="dimmed" fw={500}>
-          {item.title}
-        </Text>
-      );
     }
+
+    return (
+      <Text key={index} size="sm" c="dimmed" fw={500}>
+        {item.title}
+      </Text>
+    );
   });
 
   return (
