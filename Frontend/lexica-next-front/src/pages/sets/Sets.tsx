@@ -22,7 +22,6 @@ import {
   Pagination,
   Paper,
   ScrollArea,
-  Select,
   Stack,
   Table,
   Text,
@@ -39,8 +38,8 @@ export function Sets() {
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortField, setSortField] = useState('name');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortField] = useState('name');
+  const [sortOrder] = useState<'asc' | 'desc'>('asc');
 
   const pageSize = 10;
 
