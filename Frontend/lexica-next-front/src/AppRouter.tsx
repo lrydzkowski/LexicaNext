@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 import NotRequireAuth from './auth/NotRequireAuth';
 import RequireAuth from './auth/RequireAuth';
 import { Layout } from './components/layout/Layout';
+import { PageWithBreadcrumbs } from './components/layout/PageWithBreadcrumbs';
 import { HomePage } from './pages/HomePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { SetFullModePage } from './pages/sets/modes/SetFullModePage';
@@ -26,7 +27,6 @@ export function AppRouter() {
               </NotRequireAuth>
             }
           />
-
           <Route
             index
             element={
@@ -39,7 +39,9 @@ export function AppRouter() {
             path="sets"
             element={
               <RequireAuth>
-                <SetsPage />
+                <PageWithBreadcrumbs>
+                  <SetsPage />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             }
           />
@@ -47,7 +49,9 @@ export function AppRouter() {
             path="sets/new"
             element={
               <RequireAuth>
-                <SetNewPage />
+                <PageWithBreadcrumbs>
+                  <SetNewPage />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             }
           />
@@ -55,7 +59,9 @@ export function AppRouter() {
             path="sets/:setId/edit"
             element={
               <RequireAuth>
-                <SetEditPage />
+                <PageWithBreadcrumbs>
+                  <SetEditPage />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             }
           />
@@ -63,7 +69,9 @@ export function AppRouter() {
             path="sets/:setId/content"
             element={
               <RequireAuth>
-                <SetContentPage />
+                <PageWithBreadcrumbs>
+                  <SetContentPage />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             }
           />
@@ -71,7 +79,9 @@ export function AppRouter() {
             path="sets/:setId/spelling-mode"
             element={
               <RequireAuth>
-                <SetSpellingModePage />
+                <PageWithBreadcrumbs>
+                  <SetSpellingModePage />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             }
           />
@@ -79,7 +89,9 @@ export function AppRouter() {
             path="sets/:setId/only-open-questions-mode"
             element={
               <RequireAuth>
-                <SetOnlyOpenQuestionsModePage />
+                <PageWithBreadcrumbs>
+                  <SetOnlyOpenQuestionsModePage />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             }
           />
@@ -87,11 +99,12 @@ export function AppRouter() {
             path="sets/:setId/full-mode"
             element={
               <RequireAuth>
-                <SetFullModePage />
+                <PageWithBreadcrumbs>
+                  <SetFullModePage />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             }
           />
-
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

@@ -76,7 +76,7 @@ export function Header() {
 
           <Burger className={classes.burgerButton} opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
         </Group>
-      </header>{' '}
+      </header>
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}
