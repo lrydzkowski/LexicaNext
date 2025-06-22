@@ -1,19 +1,27 @@
+import { useAuth0 } from '@auth0/auth0-react';
+import { IconLogout } from '@tabler/icons-react';
 import { NavLink } from 'react-router';
-import { Box, Burger, Divider, Drawer, Group, Title } from '@mantine/core';
+import { Box, Burger, Button, Container, Divider, Drawer, Flex, Group, Stack, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import classes from './Header.module.css';
 
 const items = [
-  { label: 'Sign In', href: '/sign-in' },
   { label: 'Home', href: '/' },
   { label: 'Sets', href: '/sets' },
 ];
 
+const publicItems = [{ label: 'Sign In', href: '/sign-in' }];
+
 export function Header() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
+  const { isAuthenticated, logout } = useAuth0();
 
   const appTitle = 'LexicaNext';
-  const navigationLinks = items.map((item) => (
+
+  // Choose navigation items based on authentication state
+  const navItems = isAuthenticated ? items : publicItems;
+
+  const navigationLinks = navItems.map((item) => (
     <NavLink
       key={item.href + '-desktop'}
       to={item.href}
@@ -21,7 +29,8 @@ export function Header() {
       {item.label}
     </NavLink>
   ));
-  const mobileNavigationLinks = items.map((item) => (
+
+  const mobileNavigationLinks = navItems.map((item) => (
     <NavLink
       key={item.href + '-mobile'}
       to={item.href}
@@ -30,6 +39,14 @@ export function Header() {
       {item.label}
     </NavLink>
   ));
+
+  const handleLogout = () => {
+    logout({
+      logoutParams: {
+        returnTo: window.location.origin,
+      },
+    });
+  };
 
   return (
     <Box>
@@ -41,8 +58,20 @@ export function Header() {
             </Title>
           </Group>
 
-          <Group h="100%" gap={0} visibleFrom="sm">
-            {navigationLinks}
+          <Group h="100%" gap={0} visibleFrom="sm" justify="space-between" style={{ flex: 1 }}>
+            <Group h="100%" gap={0}>
+              {navigationLinks}
+            </Group>
+            {isAuthenticated && (
+              <Button
+                color="red"
+                variant="light"
+                size="sm"
+                leftSection={<IconLogout size={16} />}
+                onClick={handleLogout}>
+                Logout
+              </Button>
+            )}
           </Group>
 
           <Burger className={classes.burgerButton} opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
@@ -56,8 +85,29 @@ export function Header() {
         className={classes.drawer}
         hiddenFrom="sm"
         zIndex={1000000}>
-        <Divider mb="sm" />
-        {mobileNavigationLinks}
+        <Stack gap="0">
+          <Divider mb="sm" />
+          {mobileNavigationLinks}
+          {isAuthenticated && (
+            <>
+              <Divider my="sm" />
+              <Container fluid>
+                <Button
+                  color="red"
+                  variant="light"
+                  size="md"
+                  leftSection={<IconLogout size={16} />}
+                  onClick={() => {
+                    handleLogout();
+                    closeDrawer();
+                  }}
+                  mx="md">
+                  Logout
+                </Button>
+              </Container>
+            </>
+          )}
+        </Stack>
       </Drawer>
     </Box>
   );

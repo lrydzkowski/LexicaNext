@@ -1,4 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
+import NotRequireAuth from './auth/NotRequireAuth';
+import RequireAuth from './auth/RequireAuth';
 import { Layout } from './components/layout/Layout';
 import { HomePage } from './pages/HomePage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -16,16 +18,79 @@ export function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="sign-in" element={<SignInPage />} />
+          <Route
+            path="sign-in"
+            element={
+              <NotRequireAuth>
+                <SignInPage />
+              </NotRequireAuth>
+            }
+          />
 
-          <Route index element={<HomePage />} />
-          <Route path="sets" element={<SetsPage />} />
-          <Route path="sets/new" element={<SetNewPage />} />
-          <Route path="sets/:setId/edit" element={<SetEditPage />} />
-          <Route path="sets/:setId/content" element={<SetContentPage />} />
-          <Route path="sets/:setId/spelling-mode" element={<SetSpellingModePage />} />
-          <Route path="sets/:setId/only-open-questions-mode" element={<SetOnlyOpenQuestionsModePage />} />
-          <Route path="sets/:setId/full-mode" element={<SetFullModePage />} />
+          <Route
+            index
+            element={
+              <RequireAuth>
+                <HomePage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="sets"
+            element={
+              <RequireAuth>
+                <SetsPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="sets/new"
+            element={
+              <RequireAuth>
+                <SetNewPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="sets/:setId/edit"
+            element={
+              <RequireAuth>
+                <SetEditPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="sets/:setId/content"
+            element={
+              <RequireAuth>
+                <SetContentPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="sets/:setId/spelling-mode"
+            element={
+              <RequireAuth>
+                <SetSpellingModePage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="sets/:setId/only-open-questions-mode"
+            element={
+              <RequireAuth>
+                <SetOnlyOpenQuestionsModePage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="sets/:setId/full-mode"
+            element={
+              <RequireAuth>
+                <SetFullModePage />
+              </RequireAuth>
+            }
+          />
 
           <Route path="*" element={<NotFoundPage />} />
         </Route>
