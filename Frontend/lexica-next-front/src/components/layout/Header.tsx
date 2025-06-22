@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { IconLogout } from '@tabler/icons-react';
 import { NavLink } from 'react-router';
-import { Box, Burger, Button, Container, Divider, Drawer, Flex, Group, Stack, Title } from '@mantine/core';
+import { Box, Burger, Button, Container, Divider, Drawer, Group, Stack, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import classes from './Header.module.css';
 
