@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
-import NotRequireAuth from './auth/NotRequireAuth';
-import RequireAuth from './auth/RequireAuth';
+import NotRequireAuth from './components/auth/NotRequireAuth';
+import RequireAuth from './components/auth/RequireAuth';
 import { Layout } from './components/layout/Layout';
 import { PageWithBreadcrumbs } from './components/layout/PageWithBreadcrumbs';
 import { HomePage } from './pages/HomePage';
