@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
 import { Anchor, Breadcrumbs as MantineBreadcrumbs, Text } from '@mantine/core';
+import { links, type IAppLink } from '../../config/links';
 import { api } from '../../services/api';
 
 interface BreadcrumbItem {
@@ -8,25 +9,19 @@ interface BreadcrumbItem {
   href?: string;
 }
 
-const routeMap: Record<string, string> = {
-  '': 'Home',
-  'sign-in': 'Sign In',
-  sets: 'Sets',
-  new: 'New Set',
-  edit: 'Edit Set',
-  content: 'Content',
-  'spelling-mode': 'Spelling Mode',
-  'full-mode': 'Full Mode',
-  'only-open-questions-mode': 'Open Questions Mode',
-};
-
 export function Breadcrumbs() {
   const location = useLocation();
   const params = useParams();
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const [setName, setSetName] = useState<string>('');
 
-  // Fetch set name if we have a setId
+  const segmentLabels = useMemo(() => {
+    return Object.values(links).reduce<Record<string, IAppLink>>((acc, link) => {
+      acc[link.segment] = link;
+      return acc;
+    }, {});
+  }, []);
+
   useEffect(() => {
     const fetchSetName = async () => {
       if (!params.setId) {
@@ -45,20 +40,17 @@ export function Breadcrumbs() {
     fetchSetName();
   }, [params.setId]);
 
-  const breadcrumbItems: BreadcrumbItem[] = [{ title: 'Home', href: '/' }];
-  let currentPath = '';
+  const breadcrumbItems: BreadcrumbItem[] = [{ title: links.home.label, href: links.home.url }];
   for (let i = 0; i < pathSegments.length; i++) {
     const segment = pathSegments[i];
-    currentPath += `/${segment}`;
 
     let title: string;
     let href: string | undefined;
-
     if (segment.match(/^\d+$/) || segment === params.setId) {
       title = setName || 'Loading...';
     } else {
-      title = routeMap[segment] || segment;
-      href = currentPath;
+      title = segmentLabels[segment].label || segment;
+      href = segmentLabels[segment].url;
     }
 
     const isLast = i === pathSegments.length - 1;

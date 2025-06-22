@@ -85,31 +85,31 @@ export function HomePage() {
             </Title>
             <Stack gap="md">
               <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
-                1.
+                1.{' '}
                 <Text span c="black" fw={600} fz={{ base: 'md', md: 'lg' }}>
                   Create Sets:
-                </Text>
+                </Text>{' '}
                 Build custom vocabulary sets with English words and their translations.
               </Text>
               <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
-                2.
+                2.{' '}
                 <Text span c="black" fw={600} fz={{ base: 'md', md: 'lg' }}>
                   Choose Mode:
-                </Text>
+                </Text>{' '}
                 Select from our four learning modes based on your current level and goals.
               </Text>
               <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
-                3.
+                3.{' '}
                 <Text span c="black" fw={600} fz={{ base: 'md', md: 'lg' }}>
                   Practice:
-                </Text>
+                </Text>{' '}
                 Engage with interactive exercises that adapt to your progress.
               </Text>
               <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
-                4.
+                4.{' '}
                 <Text span c="black" fw={600} fz={{ base: 'md', md: 'lg' }}>
                   Master:
-                </Text>
+                </Text>{' '}
                 Repeat and reinforce until you've mastered each word.
               </Text>
             </Stack>
