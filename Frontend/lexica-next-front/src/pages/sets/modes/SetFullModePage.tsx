@@ -10,6 +10,7 @@ import {
   LoadingOverlay,
   Paper,
   Progress,
+  Radio,
   Stack,
   Text,
   TextInput,
@@ -18,28 +19,31 @@ import {
 import { notifications } from '@mantine/notifications';
 import { api, type EntryDto } from '../../../services/api';
 
-interface OpenQuestionsEntry extends EntryDto {
+interface FullModeEntry extends EntryDto {
+  englishCloseCounter: number;
+  nativeCloseCounter: number;
   englishOpenCounter: number;
   nativeOpenCounter: number;
 }
 
-type QuestionType = 'english-open' | 'native-open';
+type QuestionType = 'english-close' | 'native-close' | 'english-open' | 'native-open';
 
 interface Question {
-  entry: OpenQuestionsEntry;
+  entry: FullModeEntry;
   entryIndex: number;
   type: QuestionType;
   question: string;
+  options?: string[];
   correctAnswer: string;
 }
 
-export function SetOnlyOpenQuestionsMode() {
+export function SetFullModePage() {
   const { setId } = useParams<{ setId: string }>();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [setName, setSetName] = useState('');
-  const [entries, setEntries] = useState<OpenQuestionsEntry[]>([]);
+  const [entries, setEntries] = useState<FullModeEntry[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
@@ -57,6 +61,8 @@ export function SetOnlyOpenQuestionsMode() {
         // Initialize entries with counters
         const initialEntries = set.entries.map((entry) => ({
           ...entry,
+          englishCloseCounter: 0,
+          nativeCloseCounter: 0,
           englishOpenCounter: 0,
           nativeOpenCounter: 0,
         }));
@@ -78,55 +84,126 @@ export function SetOnlyOpenQuestionsMode() {
     fetchSet();
   }, [setId]);
 
-  const generateNextQuestion = (currentEntries: OpenQuestionsEntry[]) => {
-    // Randomize entries
+  const generateNextQuestion = (currentEntries: FullModeEntry[]) => {
+    // Get 7 random entries (or all if less than 7)
     const shuffledEntries = [...currentEntries].sort(() => Math.random() - 0.5);
+    const selectedEntries = shuffledEntries.slice(0, Math.min(7, shuffledEntries.length));
 
     // Find entries that still need questions
-    const eligibleEntries = shuffledEntries.filter((entry) => {
-      return entry.englishOpenCounter < 2 || entry.nativeOpenCounter < 2;
+    const eligibleEntries = selectedEntries.filter((entry) => {
+      return (
+        entry.englishCloseCounter < 1 ||
+        entry.nativeCloseCounter < 1 ||
+        entry.englishOpenCounter < 2 ||
+        entry.nativeOpenCounter < 2
+      );
     });
 
     if (eligibleEntries.length === 0) {
-      setIsComplete(true);
+      // Check if all entries are complete
+      const allComplete = currentEntries.every(
+        (entry) =>
+          entry.englishCloseCounter >= 1 &&
+          entry.nativeCloseCounter >= 1 &&
+          entry.englishOpenCounter >= 2 &&
+          entry.nativeOpenCounter >= 2,
+      );
+
+      if (allComplete) {
+        setIsComplete(true);
+        return;
+      }
+
+      // Retry with different random selection
+      generateNextQuestion(currentEntries);
       return;
     }
 
-    // Select first eligible entry
-    const selectedEntry = eligibleEntries[0];
+    // Select random eligible entry
+    const selectedEntry = eligibleEntries[Math.floor(Math.random() * eligibleEntries.length)];
     const entryIndex = currentEntries.findIndex((e) => e.word === selectedEntry.word);
 
     // Determine question type
     let questionType: QuestionType;
     const availableTypes: QuestionType[] = [];
 
-    if (selectedEntry.englishOpenCounter < 2) availableTypes.push('english-open');
-    if (selectedEntry.nativeOpenCounter < 2) availableTypes.push('native-open');
+    if (selectedEntry.englishCloseCounter < 1) availableTypes.push('english-close');
+    if (selectedEntry.nativeCloseCounter < 1) availableTypes.push('native-close');
+    if (availableTypes.length === 0) {
+      if (selectedEntry.englishOpenCounter < 2) availableTypes.push('english-open');
+      if (selectedEntry.nativeOpenCounter < 2) availableTypes.push('native-open');
+    }
 
     questionType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
 
-    // Generate question
-    const question = generateQuestion(selectedEntry, entryIndex, questionType);
+    // Generate question based on type
+    const question = generateQuestion(selectedEntry, entryIndex, questionType, currentEntries);
     setCurrentQuestion(question);
   };
 
-  const generateQuestion = (entry: OpenQuestionsEntry, entryIndex: number, type: QuestionType): Question => {
+  const generateQuestion = (
+    entry: FullModeEntry,
+    entryIndex: number,
+    type: QuestionType,
+    allEntries: FullModeEntry[],
+  ): Question => {
     switch (type) {
-      case 'english-open':
+      case 'english-close':
+        // Multiple choice: English word -> native translation
+        const correctTranslation = entry.translations[0];
+        const wrongOptions = allEntries
+          .filter((e) => e.word !== entry.word)
+          .flatMap((e) => e.translations)
+          .filter((t) => t !== correctTranslation)
+          .slice(0, 3);
+
+        const options = [correctTranslation, ...wrongOptions].sort(() => Math.random() - 0.5);
+
         return {
           entry,
           entryIndex,
           type,
           question: `What does "${entry.word}" mean?`,
-          correctAnswer: entry.translations[0],
+          options,
+          correctAnswer: correctTranslation,
         };
 
-      case 'native-open':
+      case 'native-close':
+        // Multiple choice: native translation -> English word
+        const correctWord = entry.word;
+        const wrongWords = allEntries
+          .filter((e) => e.word !== entry.word)
+          .map((e) => e.word)
+          .slice(0, 3);
+
+        const wordOptions = [correctWord, ...wrongWords].sort(() => Math.random() - 0.5);
+
         return {
           entry,
           entryIndex,
           type,
           question: `What is the English word for "${entry.translations[0]}"?`,
+          options: wordOptions,
+          correctAnswer: correctWord,
+        };
+
+      case 'english-open':
+        // Open question: English word -> native translation
+        return {
+          entry,
+          entryIndex,
+          type,
+          question: `What does "${entry.word}" mean? (Type your answer)`,
+          correctAnswer: entry.translations[0],
+        };
+
+      case 'native-open':
+        // Open question: native translation -> English word
+        return {
+          entry,
+          entryIndex,
+          type,
+          question: `What is the English word for "${entry.translations[0]}"? (Type your answer)`,
           correctAnswer: entry.word,
         };
 
@@ -148,6 +225,12 @@ export function SetOnlyOpenQuestionsMode() {
 
     if (correct) {
       switch (currentQuestion.type) {
+        case 'english-close':
+          entry.englishCloseCounter += 1;
+          break;
+        case 'native-close':
+          entry.nativeCloseCounter += 1;
+          break;
         case 'english-open':
           entry.englishOpenCounter += 1;
           break;
@@ -156,7 +239,9 @@ export function SetOnlyOpenQuestionsMode() {
           break;
       }
     } else {
-      // Reset counters for this entry
+      // Reset all counters for this entry
+      entry.englishCloseCounter = 0;
+      entry.nativeCloseCounter = 0;
       entry.englishOpenCounter = 0;
       entry.nativeOpenCounter = 0;
     }
@@ -171,9 +256,15 @@ export function SetOnlyOpenQuestionsMode() {
   };
 
   const getProgress = () => {
-    const totalRequired = entries.length * 4; // Each entry needs 4 points total (2+2)
+    const totalRequired = entries.length * 6; // Each entry needs 6 points total (1+1+2+2)
     const currentProgress = entries.reduce((sum, entry) => {
-      return sum + Math.min(entry.englishOpenCounter, 2) + Math.min(entry.nativeOpenCounter, 2);
+      return (
+        sum +
+        Math.min(entry.englishCloseCounter, 1) +
+        Math.min(entry.nativeCloseCounter, 1) +
+        Math.min(entry.englishOpenCounter, 2) +
+        Math.min(entry.nativeOpenCounter, 2)
+      );
     }, 0);
 
     return totalRequired > 0 ? (currentProgress / totalRequired) * 100 : 0;
@@ -198,10 +289,10 @@ export function SetOnlyOpenQuestionsMode() {
               🎉 Congratulations!
             </Title>
             <Text fz={{ base: 'md', md: 'lg' }} ta="center">
-              You've completed the open questions mode for "{setName}"!
+              You've completed the full mode for "{setName}"!
             </Text>
             <Text c="dimmed" ta="center" fz={{ base: 'sm', md: 'md' }}>
-              You've mastered all the words through advanced open question practice.
+              You've mastered all the words in this set through comprehensive practice.
             </Text>
             <Group wrap="wrap" justify="center">
               <Button variant="light" onClick={() => navigate('/sets')} size="md">
@@ -239,7 +330,7 @@ export function SetOnlyOpenQuestionsMode() {
             </ActionIcon>
             <div style={{ flex: 1 }}>
               <Title order={2} mt="sm">
-                Open Questions Mode
+                Full Mode
               </Title>
               <Text c="dimmed" fz={{ base: 'sm', md: 'md' }}>
                 {setName}
@@ -262,14 +353,26 @@ export function SetOnlyOpenQuestionsMode() {
 
               {!showFeedback ? (
                 <Stack gap="md">
-                  <TextInput
-                    placeholder="Type your answer..."
-                    value={userAnswer}
-                    onChange={(e) => setUserAnswer(e.target.value)}
-                    size="lg"
-                    onKeyDown={handleKeyDown}
-                    autoFocus
-                  />
+                  {currentQuestion.options ? (
+                    // Multiple choice question
+                    <Radio.Group value={userAnswer} onChange={setUserAnswer}>
+                      <Stack gap="sm">
+                        {currentQuestion.options.map((option, index) => (
+                          <Radio key={index} value={option} label={option} size="md" />
+                        ))}
+                      </Stack>
+                    </Radio.Group>
+                  ) : (
+                    // Open question
+                    <TextInput
+                      placeholder="Type your answer..."
+                      value={userAnswer}
+                      onChange={(e) => setUserAnswer(e.target.value)}
+                      size="lg"
+                      onKeyDown={handleKeyDown}
+                      autoFocus
+                    />
+                  )}
 
                   <Button size="lg" onClick={checkAnswer} disabled={!userAnswer.trim()}>
                     Check Answer

@@ -1,12 +1,11 @@
-import { useNavigate } from 'react-router';
+import { useAuth0 } from '@auth0/auth0-react';
 import { Button, Container, Stack, Text, Title } from '@mantine/core';
 
-export function SignIn() {
-  const navigate = useNavigate();
+export function SignInPage() {
+  const { loginWithRedirect } = useAuth0();
 
   const handleSignIn = () => {
-    // Temporarily bypass authentication and go directly to sets page
-    navigate('/sets');
+    loginWithRedirect();
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {

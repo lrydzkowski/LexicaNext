@@ -17,7 +17,7 @@ import {
 import { notifications } from '@mantine/notifications';
 import { api, type GetSetResponse } from '../../services/api';
 
-export function SetContent() {
+export function SetContentPage() {
   const { setId } = useParams<{ setId: string }>();
   const navigate = useNavigate();
 

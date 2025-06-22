@@ -26,6 +26,22 @@ export function Breadcrumbs() {
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const [setName, setSetName] = useState<string>('');
 
+  // Known routes for our app
+  const knownRoutes = [
+    /^\/$/, // Home
+    /^\/sign-in$/, // Sign in
+    /^\/sets$/, // Sets list
+    /^\/sets\/new$/, // New set
+    /^\/sets\/\d+\/edit$/, // Edit set
+    /^\/sets\/\d+\/content$/, // Set content
+    /^\/sets\/\d+\/spelling-mode$/, // Spelling mode
+    /^\/sets\/\d+\/full-mode$/, // Full mode
+    /^\/sets\/\d+\/only-open-questions-mode$/, // Open questions mode
+  ];
+
+  // Check if current path matches any known route
+  const isKnownRoute = knownRoutes.some((pattern) => pattern.test(location.pathname));
+
   // Fetch set name if we have a setId
   useEffect(() => {
     const fetchSetName = async () => {
@@ -71,8 +87,8 @@ export function Breadcrumbs() {
     breadcrumbItems.push({ title, href });
   }
 
-  // Don't show breadcrumbs on home page or sign-in page
-  if (pathSegments.length === 0 || location.pathname === '/sign-in') {
+  // Don't show breadcrumbs on home page, sign-in page, or 404 pages (unknown routes)
+  if (pathSegments.length === 0 || location.pathname === '/sign-in' || !isKnownRoute) {
     return null;
   }
 

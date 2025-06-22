@@ -23,7 +23,7 @@ interface FormValues {
   entries: EntryDto[];
 }
 
-export function SetNew() {
+export function SetNewPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
