@@ -183,97 +183,75 @@ export function Sets() {
             <Title order={2} mb="sm" mt="sm">
               My Vocabulary Sets
             </Title>
-            <Button leftSection={<IconPlus size={16} />} component={Link} to="/sets/new" size="md">
-              <Text visibleFrom="sm">Create New Set</Text>
-              <Text hiddenFrom="sm">Create</Text>
-            </Button>
           </Group>
 
-          <Paper>
-            <Stack gap="md">
-              <Group wrap="wrap">
-                <TextInput
-                  placeholder="Search sets..."
-                  leftSection={<IconSearch size={16} />}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  style={{ flex: 1, minWidth: '200px' }}
-                  size="md"
-                />
-                <Select
-                  placeholder="Sort by"
-                  value={sortField}
-                  onChange={(value) => setSortField(value || 'name')}
-                  data={[
-                    { value: 'name', label: 'Name' },
-                    { value: 'createdAt', label: 'Created Date' },
-                  ]}
-                  size="md"
-                />
-                <Select
-                  placeholder="Order"
-                  value={sortOrder}
-                  onChange={(value) => setSortOrder((value as 'asc' | 'desc') || 'asc')}
-                  data={[
-                    { value: 'asc', label: 'Ascending' },
-                    { value: 'desc', label: 'Descending' },
-                  ]}
-                  size="md"
-                />
-              </Group>
+          <Stack gap="md">
+            <Group wrap="wrap">
+              <Button leftSection={<IconPlus size={16} />} component={Link} to="/sets/new" size="md">
+                <Text visibleFrom="sm">Create New Set</Text>
+                <Text hiddenFrom="sm">Create</Text>
+              </Button>
+              <TextInput
+                placeholder="Search sets..."
+                leftSection={<IconSearch size={16} />}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ flex: 1, minWidth: '200px' }}
+                size="md"
+              />
+            </Group>
 
-              <Box style={{ position: 'relative' }}>
-                <LoadingOverlay visible={loading} />
+            <Box style={{ position: 'relative' }}>
+              <LoadingOverlay visible={loading} />
 
-                {/* Mobile view */}
-                <Box hiddenFrom="md">
-                  {sets.length > 0 ? (
-                    sets.map((set) => <MobileSetCard key={set.setId} set={set} />)
-                  ) : (
-                    <Text ta="center" c="dimmed" py="xl">
-                      {searchQuery
-                        ? 'No sets found matching your search.'
-                        : 'No sets created yet. Create your first set to get started!'}
-                    </Text>
-                  )}
-                </Box>
-
-                {/* Desktop view */}
-                <ScrollArea visibleFrom="md">
-                  <Table striped highlightOnHover>
-                    <Table.Thead>
-                      <Table.Tr>
-                        <Table.Th>Name</Table.Th>
-                        <Table.Th>Created</Table.Th>
-                        <Table.Th style={{ textAlign: 'center' }}>Actions</Table.Th>
-                      </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>
-                      {rows.length > 0 ? (
-                        rows
-                      ) : (
-                        <Table.Tr>
-                          <Table.Td colSpan={3}>
-                            <Text ta="center" c="dimmed" py="xl">
-                              {searchQuery
-                                ? 'No sets found matching your search.'
-                                : 'No sets created yet. Create your first set to get started!'}
-                            </Text>
-                          </Table.Td>
-                        </Table.Tr>
-                      )}
-                    </Table.Tbody>
-                  </Table>
-                </ScrollArea>
+              {/* Mobile view */}
+              <Box hiddenFrom="md">
+                {sets.length > 0 ? (
+                  sets.map((set) => <MobileSetCard key={set.setId} set={set} />)
+                ) : (
+                  <Text ta="center" c="dimmed" py="xl">
+                    {searchQuery
+                      ? 'No sets found matching your search.'
+                      : 'No sets created yet. Create your first set to get started!'}
+                  </Text>
+                )}
               </Box>
 
-              {totalPages > 1 && (
-                <Group justify="center" mt="md">
-                  <Pagination total={totalPages} value={currentPage} onChange={setCurrentPage} size="md" />
-                </Group>
-              )}
-            </Stack>
-          </Paper>
+              {/* Desktop view */}
+              <ScrollArea visibleFrom="md">
+                <Table striped highlightOnHover>
+                  <Table.Thead>
+                    <Table.Tr>
+                      <Table.Th>Name</Table.Th>
+                      <Table.Th>Created</Table.Th>
+                      <Table.Th style={{ textAlign: 'center' }}>Actions</Table.Th>
+                    </Table.Tr>
+                  </Table.Thead>
+                  <Table.Tbody>
+                    {rows.length > 0 ? (
+                      rows
+                    ) : (
+                      <Table.Tr>
+                        <Table.Td colSpan={3}>
+                          <Text ta="center" c="dimmed" py="xl">
+                            {searchQuery
+                              ? 'No sets found matching your search.'
+                              : 'No sets created yet. Create your first set to get started!'}
+                          </Text>
+                        </Table.Td>
+                      </Table.Tr>
+                    )}
+                  </Table.Tbody>
+                </Table>
+              </ScrollArea>
+            </Box>
+
+            {totalPages > 1 && (
+              <Group justify="center" mt="md">
+                <Pagination total={totalPages} value={currentPage} onChange={setCurrentPage} size="md" />
+              </Group>
+            )}
+          </Stack>
         </Stack>
       </Container>
     </>

@@ -54,11 +54,6 @@ export function Header() {
         size="100%"
         padding={0}
         className={classes.drawer}
-        title={
-          <Title px="md" order={1} size="h2" fw={700} c="blue">
-            {appTitle}
-          </Title>
-        }
         hiddenFrom="sm"
         zIndex={1000000}>
         <Divider mb="sm" />
