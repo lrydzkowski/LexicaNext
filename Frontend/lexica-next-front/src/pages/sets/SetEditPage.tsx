@@ -24,7 +24,7 @@ interface FormValues {
   entries: EntryDto[];
 }
 
-export function SetEdit() {
+export function SetEditPage() {
   const navigate = useNavigate();
   const { setId } = useParams<{ setId: string }>();
   const [loading, setLoading] = useState(false);

@@ -32,7 +32,7 @@ import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { api, type SetRecordDto } from '../../services/api';
 
-export function Sets() {
+export function SetsPage() {
   const [sets, setSets] = useState<SetRecordDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);

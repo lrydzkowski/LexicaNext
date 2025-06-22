@@ -22,7 +22,7 @@ interface SpellingEntry extends EntryDto {
   counter: number;
 }
 
-export function SetSpellingMode() {
+export function SetSpellingModePage() {
   const { setId } = useParams<{ setId: string }>();
   const navigate = useNavigate();
 

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router';
 import { Button, Container, Stack, Text, Title } from '@mantine/core';
 
-export function SignIn() {
+export function SignInPage() {
   const navigate = useNavigate();
 
   const handleSignIn = () => {
