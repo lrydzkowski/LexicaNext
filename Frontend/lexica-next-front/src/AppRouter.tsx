@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { Layout } from './components/layout/Layout';
 import { HomePage } from './pages/HomePage';
+import { NotFoundPage } from './pages/NotFoundPage';
 import { SetFullModePage } from './pages/sets/modes/SetFullModePage';
 import { SetOnlyOpenQuestionsModePage } from './pages/sets/modes/SetOnlyOpenQuestionsModePage';
 import { SetSpellingModePage } from './pages/sets/modes/SetSpellingModePage';
@@ -15,9 +16,9 @@ export function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
           <Route path="sign-in" element={<SignInPage />} />
 
+          <Route index element={<HomePage />} />
           <Route path="sets" element={<SetsPage />} />
           <Route path="sets/new" element={<SetNewPage />} />
           <Route path="sets/:setId/edit" element={<SetEditPage />} />
@@ -25,6 +26,8 @@ export function AppRouter() {
           <Route path="sets/:setId/spelling-mode" element={<SetSpellingModePage />} />
           <Route path="sets/:setId/only-open-questions-mode" element={<SetOnlyOpenQuestionsModePage />} />
           <Route path="sets/:setId/full-mode" element={<SetFullModePage />} />
+
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
