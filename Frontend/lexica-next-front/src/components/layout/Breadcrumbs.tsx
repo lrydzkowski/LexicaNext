@@ -49,8 +49,8 @@ export function Breadcrumbs() {
     if (segment.match(/^\d+$/) || segment === params.setId) {
       title = setName || 'Loading...';
     } else {
-      title = segmentLabels[segment].label || segment;
-      href = segmentLabels[segment].url;
+      title = segmentLabels[segment]?.label || segment;
+      href = segmentLabels[segment]?.url;
     }
 
     const isLast = i === pathSegments.length - 1;
