@@ -4,6 +4,7 @@ using LexicaNext.Core.Queries.GetSet.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LexicaNext.Core.Queries.GetSet;
 
@@ -25,9 +26,9 @@ public static class GetSetEndpoint
 
     private static async Task<Results<NotFound, Ok<GetSetResponse>>> HandleAsync(
         [AsParameters] GetSetRequest request,
-        IGetSetRepository getSetRepository,
-        ISetMapper setMapper,
-        CancellationToken cancellationToken
+        [FromServices] IGetSetRepository getSetRepository,
+        [FromServices] ISetMapper setMapper,
+        [FromServices] CancellationToken cancellationToken
     )
     {
         if (!Guid.TryParse(request.SetId, out Guid setId))

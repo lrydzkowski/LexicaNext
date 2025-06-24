@@ -30,10 +30,10 @@ public static class CreateSetEndpoint
 
     private static async Task<Results<ProblemHttpResult, CreatedAtRoute<CreateSetResponse>>> HandleAsync(
         [AsParameters] CreateSetRequest request,
-        IValidator<CreateSetRequest> validator,
-        ICreateSetCommandMapper createSetCommandMapper,
-        ICreateSetRepository createSetRepository,
-        CancellationToken cancellationToken
+        [FromServices] IValidator<CreateSetRequest> validator,
+        [FromServices] ICreateSetCommandMapper createSetCommandMapper,
+        [FromServices] ICreateSetRepository createSetRepository,
+        [FromServices] CancellationToken cancellationToken
     )
     {
         ValidationResult? validationResult = await validator.ValidateAsync(request, cancellationToken);

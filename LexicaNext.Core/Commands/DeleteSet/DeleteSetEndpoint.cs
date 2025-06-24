@@ -2,6 +2,7 @@ using LexicaNext.Core.Commands.DeleteSet.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LexicaNext.Core.Commands.DeleteSet;
 
@@ -23,8 +24,8 @@ public static class DeleteSetEndpoint
 
     private static async Task<Results<NotFound, NoContent>> HandleAsync(
         [AsParameters] DeleteSetRequest request,
-        IDeleteSetRepository deleteSetRepository,
-        CancellationToken cancellationToken
+        [FromServices] IDeleteSetRepository deleteSetRepository,
+        [FromServices] CancellationToken cancellationToken
     )
     {
         if (!Guid.TryParse(request.SetId, out Guid setId))
