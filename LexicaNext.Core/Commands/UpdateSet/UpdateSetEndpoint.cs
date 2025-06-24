@@ -30,10 +30,10 @@ public static class UpdateSetEndpoint
 
     private static async Task<Results<NotFound, ProblemHttpResult, NoContent>> HandleAsync(
         [AsParameters] UpdateSetRequest request,
-        IValidator<UpdateSetRequest> validator,
-        IUpdateSetCommandMapper updateSetCommandMapper,
-        IUpdateSetRepository updateSetRepository,
-        CancellationToken cancellationToken
+        [FromServices] IValidator<UpdateSetRequest> validator,
+        [FromServices] IUpdateSetCommandMapper updateSetCommandMapper,
+        [FromServices] IUpdateSetRepository updateSetRepository,
+        [FromServices] CancellationToken cancellationToken
     )
     {
         if (!Guid.TryParse(request.SetId, out Guid setId))

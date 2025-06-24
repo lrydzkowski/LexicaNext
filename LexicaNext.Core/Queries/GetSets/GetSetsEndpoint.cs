@@ -30,12 +30,12 @@ public static class GetSetsEndpoint
 
     private static async Task<Results<ProblemHttpResult, Ok<GetSetsResponse>>> HandleAsync(
         [AsParameters] GetSetsRequest getSetsRequest,
-        IGetSetsRequestProcessor processor,
-        IValidator<GetSetsRequest> validator,
-        IListParametersMapper listParametersMapper,
-        IGetSetsRepository getSetsRepository,
-        ISetRecordMapper setRecordMapper,
-        CancellationToken cancellationToken
+        [FromServices] IGetSetsRequestProcessor processor,
+        [FromServices] IValidator<GetSetsRequest> validator,
+        [FromServices] IListParametersMapper listParametersMapper,
+        [FromServices] IGetSetsRepository getSetsRepository,
+        [FromServices] ISetRecordMapper setRecordMapper,
+        [FromServices] CancellationToken cancellationToken
     )
     {
         getSetsRequest = processor.Process(getSetsRequest);

@@ -31,13 +31,13 @@ public static class GetRecordingEndpoint
 
     private static async Task<Results<ProblemHttpResult, FileContentHttpResult, NotFound>> HandleAsync(
         [AsParameters] GetRecordingRequest request,
-        IGetRecordingRequestProcessor processor,
-        IValidator<GetRecordingRequest> validator,
-        IWordTypeMapper wordTypeMapper,
-        IRecordingMetaData recordingMetaData,
-        IRecordingStorage recordingStorage,
-        IRecordingApi recordingApi,
-        CancellationToken cancellationToken
+        [FromServices] IGetRecordingRequestProcessor processor,
+        [FromServices] IValidator<GetRecordingRequest> validator,
+        [FromServices] IWordTypeMapper wordTypeMapper,
+        [FromServices] IRecordingMetaData recordingMetaData,
+        [FromServices] IRecordingStorage recordingStorage,
+        [FromServices] IRecordingApi recordingApi,
+        [FromServices] CancellationToken cancellationToken
     )
     {
         request = processor.Process(request);
