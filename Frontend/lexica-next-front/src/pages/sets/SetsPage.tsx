@@ -30,6 +30,7 @@ import {
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
+import { links } from '../../config/links';
 import { api, type SetRecordDto } from '../../services/api';
 
 export function SetsPage() {
@@ -186,7 +187,7 @@ export function SetsPage() {
 
           <Stack gap="md">
             <Group wrap="wrap">
-              <Button leftSection={<IconPlus size={16} />} component={Link} to="/sets/new" size="md">
+              <Button leftSection={<IconPlus size={16} />} component={Link} to={links.newSet.url} size="md">
                 <Text visibleFrom="sm">Create New Set</Text>
                 <Text hiddenFrom="sm">Create</Text>
               </Button>

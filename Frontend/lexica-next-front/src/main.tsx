@@ -8,7 +8,7 @@ import appConfig from './config/app-config.ts';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
-import { AuthLoading } from './auth/AuthLoading.tsx';
+import { AuthLoading } from './components/auth/AuthLoading.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

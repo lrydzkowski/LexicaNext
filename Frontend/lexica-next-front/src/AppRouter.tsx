@@ -1,8 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
-import NotRequireAuth from './auth/NotRequireAuth';
-import RequireAuth from './auth/RequireAuth';
+import NotRequireAuth from './components/auth/NotRequireAuth';
+import RequireAuth from './components/auth/RequireAuth';
 import { Layout } from './components/layout/Layout';
 import { PageWithBreadcrumbs } from './components/layout/PageWithBreadcrumbs';
+import { links } from './config/links';
 import { HomePage } from './pages/HomePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { SetFullModePage } from './pages/sets/modes/SetFullModePage';
@@ -20,7 +21,7 @@ export function AppRouter() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route
-            path="sign-in"
+            path={links.signIn.path}
             element={
               <NotRequireAuth>
                 <SignInPage />
@@ -36,7 +37,7 @@ export function AppRouter() {
             }
           />
           <Route
-            path="sets"
+            path={links.sets.path}
             element={
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -46,7 +47,7 @@ export function AppRouter() {
             }
           />
           <Route
-            path="sets/new"
+            path={links.newSet.path}
             element={
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -56,7 +57,7 @@ export function AppRouter() {
             }
           />
           <Route
-            path="sets/:setId/edit"
+            path={links.editSet.path}
             element={
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -66,7 +67,7 @@ export function AppRouter() {
             }
           />
           <Route
-            path="sets/:setId/content"
+            path={links.setContent.path}
             element={
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -76,7 +77,7 @@ export function AppRouter() {
             }
           />
           <Route
-            path="sets/:setId/spelling-mode"
+            path={links.spellingMode.path}
             element={
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -86,7 +87,7 @@ export function AppRouter() {
             }
           />
           <Route
-            path="sets/:setId/only-open-questions-mode"
+            path={links.onlyOpenQuestionsMode.path}
             element={
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -96,7 +97,7 @@ export function AppRouter() {
             }
           />
           <Route
-            path="sets/:setId/full-mode"
+            path={links.fullMode.path}
             element={
               <RequireAuth>
                 <PageWithBreadcrumbs>
