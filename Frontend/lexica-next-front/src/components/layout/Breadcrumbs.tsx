@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
 import { Anchor, Breadcrumbs as MantineBreadcrumbs, Text } from '@mantine/core';
 import { links, type IAppLink } from '../../config/links';
-import { api } from '../../services/api';
+import { api } from '../../services/api-mock';
 
 interface BreadcrumbItem {
   title: string;

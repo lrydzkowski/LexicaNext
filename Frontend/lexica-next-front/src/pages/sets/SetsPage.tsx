@@ -31,7 +31,7 @@ import {
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
-import { api, type SetRecordDto } from '../../services/api';
+import { api, type SetRecordDto } from '../../services/api-mock';
 
 export function SetsPage() {
   const [sets, setSets] = useState<SetRecordDto[]>([]);

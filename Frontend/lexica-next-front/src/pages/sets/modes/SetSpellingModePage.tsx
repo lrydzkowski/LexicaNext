@@ -16,7 +16,7 @@ import {
   Title,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { api, type EntryDto } from '../../../services/api';
+import { api, type EntryDto } from '../../../services/api-mock';
 
 interface SpellingEntry extends EntryDto {
   counter: number;

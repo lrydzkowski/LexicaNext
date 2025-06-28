@@ -17,7 +17,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { api, type EntryDto } from '../../services/api';
+import { api, type EntryDto } from '../../services/api-mock';
 
 interface FormValues {
   setName: string;
