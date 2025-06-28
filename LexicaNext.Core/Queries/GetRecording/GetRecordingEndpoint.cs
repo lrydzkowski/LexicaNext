@@ -37,7 +37,7 @@ public static class GetRecordingEndpoint
         [FromServices] IRecordingMetaData recordingMetaData,
         [FromServices] IRecordingStorage recordingStorage,
         [FromServices] IRecordingApi recordingApi,
-        [FromServices] CancellationToken cancellationToken
+        CancellationToken cancellationToken
     )
     {
         request = processor.Process(request);

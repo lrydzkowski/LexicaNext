@@ -16,6 +16,7 @@ export default defineConfig(({ command }) => {
     },
     build: {
       outDir: outputDir,
+      emptyOutDir: true,
       sourcemap: true,
     },
     envDir: './env-config',

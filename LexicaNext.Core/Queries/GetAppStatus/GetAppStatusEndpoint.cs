@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace LexicaNext.Core.Queries.GetAppStatus;
 
@@ -18,7 +17,7 @@ public static class GetAppStatusEndpoint
             .Produces(StatusCodes.Status500InternalServerError);
     }
 
-    private static Ok<GetAppStatusResponse> Handle([FromServices] CancellationToken cancellationToken)
+    private static Ok<GetAppStatusResponse> Handle(CancellationToken cancellationToken)
     {
         GetAppStatusResponse response = new()
         {

@@ -16,7 +16,7 @@ import {
   Title,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { api, type EntryDto } from '../../../services/api';
+import { useSet, type EntryDto } from '../../../hooks/api';
 
 interface SpellingEntry extends EntryDto {
   counter: number;
@@ -25,9 +25,8 @@ interface SpellingEntry extends EntryDto {
 export function SetSpellingModePage() {
   const { setId } = useParams<{ setId: string }>();
   const navigate = useNavigate();
+  const { data: set, isLoading: loading, error } = useSet(setId!);
 
-  const [loading, setLoading] = useState(true);
-  const [setName, setSetName] = useState('');
   const [entries, setEntries] = useState<SpellingEntry[]>([]);
   const [currentEntryIndex, setCurrentEntryIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
@@ -36,33 +35,24 @@ export function SetSpellingModePage() {
   const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
-    const fetchSet = async () => {
-      if (!setId) return;
+    if (set?.entries) {
+      const shuffledEntries = [...set.entries]
+        .sort(() => Math.random() - 0.5)
+        .map((entry) => ({ ...entry, counter: 0 }));
+      setEntries(shuffledEntries);
+    }
+  }, [set]);
 
-      try {
-        const set = await api.getSet(setId);
-        setSetName(set.name);
-
-        // Randomize entries and add counters
-        const shuffledEntries = [...set.entries]
-          .sort(() => Math.random() - 0.5)
-          .map((entry) => ({ ...entry, counter: 0 }));
-
-        setEntries(shuffledEntries);
-      } catch (error) {
-        notifications.show({
-          title: 'Error',
-          message: 'Failed to load set',
-          color: 'red',
-        });
-        navigate('/sets');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSet();
-  }, [setId]);
+  useEffect(() => {
+    if (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to load set',
+        color: 'red',
+      });
+      navigate('/sets');
+    }
+  }, [error, navigate]);
 
   const playAudio = async () => {
     if (entries.length === 0) return;
@@ -73,7 +63,7 @@ export function SetSpellingModePage() {
       // const audioUrl = await api.getRecording(currentEntry.word, currentEntry.wordType);
 
       // For demo purposes, we'll use speech synthesis
-      const utterance = new SpeechSynthesisUtterance(currentEntry.word);
+      const utterance = new SpeechSynthesisUtterance(currentEntry.word || '');
       utterance.lang = 'en-US';
       speechSynthesis.speak(utterance);
     } catch (error) {
@@ -83,7 +73,7 @@ export function SetSpellingModePage() {
 
   const checkAnswer = () => {
     const currentEntry = entries[currentEntryIndex];
-    const correct = userInput.trim().toLowerCase() === currentEntry.word.toLowerCase();
+    const correct = userInput.trim().toLowerCase() === (currentEntry.word || '').toLowerCase();
 
     setIsCorrect(correct);
     setShowFeedback(true);
@@ -141,7 +131,7 @@ export function SetSpellingModePage() {
               🎉 Congratulations!
             </Title>
             <Text fz={{ base: 'md', md: 'lg' }} ta="center">
-              You've completed the spelling mode for "{setName}"!
+              You've completed the spelling mode for "{set?.name}"!
             </Text>
             <Text c="dimmed" ta="center" fz={{ base: 'sm', md: 'md' }}>
               You've successfully learned the spelling of all words in this set.
@@ -187,7 +177,7 @@ export function SetSpellingModePage() {
                 Spelling Mode
               </Title>
               <Text c="dimmed" fz={{ base: 'sm', md: 'md' }}>
-                {setName}
+                {set?.name}
               </Text>
             </div>
           </Group>
@@ -252,7 +242,7 @@ export function SetSpellingModePage() {
                       ({currentEntry.wordType})
                     </Text>
                     <Text mt="sm" fz={{ base: 'sm', md: 'md' }}>
-                      <strong>Translations:</strong> {currentEntry.translations.join(', ')}
+                      <strong>Translations:</strong> {(currentEntry.translations || []).join(', ')}
                     </Text>
                   </div>
 

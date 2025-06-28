@@ -12,6 +12,12 @@ export const links: Record<string, IAppLink> = {
     label: 'Home',
     segment: '',
   },
+  about: {
+    path: 'about',
+    url: '/about',
+    label: 'About',
+    segment: 'about',
+  },
   signIn: {
     path: 'sign-in',
     url: '/sign-in',

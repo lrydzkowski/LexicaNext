@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
 import { Anchor, Breadcrumbs as MantineBreadcrumbs, Text } from '@mantine/core';
 import { links, type IAppLink } from '../../config/links';
-import { api } from '../../services/api';
+import { useSet } from '../../hooks/api';
 
 interface BreadcrumbItem {
   title: string;
@@ -13,7 +13,7 @@ export function Breadcrumbs() {
   const location = useLocation();
   const params = useParams();
   const pathSegments = location.pathname.split('/').filter(Boolean);
-  const [setName, setSetName] = useState<string>('');
+  const { data: set } = useSet(params.setId || '');
 
   const segmentLabels = useMemo(() => {
     return Object.values(links).reduce<Record<string, IAppLink>>((acc, link) => {
@@ -22,23 +22,7 @@ export function Breadcrumbs() {
     }, {});
   }, []);
 
-  useEffect(() => {
-    const fetchSetName = async () => {
-      if (!params.setId) {
-        return;
-      }
-
-      try {
-        const response = await api.getSet(params.setId);
-        setSetName(response.name);
-      } catch (error) {
-        console.error('Failed to fetch set name:', error);
-        setSetName(params.setId);
-      }
-    };
-
-    fetchSetName();
-  }, [params.setId]);
+  const setName = set?.name || 'Loading...';
 
   const breadcrumbItems: BreadcrumbItem[] = [{ title: links.home.label, href: links.home.url }];
   for (let i = 0; i < pathSegments.length; i++) {

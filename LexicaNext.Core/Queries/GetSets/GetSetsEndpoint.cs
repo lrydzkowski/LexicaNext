@@ -35,7 +35,7 @@ public static class GetSetsEndpoint
         [FromServices] IListParametersMapper listParametersMapper,
         [FromServices] IGetSetsRepository getSetsRepository,
         [FromServices] ISetRecordMapper setRecordMapper,
-        [FromServices] CancellationToken cancellationToken
+        CancellationToken cancellationToken
     )
     {
         getSetsRequest = processor.Process(getSetsRequest);

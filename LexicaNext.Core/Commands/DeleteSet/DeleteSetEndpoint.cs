@@ -25,7 +25,7 @@ public static class DeleteSetEndpoint
     private static async Task<Results<NotFound, NoContent>> HandleAsync(
         [AsParameters] DeleteSetRequest request,
         [FromServices] IDeleteSetRepository deleteSetRepository,
-        [FromServices] CancellationToken cancellationToken
+        CancellationToken cancellationToken
     )
     {
         if (!Guid.TryParse(request.SetId, out Guid setId))

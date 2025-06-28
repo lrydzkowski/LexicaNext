@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { IconArrowLeft, IconVolume } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router';
 import {
@@ -15,36 +15,23 @@ import {
   Title,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { api, type GetSetResponse } from '../../services/api';
+import { useSet } from '../../hooks/api';
 
 export function SetContentPage() {
   const { setId } = useParams<{ setId: string }>();
   const navigate = useNavigate();
-
-  const [loading, setLoading] = useState(true);
-  const [set, setSet] = useState<GetSetResponse | null>(null);
+  const { data: set, isLoading: loading, error } = useSet(setId!);
 
   useEffect(() => {
-    const fetchSet = async () => {
-      if (!setId) return;
-
-      try {
-        const setData = await api.getSet(setId);
-        setSet(setData);
-      } catch (error) {
-        notifications.show({
-          title: 'Error',
-          message: 'Failed to load set',
-          color: 'red',
-        });
-        navigate('/sets');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSet();
-  }, [setId]);
+    if (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to load set',
+        color: 'red',
+      });
+      navigate('/sets');
+    }
+  }, [error, navigate]);
 
   const playAudio = async (word: string /*, wordType: string*/) => {
     try {
@@ -110,12 +97,12 @@ export function SetContentPage() {
                 Vocabulary List
               </Text>
               <Badge size="lg" variant="light">
-                {set.entries.length} words
+                {set.entries?.length || 0} words
               </Badge>
             </Group>
 
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
-              {set.entries.map((entry, index) => (
+              {(set.entries || []).map((entry, index) => (
                 <Card key={index} withBorder>
                   <Stack gap="md">
                     <Group justify="space-between" wrap="nowrap">
@@ -123,14 +110,14 @@ export function SetContentPage() {
                         <Text fz={{ base: 'lg', md: 'xl' }} fw={700} c="blue" truncate>
                           {entry.word}
                         </Text>
-                        <Badge size="sm" color={getWordTypeColor(entry.wordType)} variant="light">
+                        <Badge size="sm" color={getWordTypeColor(entry.wordType || '')} variant="light">
                           {entry.wordType}
                         </Badge>
                       </div>
                       <ActionIcon
                         variant="light"
                         color="blue"
-                        onClick={() => playAudio(entry.word /*, entry.wordType*/)}
+                        onClick={() => playAudio(entry.word || '' /*, entry.wordType*/)}
                         aria-label={`Play pronunciation of ${entry.word}`}
                         style={{ flexShrink: 0 }}>
                         <IconVolume size={16} />
@@ -142,7 +129,7 @@ export function SetContentPage() {
                         Translations:
                       </Text>
                       <Stack gap="xs">
-                        {entry.translations.map((translation, translationIndex) => (
+                        {(entry.translations || []).map((translation, translationIndex) => (
                           <Text key={translationIndex} size="sm">
                             • {translation}
                           </Text>
@@ -165,28 +152,28 @@ export function SetContentPage() {
                   Created:
                 </Text>
                 <Text size="sm">
-                  {new Date(set.createdAt).toLocaleDateString('en-US', {
+                  {set.createdAt ? new Date(set.createdAt).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit',
-                  })}
+                  }) : 'Unknown date'}
                 </Text>
               </Group>
               <Group wrap="wrap">
                 <Text size="sm" c="dimmed">
                   Total Words:
                 </Text>
-                <Text size="sm">{set.entries.length}</Text>
+                <Text size="sm">{set.entries?.length || 0}</Text>
               </Group>
               <Group wrap="wrap">
                 <Text size="sm" c="dimmed">
                   Word Types:
                 </Text>
                 <Group gap="xs" wrap="wrap">
-                  {Array.from(new Set(set.entries.map((e) => e.wordType))).map((type) => (
-                    <Badge key={type} size="sm" color={getWordTypeColor(type)} variant="light">
+                  {Array.from(new Set((set.entries || []).map((e) => e.wordType))).map((type) => (
+                    <Badge key={type} size="sm" color={getWordTypeColor(type || '')} variant="light">
                       {type}
                     </Badge>
                   ))}

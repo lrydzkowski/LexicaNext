@@ -33,7 +33,7 @@ public static class UpdateSetEndpoint
         [FromServices] IValidator<UpdateSetRequest> validator,
         [FromServices] IUpdateSetCommandMapper updateSetCommandMapper,
         [FromServices] IUpdateSetRepository updateSetRepository,
-        [FromServices] CancellationToken cancellationToken
+        CancellationToken cancellationToken
     )
     {
         if (!Guid.TryParse(request.SetId, out Guid setId))

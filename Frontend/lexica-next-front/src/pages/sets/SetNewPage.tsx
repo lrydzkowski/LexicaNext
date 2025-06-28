@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { IconArrowLeft, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import {
@@ -16,7 +15,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { api, type EntryDto } from '../../services/api';
+import { useCreateSet, type EntryDto } from '../../hooks/api';
 
 interface FormValues {
   setName: string;
@@ -25,7 +24,7 @@ interface FormValues {
 
 export function SetNewPage() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const createSetMutation = useCreateSet();
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -33,10 +32,10 @@ export function SetNewPage() {
       entries: [{ word: '', wordType: 'noun', translations: [''] }],
     },
     validate: {
-      setName: (value) => (value.trim() === '' ? 'Set name is required' : null),
+      setName: (value) => (value?.trim() === '' ? 'Set name is required' : null),
       entries: {
-        word: (value) => (value.trim() === '' ? 'Word is required' : null),
-        translations: (value) => (value.some((t) => t.trim() === '') ? 'All translations are required' : null),
+        word: (value) => (value?.trim() === '' ? 'Word is required' : null),
+        translations: (value) => (value?.some((t) => t?.trim() === '') ? 'All translations are required' : null),
       },
     },
   });
@@ -57,33 +56,35 @@ export function SetNewPage() {
     form.removeListItem(`entries.${entryIndex}.translations`, translationIndex);
   };
 
-  const handleSubmit = async (values: FormValues) => {
-    try {
-      setLoading(true);
-      await api.createSet({
-        setName: values.setName,
-        entries: values.entries.map((entry) => ({
-          ...entry,
-          translations: entry.translations.filter((t) => t.trim() !== ''),
-        })),
-      });
-
-      notifications.show({
-        title: 'Success',
-        message: 'Set created successfully',
-        color: 'green',
-      });
-
-      navigate('/sets');
-    } catch (error) {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to create set',
-        color: 'red',
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleSubmit = (values: FormValues) => {
+    createSetMutation.mutate(
+      {
+        body: {
+          setName: values.setName,
+          entries: values.entries.map((entry) => ({
+            ...entry,
+            translations: entry.translations?.filter((t) => t?.trim() !== '') || [],
+          })),
+        },
+      },
+      {
+        onSuccess: () => {
+          notifications.show({
+            title: 'Success',
+            message: 'Set created successfully',
+            color: 'green',
+          });
+          navigate('/sets');
+        },
+        onError: () => {
+          notifications.show({
+            title: 'Error',
+            message: 'Failed to create set',
+            color: 'red',
+          });
+        },
+      }
+    );
   };
 
   return (
@@ -165,7 +166,7 @@ export function SetNewPage() {
                         <Text size="sm" fw={500} mb="xs">
                           Translations
                         </Text>
-                        {entry.translations.map((_, translationIndex) => (
+                        {(entry.translations || []).map((_, translationIndex) => (
                           <Group key={translationIndex} mb="xs" wrap="nowrap">
                             <TextInput
                               placeholder="Enter translation..."
@@ -174,7 +175,7 @@ export function SetNewPage() {
                               size="md"
                               {...form.getInputProps(`entries.${entryIndex}.translations.${translationIndex}`)}
                             />
-                            {entry.translations.length > 1 && (
+                            {(entry.translations || []).length > 1 && (
                               <ActionIcon
                                 color="red"
                                 variant="light"
@@ -207,7 +208,7 @@ export function SetNewPage() {
                   <Button variant="light" onClick={() => navigate('/sets')} size="md">
                     Cancel
                   </Button>
-                  <Button type="submit" loading={loading} size="md">
+                  <Button type="submit" loading={createSetMutation.isPending} size="md">
                     Create Set
                   </Button>
                 </Group>

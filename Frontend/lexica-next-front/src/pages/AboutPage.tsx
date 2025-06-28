@@ -1,7 +1,7 @@
 import { IconBooks, IconBrain, IconHeadphones, IconTarget } from '@tabler/icons-react';
 import { Container, Group, Paper, Stack, Text, ThemeIcon, Title } from '@mantine/core';
 
-export function HomePage() {
+export function AboutPage() {
   return (
     <>
       <Container p={{ base: 0 }}>
