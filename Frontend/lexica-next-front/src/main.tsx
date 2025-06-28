@@ -20,7 +20,10 @@ createRoot(document.getElementById('root')!).render(
         <Auth0Provider
           domain={appConfig.auth0Domain}
           clientId={appConfig.auth0ClientId}
-          authorizationParams={{ ...appConfig.getAuthorizationParams(), redirect_uri: window.location.origin }}>
+          authorizationParams={{
+            ...appConfig.buildGetTokenSilentlyOptions().authorizationParams,
+            redirect_uri: window.location.origin,
+          }}>
           <AuthLoading>
             <AppRouter />
           </AuthLoading>

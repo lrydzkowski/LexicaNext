@@ -1,4 +1,4 @@
-import type { AuthorizationParams } from '@auth0/auth0-react';
+import type { GetTokenSilentlyOptions } from '@auth0/auth0-react';
 
 class AppConfig {
   apiBasePath = this.getEnvironmentValue('VITE_API_BASE_PATH');
@@ -8,10 +8,12 @@ class AppConfig {
   auth0Audience = this.getEnvironmentValue('VITE_AUTH0_AUDIENCE');
   auth0Scope = this.getEnvironmentValue('VITE_AUTH0_SCOPE');
 
-  public getAuthorizationParams(): AuthorizationParams {
+  public buildGetTokenSilentlyOptions(): GetTokenSilentlyOptions {
     return {
-      audience: this.auth0Audience || undefined,
-      scope: this.auth0Scope || undefined,
+      authorizationParams: {
+        audience: this.auth0Audience || undefined,
+        scope: this.auth0Scope || undefined,
+      },
     };
   }
 
