@@ -6,8 +6,8 @@ import { useDisclosure } from '@mantine/hooks';
 import classes from './Header.module.css';
 
 const items = [
-  { label: 'Home', href: '/' },
   { label: 'Sets', href: '/sets' },
+  { label: 'About', href: '/about' },
 ];
 
 const publicItems = [{ label: 'Sign In', href: '/sign-in' }];

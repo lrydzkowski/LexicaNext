@@ -1,10 +1,10 @@
-import { BrowserRouter, Route, Routes } from 'react-router';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import NotRequireAuth from './components/auth/NotRequireAuth';
 import RequireAuth from './components/auth/RequireAuth';
 import { Layout } from './components/layout/Layout';
 import { PageWithBreadcrumbs } from './components/layout/PageWithBreadcrumbs';
 import { links } from './config/links';
-import { HomePage } from './pages/HomePage';
+import { AboutPage } from './pages/AboutPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { SetFullModePage } from './pages/sets/modes/SetFullModePage';
 import { SetOnlyOpenQuestionsModePage } from './pages/sets/modes/SetOnlyOpenQuestionsModePage';
@@ -32,7 +32,17 @@ export function AppRouter() {
             index
             element={
               <RequireAuth>
-                <HomePage />
+                <Navigate to={links.sets.url} replace />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path={links.about.path}
+            element={
+              <RequireAuth>
+                <PageWithBreadcrumbs>
+                  <AboutPage />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             }
           />
