@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   IconBrain,
   IconDots,
@@ -31,12 +31,9 @@ import {
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
-import { api, type SetRecordDto } from '../../services/api-mock';
+import { useSets, useDeleteSet, type SetRecordDto } from '../../hooks/api';
 
 export function SetsPage() {
-  const [sets, setSets] = useState<SetRecordDto[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField] = useState('name');
@@ -44,55 +41,55 @@ export function SetsPage() {
 
   const pageSize = 10;
 
-  const fetchSets = async () => {
-    try {
-      setLoading(true);
-      const response = await api.getSets({
-        page: currentPage,
-        pageSize,
-        sortingFieldName: sortField,
-        sortingOrder: sortOrder,
-        searchQuery: searchQuery || undefined,
-      });
-      setSets(response.data);
-      setTotalCount(response.count);
-    } catch (error) {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to load sets',
-        color: 'red',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: setsData, isLoading: loading, error } = useSets({
+    page: currentPage,
+    pageSize,
+    sortingFieldName: sortField,
+    sortingOrder: sortOrder,
+    searchQuery: searchQuery || undefined,
+  });
 
-  useEffect(() => {
-    fetchSets();
-  }, [currentPage, sortField, sortOrder, searchQuery]);
+  const deleteSetMutation = useDeleteSet();
 
-  const handleDelete = async (setId: string, setName: string) => {
+  const sets = setsData?.data || [];
+  const totalCount = setsData?.count || 0;
+
+  if (error) {
+    notifications.show({
+      title: 'Error',
+      message: 'Failed to load sets',
+      color: 'red',
+    });
+  }
+
+  const handleDelete = (setId: string, setName: string) => {
     modals.openConfirmModal({
       title: 'Delete Set',
       children: <Text>Are you sure you want to delete "{setName}"? This action cannot be undone.</Text>,
       labels: { confirm: 'Delete', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
-      onConfirm: async () => {
-        try {
-          await api.deleteSet(setId);
-          notifications.show({
-            title: 'Success',
-            message: 'Set deleted successfully',
-            color: 'green',
-          });
-          fetchSets();
-        } catch (error) {
-          notifications.show({
-            title: 'Error',
-            message: 'Failed to delete set',
-            color: 'red',
-          });
-        }
+      onConfirm: () => {
+        deleteSetMutation.mutate(
+          {
+            params: { path: { setId } },
+          },
+          {
+            onSuccess: () => {
+              notifications.show({
+                title: 'Success',
+                message: 'Set deleted successfully',
+                color: 'green',
+              });
+            },
+            onError: () => {
+              notifications.show({
+                title: 'Error',
+                message: 'Failed to delete set',
+                color: 'red',
+              });
+            },
+          }
+        );
       },
     });
   };
@@ -130,7 +127,7 @@ export function SetsPage() {
         <Menu.Item leftSection={<IconEdit size={16} />} component={Link} to={`/sets/${set.setId}/edit`}>
           Edit Set
         </Menu.Item>
-        <Menu.Item leftSection={<IconTrash size={16} />} color="red" onClick={() => handleDelete(set.setId, set.name)}>
+        <Menu.Item leftSection={<IconTrash size={16} />} color="red" onClick={() => handleDelete(set.setId || '', set.name || '')}>
           Delete Set
         </Menu.Item>
       </Menu.Dropdown>
@@ -146,7 +143,7 @@ export function SetsPage() {
               {set.name}
             </Text>
             <Text fz="xs" c="dimmed">
-              {new Date(set.createdAt).toLocaleDateString()}
+              {set.createdAt ? new Date(set.createdAt).toLocaleDateString() : 'Unknown date'}
             </Text>
           </div>
           <SetActionMenu set={set} />
@@ -164,7 +161,7 @@ export function SetsPage() {
       </Table.Td>
       <Table.Td>
         <Text fz="sm" c="dimmed">
-          {new Date(set.createdAt).toLocaleDateString()}
+          {set.createdAt ? new Date(set.createdAt).toLocaleDateString() : 'Unknown date'}
         </Text>
       </Table.Td>
       <Table.Td>

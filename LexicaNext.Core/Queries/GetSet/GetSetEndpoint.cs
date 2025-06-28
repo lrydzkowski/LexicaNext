@@ -28,7 +28,7 @@ public static class GetSetEndpoint
         [AsParameters] GetSetRequest request,
         [FromServices] IGetSetRepository getSetRepository,
         [FromServices] ISetMapper setMapper,
-        [FromServices] CancellationToken cancellationToken
+        CancellationToken cancellationToken
     )
     {
         if (!Guid.TryParse(request.SetId, out Guid setId))

@@ -16,7 +16,7 @@ import {
   Title,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { api, type EntryDto } from '../../../services/api-mock';
+import { useSet, type EntryDto } from '../../../hooks/api';
 
 interface OpenQuestionsEntry extends EntryDto {
   englishOpenCounter: number;
@@ -36,9 +36,8 @@ interface Question {
 export function SetOnlyOpenQuestionsModePage() {
   const { setId } = useParams<{ setId: string }>();
   const navigate = useNavigate();
+  const { data: set, isLoading: loading, error } = useSet(setId!);
 
-  const [loading, setLoading] = useState(true);
-  const [setName, setSetName] = useState('');
   const [entries, setEntries] = useState<OpenQuestionsEntry[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
@@ -47,36 +46,27 @@ export function SetOnlyOpenQuestionsModePage() {
   const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
-    const fetchSet = async () => {
-      if (!setId) return;
+    if (set?.entries) {
+      const initialEntries = set.entries.map((entry) => ({
+        ...entry,
+        englishOpenCounter: 0,
+        nativeOpenCounter: 0,
+      }));
+      setEntries(initialEntries);
+      generateNextQuestion(initialEntries);
+    }
+  }, [set]);
 
-      try {
-        const set = await api.getSet(setId);
-        setSetName(set.name);
-
-        // Initialize entries with counters
-        const initialEntries = set.entries.map((entry) => ({
-          ...entry,
-          englishOpenCounter: 0,
-          nativeOpenCounter: 0,
-        }));
-
-        setEntries(initialEntries);
-        generateNextQuestion(initialEntries);
-      } catch (error) {
-        notifications.show({
-          title: 'Error',
-          message: 'Failed to load set',
-          color: 'red',
-        });
-        navigate('/sets');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSet();
-  }, [setId]);
+  useEffect(() => {
+    if (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to load set',
+        color: 'red',
+      });
+      navigate('/sets');
+    }
+  }, [error, navigate]);
 
   const generateNextQuestion = (currentEntries: OpenQuestionsEntry[]) => {
     // Randomize entries
@@ -118,7 +108,7 @@ export function SetOnlyOpenQuestionsModePage() {
           entryIndex,
           type,
           question: `What does "${entry.word}" mean?`,
-          correctAnswer: entry.translations[0],
+          correctAnswer: entry.translations?.[0] || '',
         };
 
       case 'native-open':
@@ -126,8 +116,8 @@ export function SetOnlyOpenQuestionsModePage() {
           entry,
           entryIndex,
           type,
-          question: `What is the English word for "${entry.translations[0]}"?`,
-          correctAnswer: entry.word,
+          question: `What is the English word for "${entry.translations?.[0] || ''}"?`,
+          correctAnswer: entry.word || '',
         };
 
       default:
@@ -198,7 +188,7 @@ export function SetOnlyOpenQuestionsModePage() {
               🎉 Congratulations!
             </Title>
             <Text fz={{ base: 'md', md: 'lg' }} ta="center">
-              You've completed the open questions mode for "{setName}"!
+              You've completed the open questions mode for "{set?.name}"!
             </Text>
             <Text c="dimmed" ta="center" fz={{ base: 'sm', md: 'md' }}>
               You've mastered all the words through advanced open question practice.
@@ -242,7 +232,7 @@ export function SetOnlyOpenQuestionsModePage() {
                 Open Questions Mode
               </Title>
               <Text c="dimmed" fz={{ base: 'sm', md: 'md' }}>
-                {setName}
+                {set?.name}
               </Text>
             </div>
           </Group>
@@ -296,7 +286,7 @@ export function SetOnlyOpenQuestionsModePage() {
                       ({currentQuestion.entry.wordType})
                     </Text>
                     <Text mt="sm" fz={{ base: 'sm', md: 'md' }}>
-                      <strong>Translations:</strong> {currentQuestion.entry.translations.join(', ')}
+                      <strong>Translations:</strong> {(currentQuestion.entry.translations || []).join(', ')}
                     </Text>
                   </div>
 

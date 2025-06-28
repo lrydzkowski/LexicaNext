@@ -17,7 +17,7 @@ import {
   Title,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { api, type EntryDto } from '../../../services/api-mock';
+import { useSet, type EntryDto } from '../../../hooks/api';
 
 interface FullModeEntry extends EntryDto {
   englishCloseCounter: number;
@@ -40,9 +40,8 @@ interface Question {
 export function SetFullModePage() {
   const { setId } = useParams<{ setId: string }>();
   const navigate = useNavigate();
+  const { data: set, isLoading: loading, error } = useSet(setId!);
 
-  const [loading, setLoading] = useState(true);
-  const [setName, setSetName] = useState('');
   const [entries, setEntries] = useState<FullModeEntry[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
@@ -51,38 +50,29 @@ export function SetFullModePage() {
   const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
-    const fetchSet = async () => {
-      if (!setId) return;
+    if (set?.entries) {
+      const initialEntries = set.entries.map((entry) => ({
+        ...entry,
+        englishCloseCounter: 0,
+        nativeCloseCounter: 0,
+        englishOpenCounter: 0,
+        nativeOpenCounter: 0,
+      }));
+      setEntries(initialEntries);
+      generateNextQuestion(initialEntries);
+    }
+  }, [set]);
 
-      try {
-        const set = await api.getSet(setId);
-        setSetName(set.name);
-
-        // Initialize entries with counters
-        const initialEntries = set.entries.map((entry) => ({
-          ...entry,
-          englishCloseCounter: 0,
-          nativeCloseCounter: 0,
-          englishOpenCounter: 0,
-          nativeOpenCounter: 0,
-        }));
-
-        setEntries(initialEntries);
-        generateNextQuestion(initialEntries);
-      } catch (error) {
-        notifications.show({
-          title: 'Error',
-          message: 'Failed to load set',
-          color: 'red',
-        });
-        navigate('/sets');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSet();
-  }, [setId]);
+  useEffect(() => {
+    if (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to load set',
+        color: 'red',
+      });
+      navigate('/sets');
+    }
+  }, [error, navigate]);
 
   const generateNextQuestion = (currentEntries: FullModeEntry[]) => {
     // Get 7 random entries (or all if less than 7)
@@ -150,11 +140,11 @@ export function SetFullModePage() {
     switch (type) {
       case 'english-close':
         // Multiple choice: English word -> native translation
-        const correctTranslation = entry.translations[0];
+        const correctTranslation = entry.translations?.[0] || '';
         const wrongOptions = allEntries
           .filter((e) => e.word !== entry.word)
-          .flatMap((e) => e.translations)
-          .filter((t) => t !== correctTranslation)
+          .flatMap((e) => e.translations || [])
+          .filter((t) => t && t !== correctTranslation)
           .slice(0, 3);
 
         const options = [correctTranslation, ...wrongOptions].sort(() => Math.random() - 0.5);
@@ -173,18 +163,19 @@ export function SetFullModePage() {
         const correctWord = entry.word;
         const wrongWords = allEntries
           .filter((e) => e.word !== entry.word)
-          .map((e) => e.word)
+          .map((e) => e.word || '')
+          .filter((word) => word !== '')
           .slice(0, 3);
 
-        const wordOptions = [correctWord, ...wrongWords].sort(() => Math.random() - 0.5);
+        const wordOptions = [correctWord || '', ...wrongWords].sort(() => Math.random() - 0.5);
 
         return {
           entry,
           entryIndex,
           type,
-          question: `What is the English word for "${entry.translations[0]}"?`,
+          question: `What is the English word for "${entry.translations?.[0] || ''}"?`,
           options: wordOptions,
-          correctAnswer: correctWord,
+          correctAnswer: correctWord || '',
         };
 
       case 'english-open':
@@ -194,7 +185,7 @@ export function SetFullModePage() {
           entryIndex,
           type,
           question: `What does "${entry.word}" mean? (Type your answer)`,
-          correctAnswer: entry.translations[0],
+          correctAnswer: entry.translations?.[0] || '',
         };
 
       case 'native-open':
@@ -203,8 +194,8 @@ export function SetFullModePage() {
           entry,
           entryIndex,
           type,
-          question: `What is the English word for "${entry.translations[0]}"? (Type your answer)`,
-          correctAnswer: entry.word,
+          question: `What is the English word for "${entry.translations?.[0] || ''}"? (Type your answer)`,
+          correctAnswer: entry.word || '',
         };
 
       default:
@@ -289,7 +280,7 @@ export function SetFullModePage() {
               🎉 Congratulations!
             </Title>
             <Text fz={{ base: 'md', md: 'lg' }} ta="center">
-              You've completed the full mode for "{setName}"!
+              You've completed the full mode for "{set?.name}"!
             </Text>
             <Text c="dimmed" ta="center" fz={{ base: 'sm', md: 'md' }}>
               You've mastered all the words in this set through comprehensive practice.
@@ -333,7 +324,7 @@ export function SetFullModePage() {
                 Full Mode
               </Title>
               <Text c="dimmed" fz={{ base: 'sm', md: 'md' }}>
-                {setName}
+                {set?.name}
               </Text>
             </div>
           </Group>
@@ -399,7 +390,7 @@ export function SetFullModePage() {
                       ({currentQuestion.entry.wordType})
                     </Text>
                     <Text mt="sm" fz={{ base: 'sm', md: 'md' }}>
-                      <strong>Translations:</strong> {currentQuestion.entry.translations.join(', ')}
+                      <strong>Translations:</strong> {(currentQuestion.entry.translations || []).join(', ')}
                     </Text>
                   </div>
 

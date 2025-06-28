@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { IconArrowLeft, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router';
 import {
@@ -17,7 +17,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { api, type EntryDto } from '../../services/api-mock';
+import { useSet, useUpdateSet, type EntryDto } from '../../hooks/api';
 
 interface FormValues {
   setName: string;
@@ -27,8 +27,8 @@ interface FormValues {
 export function SetEditPage() {
   const navigate = useNavigate();
   const { setId } = useParams<{ setId: string }>();
-  const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
+  const { data: set, isLoading: initialLoading, error } = useSet(setId!);
+  const updateSetMutation = useUpdateSet();
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -36,38 +36,33 @@ export function SetEditPage() {
       entries: [],
     },
     validate: {
-      setName: (value) => (value.trim() === '' ? 'Set name is required' : null),
+      setName: (value) => (value?.trim() === '' ? 'Set name is required' : null),
       entries: {
-        word: (value) => (value.trim() === '' ? 'Word is required' : null),
-        translations: (value) => (value.some((t) => t.trim() === '') ? 'All translations are required' : null),
+        word: (value) => (value?.trim() === '' ? 'Word is required' : null),
+        translations: (value) => (value?.some((t) => t?.trim() === '') ? 'All translations are required' : null),
       },
     },
   });
 
   useEffect(() => {
-    const fetchSet = async () => {
-      if (!setId) return;
+    if (set) {
+      form.setValues({
+        setName: set.name || '',
+        entries: set.entries || [],
+      });
+    }
+  }, [set]);
 
-      try {
-        const set = await api.getSet(setId);
-        form.setValues({
-          setName: set.name,
-          entries: set.entries,
-        });
-      } catch (error) {
-        notifications.show({
-          title: 'Error',
-          message: 'Failed to load set',
-          color: 'red',
-        });
-        navigate('/sets');
-      } finally {
-        setInitialLoading(false);
-      }
-    };
-
-    fetchSet();
-  }, [setId]);
+  useEffect(() => {
+    if (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to load set',
+        color: 'red',
+      });
+      navigate('/sets');
+    }
+  }, [error, navigate]);
 
   const addEntry = () => {
     form.insertListItem('entries', { word: '', wordType: 'noun', translations: [''] });
@@ -85,35 +80,38 @@ export function SetEditPage() {
     form.removeListItem(`entries.${entryIndex}.translations`, translationIndex);
   };
 
-  const handleSubmit = async (values: FormValues) => {
+  const handleSubmit = (values: FormValues) => {
     if (!setId) return;
 
-    try {
-      setLoading(true);
-      await api.updateSet(setId, {
-        setName: values.setName,
-        entries: values.entries.map((entry) => ({
-          ...entry,
-          translations: entry.translations.filter((t) => t.trim() !== ''),
-        })),
-      });
-
-      notifications.show({
-        title: 'Success',
-        message: 'Set updated successfully',
-        color: 'green',
-      });
-
-      navigate('/sets');
-    } catch (error) {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to update set',
-        color: 'red',
-      });
-    } finally {
-      setLoading(false);
-    }
+    updateSetMutation.mutate(
+      {
+        params: { path: { setId } },
+        body: {
+          setName: values.setName,
+          entries: values.entries.map((entry) => ({
+            ...entry,
+            translations: entry.translations?.filter((t) => t?.trim() !== '') || [],
+          })),
+        },
+      },
+      {
+        onSuccess: () => {
+          notifications.show({
+            title: 'Success',
+            message: 'Set updated successfully',
+            color: 'green',
+          });
+          navigate('/sets');
+        },
+        onError: () => {
+          notifications.show({
+            title: 'Error',
+            message: 'Failed to update set',
+            color: 'red',
+          });
+        },
+      }
+    );
   };
 
   if (initialLoading) {
@@ -199,7 +197,7 @@ export function SetEditPage() {
                         <Text size="sm" fw={500} mb="xs">
                           Translations
                         </Text>
-                        {entry.translations.map((_, translationIndex) => (
+                        {(entry.translations || []).map((_, translationIndex) => (
                           <Group key={translationIndex} mb="xs" wrap="nowrap">
                             <TextInput
                               placeholder="Enter translation..."
@@ -208,7 +206,7 @@ export function SetEditPage() {
                               size="md"
                               {...form.getInputProps(`entries.${entryIndex}.translations.${translationIndex}`)}
                             />
-                            {entry.translations.length > 1 && (
+                            {(entry.translations || []).length > 1 && (
                               <ActionIcon
                                 color="red"
                                 variant="light"
@@ -241,7 +239,7 @@ export function SetEditPage() {
                   <Button variant="light" onClick={() => navigate('/sets')} size="md">
                     Cancel
                   </Button>
-                  <Button type="submit" loading={loading} size="md">
+                  <Button type="submit" loading={updateSetMutation.isPending} size="md">
                     Update Set
                   </Button>
                 </Group>

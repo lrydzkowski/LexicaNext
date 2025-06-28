@@ -33,7 +33,7 @@ public static class CreateSetEndpoint
         [FromServices] IValidator<CreateSetRequest> validator,
         [FromServices] ICreateSetCommandMapper createSetCommandMapper,
         [FromServices] ICreateSetRepository createSetRepository,
-        [FromServices] CancellationToken cancellationToken
+        CancellationToken cancellationToken
     )
     {
         ValidationResult? validationResult = await validator.ValidateAsync(request, cancellationToken);
