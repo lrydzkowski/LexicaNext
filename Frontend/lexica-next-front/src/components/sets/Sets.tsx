@@ -6,6 +6,7 @@ import {
   IconEye,
   IconHeadphones,
   IconPlus,
+  IconRefresh,
   IconSearch,
   IconTarget,
   IconTrash,
@@ -181,17 +182,27 @@ export function Sets() {
   return (
     <>
       <Stack gap="md">
-        <Group wrap="wrap">
-          <Button leftSection={<IconPlus size={16} />} component={Link} to={links.newSet.url} size="md">
-            <Text visibleFrom="sm">Create New Set</Text>
-            <Text hiddenFrom="sm">Create</Text>
+        <Group wrap="wrap" gap="sm">
+          <ActionIcon component={Link} to={links.newSet.url} size="xl" hiddenFrom="md">
+            <IconPlus size={22} />
+          </ActionIcon>
+          <Button
+            leftSection={<IconPlus size={16} />}
+            component={Link}
+            to={links.newSet.url}
+            size="md"
+            visibleFrom="sm">
+            <Text>Create New Set</Text>
           </Button>
+          <ActionIcon variant="light" size="xl" onClick={() => refetch()}>
+            <IconRefresh size={22} />
+          </ActionIcon>
           <TextInput
             placeholder="Search sets..."
             leftSection={<IconSearch size={16} />}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ flex: 1, minWidth: '200px' }}
+            style={{ flex: 1, minWidth: '100px' }}
             size="md"
           />
         </Group>
