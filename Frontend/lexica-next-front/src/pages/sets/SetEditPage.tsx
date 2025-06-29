@@ -50,13 +50,13 @@ export function SetEditPage() {
           if (value.trim().length > 50) return 'Word must be less than 50 characters';
           return null;
         },
-        translations: {
-          '*': (value) => {
-            if (!value?.trim()) return 'Translation is required';
-            if (value.trim().length > 200) return 'Translation must be less than 200 characters';
-            return null;
-          },
-        },
+        // translations: {
+        //   '*': (value) => {
+        //     if (!value?.trim()) return 'Translation is required';
+        //     if (value.trim().length > 200) return 'Translation must be less than 200 characters';
+        //     return null;
+        //   },
+        // },
       },
     },
   });
@@ -127,7 +127,7 @@ export function SetEditPage() {
             color: 'red',
           });
         },
-      }
+      },
     );
   };
 
