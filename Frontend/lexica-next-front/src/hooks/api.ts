@@ -1,4 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react';
+import { keepPreviousData } from '@tanstack/react-query';
 import createClient from 'openapi-react-query';
 import type { components } from '../../api-types/api-types';
 import { createAuthenticatedClient } from '../services/api-client';
@@ -31,6 +32,9 @@ export const useSets = (params?: {
   return $api.useQuery('get', '/api/sets', {
     params: {
       query: params,
+    },
+    queryOptions: {
+      placeholderData: keepPreviousData,
     },
   });
 };

@@ -17,7 +17,8 @@ internal class GetSetsRequestProcessor
             Page = request.Page ?? 1,
             PageSize = request.PageSize ?? 25,
             SortingFieldName = request.SortingFieldName?.Trim(),
-            SortingOrder = request.SortingOrder?.Trim() ?? "asc"
+            SortingOrder = request.SortingOrder?.Trim() ?? "asc",
+            SearchQuery = request.SearchQuery?.Trim()
         };
     }
 }
