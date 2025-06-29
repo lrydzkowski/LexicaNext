@@ -32,6 +32,7 @@ import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
 import { useDeleteSet, useSets, type SetRecordDto } from '../../hooks/api';
+import { formatDateTime } from '../../utils/date';
 
 export function SetsPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -150,7 +151,7 @@ export function SetsPage() {
               {set.name}
             </Text>
             <Text fz="xs" c="dimmed">
-              {set.createdAt ? new Date(set.createdAt).toLocaleDateString() : 'Unknown date'}
+              {formatDateTime(set.createdAt)}
             </Text>
           </div>
           <SetActionMenu set={set} />
@@ -168,7 +169,7 @@ export function SetsPage() {
       </Table.Td>
       <Table.Td>
         <Text fz="sm" c="dimmed">
-          {set.createdAt ? new Date(set.createdAt).toLocaleDateString() : 'Unknown date'}
+          {formatDateTime(set.createdAt)}
         </Text>
       </Table.Td>
       <Table.Td>

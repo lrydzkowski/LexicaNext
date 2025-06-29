@@ -16,6 +16,7 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useSet } from '../../hooks/api';
+import { formatDateTime } from '../../utils/date';
 
 export function SetContentPage() {
   const { setId } = useParams<{ setId: string }>();
@@ -152,13 +153,7 @@ export function SetContentPage() {
                   Created:
                 </Text>
                 <Text size="sm">
-                  {set.createdAt ? new Date(set.createdAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  }) : 'Unknown date'}
+                  {formatDateTime(set.createdAt)}
                 </Text>
               </Group>
               <Group wrap="wrap">
