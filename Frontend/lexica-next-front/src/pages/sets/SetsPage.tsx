@@ -31,21 +31,25 @@ import {
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
-import { useSets, useDeleteSet, type SetRecordDto } from '../../hooks/api';
+import { useDeleteSet, useSets, type SetRecordDto } from '../../hooks/api';
 
 export function SetsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortField] = useState('name');
-  const [sortOrder] = useState<'asc' | 'desc'>('asc');
 
+  const sortingFieldName = 'createdAt';
+  const sortingOrder = 'desc';
   const pageSize = 10;
 
-  const { data: setsData, isLoading: loading, error } = useSets({
+  const {
+    data: setsData,
+    isLoading: loading,
+    error,
+  } = useSets({
     page: currentPage,
     pageSize,
-    sortingFieldName: sortField,
-    sortingOrder: sortOrder,
+    sortingFieldName,
+    sortingOrder,
     searchQuery: searchQuery || undefined,
   });
 
@@ -88,7 +92,7 @@ export function SetsPage() {
                 color: 'red',
               });
             },
-          }
+          },
         );
       },
     });
@@ -127,7 +131,10 @@ export function SetsPage() {
         <Menu.Item leftSection={<IconEdit size={16} />} component={Link} to={`/sets/${set.setId}/edit`}>
           Edit Set
         </Menu.Item>
-        <Menu.Item leftSection={<IconTrash size={16} />} color="red" onClick={() => handleDelete(set.setId || '', set.name || '')}>
+        <Menu.Item
+          leftSection={<IconTrash size={16} />}
+          color="red"
+          onClick={() => handleDelete(set.setId || '', set.name || '')}>
           Delete Set
         </Menu.Item>
       </Menu.Dropdown>
@@ -201,7 +208,6 @@ export function SetsPage() {
             <Box style={{ position: 'relative' }}>
               <LoadingOverlay visible={loading} />
 
-              {/* Mobile view */}
               <Box hiddenFrom="md">
                 {sets.length > 0 ? (
                   sets.map((set) => <MobileSetCard key={set.setId} set={set} />)
@@ -214,7 +220,6 @@ export function SetsPage() {
                 )}
               </Box>
 
-              {/* Desktop view */}
               <ScrollArea visibleFrom="md">
                 <Table striped highlightOnHover>
                   <Table.Thead>
@@ -243,11 +248,9 @@ export function SetsPage() {
               </ScrollArea>
             </Box>
 
-            {totalPages > 1 && (
-              <Group justify="center" mt="md">
-                <Pagination total={totalPages} value={currentPage} onChange={setCurrentPage} size="md" />
-              </Group>
-            )}
+            <Group justify="center" mt="md">
+              <Pagination total={totalPages} value={currentPage} onChange={setCurrentPage} size="md" />
+            </Group>
           </Stack>
         </Stack>
       </Container>
