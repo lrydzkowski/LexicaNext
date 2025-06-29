@@ -42,8 +42,9 @@ export function Sets() {
 
   const {
     data: setsData,
-    isLoading: loading,
+    isFetching,
     error,
+    refetch,
   } = useSets({
     page: currentPage,
     pageSize,
@@ -83,6 +84,7 @@ export function Sets() {
                 message: 'Set deleted successfully',
                 color: 'green',
               });
+              refetch();
             },
             onError: () => {
               notifications.show({
@@ -195,7 +197,7 @@ export function Sets() {
         </Group>
 
         <Box style={{ position: 'relative' }}>
-          <LoadingOverlay visible={loading} />
+          <LoadingOverlay visible={isFetching} />
 
           <Box hiddenFrom="md">
             {sets.length > 0 ? (

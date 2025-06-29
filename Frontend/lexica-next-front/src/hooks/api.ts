@@ -32,6 +32,9 @@ export const useSets = (params?: {
     params: {
       query: params,
     },
+    queryOptions: {
+      placeholderData: (previousData: SetRecordDto[]) => previousData,
+    },
   });
 };
 
