@@ -33,7 +33,7 @@ import { links } from '../../config/links';
 import { useDeleteSet, useSets, type SetRecordDto } from '../../hooks/api';
 import { formatDateTime } from '../../utils/date';
 
-export function Sets() {
+export function SetsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);

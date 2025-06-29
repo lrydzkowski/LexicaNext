@@ -1,5 +1,5 @@
 import { Container, Group, Stack, Title } from '@mantine/core';
-import { Sets } from '../../components/sets/Sets';
+import { SetsList } from '../../components/sets/SetsList';
 
 export function SetsPage() {
   return (
@@ -11,7 +11,7 @@ export function SetsPage() {
               My Vocabulary Sets
             </Title>
           </Group>
-          <Sets />
+          <SetsList />
         </Stack>
       </Container>
     </>
