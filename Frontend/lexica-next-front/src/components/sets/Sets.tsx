@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   IconBrain,
   IconDots,
@@ -36,6 +36,7 @@ import { formatDateTime } from '../../utils/date';
 export function Sets() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const createButtonRef = useRef<HTMLAnchorElement | null>(null);
 
   const sortingFieldName = 'createdAt';
   const sortingOrder = 'desc';
@@ -58,6 +59,12 @@ export function Sets() {
 
   const sets = setsData?.data || [];
   const totalCount = setsData?.count || 0;
+
+  useEffect(() => {
+    if (createButtonRef.current) {
+      createButtonRef.current.focus();
+    }
+  }, []);
 
   if (error) {
     notifications.show({
@@ -187,6 +194,7 @@ export function Sets() {
             <IconPlus size={22} />
           </ActionIcon>
           <Button
+            ref={createButtonRef}
             leftSection={<IconPlus size={16} />}
             component={Link}
             to={links.newSet.url}
