@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
 import { Anchor, Breadcrumbs as MantineBreadcrumbs, Text } from '@mantine/core';
 import { links, type IAppLink } from '../../config/links';
-import { useSet } from '../../hooks/api';
 
 interface BreadcrumbItem {
   title: string;
@@ -13,7 +12,6 @@ export function Breadcrumbs() {
   const location = useLocation();
   const params = useParams();
   const pathSegments = location.pathname.split('/').filter(Boolean);
-  const { data: set } = useSet(params.setId || '');
 
   const segmentLabels = useMemo(() => {
     return Object.values(links).reduce<Record<string, IAppLink>>((acc, link) => {
@@ -22,16 +20,14 @@ export function Breadcrumbs() {
     }, {});
   }, []);
 
-  const setName = set?.name || 'Loading...';
-
   const breadcrumbItems: BreadcrumbItem[] = [{ title: links.home.label, href: links.home.url }];
   for (let i = 0; i < pathSegments.length; i++) {
     const segment = pathSegments[i];
 
     let title: string;
     let href: string | undefined;
-    if (segment.match(/^\d+$/) || segment === params.setId) {
-      title = setName || 'Loading...';
+    if (segment === params.setId) {
+      title = params.setId;
     } else {
       title = segmentLabels[segment]?.label || segment;
       href = segmentLabels[segment]?.url;
