@@ -9,6 +9,7 @@ import appConfig from './config/app-config.ts';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
+import { ModalsProvider } from '@mantine/modals';
 import { AuthLoading } from './components/auth/AuthLoading.tsx';
 
 const queryClient = new QueryClient();
@@ -17,17 +18,19 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <MantineProvider>
-        <Auth0Provider
-          domain={appConfig.auth0Domain}
-          clientId={appConfig.auth0ClientId}
-          authorizationParams={{
-            ...appConfig.buildGetTokenSilentlyOptions().authorizationParams,
-            redirect_uri: window.location.origin,
-          }}>
-          <AuthLoading>
-            <AppRouter />
-          </AuthLoading>
-        </Auth0Provider>
+        <ModalsProvider>
+          <Auth0Provider
+            domain={appConfig.auth0Domain}
+            clientId={appConfig.auth0ClientId}
+            authorizationParams={{
+              ...appConfig.buildGetTokenSilentlyOptions().authorizationParams,
+              redirect_uri: window.location.origin,
+            }}>
+            <AuthLoading>
+              <AppRouter />
+            </AuthLoading>
+          </Auth0Provider>
+        </ModalsProvider>
       </MantineProvider>
     </QueryClientProvider>
   </StrictMode>,
