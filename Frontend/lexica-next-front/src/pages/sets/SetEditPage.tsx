@@ -35,11 +35,28 @@ export function SetEditPage() {
       setName: '',
       entries: [],
     },
+    validateInputOnBlur: true,
     validate: {
-      setName: (value) => (value?.trim() === '' ? 'Set name is required' : null),
+      setName: (value) => {
+        if (!value?.trim()) return 'Set name is required';
+        if (value.trim().length < 2) return 'Set name must be at least 2 characters';
+        if (value.trim().length > 100) return 'Set name must be less than 100 characters';
+        return null;
+      },
       entries: {
-        word: (value) => (value?.trim() === '' ? 'Word is required' : null),
-        translations: (value) => (value?.some((t) => t?.trim() === '') ? 'All translations are required' : null),
+        word: (value) => {
+          if (!value?.trim()) return 'Word is required';
+          if (value.trim().length < 1) return 'Word must not be empty';
+          if (value.trim().length > 50) return 'Word must be less than 50 characters';
+          return null;
+        },
+        translations: {
+          '*': (value) => {
+            if (!value?.trim()) return 'Translation is required';
+            if (value.trim().length > 200) return 'Translation must be less than 200 characters';
+            return null;
+          },
+        },
       },
     },
   });

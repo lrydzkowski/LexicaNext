@@ -4,11 +4,21 @@ import { useNavigate } from 'react-router';
 import { ActionIcon, Button, Divider, Group, Paper, Select, Stack, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { useCreateSet, type EntryDto } from '../../hooks/api';
+import { useCreateSet } from '../../hooks/api';
 
 interface FormValues {
   setName: string;
-  entries: EntryDto[];
+  entries: FormEntry[];
+}
+
+interface FormEntry {
+  word: string;
+  wordType: string;
+  translations: FormTranslation[];
+}
+
+interface FormTranslation {
+  name: string;
 }
 
 export function SetNewForm() {
@@ -25,19 +35,36 @@ export function SetNewForm() {
   const form = useForm<FormValues>({
     initialValues: {
       setName: '',
-      entries: [{ word: '', wordType: 'noun', translations: [''] }],
+      entries: [{ word: '', wordType: 'noun', translations: [{ name: '' }] }],
     },
     validate: {
-      setName: (value) => (value?.trim() === '' ? 'Set name is required' : null),
+      setName: (value) => {
+        if (!value?.trim()) return 'Set name is required';
+        if (value.trim().length < 1) return 'Set name must not be empty';
+        if (value.trim().length > 200) return 'Set name must be less than 200 characters';
+        return null;
+      },
       entries: {
-        word: (value) => (value?.trim() === '' ? 'Word is required' : null),
-        translations: (value) => (value?.some((t) => t?.trim() === '') ? 'All translations are required' : null),
+        word: (value) => {
+          if (!value?.trim()) return 'Word is required';
+          if (value.trim().length < 1) return 'Word must not be empty';
+          if (value.trim().length > 200) return 'Word must be less than 200 characters';
+          return null;
+        },
+        translations: {
+          name: (value) => {
+            if (!value?.trim()) return 'Translation is required';
+            if (value.trim().length < 1) return 'Translation must not be empty';
+            if (value.trim().length > 200) return 'Translation must be less than 200 characters';
+            return null;
+          },
+        },
       },
     },
   });
 
   const addEntry = () => {
-    form.insertListItem('entries', { word: '', wordType: 'noun', translations: [''] });
+    form.insertListItem('entries', { word: '', wordType: 'noun', translations: [{ name: '' }] });
   };
 
   const removeEntry = (index: number) => {
@@ -45,7 +72,7 @@ export function SetNewForm() {
   };
 
   const addTranslation = (entryIndex: number) => {
-    form.insertListItem(`entries.${entryIndex}.translations`, '');
+    form.insertListItem(`entries.${entryIndex}.translations`, { name: '' });
   };
 
   const removeTranslation = (entryIndex: number, translationIndex: number) => {
@@ -58,8 +85,9 @@ export function SetNewForm() {
         body: {
           setName: values.setName,
           entries: values.entries.map((entry) => ({
-            ...entry,
-            translations: entry.translations?.filter((t) => t?.trim() !== '') || [],
+            word: entry.word.trim(),
+            wordType: entry.wordType,
+            translations: entry.translations.map((translation) => translation.name.trim()),
           })),
         },
       },
@@ -87,25 +115,18 @@ export function SetNewForm() {
     <>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="lg">
-          <TextInput
-            label="Set Name"
-            placeholder="Enter set name..."
-            required
-            size="md"
-            {...form.getInputProps('setName')}
-          />
+          <TextInput label="Set Name" placeholder="Enter set name..." size="md" {...form.getInputProps('setName')} />
 
           <Divider label="Vocabulary Entries" labelPosition="center" />
 
           {form.values.entries.map((entry, entryIndex) => (
             <Paper key={entryIndex} p={{ base: 'sm', md: 'md' }} withBorder>
               <Stack gap="sm">
-                <Group wrap="wrap">
+                <Group wrap="wrap" align="top">
                   <TextInput
                     ref={firstEnglishWorkFieldRef}
                     label="English Word"
                     placeholder="Enter English word..."
-                    required
                     style={{ flex: 1, minWidth: '200px' }}
                     size="md"
                     {...form.getInputProps(`entries.${entryIndex}.word`)}
@@ -152,20 +173,20 @@ export function SetNewForm() {
                     Translations
                   </Text>
                   {(entry.translations || []).map((_, translationIndex) => (
-                    <Group key={translationIndex} mb="xs" wrap="nowrap">
+                    <Group key={translationIndex} mb="xs" wrap="nowrap" align="top">
                       <TextInput
                         placeholder="Enter translation..."
-                        required
                         style={{ flex: 1 }}
                         size="md"
-                        {...form.getInputProps(`entries.${entryIndex}.translations.${translationIndex}`)}
+                        {...form.getInputProps(`entries.${entryIndex}.translations.${translationIndex}.name`)}
                       />
                       {(entry.translations || []).length > 1 && (
                         <ActionIcon
                           color="red"
                           variant="light"
                           onClick={() => removeTranslation(entryIndex, translationIndex)}
-                          aria-label={`Remove translation ${translationIndex + 1}`}>
+                          aria-label={`Remove translation ${translationIndex + 1}`}
+                          mt="7px">
                           <IconTrash size={16} />
                         </ActionIcon>
                       )}
