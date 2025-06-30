@@ -182,6 +182,7 @@ export function SetEditForm() {
                   <Select
                     label="Word Type"
                     data={[
+                      { value: 'none', label: 'None' },
                       { value: 'noun', label: 'Noun' },
                       { value: 'verb', label: 'Verb' },
                       { value: 'adjective', label: 'Adjective' },
