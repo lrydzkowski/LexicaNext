@@ -85,9 +85,11 @@ export function SetEditForm() {
               })) || [],
           })) || [],
       });
-      if (firstEnglishWorkFieldRef.current) {
-        firstEnglishWorkFieldRef.current.focus();
-      }
+      setTimeout(() => {
+        if (firstEnglishWorkFieldRef.current) {
+          firstEnglishWorkFieldRef.current.focus();
+        }
+      }, 0);
     }
   }, [set]);
 
@@ -170,7 +172,7 @@ export function SetEditForm() {
               <Stack gap="sm">
                 <Group wrap="wrap">
                   <TextInput
-                    ref={firstEnglishWorkFieldRef}
+                    ref={entryIndex === 0 ? firstEnglishWorkFieldRef : undefined}
                     label="English Word"
                     placeholder="Enter English word..."
                     style={{ flex: 1, minWidth: '200px' }}
