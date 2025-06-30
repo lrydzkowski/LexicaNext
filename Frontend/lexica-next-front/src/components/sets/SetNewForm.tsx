@@ -24,11 +24,11 @@ interface FormTranslation {
 export function SetNewForm() {
   const navigate = useNavigate();
   const createSetMutation = useCreateSet();
-  const firstEnglishWorkFieldRef = useRef<HTMLInputElement | null>(null);
+  const firstEnglishWordFieldRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    if (firstEnglishWorkFieldRef.current) {
-      firstEnglishWorkFieldRef.current.focus();
+    if (firstEnglishWordFieldRef.current) {
+      firstEnglishWordFieldRef.current.focus();
     }
   }, []);
 
@@ -125,7 +125,7 @@ export function SetNewForm() {
               <Stack gap="sm">
                 <Group wrap="wrap" align="top">
                   <TextInput
-                    ref={firstEnglishWorkFieldRef}
+                    ref={firstEnglishWordFieldRef}
                     label="English Word"
                     placeholder="Enter English word..."
                     style={{ flex: 1, minWidth: '200px' }}

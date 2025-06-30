@@ -37,7 +37,7 @@ export function SetEditForm() {
   const { setId } = useParams<{ setId: string }>();
   const { data: set, isLoading: initialLoading, error } = useSet(setId!);
   const updateSetMutation = useUpdateSet();
-  const firstEnglishWorkFieldRef = useRef<HTMLInputElement | null>(null);
+  const firstEnglishWordFieldRef = useRef<HTMLInputElement | null>(null);
 
   const form = useForm<FormValues>({
     mode: 'uncontrolled',
@@ -86,8 +86,8 @@ export function SetEditForm() {
           })) || [],
       });
       setTimeout(() => {
-        if (firstEnglishWorkFieldRef.current) {
-          firstEnglishWorkFieldRef.current.focus();
+        if (firstEnglishWordFieldRef.current) {
+          firstEnglishWordFieldRef.current.focus();
         }
       }, 0);
     }
@@ -172,7 +172,7 @@ export function SetEditForm() {
               <Stack gap="sm">
                 <Group wrap="wrap">
                   <TextInput
-                    ref={entryIndex === 0 ? firstEnglishWorkFieldRef : undefined}
+                    ref={entryIndex === 0 ? firstEnglishWordFieldRef : undefined}
                     label="English Word"
                     placeholder="Enter English word..."
                     style={{ flex: 1, minWidth: '200px' }}
