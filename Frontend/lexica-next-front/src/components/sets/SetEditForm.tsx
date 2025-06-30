@@ -1,10 +1,21 @@
 import { useEffect, useRef } from 'react';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
-import { useNavigate } from 'react-router';
-import { ActionIcon, Button, Divider, Group, Paper, Select, Stack, Text, TextInput } from '@mantine/core';
+import { useNavigate, useParams } from 'react-router';
+import {
+  ActionIcon,
+  Button,
+  Divider,
+  Group,
+  LoadingOverlay,
+  Paper,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { useCreateSet } from '../../hooks/api';
+import { useSet, useUpdateSet } from '../../hooks/api';
 
 interface FormValues {
   setName: string;
@@ -21,22 +32,18 @@ interface FormTranslation {
   name: string;
 }
 
-export function SetNewForm() {
+export function SetEditForm() {
   const navigate = useNavigate();
-  const createSetMutation = useCreateSet();
+  const { setId } = useParams<{ setId: string }>();
+  const { data: set, isLoading: initialLoading, error } = useSet(setId!);
+  const updateSetMutation = useUpdateSet();
   const firstEnglishWordFieldRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    if (firstEnglishWordFieldRef.current) {
-      firstEnglishWordFieldRef.current.focus();
-    }
-  }, []);
 
   const form = useForm<FormValues>({
     mode: 'uncontrolled',
     initialValues: {
       setName: '',
-      entries: [{ word: '', wordType: 'noun', translations: [{ name: '' }] }],
+      entries: [],
     },
     validate: {
       setName: (value) => {
@@ -64,6 +71,39 @@ export function SetNewForm() {
     },
   });
 
+  useEffect(() => {
+    if (set) {
+      form.setValues({
+        setName: set.name || '',
+        entries:
+          set.entries?.map((entry) => ({
+            word: entry.word || '',
+            wordType: entry.wordType || 'noun',
+            translations:
+              entry.translations?.map((translation) => ({
+                name: translation || '',
+              })) || [],
+          })) || [],
+      });
+      setTimeout(() => {
+        if (firstEnglishWordFieldRef.current) {
+          firstEnglishWordFieldRef.current.focus();
+        }
+      }, 0);
+    }
+  }, [set]);
+
+  useEffect(() => {
+    if (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to load set',
+        color: 'red',
+      });
+      navigate('/sets');
+    }
+  }, [error, navigate]);
+
   const addEntry = () => {
     form.insertListItem('entries', { word: '', wordType: 'noun', translations: [{ name: '' }] });
   };
@@ -81,8 +121,11 @@ export function SetNewForm() {
   };
 
   const handleSubmit = (values: FormValues) => {
-    createSetMutation.mutate(
+    if (!setId) return;
+
+    updateSetMutation.mutate(
       {
+        params: { path: { setId } },
         body: {
           setName: values.setName,
           entries: values.entries.map((entry) => ({
@@ -96,7 +139,7 @@ export function SetNewForm() {
         onSuccess: () => {
           notifications.show({
             title: 'Success',
-            message: 'Set created successfully',
+            message: 'Set updated successfully',
             color: 'green',
           });
           navigate('/sets');
@@ -104,13 +147,17 @@ export function SetNewForm() {
         onError: () => {
           notifications.show({
             title: 'Error',
-            message: 'Failed to create set',
+            message: 'Failed to update set',
             color: 'red',
           });
         },
       },
     );
   };
+
+  if (initialLoading) {
+    return <LoadingOverlay visible />;
+  }
 
   return (
     <>
@@ -123,9 +170,9 @@ export function SetNewForm() {
           {form.values.entries.map((entry, entryIndex) => (
             <Paper key={entryIndex} p={{ base: 'sm', md: 'md' }} withBorder>
               <Stack gap="sm">
-                <Group wrap="wrap" align="top">
+                <Group wrap="wrap">
                   <TextInput
-                    ref={firstEnglishWordFieldRef}
+                    ref={entryIndex === 0 ? firstEnglishWordFieldRef : undefined}
                     label="English Word"
                     placeholder="Enter English word..."
                     style={{ flex: 1, minWidth: '200px' }}
@@ -175,7 +222,7 @@ export function SetNewForm() {
                     Translations
                   </Text>
                   {(entry.translations || []).map((_, translationIndex) => (
-                    <Group key={translationIndex} mb="xs" wrap="nowrap" align="top">
+                    <Group key={translationIndex} mb="xs" wrap="nowrap">
                       <TextInput
                         placeholder="Enter translation..."
                         style={{ flex: 1 }}
@@ -187,8 +234,7 @@ export function SetNewForm() {
                           color="red"
                           variant="light"
                           onClick={() => removeTranslation(entryIndex, translationIndex)}
-                          aria-label={`Remove translation ${translationIndex + 1}`}
-                          mt="7px">
+                          aria-label={`Remove translation ${translationIndex + 1}`}>
                           <IconTrash size={16} />
                         </ActionIcon>
                       )}
@@ -216,8 +262,8 @@ export function SetNewForm() {
             <Button variant="light" onClick={() => navigate('/sets')} size="md">
               Cancel
             </Button>
-            <Button type="submit" loading={createSetMutation.isPending} size="md">
-              Create Set
+            <Button type="submit" loading={updateSetMutation.isPending} size="md">
+              Update Set
             </Button>
           </Group>
         </Stack>

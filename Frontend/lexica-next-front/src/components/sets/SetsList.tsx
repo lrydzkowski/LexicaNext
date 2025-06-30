@@ -36,6 +36,7 @@ import { formatDateTime } from '../../utils/date';
 export function SetsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
 
   const sortingFieldName = 'createdAt';
@@ -52,7 +53,7 @@ export function SetsList() {
     pageSize,
     sortingFieldName,
     sortingOrder,
-    searchQuery: searchQuery || undefined,
+    searchQuery: debouncedSearchQuery || undefined,
   });
 
   const deleteSetMutation = useDeleteSet();
@@ -65,6 +66,15 @@ export function SetsList() {
       createButtonRef.current.focus();
     }
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      setCurrentPage(1);
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   if (error) {
     notifications.show({
@@ -223,7 +233,7 @@ export function SetsList() {
               sets.map((set) => <MobileSetCard key={set.setId} set={set} />)
             ) : (
               <Text ta="center" c="dimmed" py="xl">
-                {searchQuery
+                {debouncedSearchQuery
                   ? 'No sets found matching your search.'
                   : 'No sets created yet. Create your first set to get started!'}
               </Text>
@@ -246,7 +256,7 @@ export function SetsList() {
                   <Table.Tr>
                     <Table.Td colSpan={3}>
                       <Text ta="center" c="dimmed" py="xl">
-                        {searchQuery
+                        {debouncedSearchQuery
                           ? 'No sets found matching your search.'
                           : 'No sets created yet. Create your first set to get started!'}
                       </Text>
