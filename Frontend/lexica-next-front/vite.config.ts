@@ -14,6 +14,19 @@ export default defineConfig(({ command }) => {
         '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },
+    optimizeDeps: {
+      include: [
+        'react',
+        'react-dom',
+        '@mantine/core',
+        '@mantine/hooks',
+        '@mantine/notifications',
+        '@mantine/modals',
+        '@auth0/auth0-react',
+        '@tanstack/react-query',
+        'react-router',
+      ],
+    },
     build: {
       outDir: outputDir,
       emptyOutDir: true,
@@ -23,6 +36,9 @@ export default defineConfig(({ command }) => {
     server: isProduction
       ? undefined
       : {
+          hmr: {
+            overlay: true,
+          },
           proxy: {
             '/api': {
               target: 'https://localhost:7226',
