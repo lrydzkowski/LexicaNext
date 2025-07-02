@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { IconArrowLeft, IconVolume } from '@tabler/icons-react';
+import { IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router';
 import {
   ActionIcon,
@@ -16,6 +16,7 @@ import {
 import { notifications } from '@mantine/notifications';
 import { useSet } from '../../hooks/api';
 import { formatDateTime } from '../../utils/date';
+import { WordCard } from './WordCard';
 
 export function SetContent() {
   const { setId } = useParams<{ setId: string }>();
@@ -32,17 +33,6 @@ export function SetContent() {
       navigate('/sets');
     }
   }, [error, navigate]);
-
-  const playAudio = async (word: string /*, wordType: string*/) => {
-    try {
-      // Mock implementation using speech synthesis
-      const utterance = new SpeechSynthesisUtterance(word);
-      utterance.lang = 'en-US';
-      speechSynthesis.speak(utterance);
-    } catch (error) {
-      console.error('Failed to play audio:', error);
-    }
-  };
 
   const getWordTypeColor = (wordType: string) => {
     switch (wordType.toLowerCase()) {
@@ -102,41 +92,7 @@ export function SetContent() {
 
           <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
             {(set.entries || []).map((entry, index) => (
-              <Card key={index} withBorder>
-                <Stack gap="md">
-                  <Group justify="space-between" wrap="nowrap">
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <Text fz={{ base: 'lg', md: 'xl' }} fw={700} c="blue" truncate>
-                        {entry.word}
-                      </Text>
-                      <Badge size="sm" color={getWordTypeColor(entry.wordType || '')} variant="light">
-                        {entry.wordType}
-                      </Badge>
-                    </div>
-                    <ActionIcon
-                      variant="light"
-                      color="blue"
-                      onClick={() => playAudio(entry.word || '' /*, entry.wordType*/)}
-                      aria-label={`Play pronunciation of ${entry.word}`}
-                      style={{ flexShrink: 0 }}>
-                      <IconVolume size={16} />
-                    </ActionIcon>
-                  </Group>
-
-                  <div>
-                    <Text size="sm" c="dimmed" fw={500} mb="xs">
-                      Translations:
-                    </Text>
-                    <Stack gap="xs">
-                      {(entry.translations || []).map((translation, translationIndex) => (
-                        <Text key={translationIndex} size="sm">
-                          • {translation}
-                        </Text>
-                      ))}
-                    </Stack>
-                  </div>
-                </Stack>
-              </Card>
+              <WordCard key={index} entry={entry} index={index} />
             ))}
           </SimpleGrid>
 
