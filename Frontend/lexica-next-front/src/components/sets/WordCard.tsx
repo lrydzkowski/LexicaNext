@@ -11,19 +11,16 @@ export function WordCard({ entry, index }: { entry: EntryDto; index: number }) {
     data: recordingData,
     isLoading: recordingLoading,
     refetch,
-  } = useRecording(entry.word || '', entry.wordType || undefined);
+  } = useRecording(entry.word || '', entry.wordType || undefined, shouldFetchRecording);
 
   const playAudio = async () => {
     try {
       if (!shouldFetchRecording) {
         setShouldFetchRecording(true);
-        const result = await refetch();
-        if (result.data) {
-          await playRecordingData(result as Blob);
-        } else {
-          playFallbackAudio();
-        }
-      } else if (recordingData) {
+        return;
+      }
+      
+      if (recordingData) {
         await playRecordingData(recordingData);
       } else {
         playFallbackAudio();
@@ -34,34 +31,38 @@ export function WordCard({ entry, index }: { entry: EntryDto; index: number }) {
     }
   };
 
+  // Auto-play when recording data becomes available
+  useEffect(() => {
+    if (recordingData && shouldFetchRecording) {
+      playRecordingData(recordingData);
+    }
+  }, [recordingData, shouldFetchRecording]);
+
   const playRecordingData = async (data: Blob) => {
-    // if (data instanceof Blob && data.type.startsWith('audio/')) {
-    const url = URL.createObjectURL(data);
-    setAudioUrl(url);
-    const audio = new Audio(url);
-    audio.addEventListener('loadeddata', () => {
-      audio.play().catch((error) => {
-        console.error('Failed to play audio blob:', error);
+    if (data instanceof Blob && data.type.startsWith('audio/')) {
+      const url = URL.createObjectURL(data);
+      setAudioUrl(url);
+      const audio = new Audio(url);
+      audio.addEventListener('loadeddata', () => {
+        audio.play().catch((error) => {
+          console.error('Failed to play audio blob:', error);
+          playFallbackAudio();
+        });
+      });
+      audio.addEventListener('error', () => {
+        console.error('Audio element error');
         playFallbackAudio();
       });
-    });
-    audio.addEventListener('error', () => {
-      console.error('Audio element error');
+    } else {
+      console.log('Unexpected data type for audio:', typeof data, data);
       playFallbackAudio();
-    });
-    // } else if (typeof data === 'string') {
-    //   const audio = new Audio(data);
-    //   await audio.play();
-    // } else {
-    //   console.log('Unexpected data type for audio:', typeof data, data);
-    //   playFallbackAudio();
-    // }
+    }
   };
 
   const playFallbackAudio = () => {
-    // const utterance = new SpeechSynthesisUtterance(entry.word || '');
-    // utterance.lang = 'en-US';
-    // speechSynthesis.speak(utterance);
+    const utterance = new SpeechSynthesisUtterance(entry.word || '');
+    utterance.lang = 'en-US';
+    speechSynthesis.speak(utterance);
   };
 
   const getWordTypeColor = (wordType: string) => {

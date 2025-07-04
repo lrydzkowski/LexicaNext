@@ -83,14 +83,12 @@ export function SetNewForm() {
   const handleSubmit = (values: FormValues) => {
     createSetMutation.mutate(
       {
-        body: {
-          setName: values.setName,
-          entries: values.entries.map((entry) => ({
-            word: entry.word.trim(),
-            wordType: entry.wordType,
-            translations: entry.translations.map((translation) => translation.name.trim()),
-          })),
-        },
+        setName: values.setName,
+        entries: values.entries.map((entry) => ({
+          word: entry.word.trim(),
+          wordType: entry.wordType,
+          translations: entry.translations.map((translation) => translation.name.trim()),
+        })),
       },
       {
         onSuccess: () => {

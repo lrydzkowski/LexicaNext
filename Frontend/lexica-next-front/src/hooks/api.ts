@@ -1,6 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { keepPreviousData } from '@tanstack/react-query';
-import createClient from 'openapi-react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { components } from '../../api-types/api-types';
 import { createAuthenticatedClient } from '../services/api-client';
 
@@ -13,11 +12,9 @@ export type UpdateSetRequestPayload = components['schemas']['UpdateSetRequestPay
 
 export const useApiClient = () => {
   const { getAccessTokenSilently } = useAuth0();
-
   const client = createAuthenticatedClient(getAccessTokenSilently);
-  const $api = createClient(client);
 
-  return { client, $api };
+  return client;
 };
 
 export const useSets = (params?: {
@@ -27,53 +24,138 @@ export const useSets = (params?: {
   sortingOrder?: string;
   searchQuery?: string;
 }) => {
-  const { $api } = useApiClient();
+  const client = useApiClient();
 
-  return $api.useQuery('get', '/api/sets', {
-    params: {
-      query: params,
+  return useQuery({
+    queryKey: ['sets', params],
+    queryFn: async (): Promise<GetSetsResponse> => {
+      const { data, error } = await client.GET('/api/sets', {
+        params: {
+          query: params,
+        },
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+
+      return data!;
     },
-    queryOptions: {
-      placeholderData: keepPreviousData,
-    },
+    placeholderData: keepPreviousData,
   });
 };
 
 export const useSet = (setId: string) => {
-  const { $api } = useApiClient();
+  const client = useApiClient();
 
-  return $api.useQuery('get', '/api/sets/{setId}', {
-    params: {
-      path: { setId },
+  return useQuery({
+    queryKey: ['set', setId],
+    queryFn: async (): Promise<GetSetResponse> => {
+      const { data, error } = await client.GET('/api/sets/{setId}', {
+        params: {
+          path: { setId },
+        },
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+
+      return data!;
     },
+    enabled: !!setId,
   });
 };
 
 export const useCreateSet = () => {
-  const { $api } = useApiClient();
+  const client = useApiClient();
+  const queryClient = useQueryClient();
 
-  return $api.useMutation('post', '/api/sets');
+  return useMutation({
+    mutationFn: async (data: CreateSetRequestPayload): Promise<void> => {
+      const { error } = await client.POST('/api/sets', {
+        body: data,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sets'] });
+    },
+  });
 };
 
 export const useUpdateSet = () => {
-  const { $api } = useApiClient();
+  const client = useApiClient();
+  const queryClient = useQueryClient();
 
-  return $api.useMutation('put', '/api/sets/{setId}');
+  return useMutation({
+    mutationFn: async ({ setId, data }: { setId: string; data: UpdateSetRequestPayload }): Promise<void> => {
+      const { error } = await client.PUT('/api/sets/{setId}', {
+        params: {
+          path: { setId },
+        },
+        body: data,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+    },
+    onSuccess: (_, { setId }) => {
+      queryClient.invalidateQueries({ queryKey: ['sets'] });
+      queryClient.invalidateQueries({ queryKey: ['set', setId] });
+    },
+  });
 };
 
 export const useDeleteSet = () => {
-  const { $api } = useApiClient();
+  const client = useApiClient();
+  const queryClient = useQueryClient();
 
-  return $api.useMutation('delete', '/api/sets/{setId}');
+  return useMutation({
+    mutationFn: async (setId: string): Promise<void> => {
+      const { error } = await client.DELETE('/api/sets/{setId}', {
+        params: {
+          path: { setId },
+        },
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sets'] });
+    },
+  });
 };
 
 export const useRecording = (word: string, wordType?: string, enabled = true) => {
-  const { $api } = useApiClient();
+  const client = useApiClient();
 
-  return $api.useQuery('get', '/api/recordings/{word}', {
-    params: {
-      path: { word },
-      query: wordType ? { wordType } : undefined,
+  return useQuery({
+    queryKey: ['recording', word, wordType],
+    queryFn: async (): Promise<Blob> => {
+      const { data, error, response } = await client.GET('/api/recordings/{word}', {
+        params: {
+          path: { word },
+          query: wordType ? { wordType } : undefined,
+        },
+        parseAs: 'blob',
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return data as Blob;
     },
     enabled: enabled && !!word,
   });
