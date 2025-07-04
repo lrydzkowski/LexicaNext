@@ -91,10 +91,7 @@ export function SetsList() {
       labels: { confirm: 'Delete', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
       onConfirm: () => {
-        deleteSetMutation.mutate(
-          {
-            params: { path: { setId } },
-          },
+        deleteSetMutation.mutate(setId,
           {
             onSuccess: () => {
               notifications.show({

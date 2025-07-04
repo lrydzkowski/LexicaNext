@@ -22,7 +22,7 @@ public static class GetRecordingEndpoint
         app.MapGet("/api/recordings/{word}", HandleAsync)
             .WithName(Name)
             .WithSummary("Return an audio recording for the pronunciation of the given word")
-            .Produces<FileContentHttpResult>()
+            .Produces<byte[]>(StatusCodes.Status200OK, CustomMediaTypes.Audio.Mpeg)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status500InternalServerError)

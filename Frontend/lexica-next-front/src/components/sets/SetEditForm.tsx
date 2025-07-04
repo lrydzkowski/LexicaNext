@@ -125,8 +125,8 @@ export function SetEditForm() {
 
     updateSetMutation.mutate(
       {
-        params: { path: { setId } },
-        body: {
+        setId,
+        data: {
           setName: values.setName,
           entries: values.entries.map((entry) => ({
             word: entry.word.trim(),
