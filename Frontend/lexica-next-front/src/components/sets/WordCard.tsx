@@ -7,11 +7,11 @@ import type { EntryDto } from '../../hooks/api';
 export function WordCard({ entry, index }: { entry: EntryDto; index: number }) {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [shouldFetchRecording, setShouldFetchRecording] = useState(false);
-  const {
-    data: recordingData,
-    isLoading: recordingLoading,
-    refetch,
-  } = useRecording(entry.word || '', entry.wordType || undefined, shouldFetchRecording);
+  const { data: recordingData, isLoading: recordingLoading } = useRecording(
+    entry.word || '',
+    entry.wordType || undefined,
+    shouldFetchRecording,
+  );
 
   const playAudio = async () => {
     try {
@@ -19,19 +19,15 @@ export function WordCard({ entry, index }: { entry: EntryDto; index: number }) {
         setShouldFetchRecording(true);
         return;
       }
-      
+
       if (recordingData) {
         await playRecordingData(recordingData);
-      } else {
-        playFallbackAudio();
       }
     } catch (error) {
       console.error('Failed to play audio:', error);
-      playFallbackAudio();
     }
   };
 
-  // Auto-play when recording data becomes available
   useEffect(() => {
     if (recordingData && shouldFetchRecording) {
       playRecordingData(recordingData);
@@ -46,23 +42,14 @@ export function WordCard({ entry, index }: { entry: EntryDto; index: number }) {
       audio.addEventListener('loadeddata', () => {
         audio.play().catch((error) => {
           console.error('Failed to play audio blob:', error);
-          playFallbackAudio();
         });
       });
       audio.addEventListener('error', () => {
         console.error('Audio element error');
-        playFallbackAudio();
       });
     } else {
       console.log('Unexpected data type for audio:', typeof data, data);
-      playFallbackAudio();
     }
-  };
-
-  const playFallbackAudio = () => {
-    const utterance = new SpeechSynthesisUtterance(entry.word || '');
-    utterance.lang = 'en-US';
-    speechSynthesis.speak(utterance);
   };
 
   const getWordTypeColor = (wordType: string) => {
