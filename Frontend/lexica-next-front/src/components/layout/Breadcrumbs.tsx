@@ -3,6 +3,7 @@ import { Link, useLocation, useParams } from 'react-router';
 import { Anchor, Breadcrumbs as MantineBreadcrumbs, Text } from '@mantine/core';
 import { links, type IAppLink } from '../../config/links';
 import { useSet } from '../../hooks/api';
+import classes from './Breadcrumbs.module.css';
 
 interface BreadcrumbItem {
   title: string;
@@ -60,7 +61,7 @@ export function Breadcrumbs() {
   });
 
   return (
-    <MantineBreadcrumbs separator="/" mb="sm" mt={0}>
+    <MantineBreadcrumbs separator="/" mb="sm" mt={0} className={classes.breadcrumbs}>
       {items}
     </MantineBreadcrumbs>
   );

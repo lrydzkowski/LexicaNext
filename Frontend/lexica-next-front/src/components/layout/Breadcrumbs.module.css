@@ -1,0 +1,5 @@
+.breadcrumbs {
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
