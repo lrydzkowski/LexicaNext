@@ -1,5 +1,61 @@
+import { useEffect } from 'react';
+import { IconArrowLeft } from '@tabler/icons-react';
+import { useNavigate, useParams } from 'react-router';
+import { ActionIcon, Container, Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { SetContent } from '../../components/sets/SetContent';
+import { useSet } from '../../hooks/api';
 
 export function SetContentPage() {
-  return <SetContent />;
+  const { setId } = useParams<{ setId: string }>();
+  const navigate = useNavigate();
+  const { data: set, isLoading: loading, error } = useSet(setId!);
+
+  useEffect(() => {
+    if (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to load set',
+        color: 'red',
+      });
+      navigate('/sets');
+    }
+  }, [error, navigate]);
+
+  if (loading) {
+    return <LoadingOverlay visible />;
+  }
+
+  if (!set) {
+    return (
+      <>
+        <Container size="md">
+          <Text>Set not found</Text>
+        </Container>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Container p={0}>
+        <Stack gap="lg">
+          <Group>
+            <ActionIcon variant="subtle" onClick={() => navigate('/sets')} aria-label="Go back to sets">
+              <IconArrowLeft size={16} />
+            </ActionIcon>
+            <div style={{ flex: 1 }}>
+              <Title order={2} mt="sm">
+                Content Mode
+              </Title>
+              <Text c="dimmed" fz={{ base: 'sm', md: 'md' }}>
+                {set.name}
+              </Text>
+            </div>
+          </Group>
+          <SetContent set={set} />
+        </Stack>
+      </Container>
+    </>
+  );
 }
