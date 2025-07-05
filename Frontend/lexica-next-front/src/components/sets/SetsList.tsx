@@ -91,25 +91,23 @@ export function SetsList() {
       labels: { confirm: 'Delete', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
       onConfirm: () => {
-        deleteSetMutation.mutate(setId,
-          {
-            onSuccess: () => {
-              notifications.show({
-                title: 'Success',
-                message: 'Set deleted successfully',
-                color: 'green',
-              });
-              refetch();
-            },
-            onError: () => {
-              notifications.show({
-                title: 'Error',
-                message: 'Failed to delete set',
-                color: 'red',
-              });
-            },
+        deleteSetMutation.mutate(setId, {
+          onSuccess: () => {
+            notifications.show({
+              title: 'Success',
+              message: 'Set deleted successfully',
+              color: 'green',
+            });
+            refetch();
           },
-        );
+          onError: () => {
+            notifications.show({
+              title: 'Error',
+              message: 'Failed to delete set',
+              color: 'red',
+            });
+          },
+        });
       },
     });
   };
