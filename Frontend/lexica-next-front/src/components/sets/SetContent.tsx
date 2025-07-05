@@ -1,6 +1,4 @@
-import { IconArrowLeft } from '@tabler/icons-react';
-import { useNavigate } from 'react-router';
-import { ActionIcon, Badge, Card, Container, Group, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import { Badge, Card, Group, SimpleGrid, Stack, Text } from '@mantine/core';
 import { type GetSetResponse } from '../../hooks/api';
 import { formatDateTime } from '../../utils/date';
 import { WordCard } from './WordCard';
@@ -10,8 +8,6 @@ export interface SentContentProps {
 }
 
 export function SetContent({ set }: SentContentProps) {
-  const navigate = useNavigate();
-
   const getWordTypeColor = (wordType: string) => {
     switch (wordType.toLowerCase()) {
       case 'noun':
