@@ -32,6 +32,7 @@ import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
 import { useDeleteSet, useSets, type SetRecordDto } from '../../hooks/api';
 import { formatDateTime } from '../../utils/date';
+import classes from './SetsList.module.css';
 
 export function SetsList() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -180,10 +181,10 @@ export function SetsList() {
           <Text>{set.name}</Text>
         </div>
       </Table.Td>
-      <Table.Td>
+      <Table.Td className={classes.createdCol}>
         <Text>{formatDateTime(set.createdAt)}</Text>
       </Table.Td>
-      <Table.Td>
+      <Table.Td className={classes.actionCol}>
         <Group justify="center">
           <SetActionMenu set={set} />
         </Group>
