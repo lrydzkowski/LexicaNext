@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { Alert, Button, Container, Group, Paper, Progress, Radio, Stack, Text, TextInput, Title } from '@mantine/core';
@@ -34,6 +34,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const optionsRef = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
     if (set?.entries) {
@@ -237,7 +238,31 @@ export function SetFullMode({ set }: SetFullModeProps) {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' && userAnswer.trim() && !showFeedback) {
+    if (showFeedback) {
+      return;
+    }
+
+    if (currentQuestion?.options) {
+      const numKey = parseInt(event.key);
+      if (numKey >= 1 && numKey <= currentQuestion.options.length) {
+        event.preventDefault();
+        const selectedOption = currentQuestion.options[numKey - 1];
+        setUserAnswer(selectedOption);
+        optionsRef.current[numKey - 1]?.focus();
+
+        return;
+      }
+
+      if (event.key === 'Enter' && userAnswer.trim()) {
+        event.preventDefault();
+        checkAnswer();
+      }
+
+      return;
+    }
+
+    if (event.key === 'Enter' && userAnswer.trim()) {
+      event.preventDefault();
       checkAnswer();
     }
   };
@@ -257,7 +282,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
               You've mastered all the words in this set through comprehensive practice.
             </Text>
             <Group wrap="wrap" justify="center">
-              <Button variant="light" onClick={() => navigate('/sets')} size="md">
+              <Button variant="light" onClick={() => navigate('/sets')} size="md" autoFocus>
                 Back to Sets
               </Button>
               <Button onClick={() => window.location.reload()} size="md">
@@ -287,7 +312,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
       <Stack gap="lg">
         <Progress value={getProgress()} size="lg" radius="md" />
 
-        <Paper>
+        <Paper onKeyDown={handleKeyDown}>
           <Stack gap="lg">
             <div>
               <Text fz={{ base: 'md', md: 'lg' }} fw={600} mb="md">
@@ -304,7 +329,16 @@ export function SetFullMode({ set }: SetFullModeProps) {
                   <Radio.Group value={userAnswer} onChange={setUserAnswer}>
                     <Stack gap="sm">
                       {currentQuestion.options.map((option, index) => (
-                        <Radio key={index} value={option} label={option} size="md" />
+                        <Radio
+                          key={index}
+                          value={option}
+                          label={`${index + 1}. ${option}`}
+                          size="md"
+                          autoFocus={index === 0}
+                          ref={(el) => {
+                            optionsRef.current[index] = el;
+                          }}
+                        />
                       ))}
                     </Stack>
                   </Radio.Group>
@@ -314,7 +348,6 @@ export function SetFullMode({ set }: SetFullModeProps) {
                     value={userAnswer}
                     onChange={(e) => setUserAnswer(e.target.value)}
                     size="lg"
-                    onKeyDown={handleKeyDown}
                     autoFocus
                   />
                 )}
