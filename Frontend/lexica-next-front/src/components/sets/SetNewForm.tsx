@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,13 +25,21 @@ interface FormTranslation {
 export function SetNewForm() {
   const navigate = useNavigate();
   const createSetMutation = useCreateSet();
-  const firstEnglishWordFieldRef = useRef<HTMLInputElement | null>(null);
+  const englishWordRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [focusEntryIndex, setFocusEntryIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    if (firstEnglishWordFieldRef.current) {
-      firstEnglishWordFieldRef.current.focus();
+    if (englishWordRefs.current[0]) {
+      englishWordRefs.current[0].focus();
     }
   }, []);
+
+  useEffect(() => {
+    if (focusEntryIndex !== null && englishWordRefs.current[focusEntryIndex]) {
+      englishWordRefs.current[focusEntryIndex].focus();
+      setFocusEntryIndex(null);
+    }
+  }, [focusEntryIndex]);
 
   const form = useForm<FormValues>({
     mode: 'uncontrolled',
@@ -67,10 +75,19 @@ export function SetNewForm() {
 
   const addEntry = () => {
     form.insertListItem('entries', { word: '', wordType: 'noun', translations: [{ name: '' }] });
+    setTimeout(() => {
+      const newEntryIndex = form.values.entries.length;
+      setFocusEntryIndex(newEntryIndex);
+    }, 0);
   };
 
   const removeEntry = (index: number) => {
     form.removeListItem('entries', index);
+    setTimeout(() => {
+      if (!focusEntryIndex) {
+        setFocusEntryIndex(form.values.entries.length - 2);
+      }
+    }, 0);
   };
 
   const addTranslation = (entryIndex: number) => {
@@ -124,7 +141,9 @@ export function SetNewForm() {
               <Stack gap="sm">
                 <Group wrap="wrap" align="top">
                   <TextInput
-                    ref={firstEnglishWordFieldRef}
+                    ref={(el) => {
+                      englishWordRefs.current[entryIndex] = el;
+                    }}
                     label="English Word"
                     placeholder="Enter English word..."
                     style={{ flex: 1, minWidth: '200px' }}
