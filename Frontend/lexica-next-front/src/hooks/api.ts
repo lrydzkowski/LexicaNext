@@ -51,11 +51,12 @@ export const useSet = (setId: string) => {
 
   return useQuery({
     queryKey: ['set', setId],
-    queryFn: async (): Promise<GetSetResponse> => {
+    queryFn: async ({ signal }): Promise<GetSetResponse> => {
       const { data, error } = await client.GET('/api/sets/{setId}', {
         params: {
           path: { setId },
         },
+        signal,
       });
 
       if (error) {
@@ -139,13 +140,14 @@ export const useRecording = (word: string, wordType?: string, enabled = true) =>
 
   return useQuery({
     queryKey: ['recording', word, wordType],
-    queryFn: async (): Promise<Blob> => {
+    queryFn: async ({ signal }): Promise<Blob> => {
       const { data, error, response } = await client.GET('/api/recordings/{word}', {
         params: {
           path: { word },
           query: wordType ? { wordType } : undefined,
         },
         parseAs: 'blob',
+        signal,
       });
 
       if (error) {
