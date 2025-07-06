@@ -100,7 +100,9 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
   };
 
   const checkAnswer = () => {
-    if (!currentQuestion) return;
+    if (!currentQuestion) {
+      return;
+    }
 
     const correct = userAnswer.trim().toLowerCase() === currentQuestion.correctAnswer.toLowerCase();
     setIsCorrect(correct);
@@ -143,6 +145,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && userAnswer.trim() && !showFeedback) {
+      event.preventDefault();
       checkAnswer();
     }
   };
@@ -162,7 +165,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
               You've mastered all the words through advanced open question practice.
             </Text>
             <Group wrap="wrap" justify="center">
-              <Button variant="light" onClick={() => navigate('/sets')} size="md">
+              <Button variant="light" onClick={() => navigate('/sets')} size="md" autoFocus>
                 Back to Sets
               </Button>
               <Button onClick={() => window.location.reload()} size="md">
