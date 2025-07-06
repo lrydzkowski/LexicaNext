@@ -221,14 +221,16 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
               title: 'Success',
               message: 'Set created successfully',
               color: 'green',
+              position: 'top-center',
             });
             navigate('/sets');
           },
           onError: () => {
             notifications.show({
-              title: 'Error',
+              title: 'Error Creating Set',
               message: 'Failed to create set',
               color: 'red',
+              position: 'top-center',
             });
           },
         },
@@ -254,14 +256,16 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
               title: 'Success',
               message: 'Set updated successfully',
               color: 'green',
+              position: 'top-center',
             });
             navigate('/sets');
           },
           onError: () => {
             notifications.show({
-              title: 'Error',
+              title: 'Error Updating Set',
               message: 'Failed to update set',
               color: 'red',
+              position: 'top-center',
             });
           },
         },

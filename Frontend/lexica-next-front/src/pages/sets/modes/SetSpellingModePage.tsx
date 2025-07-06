@@ -14,9 +14,10 @@ export function SetSpellingModePage() {
   useEffect(() => {
     if (error) {
       notifications.show({
-        title: 'Error',
+        title: 'Error Loading Set',
         message: 'Failed to load set',
         color: 'red',
+        position: 'top-center',
       });
       navigate('/sets');
     }

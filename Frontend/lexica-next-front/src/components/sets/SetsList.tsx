@@ -77,13 +77,16 @@ export function SetsList() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  if (error) {
-    notifications.show({
-      title: 'Error',
-      message: 'Failed to load sets',
-      color: 'red',
-    });
-  }
+  useEffect(() => {
+    if (error) {
+      notifications.show({
+        title: 'Error Loading Sets',
+        message: 'An unexpected error occurred',
+        color: 'red',
+        position: 'top-center',
+      });
+    }
+  }, [error]);
 
   const handleDelete = (setId: string, setName: string) => {
     modals.openConfirmModal({
@@ -98,14 +101,16 @@ export function SetsList() {
               title: 'Success',
               message: 'Set deleted successfully',
               color: 'green',
+              position: 'top-center',
             });
             refetch();
           },
           onError: () => {
             notifications.show({
-              title: 'Error',
+              title: 'Error Deleting Set',
               message: 'Failed to delete set',
               color: 'red',
+              position: 'top-center',
             });
           },
         });
