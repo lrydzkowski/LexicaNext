@@ -26,6 +26,7 @@ export interface SetSpellingModeProps {
 
 export function SetSpellingMode({ set }: SetSpellingModeProps) {
   const navigate = useNavigate();
+  const [iteration, setIteration] = useState(0);
   const [entries, setEntries] = useState<SpellingEntry[]>([]);
   const [currentEntryIndex, setCurrentEntryIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
@@ -33,13 +34,14 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   const [isCorrect, setIsCorrect] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [shouldFetchRecording, setShouldFetchRecording] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
 
   const currentEntry = entries[currentEntryIndex];
   const { data: recordingData, isLoading: recordingLoading } = useRecording(
     currentEntry?.word || '',
     currentEntry?.wordType || undefined,
-    shouldFetchRecording && currentEntry != null,
+    currentEntry != null,
   );
 
   useEffect(() => {
@@ -52,20 +54,21 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   }, [set]);
 
   useEffect(() => {
-    if (recordingData && shouldFetchRecording) {
-      playRecordingData(recordingData);
-    }
-  }, [recordingData, shouldFetchRecording]);
+    const totalPossiblePoints = entries.length * 2;
+    const currentPoints = entries.reduce((sum, entry) => sum + Math.min(entry.counter, 2), 0);
+    const progressValue = totalPossiblePoints > 0 ? (currentPoints / totalPossiblePoints) * 100 : 0;
+
+    const completed = entries.filter((entry) => entry.counter >= 2).length;
+
+    setProgress(progressValue);
+    setCompletedCount(completed);
+  }, [entries]);
 
   useEffect(() => {
-    if (currentEntry && !showFeedback && !isComplete) {
-      const timer = setTimeout(() => {
-        setShouldFetchRecording(true);
-      }, 500);
-
-      return () => clearTimeout(timer);
+    if (recordingData) {
+      playRecordingData(recordingData);
     }
-  }, [currentEntry, showFeedback, isComplete]);
+  }, [recordingData, iteration]);
 
   useEffect(() => {
     return () => {
@@ -76,14 +79,11 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   }, [audioUrl]);
 
   const playAudio = async () => {
-    if (entries.length === 0) return;
+    if (entries.length === 0) {
+      return;
+    }
 
     try {
-      if (!shouldFetchRecording) {
-        setShouldFetchRecording(true);
-        return;
-      }
-
       if (recordingData) {
         await playRecordingData(recordingData);
       }
@@ -93,21 +93,23 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   };
 
   const playRecordingData = async (data: Blob) => {
-    if (data instanceof Blob && data.type.startsWith('audio/')) {
-      const url = URL.createObjectURL(data);
-      setAudioUrl(url);
-      const audio = new Audio(url);
-      audio.addEventListener('loadeddata', () => {
-        audio.play().catch((error) => {
-          console.error('Failed to play audio blob:', error);
-        });
-      });
-      audio.addEventListener('error', () => {
-        console.error('Audio element error');
-      });
-    } else {
+    if (!(data instanceof Blob) || !data.type.startsWith('audio/')) {
       console.log('Unexpected data type for audio:', typeof data, data);
+
+      return;
     }
+
+    const url = URL.createObjectURL(data);
+    setAudioUrl(url);
+    const audio = new Audio(url);
+    audio.addEventListener('loadeddata', () => {
+      audio.play().catch((error) => {
+        console.error('Failed to play audio blob:', error);
+      });
+    });
+    audio.addEventListener('error', () => {
+      console.error('Audio element error');
+    });
   };
 
   const checkAnswer = () => {
@@ -129,7 +131,6 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   const nextQuestion = () => {
     setShowFeedback(false);
     setUserInput('');
-    setShouldFetchRecording(false);
 
     const remainingEntries = entries.filter((entry) => entry.counter < 2);
 
@@ -142,15 +143,12 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
     const nextEntry = shuffled[0];
     const nextIndex = entries.findIndex((entry) => entry.word === nextEntry.word);
     setCurrentEntryIndex(nextIndex);
-  };
-
-  const getProgress = () => {
-    const completedEntries = entries.filter((entry) => entry.counter >= 2).length;
-    return entries.length > 0 ? (completedEntries / entries.length) * 100 : 0;
+    setIteration((prev) => prev + 1);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && userInput.trim() && !showFeedback) {
+      event.preventDefault();
       checkAnswer();
     }
   };
@@ -170,7 +168,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
               You've successfully learned the spelling of all words in this set.
             </Text>
             <Group wrap="wrap" justify="center">
-              <Button variant="light" onClick={() => navigate('/sets')} size="md">
+              <Button variant="light" onClick={() => navigate('/sets')} size="md" autoFocus>
                 Back to Sets
               </Button>
               <Button onClick={() => window.location.reload()} size="md">
@@ -198,9 +196,9 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   return (
     <>
       <Stack gap="lg">
-        <Progress value={getProgress()} size="lg" radius="md" />
+        <Progress value={progress} size="lg" radius="md" />
         <Text size="sm" c="dimmed" ta="center">
-          {entries.filter((e) => e.counter >= 2).length} / {entries.length} words completed
+          {completedCount} / {entries.length} words completed
         </Text>
 
         <Paper ta="center">
