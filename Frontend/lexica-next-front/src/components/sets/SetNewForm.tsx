@@ -26,7 +26,11 @@ export function SetNewForm() {
   const navigate = useNavigate();
   const createSetMutation = useCreateSet();
   const englishWordRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const translationRefs = useRef<{ [entryIndex: number]: (HTMLInputElement | null)[] }>({});
   const [focusEntryIndex, setFocusEntryIndex] = useState<number | null>(null);
+  const [focusTranslation, setFocusTranslation] = useState<{ entryIndex: number; translationIndex: number } | null>(
+    null,
+  );
 
   useEffect(() => {
     if (englishWordRefs.current[0]) {
@@ -40,6 +44,16 @@ export function SetNewForm() {
       setFocusEntryIndex(null);
     }
   }, [focusEntryIndex]);
+
+  useEffect(() => {
+    if (focusTranslation !== null) {
+      const { entryIndex, translationIndex } = focusTranslation;
+      if (translationRefs.current[entryIndex]?.[translationIndex]) {
+        translationRefs.current[entryIndex][translationIndex]?.focus();
+        setFocusTranslation(null);
+      }
+    }
+  }, [focusTranslation]);
 
   const form = useForm<FormValues>({
     mode: 'uncontrolled',
@@ -92,10 +106,34 @@ export function SetNewForm() {
 
   const addTranslation = (entryIndex: number) => {
     form.insertListItem(`entries.${entryIndex}.translations`, { name: '' });
+    setTimeout(() => {
+      const newTranslationIndex = form.values.entries[entryIndex].translations.length; // This will be the index of the new translation
+      setFocusTranslation({ entryIndex, translationIndex: newTranslationIndex });
+    }, 0);
   };
 
   const removeTranslation = (entryIndex: number, translationIndex: number) => {
     form.removeListItem(`entries.${entryIndex}.translations`, translationIndex);
+    setTimeout(() => {
+      const currentEntry = form.values.entries[entryIndex];
+      const remainingTranslations = currentEntry.translations.length - 1;
+
+      if (remainingTranslations === 0) {
+        return;
+      }
+
+      let targetIndex: number;
+      if (translationIndex === 0) {
+        targetIndex = 0;
+      } else {
+        targetIndex = translationIndex - 1;
+      }
+
+      targetIndex = Math.min(targetIndex, remainingTranslations - 1);
+      targetIndex = Math.max(targetIndex, 0);
+
+      setFocusTranslation({ entryIndex, translationIndex: targetIndex });
+    }, 0);
   };
 
   const handleSubmit = (values: FormValues) => {
@@ -195,6 +233,12 @@ export function SetNewForm() {
                   {(entry.translations || []).map((_, translationIndex) => (
                     <Group key={translationIndex} mb="xs" wrap="nowrap" align="top">
                       <TextInput
+                        ref={(el) => {
+                          if (!translationRefs.current[entryIndex]) {
+                            translationRefs.current[entryIndex] = [];
+                          }
+                          translationRefs.current[entryIndex][translationIndex] = el;
+                        }}
                         placeholder="Enter translation..."
                         style={{ flex: 1 }}
                         size="md"
