@@ -32,6 +32,7 @@ import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
 import { useDeleteSet, useSets, type SetRecordDto } from '../../hooks/api';
 import { formatDateTime } from '../../utils/date';
+import classes from './SetsList.module.css';
 
 export function SetsList() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,13 +77,16 @@ export function SetsList() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  if (error) {
-    notifications.show({
-      title: 'Error',
-      message: 'Failed to load sets',
-      color: 'red',
-    });
-  }
+  useEffect(() => {
+    if (error) {
+      notifications.show({
+        title: 'Error Loading Sets',
+        message: 'An unexpected error occurred',
+        color: 'red',
+        position: 'top-center',
+      });
+    }
+  }, [error]);
 
   const handleDelete = (setId: string, setName: string) => {
     modals.openConfirmModal({
@@ -91,25 +95,25 @@ export function SetsList() {
       labels: { confirm: 'Delete', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
       onConfirm: () => {
-        deleteSetMutation.mutate(setId,
-          {
-            onSuccess: () => {
-              notifications.show({
-                title: 'Success',
-                message: 'Set deleted successfully',
-                color: 'green',
-              });
-              refetch();
-            },
-            onError: () => {
-              notifications.show({
-                title: 'Error',
-                message: 'Failed to delete set',
-                color: 'red',
-              });
-            },
+        deleteSetMutation.mutate(setId, {
+          onSuccess: () => {
+            notifications.show({
+              title: 'Success',
+              message: 'Set deleted successfully',
+              color: 'green',
+              position: 'top-center',
+            });
+            refetch();
           },
-        );
+          onError: () => {
+            notifications.show({
+              title: 'Error Deleting Set',
+              message: 'Failed to delete set',
+              color: 'red',
+              position: 'top-center',
+            });
+          },
+        });
       },
     });
   };
@@ -182,10 +186,10 @@ export function SetsList() {
           <Text>{set.name}</Text>
         </div>
       </Table.Td>
-      <Table.Td>
+      <Table.Td className={classes.createdCol}>
         <Text>{formatDateTime(set.createdAt)}</Text>
       </Table.Td>
-      <Table.Td>
+      <Table.Td className={classes.actionCol}>
         <Group justify="center">
           <SetActionMenu set={set} />
         </Group>
@@ -222,7 +226,7 @@ export function SetsList() {
           />
         </Group>
 
-        <Box style={{ position: 'relative' }}>
+        <Box pos="relative">
           <LoadingOverlay visible={isFetching} />
 
           <Box hiddenFrom="md">

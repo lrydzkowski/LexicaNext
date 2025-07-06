@@ -18,7 +18,6 @@ export function Header() {
 
   const appTitle = 'LexicaNext';
 
-  // Choose navigation items based on authentication state
   const navItems = isAuthenticated ? items : publicItems;
 
   const navigationLinks = navItems.map((item) => (

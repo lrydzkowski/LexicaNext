@@ -48,7 +48,7 @@ export function WordCard({ entry, index }: { entry: EntryDto; index: number }) {
         console.error('Audio element error');
       });
     } else {
-      console.log('Unexpected data type for audio:', typeof data, data);
+      console.error('Unexpected data type for audio:', typeof data, data);
     }
   };
 

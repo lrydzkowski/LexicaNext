@@ -10,6 +10,7 @@ import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
 import { ModalsProvider } from '@mantine/modals';
+import { Notifications } from '@mantine/notifications';
 import { AuthLoading } from './components/auth/AuthLoading.tsx';
 
 const queryClient = new QueryClient({
@@ -20,6 +21,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       refetchOnMount: true,
       refetchOnReconnect: false,
+      retry: 0,
     },
   },
 });
@@ -29,6 +31,7 @@ createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <MantineProvider>
         <ModalsProvider>
+          <Notifications />
           <Auth0Provider
             domain={appConfig.auth0Domain}
             clientId={appConfig.auth0ClientId}
