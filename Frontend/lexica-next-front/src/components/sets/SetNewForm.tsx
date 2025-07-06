@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
+import { v4 as uuidv4 } from 'uuid';
 import { ActionIcon, Button, Divider, Group, Paper, Select, Stack, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -35,7 +36,7 @@ export function SetNewForm() {
   const form = useForm<FormValues>({
     mode: 'uncontrolled',
     initialValues: {
-      setName: '',
+      setName: uuidv4(),
       entries: [{ word: '', wordType: 'noun', translations: [{ name: '' }] }],
     },
     validate: {
