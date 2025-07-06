@@ -2,7 +2,18 @@ import { useEffect, useRef, useState } from 'react';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
-import { ActionIcon, Button, Divider, Group, LoadingOverlay, Paper, Select, Stack, Text, TextInput } from '@mantine/core';
+import {
+  ActionIcon,
+  Button,
+  Divider,
+  Group,
+  LoadingOverlay,
+  Paper,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useCreateSet, useUpdateSet, type GetSetResponse } from '../../hooks/api';
@@ -85,7 +96,6 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
 
   useEffect(() => {
     if (mode === 'create') {
-      // Focus on first field for create mode
       if (englishWordRefs.current[0]) {
         englishWordRefs.current[0].focus();
       }
@@ -94,7 +104,6 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
 
   useEffect(() => {
     if (mode === 'edit' && set) {
-      // Populate form with set data for edit mode
       form.setValues({
         setName: set.name || '',
         entries:
@@ -144,21 +153,21 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
     form.removeListItem('entries', index);
     setTimeout(() => {
       const remainingEntries = form.values.entries.length - 1;
-      
+
       if (remainingEntries === 0) {
         return;
       }
-      
+
       let targetIndex: number;
       if (index === 0) {
         targetIndex = 0;
       } else {
         targetIndex = index - 1;
       }
-      
+
       targetIndex = Math.min(targetIndex, remainingEntries - 1);
       targetIndex = Math.max(targetIndex, 0);
-      
+
       setFocusEntryIndex(targetIndex);
     }, 0);
   };
@@ -306,7 +315,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                         color="red"
                         variant="light"
                         onClick={() => removeEntry(entryIndex)}
-                        mt={{ base: '0', md: '1.4rem' }}
+                        mt={{ base: '0', md: '1.8em' }}
                         visibleFrom="sm"
                         aria-label={`Remove entry ${entryIndex + 1}`}>
                         <IconTrash size={16} />
@@ -376,11 +385,10 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
             <Button variant="light" onClick={() => navigate('/sets')} size="md">
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              loading={mode === 'create' ? createSetMutation.isPending : updateSetMutation.isPending} 
-              size="md"
-            >
+            <Button
+              type="submit"
+              loading={mode === 'create' ? createSetMutation.isPending : updateSetMutation.isPending}
+              size="md">
               {mode === 'create' ? 'Create Set' : 'Update Set'}
             </Button>
           </Group>
