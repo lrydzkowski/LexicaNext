@@ -28,11 +28,12 @@ export const useSets = (params?: {
 
   return useQuery({
     queryKey: ['sets', params],
-    queryFn: async (): Promise<GetSetsResponse> => {
+    queryFn: async ({ signal }): Promise<GetSetsResponse> => {
       const { data, error } = await client.GET('/api/sets', {
         params: {
           query: params,
         },
+        signal,
       });
 
       if (error) {
