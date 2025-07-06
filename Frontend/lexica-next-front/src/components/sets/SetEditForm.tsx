@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router';
 import {
@@ -37,7 +37,29 @@ export function SetEditForm() {
   const { setId } = useParams<{ setId: string }>();
   const { data: set, isLoading: initialLoading, error } = useSet(setId!);
   const updateSetMutation = useUpdateSet();
-  const firstEnglishWordFieldRef = useRef<HTMLInputElement | null>(null);
+  const englishWordRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const translationRefs = useRef<{ [entryIndex: number]: (HTMLInputElement | null)[] }>({});
+  const [focusEntryIndex, setFocusEntryIndex] = useState<number | null>(null);
+  const [focusTranslation, setFocusTranslation] = useState<{ entryIndex: number; translationIndex: number } | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (focusEntryIndex !== null && englishWordRefs.current[focusEntryIndex]) {
+      englishWordRefs.current[focusEntryIndex].focus();
+      setFocusEntryIndex(null);
+    }
+  }, [focusEntryIndex]);
+
+  useEffect(() => {
+    if (focusTranslation !== null) {
+      const { entryIndex, translationIndex } = focusTranslation;
+      if (translationRefs.current[entryIndex]?.[translationIndex]) {
+        translationRefs.current[entryIndex][translationIndex]?.focus();
+        setFocusTranslation(null);
+      }
+    }
+  }, [focusTranslation]);
 
   const form = useForm<FormValues>({
     mode: 'uncontrolled',
@@ -86,8 +108,8 @@ export function SetEditForm() {
           })) || [],
       });
       setTimeout(() => {
-        if (firstEnglishWordFieldRef.current) {
-          firstEnglishWordFieldRef.current.focus();
+        if (englishWordRefs.current[0]) {
+          englishWordRefs.current[0].focus();
         }
       }, 0);
     }
@@ -106,18 +128,51 @@ export function SetEditForm() {
 
   const addEntry = () => {
     form.insertListItem('entries', { word: '', wordType: 'noun', translations: [{ name: '' }] });
+    setTimeout(() => {
+      const newEntryIndex = form.values.entries.length;
+      setFocusEntryIndex(newEntryIndex);
+    }, 0);
   };
 
   const removeEntry = (index: number) => {
     form.removeListItem('entries', index);
+    setTimeout(() => {
+      if (!focusEntryIndex) {
+        setFocusEntryIndex(form.values.entries.length - 2);
+      }
+    }, 0);
   };
 
   const addTranslation = (entryIndex: number) => {
     form.insertListItem(`entries.${entryIndex}.translations`, { name: '' });
+    setTimeout(() => {
+      const newTranslationIndex = form.values.entries[entryIndex].translations.length; // This will be the index of the new translation
+      setFocusTranslation({ entryIndex, translationIndex: newTranslationIndex });
+    }, 0);
   };
 
   const removeTranslation = (entryIndex: number, translationIndex: number) => {
     form.removeListItem(`entries.${entryIndex}.translations`, translationIndex);
+    setTimeout(() => {
+      const currentEntry = form.values.entries[entryIndex];
+      const remainingTranslations = currentEntry.translations.length - 1;
+
+      if (remainingTranslations === 0) {
+        return;
+      }
+
+      let targetIndex: number;
+      if (translationIndex === 0) {
+        targetIndex = 0;
+      } else {
+        targetIndex = translationIndex - 1;
+      }
+
+      targetIndex = Math.min(targetIndex, remainingTranslations - 1);
+      targetIndex = Math.max(targetIndex, 0);
+
+      setFocusTranslation({ entryIndex, translationIndex: targetIndex });
+    }, 0);
   };
 
   const handleSubmit = (values: FormValues) => {
@@ -172,7 +227,9 @@ export function SetEditForm() {
               <Stack gap="sm">
                 <Group wrap="wrap">
                   <TextInput
-                    ref={entryIndex === 0 ? firstEnglishWordFieldRef : undefined}
+                    ref={(el) => {
+                      englishWordRefs.current[entryIndex] = el;
+                    }}
                     label="English Word"
                     placeholder="Enter English word..."
                     style={{ flex: 1, minWidth: '200px' }}
@@ -224,6 +281,12 @@ export function SetEditForm() {
                   {(entry.translations || []).map((_, translationIndex) => (
                     <Group key={translationIndex} mb="xs" wrap="nowrap">
                       <TextInput
+                        ref={(el) => {
+                          if (!translationRefs.current[entryIndex]) {
+                            translationRefs.current[entryIndex] = [];
+                          }
+                          translationRefs.current[entryIndex][translationIndex] = el;
+                        }}
                         placeholder="Enter translation..."
                         style={{ flex: 1 }}
                         size="md"
