@@ -25,7 +25,7 @@ export function usePronunciation(
 
   const playRecordingData = useCallback(async (data: Blob) => {
     if (!(data instanceof Blob) || !data.type.startsWith('audio/')) {
-      console.log('Unexpected data type for audio:', typeof data, data);
+      console.error('Unexpected data type for audio:', typeof data, data);
       return;
     }
 
