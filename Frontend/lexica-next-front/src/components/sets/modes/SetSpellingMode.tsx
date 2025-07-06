@@ -14,7 +14,8 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { useRecording, type EntryDto, type GetSetResponse } from '../../../hooks/api';
+import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
+import { usePronunciation } from '../../../hooks/usePronunciation';
 
 interface SpellingEntry extends EntryDto {
   counter: number;
@@ -26,22 +27,24 @@ export interface SetSpellingModeProps {
 
 export function SetSpellingMode({ set }: SetSpellingModeProps) {
   const navigate = useNavigate();
-  const [iteration, setIteration] = useState(0);
   const [entries, setEntries] = useState<SpellingEntry[]>([]);
   const [currentEntryIndex, setCurrentEntryIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
+  const [iteration, setIteration] = useState(0);
 
   const currentEntry = entries[currentEntryIndex];
-  const { data: recordingData, isLoading: recordingLoading } = useRecording(
+  const { playAudio, isLoading: pronunciationLoading } = usePronunciation(
     currentEntry?.word || '',
-    currentEntry?.wordType || undefined,
-    currentEntry != null,
+    currentEntry?.wordType,
+    {
+      autoPlay: false,
+      enabled: currentEntry != null,
+    },
   );
 
   useEffect(() => {
@@ -65,52 +68,14 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   }, [entries]);
 
   useEffect(() => {
-    if (recordingData) {
-      playRecordingData(recordingData);
+    if (currentEntry) {
+      const timer = setTimeout(() => {
+        playAudio();
+      }, 100);
+
+      return () => clearTimeout(timer);
     }
-  }, [recordingData, iteration]);
-
-  useEffect(() => {
-    return () => {
-      if (audioUrl) {
-        URL.revokeObjectURL(audioUrl);
-      }
-    };
-  }, [audioUrl]);
-
-  const playAudio = async () => {
-    if (entries.length === 0) {
-      return;
-    }
-
-    try {
-      if (recordingData) {
-        await playRecordingData(recordingData);
-      }
-    } catch (error) {
-      console.error('Failed to play audio:', error);
-    }
-  };
-
-  const playRecordingData = async (data: Blob) => {
-    if (!(data instanceof Blob) || !data.type.startsWith('audio/')) {
-      console.log('Unexpected data type for audio:', typeof data, data);
-
-      return;
-    }
-
-    const url = URL.createObjectURL(data);
-    setAudioUrl(url);
-    const audio = new Audio(url);
-    audio.addEventListener('loadeddata', () => {
-      audio.play().catch((error) => {
-        console.error('Failed to play audio blob:', error);
-      });
-    });
-    audio.addEventListener('error', () => {
-      console.error('Audio element error');
-    });
-  };
+  }, [currentEntry, iteration, playAudio]);
 
   const checkAnswer = () => {
     const currentEntry = entries[currentEntryIndex];
@@ -212,7 +177,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
                 variant="filled"
                 color="blue"
                 onClick={playAudio}
-                loading={recordingLoading}
+                loading={pronunciationLoading}
                 style={{ margin: '0 auto' }}
                 aria-label="Play pronunciation">
                 <IconVolume size={24} />

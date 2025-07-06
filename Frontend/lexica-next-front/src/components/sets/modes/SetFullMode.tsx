@@ -3,6 +3,7 @@ import { IconCheck, IconX } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { Alert, Button, Container, Group, Paper, Progress, Radio, Stack, Text, TextInput, Title } from '@mantine/core';
 import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
+import { usePronunciation } from '../../../hooks/usePronunciation';
 
 interface FullModeEntry extends EntryDto {
   englishCloseCounter: number;
@@ -36,6 +37,11 @@ export function SetFullMode({ set }: SetFullModeProps) {
   const [isComplete, setIsComplete] = useState(false);
   const optionsRef = useRef<(HTMLInputElement | null)[]>([]);
 
+  const { playAudio } = usePronunciation(currentQuestion?.entry.word || '', currentQuestion?.entry.wordType, {
+    autoPlay: false,
+    enabled: !!currentQuestion?.entry.word,
+  });
+
   useEffect(() => {
     if (set?.entries) {
       const initialEntries = set.entries.map((entry) => ({
@@ -49,6 +55,16 @@ export function SetFullMode({ set }: SetFullModeProps) {
       generateNextQuestion(initialEntries);
     }
   }, [set]);
+
+  useEffect(() => {
+    if (showFeedback && currentQuestion) {
+      const timer = setTimeout(() => {
+        playAudio();
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showFeedback, currentQuestion, playAudio]);
 
   const generateNextQuestion = (currentEntries: FullModeEntry[]) => {
     const shuffledEntries = [...currentEntries].sort(() => Math.random() - 0.5);

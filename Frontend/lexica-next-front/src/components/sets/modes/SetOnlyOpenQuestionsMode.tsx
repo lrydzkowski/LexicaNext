@@ -3,6 +3,7 @@ import { IconCheck, IconX } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { Alert, Button, Container, Group, Paper, Progress, Stack, Text, TextInput, Title } from '@mantine/core';
 import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
+import { usePronunciation } from '../../../hooks/usePronunciation';
 
 interface OpenQuestionsEntry extends EntryDto {
   englishOpenCounter: number;
@@ -32,6 +33,11 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
   const [isCorrect, setIsCorrect] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
 
+  const { playAudio } = usePronunciation(currentQuestion?.entry.word || '', currentQuestion?.entry.wordType, {
+    autoPlay: false,
+    enabled: !!currentQuestion?.entry.word,
+  });
+
   useEffect(() => {
     if (set?.entries) {
       const initialEntries = set.entries.map((entry) => ({
@@ -43,6 +49,15 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
       generateNextQuestion(initialEntries);
     }
   }, [set]);
+
+  useEffect(() => {
+    if (showFeedback && currentQuestion) {
+      const timer = setTimeout(() => {
+        playAudio();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [showFeedback, currentQuestion, playAudio]);
 
   const generateNextQuestion = (currentEntries: OpenQuestionsEntry[]) => {
     const shuffledEntries = [...currentEntries].sort(() => Math.random() - 0.5);
