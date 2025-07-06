@@ -221,7 +221,7 @@ export function SetsList() {
           />
         </Group>
 
-        <Box style={{ position: 'relative' }}>
+        <Box pos="relative">
           <LoadingOverlay visible={isFetching} />
 
           <Box hiddenFrom="md">

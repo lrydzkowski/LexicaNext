@@ -23,7 +23,11 @@ export function SetFullModePage() {
   }, [error, navigate]);
 
   if (loading) {
-    return <LoadingOverlay visible />;
+    return (
+      <Stack pos="relative" mih="12rem">
+        <LoadingOverlay visible />
+      </Stack>
+    );
   }
 
   if (!set) {

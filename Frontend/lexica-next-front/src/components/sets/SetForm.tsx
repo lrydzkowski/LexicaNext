@@ -270,7 +270,11 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   };
 
   if (isLoading) {
-    return <LoadingOverlay visible />;
+    return (
+      <Stack pos="relative" mih="12rem">
+        <LoadingOverlay visible />
+      </Stack>
+    );
   }
 
   return (
