@@ -57,12 +57,12 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         setName: uuidv4(),
         entries: [{ word: '', wordType: 'noun', translations: [{ name: '' }] }],
       };
-    } else {
-      return {
-        setName: '',
-        entries: [],
-      };
     }
+
+    return {
+      setName: '',
+      entries: [],
+    };
   };
 
   const form = useForm<FormValues>({
@@ -70,23 +70,50 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
     initialValues: getInitialValues(),
     validate: {
       setName: (value) => {
-        if (!value?.trim()) return 'Set name is required';
-        if (value.trim().length < 1) return 'Set name must not be empty';
-        if (value.trim().length > 200) return 'Set name must be less than 200 characters';
+        if (!value?.trim()) {
+          return 'Set name is required';
+        }
+
+        if (value.trim().length < 1) {
+          return 'Set name must not be empty';
+        }
+
+        if (value.trim().length > 200) {
+          return 'Set name must be less than 200 characters';
+        }
+
         return null;
       },
       entries: {
         word: (value) => {
-          if (!value?.trim()) return 'Word is required';
-          if (value.trim().length < 1) return 'Word must not be empty';
-          if (value.trim().length > 200) return 'Word must be less than 200 characters';
+          if (!value?.trim()) {
+            return 'Word is required';
+          }
+
+          if (value.trim().length < 1) {
+            return 'Word must not be empty';
+          }
+
+          if (value.trim().length > 200) {
+            return 'Word must be less than 200 characters';
+          }
+
           return null;
         },
         translations: {
           name: (value) => {
-            if (!value?.trim()) return 'Translation is required';
-            if (value.trim().length < 1) return 'Translation must not be empty';
-            if (value.trim().length > 200) return 'Translation must be less than 200 characters';
+            if (!value?.trim()) {
+              return 'Translation is required';
+            }
+
+            if (value.trim().length < 1) {
+              return 'Translation must not be empty';
+            }
+
+            if (value.trim().length > 200) {
+              return 'Translation must be less than 200 characters';
+            }
+
             return null;
           },
         },
@@ -236,7 +263,9 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         },
       );
     } else {
-      if (!setId) return;
+      if (!setId) {
+        return;
+      }
 
       updateSetMutation.mutate(
         {
