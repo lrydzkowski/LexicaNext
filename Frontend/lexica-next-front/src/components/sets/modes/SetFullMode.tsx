@@ -259,7 +259,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
     }
 
     if (currentQuestion?.options) {
-      const numKey = parseInt(event.key);
+      const numKey = parseInt(event.key, 10);
       if (numKey >= 1 && numKey <= currentQuestion.options.length) {
         event.preventDefault();
         const selectedOption = currentQuestion.options[numKey - 1];

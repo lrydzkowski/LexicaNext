@@ -22,7 +22,7 @@ export function Header() {
 
   const navigationLinks = navItems.map((item) => (
     <NavLink
-      key={item.href + '-desktop'}
+      key={`${item.href}-desktop`}
       to={item.href}
       className={({ isActive }) => `${classes.link} ${isActive ? classes.active : ''}`}>
       {item.label}
@@ -31,7 +31,7 @@ export function Header() {
 
   const mobileNavigationLinks = navItems.map((item) => (
     <NavLink
-      key={item.href + '-mobile'}
+      key={`${item.href}-mobile`}
       to={item.href}
       className={({ isActive }) => `${classes.link} ${isActive ? classes.active : ''}`}
       onClick={closeDrawer}>
