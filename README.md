@@ -1,30 +1,176 @@
 # LexicaNext
 
-The next iteration of Lexica, an English vocabulary learning software:
+A modern English vocabulary learning application built with React and .NET, featuring interactive study modes and pronunciation support.
 
-- <https://github.com/lrydzkowski/R.Systems.Lexica>
-- <https://github.com/lrydzkowski/R.Systems.ReactFront>
+[![.NET](https://img.shields.io/badge/.NET-9.0-blue.svg)](https://dotnet.microsoft.com/)
+[![React](https://img.shields.io/badge/React-19-blue.svg)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
+[![Docker](https://img.shields.io/badge/Docker-supported-blue.svg)](https://www.docker.com/)
 
-**Project is under construction**
+## Features
 
-Open API Specification: <https://localhost:7226/openapi/v1.json>
+- **Interactive Study Modes**
+    - Spelling Mode - Practice spelling vocabulary words
+    - Full Mode - Complete vocabulary practice with all word details
+    - Open Questions Mode - Answer open-ended questions about vocabulary
+- **Audio Pronunciation** - Integration with English Dictionary API
+- **User Authentication** - Secure login with Auth0
+- **Real-time Updates** - Live synchronization across sessions
+- **Responsive Design** - Modern UI with Mantine components
+- **Type Safety** - Full TypeScript support with auto-generated API types
 
-Create EF Core migration:
+## Tech Stack
 
-```powershell
-cd .\LexicaNext.Infrastructure
-dotnet ef migrations add <migration_name> -o Db\Migrations
+### Frontend
+
+- **React 19** with TypeScript
+- **Vite** for build tooling and development
+- **Mantine** UI component library
+- **TanStack Query** for server state management
+- **React Router 7** for navigation
+- **Auth0** for authentication
+
+### Backend
+
+- **.NET 9.0** with C# 13
+- **PostgreSQL** database
+- **Entity Framework Core** for data access
+- **Clean Architecture** with CQRS pattern
+- **FluentValidation** for input validation
+- **OpenAPI/Swagger** documentation
+
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 22+ and npm
+- [.NET 9.0 SDK](https://dotnet.microsoft.com/download)
+- [PostgreSQL](https://www.postgresql.org/) 13+
+- [Docker](https://www.docker.com/) (optional)
+
+### Development Setup
+
+#### Backend Setup
+
+1. **Database Setup**
+   ```bash
+   # Create database and apply migrations
+   cd LexicaNext.Infrastructure
+   dotnet ef database update
+   ```
+
+2. **Run Backend**
+   ```bash
+   # From repository root
+   dotnet run --project LexicaNext.WebApp
+   ```
+
+#### Frontend Setup
+
+1. **Install Dependencies**
+   ```bash
+   cd Frontend/lexica-next-front
+   npm install
+   ```
+
+2. **Environment Configuration**
+   Create environment files in `Frontend/lexica-next-front/env-config/`:
+    - `.env.local` for development
+    - Configure Auth0 credentials and API endpoints
+
+3. **Run Frontend**
+   ```bash
+   npm run dev
+   ```
+
+### Environment Variables
+
+Create the following environment files in `Frontend/lexica-next-front/env-config/`:
+
+```env
+# .env.local
+VITE_API_BASE_PATH=https://localhost:7226/api
+VITE_AUTH0_DOMAIN=your-auth0-domain
+VITE_AUTH0_CLIENT_ID=your-auth0-client-id
+VITE_AUTH0_AUDIENCE=your-auth0-audience
+VITE_AUTH0_SCOPE=openid profile email
 ```
 
-Apply EF Core migration:
+## API Documentation
 
-```powershell
-cd .\LexicaNext.Infrastructure
+When running the application, the OpenAPI specification is available at:
+
+- **Local Development**: `https://localhost:7226/openapi/v1.json`
+- **Swagger UI**: `https://localhost:7226/swagger`
+
+## Development Commands
+
+### Frontend
+
+```bash
+cd Frontend/lexica-next-front
+
+# Development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Lint code
+npm run lint
+
+# Format code
+npm run prettier
+```
+
+### Backend
+
+```bash
+# Build solution
+dotnet build LexicaNext.sln
+
+# Run web application
+dotnet run --project LexicaNext.WebApp
+
+# Run CLI commands
+dotnet run --project LexicaNext.CLI
+```
+
+### Database Management
+
+```bash
+cd LexicaNext.Infrastructure
+
+# Create migration
+dotnet ef migrations add <migration_name> -o Db\Migrations
+
+# Apply migrations
 dotnet ef database update
 ```
 
-Docker compose:
+## Architecture
 
-```powershell
-docker compose -f ./compose.yaml -p lexica-next up --build
-```
+The application follows **Clean Architecture** principles:
+
+- **Domain Layer** (`LexicaNext.Core`) - Business logic and domain models
+- **Infrastructure Layer** (`LexicaNext.Infrastructure`) - Data access and external services
+- **Presentation Layer** (`LexicaNext.WebApp`) - API endpoints and web hosting
+- **Frontend** (`Frontend/lexica-next-front`) - React SPA with TypeScript
+
+### Key Patterns
+
+- **CQRS** - Command Query Responsibility Segregation
+- **Repository Pattern** - Data access abstraction
+- **Dependency Injection** - Service registration with Scrutor
+- **Type Safety** - Auto-generated TypeScript types from OpenAPI
+
+## License
+
+This project is licensed under the MIT License.
+
+## Related Projects
+
+Previous iterations of the Lexica vocabulary learning system:
+
+- [R.Systems.Lexica](https://github.com/lrydzkowski/R.Systems.Lexica) - Original backend
+- [R.Systems.ReactFront](https://github.com/lrydzkowski/R.Systems.ReactFront) - Original frontend
