@@ -11,6 +11,8 @@ internal interface IGetRecordingRequestProcessor
 internal class GetRecordingRequestProcessor
     : IGetRecordingRequestProcessor, ISingletonService
 {
+    private static readonly Regex WordSanitizer = new("[^a-zA-Z0-9_ '-]", RegexOptions.Compiled);
+
     public GetRecordingRequest Process(GetRecordingRequest request)
     {
         request.Word = SanitizeWord(request.Word);
@@ -21,6 +23,6 @@ internal class GetRecordingRequestProcessor
 
     private static string SanitizeWord(string word)
     {
-        return Regex.Replace(word, "[^a-zA-Z0-9_ ]", "").Trim();
+        return WordSanitizer.Replace(word, "").Trim();
     }
 }
