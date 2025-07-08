@@ -14,7 +14,7 @@ public class GetRecordingRequestValidator : AbstractValidator<GetRecordingReques
 
     private void AddValidationForWord()
     {
-        RuleFor(request => request.Word).NotEmpty();
+        RuleFor(request => request.Word).NotEmpty().MaximumLength(100);
     }
 
     private void AddValidationForWordType()
