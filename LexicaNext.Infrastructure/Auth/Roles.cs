@@ -1,4 +1,4 @@
-namespace LexicaNext.Infrastructure.Auth0;
+namespace LexicaNext.Infrastructure.Auth;
 
 internal static class Roles
 {

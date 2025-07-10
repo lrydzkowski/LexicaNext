@@ -1,13 +1,13 @@
 ﻿using System.Security.Claims;
 using LexicaNext.Core;
-using LexicaNext.Infrastructure.Auth0.Auth;
-using LexicaNext.Infrastructure.Auth0.Options;
+using LexicaNext.Infrastructure.Auth.Options;
+using LexicaNext.Infrastructure.Auth.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace LexicaNext.Infrastructure.Auth0;
+namespace LexicaNext.Infrastructure.Auth;
 
 internal static class ServiceCollectionExtensions
 {

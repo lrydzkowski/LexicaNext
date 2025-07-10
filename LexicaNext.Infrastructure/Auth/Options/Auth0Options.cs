@@ -1,4 +1,4 @@
-﻿namespace LexicaNext.Infrastructure.Auth0.Options;
+﻿namespace LexicaNext.Infrastructure.Auth.Options;
 
 internal class Auth0Options
 {
