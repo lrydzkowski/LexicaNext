@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using LexicaNext.Core;
+using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Infrastructure.Auth.Options;
 using LexicaNext.Infrastructure.Auth.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -24,12 +25,27 @@ internal static class ServiceCollectionExtensions
         IConfiguration configuration
     )
     {
-        return services.AddOptionsType<Auth0Options>(configuration, Auth0Options.Position);
+        return services.AddOptionsType<Auth0Options>(configuration, Auth0Options.Position)
+            .AddOptionsType<ApiKeyOptions>(configuration, ApiKeyOptions.Position);
     }
 
     private static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddAuthentication()
+        services.AddAuthentication(configuration);
+        services.AddAuthorization();
+
+        return services;
+    }
+
+    private static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddAuthentication(
+                options =>
+                {
+                    options.DefaultScheme = AuthenticationSchemes.Auth0;
+                    options.DefaultChallengeScheme = AuthenticationSchemes.Auth0;
+                }
+            )
             .AddJwtBearer(
                 AuthenticationSchemes.Auth0,
                 options =>
@@ -42,7 +58,20 @@ internal static class ServiceCollectionExtensions
                         NameClaimType = ClaimTypes.NameIdentifier
                     };
                 }
+            )
+            .AddScheme<ApiKeyAuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(
+                AuthenticationSchemes.ApiKey,
+                options =>
+                {
+                    ApiKeyOptions? apiKeyOptions =
+                        configuration.GetSection(ApiKeyOptions.Position).Get<ApiKeyOptions>();
+                    options.ValidApiKeys = apiKeyOptions?.ValidKeys.ToHashSet() ?? [];
+                }
             );
+    }
+
+    private static void AddAuthorization(this IServiceCollection services)
+    {
         services.AddSingleton<IAuthorizationHandler, RoleAuthorizationHandler>();
         services.AddAuthorization(
             options =>
@@ -52,9 +81,15 @@ internal static class ServiceCollectionExtensions
                     policy => policy.RequireAuthenticatedUser()
                         .AddRequirements(new RoleRequirement([Roles.Admin]))
                 );
+                options.AddPolicy(
+                    AuthorizationPolicies.Auth0OrApiKey,
+                    policy =>
+                    {
+                        policy.AddAuthenticationSchemes(AuthenticationSchemes.Auth0, AuthenticationSchemes.ApiKey);
+                        policy.RequireAuthenticatedUser();
+                    }
+                );
             }
         );
-
-        return services;
     }
 }

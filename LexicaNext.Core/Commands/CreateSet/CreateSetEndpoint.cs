@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using LexicaNext.Core.Commands.CreateSet.Interfaces;
 using LexicaNext.Core.Commands.CreateSet.Models;
 using LexicaNext.Core.Commands.CreateSet.Services;
+using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Queries.GetSet;
 using Microsoft.AspNetCore.Builder;
@@ -25,7 +26,7 @@ public static class CreateSetEndpoint
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status500InternalServerError)
-            .RequireAuthorization();
+            .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
     private static async Task<Results<ProblemHttpResult, CreatedAtRoute<CreateSetResponse>>> HandleAsync(

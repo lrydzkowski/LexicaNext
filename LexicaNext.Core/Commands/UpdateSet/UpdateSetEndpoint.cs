@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using LexicaNext.Core.Commands.UpdateSet.Interfaces;
 using LexicaNext.Core.Commands.UpdateSet.Models;
 using LexicaNext.Core.Commands.UpdateSet.Services;
+using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -25,7 +26,7 @@ public static class UpdateSetEndpoint
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError)
-            .RequireAuthorization();
+            .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
     private static async Task<Results<NotFound, ProblemHttpResult, NoContent>> HandleAsync(
