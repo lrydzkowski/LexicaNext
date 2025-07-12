@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
-using LexicaNext.Core.Common.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -56,6 +55,6 @@ internal class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthent
 
     private bool IsValidApiKey(string apiKey)
     {
-        return Options.ValidApiKeys.ContainsIgnoreCase(apiKey);
+        return Options.ValidApiKeys.Contains(apiKey);
     }
 }

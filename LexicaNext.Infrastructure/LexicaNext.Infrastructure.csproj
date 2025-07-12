@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="LexicaNext.CLI" />
+    <InternalsVisibleTo Include="LexicaNext.WebApp.Tests.Integration" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using FluentValidation;
+﻿using FluentValidation;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,7 +34,7 @@ public static class ServiceCollectionExtensions
     {
         return services.Scan(
             scan => scan
-                .FromAssemblyDependencies(Assembly.GetEntryAssembly()!)
+                .FromApplicationDependencies()
                 .AddClasses(classes => classes.AssignableTo<ITransientService>(), false)
                 .AsImplementedInterfaces()
                 .WithTransientLifetime()
