@@ -19,7 +19,7 @@
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met:\r\nDenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
       }
       {
         "LogLevel": "Information",
@@ -52,7 +52,7 @@
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met:\r\nDenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
       }
       {
         "LogLevel": "Information",
@@ -85,7 +85,7 @@
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met:\r\nDenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
       }
       {
         "LogLevel": "Information",
@@ -113,7 +113,7 @@
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met:\r\nDenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
       }
       {
         "LogLevel": "Information",
@@ -146,7 +146,7 @@
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met:\r\nDenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
       }
       {
         "LogLevel": "Information",
@@ -179,7 +179,7 @@
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met:\r\nDenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
       }
       {
         "LogLevel": "Information",
