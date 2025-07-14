@@ -37,9 +37,6 @@ jobs:
       - name: Install API dependencies
         run: dotnet restore
 
-      - name: Restore .NET tools
-        run: dotnet tool restore --tool-manifest AsyncJobsTemplate.WebApi/.config/dotnet-tools.json
-
       - name: Build API
         run: dotnet build --configuration Release --no-restore
 
