@@ -10,9 +10,9 @@ A modern English vocabulary learning application built with React and .NET, feat
 ## Features
 
 - **Interactive Study Modes**
-  - Spelling Mode - Practice spelling vocabulary words
-  - Full Mode - Complete vocabulary practice with all word details
-  - Open Questions Mode - Answer open-ended questions about vocabulary
+    - Spelling Mode - Practice spelling vocabulary words
+    - Full Mode - Complete vocabulary practice with all word details
+    - Open Questions Mode - Answer open-ended questions about vocabulary
 - **Audio Pronunciation** - Integration with English Dictionary API
 - **User Authentication** - Secure login with Auth0
 - **Real-time Updates** - Live synchronization across sessions
@@ -165,6 +165,26 @@ The application follows **Clean Architecture** principles:
 ## License
 
 This project is licensed under the MIT License.
+
+## Tools and Extensions
+
+### MCP Server (`Tools/mcp-server/`)
+
+A Model Context Protocol (MCP) server that enables Claude to interact with the LexicaNext API. Provides tools for vocabulary set management operations.
+
+```bash
+cd Tools/mcp-server
+npm install
+npm run build
+```
+
+Available MCP tools:
+
+- `get_lexica_status` - Check API status
+- `get_lexica_sets` - Retrieve vocabulary sets
+- `get_lexica_set` - Get specific set by ID
+- `create_lexica_set` - Create new vocabulary set
+- `update_lexica_set` - Update existing set
 
 ## Related Projects
 
