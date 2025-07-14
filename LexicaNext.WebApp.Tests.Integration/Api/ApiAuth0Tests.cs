@@ -53,8 +53,7 @@ public class ApiAuth0Tests
     }
 
     [Fact]
-    public async Task
-        SendRequest_ShouldReturn401_WhenOldAccessToken()
+    public async Task SendRequest_ShouldReturn401_WhenOldAccessToken()
     {
         IReadOnlyList<EndpointInfo> endpointsInfo = EndpointHelpers.GetEndpointsWithAuth(
             _endpointDataSource,
