@@ -14,7 +14,8 @@ public static class GetAppStatusEndpoint
             .WithName(Name)
             .WithSummary("Return the status of the application")
             .Produces<GetAppStatusResponse>()
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .AllowAnonymous();
     }
 
     private static Ok<GetAppStatusResponse> Handle(CancellationToken cancellationToken)

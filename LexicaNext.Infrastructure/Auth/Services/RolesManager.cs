@@ -1,11 +1,11 @@
 ﻿using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
-using LexicaNext.Infrastructure.Auth0.Options;
+using LexicaNext.Infrastructure.Auth.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace LexicaNext.Infrastructure.Auth0.Auth;
+namespace LexicaNext.Infrastructure.Auth.Services;
 
 internal class RolesManager
     : IScopedService, IRolesManager

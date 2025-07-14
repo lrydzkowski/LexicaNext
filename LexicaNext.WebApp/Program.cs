@@ -1,3 +1,4 @@
+using System.Globalization;
 using LexicaNext.Core;
 using LexicaNext.Core.Commands.CreateSet;
 using LexicaNext.Core.Commands.DeleteSet;
@@ -14,6 +15,10 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddWebAppServices();
 builder.Services.AddCoreServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+
+CultureInfo culture = new("en-US");
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 WebApplication app = builder.Build();
 
@@ -39,3 +44,7 @@ app.MapGetRecordingEndpoint();
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+public partial class Program
+{
+}

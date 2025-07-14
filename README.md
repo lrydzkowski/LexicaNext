@@ -10,9 +10,9 @@ A modern English vocabulary learning application built with React and .NET, feat
 ## Features
 
 - **Interactive Study Modes**
-    - Spelling Mode - Practice spelling vocabulary words
-    - Full Mode - Complete vocabulary practice with all word details
-    - Open Questions Mode - Answer open-ended questions about vocabulary
+  - Spelling Mode - Practice spelling vocabulary words
+  - Full Mode - Complete vocabulary practice with all word details
+  - Open Questions Mode - Answer open-ended questions about vocabulary
 - **Audio Pronunciation** - Integration with English Dictionary API
 - **User Authentication** - Secure login with Auth0
 - **Real-time Updates** - Live synchronization across sessions
@@ -52,14 +52,22 @@ A modern English vocabulary learning application built with React and .NET, feat
 
 #### Backend Setup
 
-1. **Database Setup**
+1. **Initialize User Secrets**
+
+   Create a user secrets file to store sensitive configuration data in the following projects:
+    - `LexicaNext.WebApp`
+    - `LexicaNext.Infrastructure`
+
+2. **Database Setup**
+
    ```bash
    # Create database and apply migrations
    cd LexicaNext.Infrastructure
    dotnet ef database update
    ```
 
-2. **Run Backend**
+3. **Run Backend**
+
    ```bash
    # From repository root
    dotnet run --project LexicaNext.WebApp
@@ -68,33 +76,23 @@ A modern English vocabulary learning application built with React and .NET, feat
 #### Frontend Setup
 
 1. **Install Dependencies**
+
    ```bash
    cd Frontend/lexica-next-front
    npm install
    ```
 
 2. **Environment Configuration**
+
    Create environment files in `Frontend/lexica-next-front/env-config/`:
     - `.env.local` for development
     - Configure Auth0 credentials and API endpoints
 
 3. **Run Frontend**
+
    ```bash
    npm run dev
    ```
-
-### Environment Variables
-
-Create the following environment files in `Frontend/lexica-next-front/env-config/`:
-
-```env
-# .env.local
-VITE_API_BASE_PATH=https://localhost:7226/api
-VITE_AUTH0_DOMAIN=your-auth0-domain
-VITE_AUTH0_CLIENT_ID=your-auth0-client-id
-VITE_AUTH0_AUDIENCE=your-auth0-audience
-VITE_AUTH0_SCOPE=openid profile email
-```
 
 ## API Documentation
 

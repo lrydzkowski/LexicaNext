@@ -1,5 +1,6 @@
 using FluentValidation;
 using FluentValidation.Results;
+using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Lists;
 using LexicaNext.Core.Common.Models;
@@ -25,7 +26,7 @@ public static class GetSetsEndpoint
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status500InternalServerError)
-            .RequireAuthorization();
+            .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
     private static async Task<Results<ProblemHttpResult, Ok<GetSetsResponse>>> HandleAsync(

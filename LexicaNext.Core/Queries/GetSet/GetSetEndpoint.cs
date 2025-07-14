@@ -1,3 +1,4 @@
+using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetSet.Interfaces;
 using LexicaNext.Core.Queries.GetSet.Services;
@@ -21,7 +22,7 @@ public static class GetSetEndpoint
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError)
-            .RequireAuthorization();
+            .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
     private static async Task<Results<NotFound, Ok<GetSetResponse>>> HandleAsync(

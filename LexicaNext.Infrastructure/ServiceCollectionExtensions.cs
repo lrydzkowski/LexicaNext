@@ -1,4 +1,4 @@
-using LexicaNext.Infrastructure.Auth0;
+using LexicaNext.Infrastructure.Auth;
 using LexicaNext.Infrastructure.Db;
 using LexicaNext.Infrastructure.EnglishDictionary;
 using LexicaNext.Infrastructure.Storage;

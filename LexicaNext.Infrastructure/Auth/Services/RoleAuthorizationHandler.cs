@@ -1,9 +1,9 @@
 ﻿using LexicaNext.Core.Common.Infrastructure.Extensions;
-using LexicaNext.Infrastructure.Auth0.Options;
+using LexicaNext.Infrastructure.Auth.Options;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
-namespace LexicaNext.Infrastructure.Auth0.Auth;
+namespace LexicaNext.Infrastructure.Auth.Services;
 
 internal class RoleAuthorizationHandler : AuthorizationHandler<RoleRequirement>
 {
