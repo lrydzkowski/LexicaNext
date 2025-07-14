@@ -15,4 +15,18 @@ internal static class VerifyScrubberExtensions
             }
         );
     }
+
+    public static void ScrubCustomBlankCharacters(this VerifySettings settings)
+    {
+        settings.AddScrubber(
+            input =>
+            {
+                string original = input.ToString();
+                string updated = original.Replace("\\u202F", " ");
+
+                input.Clear();
+                input.Append(updated);
+            }
+        );
+    }
 }
