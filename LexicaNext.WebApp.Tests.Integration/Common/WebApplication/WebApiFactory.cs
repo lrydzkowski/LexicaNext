@@ -35,8 +35,8 @@ public class WebApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     public new async Task DisposeAsync()
     {
         await DbContainer.DisposeAsync();
-
         WireMockServer.Dispose();
+        await base.DisposeAsync();
     }
 
     protected override IHost CreateHost(IHostBuilder builder)

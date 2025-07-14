@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Immutable;
+using System.Security.Claims;
 using LexicaNext.Core;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Infrastructure.Auth.Options;
@@ -65,7 +66,7 @@ internal static class ServiceCollectionExtensions
                 {
                     ApiKeyOptions? apiKeyOptions =
                         configuration.GetSection(ApiKeyOptions.Position).Get<ApiKeyOptions>();
-                    options.ValidApiKeys = apiKeyOptions?.ValidKeys.ToHashSet() ?? [];
+                    options.ValidApiKeys = apiKeyOptions?.ValidKeys.ToImmutableHashSet() ?? [];
                 }
             );
     }

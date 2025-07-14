@@ -1,5 +1,8 @@
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Encodings.Web;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -9,8 +12,6 @@ namespace LexicaNext.Infrastructure.Auth.Services;
 
 internal class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthenticationSchemeOptions>
 {
-    private const string ApiKeyHeaderName = "X-API-Key";
-
     public ApiKeyAuthenticationHandler(
         IOptionsMonitor<ApiKeyAuthenticationSchemeOptions> options,
         ILoggerFactory logger,
@@ -22,7 +23,7 @@ internal class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthent
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        if (!Request.Headers.TryGetValue(ApiKeyHeaderName, out StringValues apiKeyHeaderValues))
+        if (!Request.Headers.TryGetValue(HttpHeaderNames.ApiKey, out StringValues apiKeyHeaderValues))
         {
             return Task.FromResult(AuthenticateResult.Fail("API key header missing"));
         }
@@ -55,6 +56,11 @@ internal class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthent
 
     private bool IsValidApiKey(string apiKey)
     {
-        return Options.ValidApiKeys.Contains(apiKey);
+        return Options.ValidApiKeys.Any(
+            validKey => CryptographicOperations.FixedTimeEquals(
+                Encoding.UTF8.GetBytes(apiKey),
+                Encoding.UTF8.GetBytes(validKey)
+            )
+        );
     }
 }

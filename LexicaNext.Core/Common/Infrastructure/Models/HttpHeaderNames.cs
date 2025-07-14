@@ -8,7 +8,7 @@ public static class HttpHeaderNames
 
     public const string Access = "Access";
 
-    public const string ApiKey = "api-key";
+    public const string ApiKey = "X-Api-Key";
 
     public static readonly IReadOnlyList<string> HeadersToFilterFromLogs =
     [
