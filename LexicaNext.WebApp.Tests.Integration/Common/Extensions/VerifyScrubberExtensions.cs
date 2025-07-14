@@ -8,7 +8,7 @@ internal static class VerifyScrubberExtensions
             input =>
             {
                 string original = input.ToString();
-                string updated = original.Replace("\\r\\n", " ");
+                string updated = original.Replace("\\r\\n", " ").Replace("\\n", " ");
 
                 input.Clear();
                 input.Append(updated);
