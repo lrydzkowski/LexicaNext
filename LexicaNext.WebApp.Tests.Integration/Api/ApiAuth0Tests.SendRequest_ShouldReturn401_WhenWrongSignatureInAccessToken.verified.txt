@@ -14,12 +14,12 @@
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9\r\n\u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
       }
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met:\r\nDenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
       }
       {
         "LogLevel": "Information",
@@ -42,17 +42,17 @@
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9\r\n\u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
       }
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9\r\n\u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
       }
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met:\r\nDenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
       }
       {
         "LogLevel": "Information",
@@ -75,17 +75,17 @@
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9\r\n\u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
       }
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9\r\n\u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
       }
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met:\r\nDenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
       }
       {
         "LogLevel": "Information",
@@ -108,12 +108,12 @@
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9\r\n\u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
       }
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met:\r\nDenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
       }
       {
         "LogLevel": "Information",
@@ -136,17 +136,17 @@
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9\r\n\u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
       }
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9\r\n\u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
       }
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met:\r\nDenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
       }
       {
         "LogLevel": "Information",
@@ -169,17 +169,17 @@
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9\r\n\u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
       }
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9\r\n\u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027. \nNumber of keys in TokenValidationParameters: \u00270\u0027. \nNumber of keys in Configuration: \u00274\u0027. \nMatched key was in \u0027Configuration\u0027. \nkid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027. \nExceptions caught:\n \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027.\ntoken: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
       }
       {
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met:\r\nDenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
       }
       {
         "LogLevel": "Information",
