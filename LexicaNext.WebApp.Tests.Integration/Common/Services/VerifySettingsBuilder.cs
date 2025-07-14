@@ -10,6 +10,7 @@ internal static class VerifySettingsBuilder
         VerifySettings settings = new();
         settings.ScrubInlineDateTimes("M/d/yyyy h:mm:ss tt");
         settings.ScrubNewLineCharacters();
+        settings.ScrubCustomBlankCharacters();
         settings.DontIgnoreEmptyCollections();
         settings.AddExtraSettings(
             jsonSerializerSettings => jsonSerializerSettings.NullValueHandling = NullValueHandling.Include
