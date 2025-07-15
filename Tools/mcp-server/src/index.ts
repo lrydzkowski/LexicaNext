@@ -135,7 +135,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       annotations: {
         title: 'Create Lexica Set',
         readOnlyHint: false,
-        destructiveHint: true,
+        destructiveHint: false,
         idempotentHint: false,
       },
     },
