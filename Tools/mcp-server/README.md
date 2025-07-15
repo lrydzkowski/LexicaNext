@@ -40,7 +40,7 @@ The server requires configuration for:
 - API key for authentication
 - Logging settings
 
-Configuration is loaded from the `env-config/` directory.
+Configuration is loaded from the `env-config/.env` file.
 
 ## Usage
 
