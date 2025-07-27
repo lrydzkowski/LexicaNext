@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
 import {
   ActionIcon,
@@ -50,6 +50,8 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   const [focusTranslation, setFocusTranslation] = useState<{ entryIndex: number; translationIndex: number } | null>(
     null,
   );
+  const [searchParams] = useSearchParams();
+  const returnPage = searchParams.get('returnPage') || '1';
 
   const getInitialValues = (): FormValues => {
     if (mode === 'create') {
@@ -419,7 +421,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
           </Group>
 
           <Group justify="space-between" mt="xl" wrap="wrap">
-            <Button variant="light" onClick={() => navigate('/sets')} size="md">
+            <Button variant="light" onClick={() => navigate(`/sets?page=${returnPage}`)} size="md">
               Cancel
             </Button>
             <Button

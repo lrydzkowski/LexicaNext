@@ -11,7 +11,7 @@ import {
   IconTarget,
   IconTrash,
 } from '@tabler/icons-react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import {
   ActionIcon,
   Box,
@@ -35,10 +35,12 @@ import { formatDateTime } from '../../utils/date';
 import classes from './SetsList.module.css';
 
 export function SetsList() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
+
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
   const sortingFieldName = 'createdAt';
   const sortingOrder = 'desc';
@@ -70,8 +72,16 @@ export function SetsList() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
+      const oldSearch = debouncedSearchQuery;
       setDebouncedSearchQuery(searchQuery);
-      setCurrentPage(1);
+      if (oldSearch !== searchQuery) {
+        setSearchParams((prev) => {
+          const newParams = new URLSearchParams(prev);
+          newParams.set('page', '1');
+
+          return newParams;
+        });
+      }
     }, 150);
 
     return () => clearTimeout(timer);
@@ -129,26 +139,38 @@ export function SetsList() {
       </Menu.Target>
       <Menu.Dropdown>
         <Menu.Label>Learning Modes</Menu.Label>
-        <Menu.Item leftSection={<IconHeadphones size={16} />} component={Link} to={`/sets/${set.setId}/spelling-mode`}>
+        <Menu.Item
+          leftSection={<IconHeadphones size={16} />}
+          component={Link}
+          to={`/sets/${set.setId}/spelling-mode?returnPage=${currentPage}`}>
           Spelling Mode
         </Menu.Item>
-        <Menu.Item leftSection={<IconBrain size={16} />} component={Link} to={`/sets/${set.setId}/full-mode`}>
+        <Menu.Item
+          leftSection={<IconBrain size={16} />}
+          component={Link}
+          to={`/sets/${set.setId}/full-mode?returnPage=${currentPage}`}>
           Full Mode
         </Menu.Item>
         <Menu.Item
           leftSection={<IconTarget size={16} />}
           component={Link}
-          to={`/sets/${set.setId}/only-open-questions-mode`}>
+          to={`/sets/${set.setId}/only-open-questions-mode?returnPage=${currentPage}`}>
           Open Questions Mode
         </Menu.Item>
 
         <Menu.Divider />
 
         <Menu.Label>Set Management</Menu.Label>
-        <Menu.Item leftSection={<IconEye size={16} />} component={Link} to={`/sets/${set.setId}/content`}>
+        <Menu.Item
+          leftSection={<IconEye size={16} />}
+          component={Link}
+          to={`/sets/${set.setId}/content?returnPage=${currentPage}`}>
           View Content
         </Menu.Item>
-        <Menu.Item leftSection={<IconEdit size={16} />} component={Link} to={`/sets/${set.setId}/edit`}>
+        <Menu.Item
+          leftSection={<IconEdit size={16} />}
+          component={Link}
+          to={`/sets/${set.setId}/edit?returnPage=${currentPage}`}>
           Edit Set
         </Menu.Item>
         <Menu.Item
@@ -208,7 +230,7 @@ export function SetsList() {
             ref={createButtonRef}
             leftSection={<IconPlus size={16} />}
             component={Link}
-            to={links.newSet.url}
+            to={`${links.newSet.url}?returnPage=${currentPage}`}
             size="md"
             visibleFrom="sm">
             <Text>Create New Set</Text>
@@ -270,7 +292,19 @@ export function SetsList() {
         </Box>
 
         <Group justify="center" mt="md">
-          <Pagination total={totalPages} value={currentPage} onChange={setCurrentPage} size="md" />
+          <Pagination
+            total={totalPages}
+            value={currentPage}
+            onChange={(page) => {
+              setSearchParams((prev) => {
+                const newParams = new URLSearchParams(prev);
+                newParams.set('page', page.toString());
+
+                return newParams;
+              });
+            }}
+            size="md"
+          />
         </Group>
       </Stack>
     </>
