@@ -75,7 +75,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
         console.error('Pronunciation error:', pronunciationError);
 
         const updatedEntries = [...entries];
-        updatedEntries[currentEntryIndex].counter += 1;
+        updatedEntries[currentEntryIndex].counter = 2;
         setEntries(updatedEntries);
         nextQuestion();
 
