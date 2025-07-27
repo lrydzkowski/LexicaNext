@@ -40,14 +40,14 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   const [iteration, setIteration] = useState(0);
 
   const currentEntry = entries[currentEntryIndex];
-  const { playAudio, isLoading: pronunciationLoading } = usePronunciation(
-    currentEntry?.word || '',
-    currentEntry?.wordType,
-    {
-      autoPlay: false,
-      enabled: currentEntry != null,
-    },
-  );
+  const {
+    playAudio,
+    isLoading: pronunciationLoading,
+    error: pronunciationError,
+  } = usePronunciation(currentEntry?.word || '', currentEntry?.wordType, {
+    autoPlay: false,
+    enabled: currentEntry != null,
+  });
 
   useEffect(() => {
     if (set?.entries) {
@@ -71,13 +71,24 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
 
   useEffect(() => {
     if (currentEntry) {
+      if (pronunciationError) {
+        console.error('Pronunciation error:', pronunciationError);
+
+        const updatedEntries = [...entries];
+        updatedEntries[currentEntryIndex].counter += 1;
+        setEntries(updatedEntries);
+        nextQuestion();
+
+        return;
+      }
+
       const timer = setTimeout(() => {
         playAudio();
       }, 100);
 
       return () => clearTimeout(timer);
     }
-  }, [currentEntry, iteration, playAudio]);
+  }, [currentEntry, iteration, playAudio, pronunciationError]);
 
   const checkAnswer = () => {
     const currentEntry = entries[currentEntryIndex];
