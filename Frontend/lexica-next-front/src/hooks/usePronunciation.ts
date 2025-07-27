@@ -10,6 +10,7 @@ interface UsePronunciationReturn {
   playAudio: () => Promise<void>;
   isLoading: boolean;
   isPlaying: boolean;
+  error: Error | null;
 }
 
 export function usePronunciation(
@@ -21,7 +22,7 @@ export function usePronunciation(
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const { data: recordingData, isLoading } = useRecording(word, wordType, enabled && !!word);
+  const { data: recordingData, isLoading, error } = useRecording(word, wordType, enabled && !!word);
 
   const playRecordingData = useCallback(async (data: Blob) => {
     if (!(data instanceof Blob) || !data.type.startsWith('audio/')) {
@@ -93,5 +94,6 @@ export function usePronunciation(
     playAudio,
     isLoading,
     isPlaying,
+    error,
   };
 }

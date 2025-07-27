@@ -151,7 +151,7 @@ export const useRecording = (word: string, wordType?: string, enabled = true) =>
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throw new Error(`API error: ${JSON.stringify(error)}`);
       }
 
       if (!response.ok) {

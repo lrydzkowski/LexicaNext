@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { IconArrowLeft } from '@tabler/icons-react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { ActionIcon, Container, Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { SetSpellingMode } from '../../../components/sets/modes/SetSpellingMode';
@@ -10,6 +10,8 @@ export function SetSpellingModePage() {
   const { setId } = useParams<{ setId: string }>();
   const navigate = useNavigate();
   const { data: set, isLoading: loading, error } = useSet(setId!);
+  const [searchParams] = useSearchParams();
+  const returnPage = searchParams.get('returnPage') || '1';
 
   useEffect(() => {
     if (error) {
@@ -46,7 +48,10 @@ export function SetSpellingModePage() {
       <Container p={0}>
         <Stack gap="lg">
           <Group>
-            <ActionIcon variant="subtle" onClick={() => navigate('/sets')} aria-label="Go back to sets">
+            <ActionIcon
+              variant="subtle"
+              onClick={() => navigate(`/sets?page=${returnPage}`)}
+              aria-label="Go back to sets">
               <IconArrowLeft size={16} />
             </ActionIcon>
             <div style={{ flex: 1 }}>

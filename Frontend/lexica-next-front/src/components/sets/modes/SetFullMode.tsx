@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { Alert, Button, Container, Group, Paper, Progress, Radio, Stack, Text, TextInput, Title } from '@mantine/core';
 import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
@@ -29,6 +29,8 @@ export interface SetFullModeProps {
 
 export function SetFullMode({ set }: SetFullModeProps) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnPage = searchParams.get('returnPage') || '1';
   const [entries, setEntries] = useState<FullModeEntry[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
@@ -298,7 +300,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
               You've mastered all the words in this set through comprehensive practice.
             </Text>
             <Group wrap="wrap" justify="center">
-              <Button variant="light" onClick={() => navigate('/sets')} size="md" autoFocus>
+              <Button variant="light" onClick={() => navigate(`/sets?page=${returnPage}`)} size="md" autoFocus>
                 Back to Sets
               </Button>
               <Button onClick={() => window.location.reload()} size="md">
