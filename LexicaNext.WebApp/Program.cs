@@ -2,6 +2,7 @@ using System.Globalization;
 using LexicaNext.Core;
 using LexicaNext.Core.Commands.CreateSet;
 using LexicaNext.Core.Commands.DeleteSet;
+using LexicaNext.Core.Commands.RegisterAnswer;
 using LexicaNext.Core.Commands.UpdateSet;
 using LexicaNext.Core.Queries.GetAppStatus;
 using LexicaNext.Core.Queries.GetRecording;
@@ -40,6 +41,7 @@ app.MapCreateSetEndpoint();
 app.MapDeleteSetEndpoint();
 app.MapUpdateSetEndpoint();
 app.MapGetRecordingEndpoint();
+app.MapRegisterAnswerEndpoint();
 
 app.MapFallbackToFile("index.html");
 
