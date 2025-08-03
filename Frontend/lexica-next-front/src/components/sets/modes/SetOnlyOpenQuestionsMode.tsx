@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { Alert, Button, Container, Group, Paper, Progress, Stack, Text, TextInput, Title } from '@mantine/core';
+import { compareAnswers, serialize } from '@/utils/utils';
 import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
 
@@ -17,7 +18,7 @@ interface Question {
   entryIndex: number;
   type: QuestionType;
   question: string;
-  correctAnswer: string;
+  correctAnswers: string[];
 }
 
 export interface SetOnlyOpenQuestionsModeProps {
@@ -99,7 +100,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
           entryIndex,
           type,
           question: `What does "${entry.word}" mean?`,
-          correctAnswer: entry.translations?.[0] || '',
+          correctAnswers: entry.translations ?? [],
         };
 
       case 'native-open':
@@ -107,8 +108,8 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
           entry,
           entryIndex,
           type,
-          question: `What is the English word for "${entry.translations?.[0] || ''}"?`,
-          correctAnswer: entry.word || '',
+          question: `What is the English word for "${serialize(entry.translations)}"?`,
+          correctAnswers: entry.word ? [entry.word] : [],
         };
 
       default:
@@ -121,14 +122,15 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
       return;
     }
 
-    const correct = userAnswer.trim().toLowerCase() === currentQuestion.correctAnswer.toLowerCase();
-    setIsCorrect(correct);
+    const isCorrect = compareAnswers(userAnswer, currentQuestion.correctAnswers);
+
+    setIsCorrect(isCorrect);
     setShowFeedback(true);
 
     const updatedEntries = [...entries];
     const entry = updatedEntries[currentQuestion.entryIndex];
 
-    if (correct) {
+    if (isCorrect) {
       switch (currentQuestion.type) {
         case 'english-open':
           entry.englishOpenCounter += 1;
@@ -246,7 +248,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
                   title={isCorrect ? 'Correct!' : 'Incorrect'}>
                   {!isCorrect && (
                     <Text>
-                      The correct answer is: <strong>{currentQuestion.correctAnswer}</strong>
+                      The correct answer is: <strong>{serialize(currentQuestion.correctAnswers)}</strong>
                     </Text>
                   )}
                 </Alert>
@@ -259,7 +261,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
                     ({currentQuestion.entry.wordType})
                   </Text>
                   <Text mt="sm" fz={{ base: 'sm', md: 'md' }}>
-                    <strong>Translations:</strong> {(currentQuestion.entry.translations || []).join(', ')}
+                    <strong>Translations:</strong> {serialize(currentQuestion.entry.translations)}
                   </Text>
                 </div>
 

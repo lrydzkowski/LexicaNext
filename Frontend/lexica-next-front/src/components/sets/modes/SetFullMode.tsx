@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { Alert, Button, Container, Group, Paper, Progress, Radio, Stack, Text, TextInput, Title } from '@mantine/core';
+import { compareAnswers, serialize } from '@/utils/utils';
 import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
 
@@ -20,7 +21,7 @@ interface Question {
   type: QuestionType;
   question: string;
   options?: string[];
-  correctAnswer: string;
+  correctAnswers: string[];
 }
 
 export interface SetFullModeProps {
@@ -135,14 +136,13 @@ export function SetFullMode({ set }: SetFullModeProps) {
   ): Question => {
     switch (type) {
       case 'english-close': {
-        const correctTranslation = entry.translations?.[0] || '';
+        const correctTranslation = entry.translations ?? [];
         const wrongOptions = allEntries
           .filter((e) => e.word !== entry.word)
-          .flatMap((e) => e.translations || [])
-          .filter((t) => t && t !== correctTranslation)
+          .flatMap((e) => serialize(e.translations))
           .slice(0, 3);
 
-        const options = [correctTranslation, ...wrongOptions].sort(() => Math.random() - 0.5);
+        const options = [serialize(correctTranslation), ...wrongOptions].sort(() => Math.random() - 0.5);
 
         return {
           entry,
@@ -150,7 +150,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
           type,
           question: `What does "${entry.word}" mean?`,
           options,
-          correctAnswer: correctTranslation,
+          correctAnswers: correctTranslation,
         };
       }
 
@@ -168,9 +168,9 @@ export function SetFullMode({ set }: SetFullModeProps) {
           entry,
           entryIndex,
           type,
-          question: `What is the English word for "${entry.translations?.[0] || ''}"?`,
+          question: `What is the English word for "${serialize(entry.translations)}"?`,
           options: wordOptions,
-          correctAnswer: correctWord || '',
+          correctAnswers: correctWord ? [correctWord] : [],
         };
       }
 
@@ -180,7 +180,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
           entryIndex,
           type,
           question: `What does "${entry.word}" mean? (Type your answer)`,
-          correctAnswer: entry.translations?.[0] || '',
+          correctAnswers: entry.translations ?? [],
         };
 
       case 'native-open':
@@ -188,8 +188,8 @@ export function SetFullMode({ set }: SetFullModeProps) {
           entry,
           entryIndex,
           type,
-          question: `What is the English word for "${entry.translations?.[0] || ''}"? (Type your answer)`,
-          correctAnswer: entry.word || '',
+          question: `What is the English word for "${serialize(entry.translations)}"? (Type your answer)`,
+          correctAnswers: entry.word ? [entry.word] : [],
         };
 
       default:
@@ -202,14 +202,15 @@ export function SetFullMode({ set }: SetFullModeProps) {
       return;
     }
 
-    const correct = userAnswer.trim().toLowerCase() === currentQuestion.correctAnswer.toLowerCase();
-    setIsCorrect(correct);
+    const isCorrect = compareAnswers(userAnswer, currentQuestion.correctAnswers);
+
+    setIsCorrect(isCorrect);
     setShowFeedback(true);
 
     const updatedEntries = [...entries];
     const entry = updatedEntries[currentQuestion.entryIndex];
 
-    if (correct) {
+    if (isCorrect) {
       switch (currentQuestion.type) {
         case 'english-close':
           entry.englishCloseCounter += 1;
@@ -382,7 +383,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
                   title={isCorrect ? 'Correct!' : 'Incorrect'}>
                   {!isCorrect && (
                     <Text>
-                      The correct answer is: <strong>{currentQuestion.correctAnswer}</strong>
+                      The correct answer is: <strong>{serialize(currentQuestion.correctAnswers)}</strong>
                     </Text>
                   )}
                 </Alert>
@@ -395,7 +396,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
                     ({currentQuestion.entry.wordType})
                   </Text>
                   <Text mt="sm" fz={{ base: 'sm', md: 'md' }}>
-                    <strong>Translations:</strong> {(currentQuestion.entry.translations || []).join(', ')}
+                    <strong>Translations:</strong> {serialize(currentQuestion.entry.translations)}
                   </Text>
                 </div>
 

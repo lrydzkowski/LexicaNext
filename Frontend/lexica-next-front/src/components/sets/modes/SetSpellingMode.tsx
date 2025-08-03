@@ -14,6 +14,7 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
+import { serialize } from '@/utils/utils';
 import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
 
@@ -235,7 +236,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
                     ({currentEntry.wordType})
                   </Text>
                   <Text mt="sm" fz={{ base: 'sm', md: 'md' }}>
-                    <strong>Translations:</strong> {(currentEntry.translations || []).join(', ')}
+                    <strong>Translations:</strong> {serialize(currentEntry.translations)}
                   </Text>
                 </div>
 
