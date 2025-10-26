@@ -93,7 +93,7 @@ jobs:
       - name: Execute SQL migration
         uses: fjogeleit/http-request-action@v1
         with:
-          url: 'https://v2.r-systems-cloud-alt.com/api/hooks/lexica-next-sql-migration'
+          url: 'https://v2.r-systems-cloud.com/api/hooks/lexica-next-sql-migration'
           method: 'POST'
           customHeaders: '{"x-api-key": "${{ secrets.DEPLOY_APP_KEY }}"}'
           data: '{"image_tag": "latest"}'
@@ -102,7 +102,7 @@ jobs:
       - name: Deploy APP
         uses: fjogeleit/http-request-action@v1
         with:
-          url: 'https://v2.r-systems-cloud-alt.com/api/hooks/lexica-next'
+          url: 'https://v2.r-systems-cloud.com/api/hooks/lexica-next'
           method: 'POST'
           customHeaders: '{"x-api-key": "${{ secrets.DEPLOY_APP_KEY }}"}'
           data: '{"image_tag": "latest"}'
