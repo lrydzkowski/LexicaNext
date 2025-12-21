@@ -234,7 +234,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
                   size="lg"
                   onKeyDown={handleKeyDown}
                   autoFocus
-                  spellCheck="true"
+                  spellCheck={true}
                   lang={currentQuestion.type === 'native-open' ? 'en' : 'pl'}
                 />
 

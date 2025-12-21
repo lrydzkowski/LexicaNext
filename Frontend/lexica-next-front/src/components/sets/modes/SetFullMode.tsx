@@ -368,7 +368,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
                     onChange={(e) => setUserAnswer(e.target.value)}
                     size="lg"
                     autoFocus
-                    spellCheck="true"
+                    spellCheck={true}
                     lang={currentQuestion.type === 'native-open' ? 'en' : 'pl'}
                   />
                 )}
