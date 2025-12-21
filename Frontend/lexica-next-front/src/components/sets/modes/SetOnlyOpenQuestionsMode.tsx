@@ -234,6 +234,8 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
                   size="lg"
                   onKeyDown={handleKeyDown}
                   autoFocus
+                  spellCheck={true}
+                  lang={currentQuestion.type === 'native-open' ? 'en' : 'pl'}
                 />
 
                 <Button size="lg" onClick={checkAnswer} disabled={!userAnswer.trim()}>
