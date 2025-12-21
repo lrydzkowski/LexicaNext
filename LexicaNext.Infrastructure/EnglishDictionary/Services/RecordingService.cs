@@ -76,9 +76,19 @@ internal class RecordingService : IScopedService, IRecordingApi
                 continue;
             }
 
-            link = wordNode.ParentNode.ParentNode.SelectSingleNode(".//span[contains(@class, 'us')]")
-                ?.SelectSingleNode(".//source[@type='audio/mpeg']")
-                ?.GetAttributeValue("src", "");
+            HtmlNodeCollection usNodes = wordNode.ParentNode.ParentNode.SelectNodes(".//span[contains(@class, 'us')]");
+            foreach (HtmlNode usNode in usNodes)
+            {
+                string? usNodeLink = usNode?.SelectSingleNode(".//source[@type='audio/mpeg']")
+                    ?.GetAttributeValue("src", "");
+                if (!string.IsNullOrWhiteSpace(usNodeLink))
+                {
+                    link = usNodeLink;
+
+                    break;
+                }
+            }
+
             if (link != null)
             {
                 break;
