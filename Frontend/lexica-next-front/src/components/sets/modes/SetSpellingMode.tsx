@@ -210,6 +210,8 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
                   size="lg"
                   onKeyDown={handleKeyDown}
                   autoFocus
+                  spellCheck="true"
+                  lang="en"
                 />
                 <Button size="lg" onClick={checkAnswer} disabled={!userInput.trim()}>
                   Check Answer

@@ -333,6 +333,8 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                     style={{ flex: 1, minWidth: '200px' }}
                     size="md"
                     {...form.getInputProps(`entries.${entryIndex}.word`)}
+                    lang="en"
+                    spellCheck={true}
                   />
                   <Select
                     label="Word Type"
@@ -389,6 +391,8 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                         style={{ flex: 1 }}
                         size="md"
                         {...form.getInputProps(`entries.${entryIndex}.translations.${translationIndex}.name`)}
+                        lang="pl"
+                        spellCheck={true}
                       />
                       {(entry.translations || []).length > 1 && (
                         <ActionIcon
