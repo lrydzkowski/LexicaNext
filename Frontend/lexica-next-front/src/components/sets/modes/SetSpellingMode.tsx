@@ -180,9 +180,9 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
           {completedCount} / {entries.length} words completed
         </Text>
 
-        <Paper ta="center">
+        <Paper>
           <Stack gap="lg">
-            <div>
+            <Stack ta="center">
               <Text fz={{ base: 'md', md: 'lg' }} mb="md">
                 Listen and spell the word:
               </Text>
@@ -199,7 +199,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
               <Text size="sm" c="dimmed" mt="sm">
                 Click to hear the pronunciation
               </Text>
-            </div>
+            </Stack>
 
             {!showFeedback ? (
               <Stack gap="md">
