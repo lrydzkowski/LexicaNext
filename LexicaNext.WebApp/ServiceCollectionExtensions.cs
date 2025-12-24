@@ -1,4 +1,4 @@
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace LexicaNext.WebApp;
 
@@ -24,24 +24,34 @@ internal static class ServiceCollectionExtensions
                     {
                         document.Servers = [];
 
-                        OpenApiSecurityScheme scheme = new()
+                        Dictionary<string, IOpenApiSecurityScheme> securitySchemes = new()
                         {
-                            BearerFormat = "JSON Web Token",
-                            Description = "Bearer authentication using a JWT.",
-                            Scheme = "bearer",
-                            Type = SecuritySchemeType.Http,
-                            Reference = new OpenApiReference
+                            ["Bearer"] = new OpenApiSecurityScheme
                             {
-                                Id = "Bearer",
-                                Type = ReferenceType.SecurityScheme
+                                Type = SecuritySchemeType.Http,
+                                Scheme = "bearer",
+                                In = ParameterLocation.Header,
+                                BearerFormat = "Json Web Token"
                             }
                         };
-
                         document.Components ??= new OpenApiComponents();
-                        document.Components.SecuritySchemes ??= new Dictionary<string, OpenApiSecurityScheme>();
-                        document.Components.SecuritySchemes[scheme.Reference.Id] = scheme;
-                        document.SecurityRequirements ??= [];
-                        document.SecurityRequirements.Add(new OpenApiSecurityRequirement { [scheme] = [] });
+                        document.Components.SecuritySchemes = securitySchemes;
+
+                        IEnumerable<KeyValuePair<HttpMethod, OpenApiOperation>> operations = document.Paths.Values
+                            .Where(path => path.Operations is not null)
+                            .Select(path => path.Operations)
+                            .Cast<Dictionary<HttpMethod, OpenApiOperation>>()
+                            .SelectMany(path => path);
+                        foreach (KeyValuePair<HttpMethod, OpenApiOperation> operation in operations)
+                        {
+                            operation.Value.Security ??= [];
+                            operation.Value.Security.Add(
+                                new OpenApiSecurityRequirement
+                                {
+                                    [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+                                }
+                            );
+                        }
 
                         return Task.CompletedTask;
                     }

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -9,12 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.6">
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <Target Name="OpenAPI" AfterTargets="Build" Condition="$(Configuration)=='Debug'">
-    <Exec Command="npx openapi-typescript@7.8.0 ./obj/LexicaNext.WebApp.json -o ../Frontend/lexica-next-front/api-types/api-types.d.ts" WorkingDirectory="$(ProjectDir)" />
+    <Exec Command="npx openapi-typescript@7.10.1 ./obj/LexicaNext.WebApp.json -o ../Frontend/lexica-next-front/api-types/api-types.d.ts" WorkingDirectory="$(ProjectDir)" />
   </Target>
 
 </Project>

@@ -99,7 +99,7 @@ export interface components {
         CreateSetRequestPayload: {
             setName?: string;
             entries?: components["schemas"]["EntryDto"][];
-        } | null;
+        };
         CreateSetResponse: {
             /** Format: uuid */
             setId?: string;
@@ -122,22 +122,22 @@ export interface components {
         };
         GetSetsResponse: {
             /** Format: int32 */
-            count?: number;
+            count?: number | string;
             data?: components["schemas"]["SetRecordDto"][];
         };
         ProblemDetails: {
-            type?: string | null;
-            title?: string | null;
+            type?: null | string;
+            title?: null | string;
             /** Format: int32 */
-            status?: number | null;
-            detail?: string | null;
-            instance?: string | null;
+            status?: null | number | string;
+            detail?: null | string;
+            instance?: null | string;
         };
         RegisterAnswerRequestPayload: {
-            question?: string | null;
-            givenAnswer?: string | null;
-            expectedAnswer?: string | null;
-        } | null;
+            question?: null | string;
+            givenAnswer?: null | string;
+            expectedAnswer?: null | string;
+        };
         SetRecordDto: {
             /** Format: uuid */
             setId?: string;
@@ -148,7 +148,7 @@ export interface components {
         UpdateSetRequestPayload: {
             setName?: string;
             entries?: components["schemas"]["EntryDto"][];
-        } | null;
+        };
     };
     responses: never;
     parameters: never;
@@ -239,7 +239,7 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["UpdateSetRequestPayload"];
+                "application/json": null | components["schemas"]["UpdateSetRequestPayload"];
             };
         };
         responses: {
@@ -326,8 +326,8 @@ export interface operations {
     GetSets: {
         parameters: {
             query?: {
-                page?: number;
-                pageSize?: number;
+                page?: number | string;
+                pageSize?: number | string;
                 sortingFieldName?: string;
                 sortingOrder?: string;
                 searchQuery?: string;
@@ -381,7 +381,7 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["CreateSetRequestPayload"];
+                "application/json": null | components["schemas"]["CreateSetRequestPayload"];
             };
         };
         responses: {
@@ -491,7 +491,7 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["RegisterAnswerRequestPayload"];
+                "application/json": null | components["schemas"]["RegisterAnswerRequestPayload"];
             };
         };
         responses: {

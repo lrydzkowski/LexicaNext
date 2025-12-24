@@ -2,16 +2,16 @@
 
 A modern English vocabulary learning application built with React and .NET, featuring interactive study modes and pronunciation support.
 
-[![.NET](https://img.shields.io/badge/.NET-9.0-blue.svg)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-10.0-blue.svg)](https://dotnet.microsoft.com/)
 [![React](https://img.shields.io/badge/React-19-blue.svg)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
 
 ## Features
 
 - Interactive Study Modes
-  - Spelling Mode - Practice spelling vocabulary words
-  - Full Mode - Complete vocabulary practice with all word details
-  - Open Questions Mode - Answer open-ended questions about vocabulary
+    - Spelling Mode - Practice spelling vocabulary words
+    - Full Mode - Complete vocabulary practice with all word details
+    - Open Questions Mode - Answer open-ended questions about vocabulary
 - Audio Pronunciation - Integration with English Dictionary API
 - User Authentication - Secure login with Auth0
 - Responsive Design - Modern UI with Mantine components
@@ -30,7 +30,7 @@ A modern English vocabulary learning application built with React and .NET, feat
 
 ### Backend
 
-- .NET 9.0 with C# 13
+- .NET 10.0
 - PostgreSQL database
 - Entity Framework Core for data access
 - Clean Architecture with CQRS pattern
@@ -42,7 +42,7 @@ A modern English vocabulary learning application built with React and .NET, feat
 ### Prerequisites
 
 - [Node.js 22+ and npm](https://nodejs.org/)
-- [.NET 9.0 SDK](https://dotnet.microsoft.com/download)
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download)
 - [PostgreSQL 13+](https://www.postgresql.org/)
 
 ### Development Setup
@@ -55,7 +55,7 @@ A modern English vocabulary learning application built with React and .NET, feat
     - `LexicaNext.WebApp`
     - `LexicaNext.Infrastructure`
 
-    It should look like the following:
+   It should look like the following:
 
     ```json
     {
@@ -86,8 +86,8 @@ A modern English vocabulary learning application built with React and .NET, feat
 
 2. **Environment Configuration**
 
-    Create environment files in `Frontend/lexica-next-front/env-config/`:
-    
+   Create environment files in `Frontend/lexica-next-front/env-config/`:
+
     - `.env.local` for development
     - Configure Auth0 credentials and API endpoints
 
