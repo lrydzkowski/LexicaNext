@@ -256,6 +256,16 @@ export function SetFullMode({ set }: SetFullModeProps) {
     return totalRequired > 0 ? (currentProgress / totalRequired) * 100 : 0;
   };
 
+  const getCompletedCount = (currentEntries: FullModeEntry[]) => {
+    return currentEntries.filter(
+      (entry) =>
+        entry.englishCloseCounter >= 1 &&
+        entry.nativeCloseCounter >= 1 &&
+        entry.englishOpenCounter >= 2 &&
+        entry.nativeOpenCounter >= 2,
+    ).length;
+  };
+
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (showFeedback) {
       return;
@@ -330,6 +340,9 @@ export function SetFullMode({ set }: SetFullModeProps) {
     <>
       <Stack gap="lg">
         <Progress value={getProgress()} size="lg" radius="md" />
+        <Text size="sm" c="dimmed" ta="center">
+          {getCompletedCount(entries)} / {entries.length} words completed
+        </Text>
 
         <Paper onKeyDown={handleKeyDown}>
           <Stack gap="lg">

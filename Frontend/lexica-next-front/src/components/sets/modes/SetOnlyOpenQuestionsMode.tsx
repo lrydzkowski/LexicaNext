@@ -162,6 +162,10 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
     return totalRequired > 0 ? (currentProgress / totalRequired) * 100 : 0;
   };
 
+  const getCompletedCount = (currentEntries: OpenQuestionsEntry[]) => {
+    return currentEntries.filter((entry) => entry.englishOpenCounter >= 2 && entry.nativeOpenCounter >= 2).length;
+  };
+
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && !showFeedback) {
       event.preventDefault();
@@ -213,6 +217,9 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
     <>
       <Stack gap="lg">
         <Progress value={getProgress()} size="lg" radius="md" />
+        <Text size="sm" c="dimmed" ta="center">
+          {getCompletedCount(entries)} / {entries.length} words completed
+        </Text>
 
         <Paper>
           <Stack gap="lg">
