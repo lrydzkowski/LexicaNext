@@ -3,7 +3,7 @@ USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 
-FROM node:22 AS node-build
+FROM node:24 AS node-build
 WORKDIR /src
 COPY ["Frontend/lexica-next-front/package.json", "Frontend/lexica-next-front/package-lock.json*", "./"]
 RUN npm ci
