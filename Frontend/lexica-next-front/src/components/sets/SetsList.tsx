@@ -128,7 +128,7 @@ export function SetsList() {
     });
   };
 
-  const totalPages = Math.ceil(totalCount / pageSize);
+  const totalPages = Math.ceil((totalCount as number) / pageSize);
 
   const SetActionMenu = ({ set }: { set: SetRecordDto }) => (
     <Menu shadow="md" width={220} position="bottom-end">

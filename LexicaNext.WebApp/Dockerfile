@@ -1,9 +1,9 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 
-FROM node:22 AS node-build
+FROM node:24 AS node-build
 WORKDIR /src
 COPY ["Frontend/lexica-next-front/package.json", "Frontend/lexica-next-front/package-lock.json*", "./"]
 RUN npm ci
@@ -11,7 +11,7 @@ ENV VITE_OUTPUT_DIR=dist
 COPY ["Frontend/lexica-next-front", "./"]
 RUN npm run build
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["LexicaNext.Infrastructure/LexicaNext.Infrastructure.csproj", "LexicaNext.Infrastructure/"]
