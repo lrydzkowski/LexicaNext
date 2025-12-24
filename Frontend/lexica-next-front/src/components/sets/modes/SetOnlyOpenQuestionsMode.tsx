@@ -163,7 +163,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' && userAnswer.trim() && !showFeedback) {
+    if (event.key === 'Enter' && !showFeedback) {
       event.preventDefault();
       checkAnswer();
     }
@@ -238,7 +238,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
                   lang={currentQuestion.type === 'native-open' ? 'en' : 'pl'}
                 />
 
-                <Button size="lg" onClick={checkAnswer} disabled={!userAnswer.trim()}>
+                <Button size="lg" onClick={checkAnswer}>
                   Check Answer
                 </Button>
               </Stack>
@@ -249,9 +249,14 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
                   icon={isCorrect ? <IconCheck size={16} /> : <IconX size={16} />}
                   title={isCorrect ? 'Correct!' : 'Incorrect'}>
                   {!isCorrect && (
-                    <Text>
-                      The correct answer is: <strong>{serialize(currentQuestion.correctAnswers)}</strong>
-                    </Text>
+                    <>
+                      <Text>
+                        Your answer is: <strong>{userAnswer}</strong>
+                      </Text>
+                      <Text>
+                        The correct answer is: <strong>{serialize(currentQuestion.correctAnswers)}</strong>
+                      </Text>
+                    </>
                   )}
                 </Alert>
 

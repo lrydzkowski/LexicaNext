@@ -126,7 +126,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' && userInput.trim() && !showFeedback) {
+    if (event.key === 'Enter' && !showFeedback) {
       event.preventDefault();
       checkAnswer();
     }
@@ -213,7 +213,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
                   spellCheck
                   lang="en"
                 />
-                <Button size="lg" onClick={checkAnswer} disabled={!userInput.trim()}>
+                <Button size="lg" onClick={checkAnswer}>
                   Check Answer
                 </Button>
               </Stack>
@@ -224,9 +224,14 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
                   icon={isCorrect ? <IconCheck size={16} /> : <IconX size={16} />}
                   title={isCorrect ? 'Correct!' : 'Incorrect'}>
                   {!isCorrect && (
-                    <Text>
-                      The correct spelling is: <strong>{currentEntry.word}</strong>
-                    </Text>
+                    <>
+                      <Text>
+                        Your answer is: <strong>{userInput}</strong>
+                      </Text>
+                      <Text>
+                        The correct spelling is: <strong>{currentEntry.word}</strong>
+                      </Text>
+                    </>
                   )}
                 </Alert>
 
