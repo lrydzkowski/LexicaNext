@@ -126,7 +126,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' && userInput.trim() && !showFeedback) {
+    if (event.key === 'Enter' && !showFeedback) {
       event.preventDefault();
       checkAnswer();
     }
@@ -180,9 +180,9 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
           {completedCount} / {entries.length} words completed
         </Text>
 
-        <Paper ta="center">
+        <Paper>
           <Stack gap="lg">
-            <div>
+            <Stack ta="center">
               <Text fz={{ base: 'md', md: 'lg' }} mb="md">
                 Listen and spell the word:
               </Text>
@@ -199,7 +199,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
               <Text size="sm" c="dimmed" mt="sm">
                 Click to hear the pronunciation
               </Text>
-            </div>
+            </Stack>
 
             {!showFeedback ? (
               <Stack gap="md">
@@ -210,10 +210,10 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
                   size="lg"
                   onKeyDown={handleKeyDown}
                   autoFocus
-                  spellCheck={true}
+                  spellCheck
                   lang="en"
                 />
-                <Button size="lg" onClick={checkAnswer} disabled={!userInput.trim()}>
+                <Button size="lg" onClick={checkAnswer}>
                   Check Answer
                 </Button>
               </Stack>
@@ -224,9 +224,14 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
                   icon={isCorrect ? <IconCheck size={16} /> : <IconX size={16} />}
                   title={isCorrect ? 'Correct!' : 'Incorrect'}>
                   {!isCorrect && (
-                    <Text>
-                      The correct spelling is: <strong>{currentEntry.word}</strong>
-                    </Text>
+                    <>
+                      <Text>
+                        Your answer is: <strong>{userInput}</strong>
+                      </Text>
+                      <Text>
+                        The correct spelling is: <strong>{currentEntry.word}</strong>
+                      </Text>
+                    </>
                   )}
                 </Alert>
 

@@ -162,8 +162,12 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
     return totalRequired > 0 ? (currentProgress / totalRequired) * 100 : 0;
   };
 
+  const getCompletedCount = (currentEntries: OpenQuestionsEntry[]) => {
+    return currentEntries.filter((entry) => entry.englishOpenCounter >= 2 && entry.nativeOpenCounter >= 2).length;
+  };
+
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' && userAnswer.trim() && !showFeedback) {
+    if (event.key === 'Enter' && !showFeedback) {
       event.preventDefault();
       checkAnswer();
     }
@@ -213,6 +217,9 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
     <>
       <Stack gap="lg">
         <Progress value={getProgress()} size="lg" radius="md" />
+        <Text size="sm" c="dimmed" ta="center">
+          {getCompletedCount(entries)} / {entries.length} words completed
+        </Text>
 
         <Paper>
           <Stack gap="lg">
@@ -234,11 +241,11 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
                   size="lg"
                   onKeyDown={handleKeyDown}
                   autoFocus
-                  spellCheck={true}
+                  spellCheck
                   lang={currentQuestion.type === 'native-open' ? 'en' : 'pl'}
                 />
 
-                <Button size="lg" onClick={checkAnswer} disabled={!userAnswer.trim()}>
+                <Button size="lg" onClick={checkAnswer}>
                   Check Answer
                 </Button>
               </Stack>
@@ -249,9 +256,14 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
                   icon={isCorrect ? <IconCheck size={16} /> : <IconX size={16} />}
                   title={isCorrect ? 'Correct!' : 'Incorrect'}>
                   {!isCorrect && (
-                    <Text>
-                      The correct answer is: <strong>{serialize(currentQuestion.correctAnswers)}</strong>
-                    </Text>
+                    <>
+                      <Text>
+                        Your answer is: <strong>{userAnswer}</strong>
+                      </Text>
+                      <Text>
+                        The correct answer is: <strong>{serialize(currentQuestion.correctAnswers)}</strong>
+                      </Text>
+                    </>
                   )}
                 </Alert>
 

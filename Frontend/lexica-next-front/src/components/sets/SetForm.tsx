@@ -334,7 +334,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                     size="md"
                     {...form.getInputProps(`entries.${entryIndex}.word`)}
                     lang="en"
-                    spellCheck={true}
+                    spellCheck
                   />
                   <Select
                     label="Word Type"
@@ -392,7 +392,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                         size="md"
                         {...form.getInputProps(`entries.${entryIndex}.translations.${translationIndex}.name`)}
                         lang="pl"
-                        spellCheck={true}
+                        spellCheck
                       />
                       {(entry.translations || []).length > 1 && (
                         <ActionIcon
