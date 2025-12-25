@@ -1,0 +1,165 @@
+# OpenAPI Additions for AI-Generated Translations and Example Sentences
+# These paths and schemas will be added to the existing OpenAPI spec
+# via the new endpoints in LexicaNext.WebApp
+
+openapi: 3.0.3
+info:
+  title: LexicaNext AI Generation API Additions
+  version: 1.0.0
+
+paths:
+  /api/ai/translations:
+    post:
+      operationId: generateTranslations
+      summary: Generate Polish translations for an English word
+      tags:
+        - AI Generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateTranslationsRequest'
+      responses:
+        '200':
+          description: Translations generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateTranslationsResponse'
+        '400':
+          description: Invalid request (missing word or word type)
+        '503':
+          description: AI service unavailable
+
+  /api/ai/sentences:
+    post:
+      operationId: generateExampleSentences
+      summary: Generate example sentences for an English word
+      tags:
+        - AI Generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateExampleSentencesRequest'
+      responses:
+        '200':
+          description: Example sentences generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateExampleSentencesResponse'
+        '400':
+          description: Invalid request (missing word or word type)
+        '503':
+          description: AI service unavailable
+
+components:
+  schemas:
+    GenerateTranslationsRequest:
+      type: object
+      required:
+        - word
+        - wordType
+      properties:
+        word:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: The English word to translate
+          example: "run"
+        wordType:
+          type: string
+          enum: [noun, verb, adjective, adverb]
+          description: The grammatical type of the word
+          example: "verb"
+        count:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 3
+          description: Number of translations to generate
+          example: 3
+
+    GenerateTranslationsResponse:
+      type: object
+      required:
+        - translations
+      properties:
+        translations:
+          type: array
+          items:
+            type: string
+          description: Polish translations ordered from most to least common
+          example: ["biegać", "działać", "prowadzić"]
+
+    GenerateExampleSentencesRequest:
+      type: object
+      required:
+        - word
+        - wordType
+      properties:
+        word:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: The English word to create sentences for
+          example: "perseverance"
+        wordType:
+          type: string
+          enum: [noun, verb, adjective, adverb]
+          description: The grammatical type of the word
+          example: "noun"
+        count:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 3
+          description: Number of sentences to generate
+          example: 3
+
+    GenerateExampleSentencesResponse:
+      type: object
+      required:
+        - sentences
+      properties:
+        sentences:
+          type: array
+          items:
+            type: string
+          description: Example sentences at B1-B2 complexity level
+          example:
+            - "Perseverance is the key to achieving long-term goals."
+            - "Her perseverance through difficult times inspired everyone."
+            - "Success requires both talent and perseverance."
+
+    # Updated schemas for existing endpoints
+    EntryDtoWithSentences:
+      type: object
+      required:
+        - word
+        - wordType
+        - translations
+      properties:
+        word:
+          type: string
+          example: "run"
+        wordType:
+          type: string
+          enum: [noun, verb, adjective, adverb]
+          example: "verb"
+        translations:
+          type: array
+          items:
+            type: string
+          example: ["biegać", "działać"]
+        exampleSentences:
+          type: array
+          items:
+            type: string
+          description: Example sentences for this word (optional, may be empty)
+          example:
+            - "I run every morning before work."
+            - "The program will run automatically."
