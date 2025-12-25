@@ -35,16 +35,16 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T003 Create IAiGenerationService interface in LexicaNext.Infrastructure/Foundry/IAiGenerationService.cs
-- [ ] T004 Implement AzureFoundryAiService in LexicaNext.Infrastructure/Foundry/AzureFoundryAiService.cs
-- [ ] T005 Register AzureFoundryAiService in LexicaNext.Infrastructure/Foundry/ServiceCollectionExtensions.cs
-- [ ] T006 [P] Create ExampleSentence domain model in LexicaNext.Core/Common/Models/ExampleSentence.cs
-- [ ] T007 [P] Create ExampleSentenceEntity in LexicaNext.Infrastructure/Db/Common/Entities/ExampleSentenceEntity.cs
-- [ ] T008 Create ExampleSentenceEntityTypeConfiguration in LexicaNext.Infrastructure/Db/Common/Configurations/ExampleSentenceEntityTypeConfiguration.cs
-- [ ] T009 Add ExampleSentences navigation property to WordEntity in LexicaNext.Infrastructure/Db/Common/Entities/WordEntity.cs
-- [ ] T010 Add ExampleSentences DbSet to AppDbContext in LexicaNext.Infrastructure/Db/AppDbContext.cs
-- [ ] T011 Create EF Core migration AddExampleSentences in LexicaNext.Infrastructure/Db/Migrations/
-- [ ] T012 Update Entry domain model to include ExampleSentences in LexicaNext.Core/Common/Models/Entry.cs
+- [x] T003 Create IAiGenerationService interface in LexicaNext.Infrastructure/Foundry/IAiGenerationService.cs
+- [x] T004 Implement AzureFoundryAiService in LexicaNext.Infrastructure/Foundry/AzureFoundryAiService.cs
+- [x] T005 Register AzureFoundryAiService in LexicaNext.Infrastructure/Foundry/ServiceCollectionExtensions.cs
+- [x] T006 [P] Create ExampleSentence domain model in LexicaNext.Core/Common/Models/ExampleSentence.cs
+- [x] T007 [P] Create ExampleSentenceEntity in LexicaNext.Infrastructure/Db/Common/Entities/ExampleSentenceEntity.cs
+- [x] T008 Create ExampleSentenceEntityTypeConfiguration in LexicaNext.Infrastructure/Db/Common/Configurations/ExampleSentenceEntityTypeConfiguration.cs
+- [x] T009 Add ExampleSentences navigation property to WordEntity in LexicaNext.Infrastructure/Db/Common/Entities/WordEntity.cs
+- [x] T010 Add ExampleSentences DbSet to AppDbContext in LexicaNext.Infrastructure/Db/AppDbContext.cs
+- [x] T011 Create EF Core migration AddExampleSentences in LexicaNext.Infrastructure/Db/Migrations/
+- [x] T012 Update Entry domain model to include ExampleSentences in LexicaNext.Core/Common/Models/Entry.cs
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
