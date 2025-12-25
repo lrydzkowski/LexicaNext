@@ -7,7 +7,7 @@ export function AboutPage() {
       <Container p={{ base: 0 }}>
         <Stack gap="xl">
           <div>
-            <Title order={2} mb="sm" mt="lg">
+            <Title order={2} mb="sm" mt="sm">
               About LexicaNext
             </Title>
             <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
