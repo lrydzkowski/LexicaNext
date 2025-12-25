@@ -58,19 +58,19 @@
 
 ### Backend Implementation for User Story 1
 
-- [ ] T013 [P] [US1] Create GenerateTranslationsRequest record in LexicaNext.Core/Commands/GenerateTranslations/GenerateTranslationsRequest.cs
-- [ ] T014 [P] [US1] Create GenerateTranslationsResponse record in LexicaNext.Core/Commands/GenerateTranslations/GenerateTranslationsResponse.cs
-- [ ] T015 [US1] Add GenerateTranslationsAsync method to IAiGenerationService in LexicaNext.Infrastructure/Foundry/IAiGenerationService.cs
-- [ ] T016 [US1] Implement GenerateTranslationsAsync in AzureFoundryAiService in LexicaNext.Infrastructure/Foundry/AzureFoundryAiService.cs
-- [ ] T017 [US1] Create GenerateTranslationsEndpoint in LexicaNext.Core/Commands/GenerateTranslations/GenerateTranslationsEndpoint.cs
-- [ ] T018 [US1] Register GenerateTranslationsEndpoint in LexicaNext.WebApp/Program.cs
+- [x] T013 [P] [US1] Create GenerateTranslationsRequest record in LexicaNext.Core/Commands/GenerateTranslations/GenerateTranslationsRequest.cs
+- [x] T014 [P] [US1] Create GenerateTranslationsResponse record in LexicaNext.Core/Commands/GenerateTranslations/GenerateTranslationsResponse.cs
+- [x] T015 [US1] Add GenerateTranslationsAsync method to IAiGenerationService in LexicaNext.Core/Commands/GenerateTranslations/Interfaces/IAiGenerationService.cs
+- [x] T016 [US1] Implement GenerateTranslationsAsync in AzureFoundryAiService in LexicaNext.Infrastructure/Foundry/AzureFoundryAiService.cs
+- [x] T017 [US1] Create GenerateTranslationsEndpoint in LexicaNext.Core/Commands/GenerateTranslations/GenerateTranslationsEndpoint.cs
+- [x] T018 [US1] Register GenerateTranslationsEndpoint in LexicaNext.WebApp/Program.cs
 
 ### Frontend Implementation for User Story 1
 
-- [ ] T019 [US1] Add useGenerateTranslations mutation hook in Frontend/lexica-next-front/src/hooks/api.ts
-- [ ] T020 [US1] Create GenerateTranslationsButton component in Frontend/lexica-next-front/src/components/sets/GenerateTranslationsButton.tsx
-- [ ] T021 [US1] Integrate GenerateTranslationsButton into word entry form in Frontend/lexica-next-front/src/components/sets/SetForm.tsx
-- [ ] T022 [US1] Regenerate API types from OpenAPI spec in Frontend/lexica-next-front/api-types/api-types.d.ts
+- [x] T019 [US1] Add useGenerateTranslations mutation hook in Frontend/lexica-next-front/src/hooks/api.ts
+- [x] T020 [US1] Create GenerateTranslationsButton component in Frontend/lexica-next-front/src/components/sets/GenerateTranslationsButton.tsx
+- [x] T021 [US1] Integrate GenerateTranslationsButton into word entry form in Frontend/lexica-next-front/src/components/sets/SetForm.tsx
+- [x] T022 [US1] Regenerate API types from OpenAPI spec in Frontend/lexica-next-front/api-types/api-types.d.ts
 
 **Checkpoint**: User Story 1 complete - translations can be generated and applied to words
 

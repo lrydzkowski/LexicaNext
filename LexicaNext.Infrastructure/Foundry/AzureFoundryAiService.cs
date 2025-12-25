@@ -4,29 +4,13 @@ using System.ClientModel;
 using Azure.AI.Projects;
 using Azure.AI.Projects.OpenAI;
 using Azure.Identity;
+using LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Services;
 using Microsoft.Extensions.Options;
 using OpenAI.Responses;
 
 namespace LexicaNext.Infrastructure.Foundry;
-
-public interface IAiGenerationService
-{
-    Task<IReadOnlyList<string>> GenerateTranslationsAsync(
-        string word,
-        string wordType,
-        int count,
-        CancellationToken cancellationToken = default
-    );
-
-    Task<IReadOnlyList<string>> GenerateExampleSentencesAsync(
-        string word,
-        string wordType,
-        int count,
-        CancellationToken cancellationToken = default
-    );
-}
 
 internal class AzureFoundryAiService : IAiGenerationService, IScopedService
 {

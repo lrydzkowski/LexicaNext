@@ -1,4 +1,5 @@
 using LexicaNext.Core;
+using LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

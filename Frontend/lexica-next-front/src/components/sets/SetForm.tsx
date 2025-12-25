@@ -17,6 +17,7 @@ import {
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useCreateSet, useUpdateSet, type GetSetResponse } from '../../hooks/api';
+import { GenerateTranslationsButton } from './GenerateTranslationsButton';
 
 interface FormValues {
   setName: string;
@@ -207,6 +208,13 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
       const newTranslationIndex = form.values.entries[entryIndex].translations.length;
       setFocusTranslation({ entryIndex, translationIndex: newTranslationIndex });
     }, 0);
+  };
+
+  const handleTranslationsGenerated = (entryIndex: number, translations: string[]) => {
+    form.setFieldValue(
+      `entries.${entryIndex}.translations`,
+      translations.map((t) => ({ name: t })),
+    );
   };
 
   const removeTranslation = (entryIndex: number, translationIndex: number) => {
@@ -406,13 +414,20 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                       )}
                     </Group>
                   ))}
-                  <Button
-                    variant="light"
-                    size="xs"
-                    leftSection={<IconPlus size={14} />}
-                    onClick={() => addTranslation(entryIndex)}>
-                    Add Translation
-                  </Button>
+                  <Group gap="xs">
+                    <Button
+                      variant="light"
+                      size="xs"
+                      leftSection={<IconPlus size={14} />}
+                      onClick={() => addTranslation(entryIndex)}>
+                      Add Translation
+                    </Button>
+                    <GenerateTranslationsButton
+                      word={entry.word}
+                      wordType={entry.wordType}
+                      onTranslationsGenerated={(translations) => handleTranslationsGenerated(entryIndex, translations)}
+                    />
+                  </Group>
                 </div>
               </Stack>
             </Paper>
