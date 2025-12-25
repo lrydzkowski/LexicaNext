@@ -7,8 +7,8 @@ export function AboutPage() {
       <Container p={{ base: 0 }}>
         <Stack gap="xl">
           <div>
-            <Title order={2} mb="sm" mt="lg">
-              About LexicaNext
+            <Title order={2} mb="sm" mt="sm">
+              About LexicaNext (test)
             </Title>
             <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
               LexicaNext is a comprehensive English vocabulary learning platform designed to help you master new words
