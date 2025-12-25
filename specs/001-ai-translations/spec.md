@@ -11,7 +11,7 @@
 
 As a user creating or editing a vocabulary set, I want to generate Polish translations for an English word so that I don't have to manually look up translations.
 
-When editing a word entry, I click a "Generate Translations" button next to the word. The system asks me how many translations I want (defaulting to 3) and uses the word type (noun, verb, etc.) to generate accurate translations. The translations are returned ordered from most common to least common usage. I can then select which translations to add to my word entry.
+When editing a word entry, I click a "Generate Translations" button next to the word. The system asks me how many translations I want (defaulting to 3) and uses the word type (noun, verb, etc.) to generate accurate translations. The translations are returned ordered from most common to least common usage and automatically replace any existing translations for that word.
 
 **Why this priority**: This is the core value proposition - reducing manual translation lookup effort. Without this, the feature has no utility.
 
@@ -98,19 +98,27 @@ After answering a question in any study mode, the result screen shows the exampl
 - **FR-004**: System MUST return translations ordered from most common to least common usage
 - **FR-005**: System MUST provide a "Generate Example Sentences" button for each word entry in the set editor
 - **FR-006**: System MUST allow users to specify the number of example sentences to generate (default: 3)
-- **FR-007**: System MUST generate contextually appropriate English example sentences
+- **FR-007**: System MUST generate contextually appropriate English example sentences at intermediate complexity level (B1-B2)
 - **FR-008**: System MUST persist example sentences when the vocabulary set is saved
 - **FR-009**: System MUST display example sentences on the Content page for words that have them
 - **FR-010**: System MUST display example sentences in Spelling Mode results
 - **FR-011**: System MUST display example sentences in Full Mode results
 - **FR-012**: System MUST display example sentences in Open Questions Mode results
-- **FR-013**: System MUST handle AI service failures gracefully with user-friendly error messages
+- **FR-013**: System MUST handle AI service failures by displaying an error message with a "Try Again" button (no automatic retries)
 - **FR-014**: System MUST allow independent translation generation for each word (generating for one word does not affect others)
 
 ### Key Entities
 
 - **ExampleSentence**: An English sentence demonstrating usage of a word; belongs to a Word entry; contains the sentence text
 - **Translation**: A Polish translation of an English word; belongs to a Word entry; has a popularity/order ranking
+
+## Clarifications
+
+### Session 2025-12-25
+
+- Q: When user generates translations, what happens with them? → A: Auto-add - generated translations automatically replace existing translations
+- Q: What complexity level should generated example sentences have? → A: Intermediate (B1-B2 level) - standard sentences with common structures
+- Q: How should LLM service failure retry work? → A: Manual retry - show error immediately with a "Try Again" button
 
 ## Assumptions
 
