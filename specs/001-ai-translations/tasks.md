@@ -24,8 +24,8 @@
 
 **Purpose**: Project initialization and configuration
 
-- [ ] T001 Add ApiKey property to FoundryOptions in LexicaNext.Infrastructure/Foundry/FoundryOptions.cs
-- [ ] T002 [P] Add Azure.AI.Projects NuGet package to LexicaNext.Infrastructure.csproj
+- [x] T001 Add ApiKey property to FoundryOptions in LexicaNext.Infrastructure/Foundry/FoundryOptions.cs
+- [x] T002 [P] Add Azure.AI.Projects NuGet package to LexicaNext.Infrastructure.csproj
 
 ---
 
