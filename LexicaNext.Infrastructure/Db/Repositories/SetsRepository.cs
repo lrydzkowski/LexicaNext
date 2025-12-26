@@ -126,7 +126,10 @@ internal class SetsRepository
                             {
                                 Word = x.Word,
                                 WordType = MapWordType(x.WordType!.Name),
-                                Translations = x.Translations.Select(y => y.Translation).ToList()
+                                Translations = x.Translations.OrderBy(t => t.Order).Select(y => y.Translation).ToList(),
+                                ExampleSentences = x.ExampleSentences.OrderBy(s => s.Order)
+                                    .Select(s => new ExampleSentence { Sentence = s.Sentence, Order = s.Order })
+                                    .ToList()
                             }
                         )
                         .ToList()

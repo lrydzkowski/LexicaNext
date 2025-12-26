@@ -84,24 +84,24 @@
 
 ### Backend Implementation for User Story 2
 
-- [ ] T023 [P] [US2] Create GenerateExampleSentencesRequest record in LexicaNext.Core/Commands/GenerateExampleSentences/GenerateExampleSentencesRequest.cs
-- [ ] T024 [P] [US2] Create GenerateExampleSentencesResponse record in LexicaNext.Core/Commands/GenerateExampleSentences/GenerateExampleSentencesResponse.cs
-- [ ] T025 [US2] Add GenerateExampleSentencesAsync method to IAiGenerationService in LexicaNext.Infrastructure/Foundry/IAiGenerationService.cs
-- [ ] T026 [US2] Implement GenerateExampleSentencesAsync in AzureFoundryAiService in LexicaNext.Infrastructure/Foundry/AzureFoundryAiService.cs
-- [ ] T027 [US2] Create GenerateExampleSentencesEndpoint in LexicaNext.Core/Commands/GenerateExampleSentences/GenerateExampleSentencesEndpoint.cs
-- [ ] T028 [US2] Register GenerateExampleSentencesEndpoint in LexicaNext.WebApp/Program.cs
-- [ ] T029 [US2] Update CreateSetCommandMapper to handle ExampleSentences in LexicaNext.Core/Commands/CreateSet/Services/CreateSetCommandMapper.cs
-- [ ] T030 [US2] Update SetsRepository.CreateSetAsync to persist ExampleSentences in LexicaNext.Infrastructure/Db/Repositories/SetsRepository.cs
-- [ ] T031 [US2] Update SetsRepository.UpdateSetAsync to persist ExampleSentences in LexicaNext.Infrastructure/Db/Repositories/SetsRepository.cs
-- [ ] T032 [US2] Update EntryDto to include exampleSentences property in LexicaNext.Core/Commands/CreateSet/CreateSetEndpoint.cs
+- [x] T023 [P] [US2] Create GenerateExampleSentencesRequest record in LexicaNext.Core/Commands/GenerateExampleSentences/GenerateExampleSentencesRequest.cs
+- [x] T024 [P] [US2] Create GenerateExampleSentencesResponse record in LexicaNext.Core/Commands/GenerateExampleSentences/GenerateExampleSentencesResponse.cs
+- [x] T025 [US2] Add GenerateExampleSentencesAsync method to IAiGenerationService in LexicaNext.Core/Commands/GenerateTranslations/Interfaces/IAiGenerationService.cs
+- [x] T026 [US2] Implement GenerateExampleSentencesAsync in AzureFoundryAiService in LexicaNext.Infrastructure/Foundry/AzureFoundryAiService.cs
+- [x] T027 [US2] Create GenerateExampleSentencesEndpoint in LexicaNext.Core/Commands/GenerateExampleSentences/GenerateExampleSentencesEndpoint.cs
+- [x] T028 [US2] Register GenerateExampleSentencesEndpoint in LexicaNext.WebApp/Program.cs
+- [x] T029 [US2] Update CreateSetCommandMapper to handle ExampleSentences in LexicaNext.Core/Commands/CreateSet/Services/CreateSetCommandMapper.cs
+- [x] T030 [US2] Update SetsRepository.CreateSetAsync to persist ExampleSentences in LexicaNext.Infrastructure/Db/Repositories/SetsRepository.cs
+- [x] T031 [US2] Update SetsRepository.UpdateSetAsync to persist ExampleSentences in LexicaNext.Infrastructure/Db/Repositories/SetsRepository.cs
+- [x] T032 [US2] Update EntryDto to include exampleSentences property in LexicaNext.Core/Commands/CreateSet/CreateSetEndpoint.cs
 
 ### Frontend Implementation for User Story 2
 
-- [ ] T033 [US2] Add useGenerateExampleSentences mutation hook in Frontend/lexica-next-front/src/hooks/api.ts
-- [ ] T034 [US2] Create GenerateSentencesButton component in Frontend/lexica-next-front/src/components/sets/GenerateSentencesButton.tsx
-- [ ] T035 [US2] Integrate GenerateSentencesButton into word entry form in Frontend/lexica-next-front/src/components/sets/SetForm.tsx
-- [ ] T036 [US2] Update set form state to track example sentences per word in Frontend/lexica-next-front/src/components/sets/SetForm.tsx
-- [ ] T037 [US2] Regenerate API types from OpenAPI spec in Frontend/lexica-next-front/api-types/api-types.d.ts
+- [x] T033 [US2] Add useGenerateExampleSentences mutation hook in Frontend/lexica-next-front/src/hooks/api.ts
+- [x] T034 [US2] Create GenerateSentencesButton component in Frontend/lexica-next-front/src/components/sets/GenerateSentencesButton.tsx
+- [x] T035 [US2] Integrate GenerateSentencesButton into word entry form in Frontend/lexica-next-front/src/components/sets/SetForm.tsx
+- [x] T036 [US2] Update set form state to track example sentences per word in Frontend/lexica-next-front/src/components/sets/SetForm.tsx
+- [x] T037 [US2] Regenerate API types from OpenAPI spec in Frontend/lexica-next-front/api-types/api-types.d.ts
 
 **Checkpoint**: User Story 2 complete - example sentences can be generated and persisted
 
@@ -117,15 +117,15 @@
 
 ### Backend Implementation for User Story 3
 
-- [ ] T038 [US3] Update GetSetResponse to include exampleSentences in LexicaNext.Core/Queries/GetSet/GetSetEndpoint.cs
-- [ ] T039 [US3] Update SetMapper to map ExampleSentences in LexicaNext.Core/Queries/GetSet/Services/SetMapper.cs
-- [ ] T040 [US3] Update SetsRepository.GetSetAsync to include ExampleSentences in LexicaNext.Infrastructure/Db/Repositories/SetsRepository.cs
+- [x] T038 [US3] Update GetSetResponse to include exampleSentences in LexicaNext.Core/Queries/GetSet/GetSetEndpoint.cs
+- [x] T039 [US3] Update SetMapper to map ExampleSentences in LexicaNext.Core/Queries/GetSet/Services/SetMapper.cs
+- [x] T040 [US3] Update SetsRepository.GetSetAsync to include ExampleSentences in LexicaNext.Infrastructure/Db/Repositories/SetsRepository.cs
 
 ### Frontend Implementation for User Story 3
 
-- [ ] T041 [P] [US3] Create ExampleSentences display component in Frontend/lexica-next-front/src/components/sets/ExampleSentences.tsx
-- [ ] T042 [US3] Integrate ExampleSentences into SetContent in Frontend/lexica-next-front/src/components/sets/SetContent.tsx
-- [ ] T043 [US3] Update WordCard to display example sentences in Frontend/lexica-next-front/src/components/sets/WordCard.tsx
+- [x] T041 [P] [US3] Create ExampleSentences display component in Frontend/lexica-next-front/src/components/sets/ExampleSentences.tsx
+- [x] T042 [US3] Integrate ExampleSentences into SetContent in Frontend/lexica-next-front/src/components/sets/SetContent.tsx
+- [x] T043 [US3] Update WordCard to display example sentences in Frontend/lexica-next-front/src/components/sets/WordCard.tsx
 
 **Checkpoint**: User Story 3 complete - sentences visible on Content page
 
