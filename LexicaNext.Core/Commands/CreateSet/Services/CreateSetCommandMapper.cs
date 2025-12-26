@@ -44,7 +44,10 @@ internal class CreateSetCommandMapper
         {
             Word = entryDto.Word.Trim(),
             WordType = _wordTypeMapper.Map(entryDto.WordType),
-            Translations = entryDto.Translations.Select(translation => translation.Trim()).ToList()
+            Translations = entryDto.Translations.Select(translation => translation.Trim()).ToList(),
+            ExampleSentences = entryDto.ExampleSentences
+                .Select((sentence, index) => new ExampleSentence { Sentence = sentence.Trim(), Order = index })
+                .ToList()
         };
     }
 }

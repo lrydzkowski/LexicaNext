@@ -11,6 +11,8 @@ export type CreateSetRequestPayload = components['schemas']['CreateSetRequestPay
 export type UpdateSetRequestPayload = components['schemas']['UpdateSetRequestPayload'];
 export type GenerateTranslationsRequest = components['schemas']['GenerateTranslationsRequest'];
 export type GenerateTranslationsResponse = components['schemas']['GenerateTranslationsResponse'];
+export type GenerateExampleSentencesRequest = components['schemas']['GenerateExampleSentencesRequest'];
+export type GenerateExampleSentencesResponse = components['schemas']['GenerateExampleSentencesResponse'];
 
 export const useApiClient = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -172,6 +174,24 @@ export const useGenerateTranslations = () => {
   return useMutation({
     mutationFn: async (request: GenerateTranslationsRequest): Promise<GenerateTranslationsResponse> => {
       const { data, error } = await client.POST('/api/translations/generate', {
+        body: request,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${JSON.stringify(error)}`);
+      }
+
+      return data!;
+    },
+  });
+};
+
+export const useGenerateExampleSentences = () => {
+  const client = useApiClient();
+
+  return useMutation({
+    mutationFn: async (request: GenerateExampleSentencesRequest): Promise<GenerateExampleSentencesResponse> => {
+      const { data, error } = await client.POST('/api/sentences/generate', {
         body: request,
       });
 

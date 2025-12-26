@@ -79,6 +79,12 @@ internal class SetsRepository
                     string translation = entry.Translations[j];
                     await AddTranslationAsync(translation, j, wordEntity, cancellationToken);
                 }
+
+                for (int j = 0; j < entry.ExampleSentences.Count; j++)
+                {
+                    ExampleSentence sentence = entry.ExampleSentences[j];
+                    await AddExampleSentenceAsync(sentence.Sentence, j, wordEntity, cancellationToken);
+                }
             }
 
             await transaction.CommitAsync(cancellationToken);
@@ -200,6 +206,12 @@ internal class SetsRepository
                     string translation = entry.Translations[j];
                     await AddTranslationAsync(translation, j, wordEntity, cancellationToken);
                 }
+
+                for (int j = 0; j < entry.ExampleSentences.Count; j++)
+                {
+                    ExampleSentence sentence = entry.ExampleSentences[j];
+                    await AddExampleSentenceAsync(sentence.Sentence, j, wordEntity, cancellationToken);
+                }
             }
 
             await transaction.CommitAsync(cancellationToken);
@@ -288,6 +300,26 @@ internal class SetsRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return translationEntity;
+    }
+
+    private async Task<ExampleSentenceEntity> AddExampleSentenceAsync(
+        string sentence,
+        int order,
+        WordEntity wordEntity,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ExampleSentenceEntity exampleSentenceEntity = new()
+        {
+            ExampleSentenceId = Guid.CreateVersion7(),
+            Sentence = sentence,
+            Order = order,
+            WordId = wordEntity.WordId
+        };
+        await _dbContext.ExampleSentences.AddAsync(exampleSentenceEntity, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return exampleSentenceEntity;
     }
 
     private static WordType MapWordType(string wordTypeName)

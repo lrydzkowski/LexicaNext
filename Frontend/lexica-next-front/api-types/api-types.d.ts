@@ -109,6 +109,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/sentences/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Generate example sentences for an English word using AI */
+        post: operations["GenerateExampleSentences"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -125,6 +142,19 @@ export interface components {
             word?: string;
             wordType?: string;
             translations?: string[];
+            exampleSentences?: string[];
+        };
+        GenerateExampleSentencesRequest: {
+            word: string;
+            wordType: string;
+            /**
+             * Format: int32
+             * @default 3
+             */
+            count: number | string;
+        };
+        GenerateExampleSentencesResponse: {
+            sentences: string[];
         };
         GenerateTranslationsRequest: {
             word: string;
@@ -576,6 +606,53 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GenerateTranslationsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GenerateExampleSentences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenerateExampleSentencesRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GenerateExampleSentencesResponse"];
                 };
             };
             /** @description Bad Request */
