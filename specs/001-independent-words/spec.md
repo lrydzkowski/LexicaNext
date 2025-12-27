@@ -106,6 +106,7 @@ As a user, I want to select existing words when creating or editing a set so tha
 3. **Given** the user has selected words for a set, **When** they save the set, **Then** the set is created/updated with references to the selected words.
 4. **Given** a word is already in the current set, **When** the user views the word selection table, **Then** that word is shown as already selected/included.
 5. **Given** the user is viewing the word selection table, **When** they search/sort/paginate, **Then** the table behaves identically to the standalone words page.
+6. **Given** the user is in the set form and needs a word that doesn't exist, **When** they click "Create New Word", **Then** they can create the word inline without leaving the set form, and the newly created word is automatically added to the set.
 
 ---
 
@@ -158,6 +159,7 @@ As a user, I want to remove a word from a set without deleting the word itself s
 - **FR-016**: The word selection table MUST support the same pagination, sorting, and search functionality as the words page.
 - **FR-017**: System MUST indicate which words are already selected for the current set in the selection table.
 - **FR-018**: Users MUST be able to add and remove words from a set without deleting the words themselves.
+- **FR-018a**: Users MUST be able to create new words inline from the set creation/edit form without navigating away.
 - **FR-019**: System MUST maintain word order within a set (the order in which words appear during study).
 - **FR-020**: When a word is deleted, System MUST automatically remove it from all sets that reference it.
 
@@ -165,6 +167,7 @@ As a user, I want to remove a word from a set without deleting the word itself s
 
 - **FR-021**: The create/edit word form MUST have the same fields and layout as the current entry form in set creation (word, word type, translations, example sentences).
 - **FR-022**: The words page MUST follow the same UI patterns as the sets page (table/card layout, action buttons, loading states, empty states).
+
 
 ### Key Entities
 
@@ -193,4 +196,11 @@ As a user, I want to remove a word from a set without deleting the word itself s
 - The existing UI component library (Mantine) will be used for the words page and forms.
 - Audio recordings will continue to be fetched from the external English Dictionary API based on word text and type.
 - The "Generate Translations" and "Generate Sentences" AI features will continue to work in the word creation/edit form.
-- Migration of existing embedded words to independent words is out of scope for this feature (existing sets will continue to work, new sets will use the new model).
+- All existing data (sets and embedded words) will be removed during deployment; users will start fresh with the new model.
+
+## Clarifications
+
+### Session 2025-12-27
+
+- Q: How should existing sets coexist with the new word-reference model? → A: Remove all existing data; start fresh with the new model
+- Q: When creating/editing a set and a needed word doesn't exist, what should happen? → A: Allow inline word creation from the set form without leaving the form (Option A)
