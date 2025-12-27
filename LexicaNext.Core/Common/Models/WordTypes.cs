@@ -5,14 +5,11 @@ namespace LexicaNext.Core.Common.Models;
 internal static class WordTypes
 {
     public const string None = "none";
-
     public const string Noun = "noun";
-
     public const string Verb = "verb";
-
     public const string Adjective = "adjective";
-
     public const string Adverb = "adverb";
+    public const string Other = "other";
 
     public static readonly IReadOnlyList<string> All =
     [
@@ -20,7 +17,8 @@ internal static class WordTypes
         Noun,
         Verb,
         Adjective,
-        Adverb
+        Adverb,
+        Other
     ];
 
     public static bool IsCorrect(string? sortingOrder)
