@@ -1,11 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
-import { IconDots, IconEdit, IconPlus, IconRefresh, IconSearch, IconTrash } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconChevronUp,
+  IconDots,
+  IconEdit,
+  IconPlus,
+  IconRefresh,
+  IconSearch,
+  IconSelector,
+  IconTrash,
+} from '@tabler/icons-react';
 import { Link, useSearchParams } from 'react-router';
 import {
   ActionIcon,
   Badge,
   Box,
   Button,
+  Center,
   Group,
   LoadingOverlay,
   Menu,
@@ -16,12 +27,42 @@ import {
   Table,
   Text,
   TextInput,
+  UnstyledButton,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
 import { useWords, type WordRecordDto } from '../../hooks/api';
 import { formatDateTime } from '../../utils/date';
 import classes from './WordsList.module.css';
+
+type SortField = 'word' | 'createdAt' | 'editedAt';
+type SortOrder = 'asc' | 'desc';
+
+interface SortableHeaderProps {
+  label: string;
+  field: SortField;
+  currentField: SortField;
+  currentOrder: SortOrder;
+  onSort: (field: SortField) => void;
+}
+
+function SortableHeader({ label, field, currentField, currentOrder, onSort }: SortableHeaderProps) {
+  const isActive = field === currentField;
+  const Icon = isActive ? (currentOrder === 'asc' ? IconChevronUp : IconChevronDown) : IconSelector;
+
+  return (
+    <UnstyledButton onClick={() => onSort(field)} className={classes.sortableHeader}>
+      <Group gap={4} wrap="nowrap">
+        <Text fw={700} fz="sm">
+          {label}
+        </Text>
+        <Center>
+          <Icon size={14} style={{ opacity: isActive ? 1 : 0.5 }} />
+        </Center>
+      </Group>
+    </UnstyledButton>
+  );
+}
 
 export function WordsList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -30,9 +71,9 @@ export function WordsList() {
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const sortField = (searchParams.get('sortField') as SortField) || 'createdAt';
+  const sortOrder = (searchParams.get('sortOrder') as SortOrder) || 'desc';
 
-  const sortingFieldName = 'createdAt';
-  const sortingOrder = 'desc';
   const pageSize = 10;
 
   const {
@@ -43,10 +84,24 @@ export function WordsList() {
   } = useWords({
     page: currentPage,
     pageSize,
-    sortingFieldName,
-    sortingOrder,
+    sortingFieldName: sortField,
+    sortingOrder: sortOrder,
     searchQuery: debouncedSearchQuery || undefined,
   });
+
+  const handleSort = (field: SortField) => {
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      if (field === sortField) {
+        newParams.set('sortOrder', sortOrder === 'asc' ? 'desc' : 'asc');
+      } else {
+        newParams.set('sortField', field);
+        newParams.set('sortOrder', 'asc');
+      }
+      newParams.set('page', '1');
+      return newParams;
+    });
+  };
 
   const words = wordsData?.data || [];
   const totalCount = wordsData?.count || 0;
@@ -209,10 +264,34 @@ export function WordsList() {
             <Table striped highlightOnHover>
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th>Word</Table.Th>
+                  <Table.Th>
+                    <SortableHeader
+                      label="Word"
+                      field="word"
+                      currentField={sortField}
+                      currentOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                  </Table.Th>
                   <Table.Th>Word Type</Table.Th>
-                  <Table.Th>Created</Table.Th>
-                  <Table.Th>Edited</Table.Th>
+                  <Table.Th>
+                    <SortableHeader
+                      label="Created"
+                      field="createdAt"
+                      currentField={sortField}
+                      currentOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                  </Table.Th>
+                  <Table.Th>
+                    <SortableHeader
+                      label="Edited"
+                      field="editedAt"
+                      currentField={sortField}
+                      currentOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                  </Table.Th>
                   <Table.Th style={{ textAlign: 'center' }}>Actions</Table.Th>
                 </Table.Tr>
               </Table.Thead>

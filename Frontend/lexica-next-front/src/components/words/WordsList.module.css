@@ -10,3 +10,16 @@
 .actionCol {
   width: 5rem;
 }
+.sortableHeader {
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+.sortableHeader:hover {
+  background-color: var(--mantine-color-gray-1);
+}
+@media (prefers-color-scheme: dark) {
+  .sortableHeader:hover {
+    background-color: var(--mantine-color-dark-5);
+  }
+}

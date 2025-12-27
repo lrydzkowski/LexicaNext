@@ -114,13 +114,13 @@
 
 ### Backend Implementation
 
-- [ ] T037 [US3] Add sorting support to GetWordsEndpoint for all columns in `LexicaNext.Core/Queries/GetWords/GetWordsEndpoint.cs`
-- [ ] T038 [US3] Add search/filter support to WordsRepository in `LexicaNext.Infrastructure/Db/Repositories/WordsRepository.cs`
+- [x] T037 [US3] Add sorting support to GetWordsEndpoint for all columns in `LexicaNext.Core/Queries/GetWords/GetWordsEndpoint.cs`
+- [x] T038 [US3] Add search/filter support to WordsRepository in `LexicaNext.Infrastructure/Db/Repositories/WordsRepository.cs`
 
 ### Frontend Implementation
 
-- [ ] T039 [US3] Add sorting state and column click handlers to WordsList in `Frontend/lexica-next-front/src/components/words/WordsList.tsx`
-- [ ] T040 [US3] Add search input with debounce to WordsList in `Frontend/lexica-next-front/src/components/words/WordsList.tsx`
+- [x] T039 [US3] Add sorting state and column click handlers to WordsList in `Frontend/lexica-next-front/src/components/words/WordsList.tsx`
+- [x] T040 [US3] Add search input with debounce to WordsList in `Frontend/lexica-next-front/src/components/words/WordsList.tsx`
 
 **Checkpoint**: User Story 3 complete - search, sort, pagination all functional
 
