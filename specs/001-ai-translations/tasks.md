@@ -153,13 +153,13 @@
 
 **Purpose**: Final improvements and validation
 
-- [ ] T047 [P] Add loading spinner/state for generation buttons in Frontend/lexica-next-front/src/components/sets/GenerateTranslationsButton.tsx
-- [ ] T048 [P] Add loading spinner/state for generation buttons in Frontend/lexica-next-front/src/components/sets/GenerateSentencesButton.tsx
-- [ ] T049 [P] Add error handling with "Try Again" button for AI failures in GenerateTranslationsButton
-- [ ] T050 [P] Add error handling with "Try Again" button for AI failures in GenerateSentencesButton
-- [ ] T051 Validate word type is selected before allowing translation generation
-- [ ] T052 Run quickstart.md validation scenarios
-- [ ] T053 Build solution and verify zero warnings
+- [x] T047 [P] Add loading spinner/state for generation buttons in Frontend/lexica-next-front/src/components/sets/GenerateTranslationsButton.tsx
+- [x] T048 [P] Add loading spinner/state for generation buttons in Frontend/lexica-next-front/src/components/sets/GenerateSentencesButton.tsx
+- [x] T049 [P] Add error handling with "Try Again" button for AI failures in GenerateTranslationsButton
+- [x] T050 [P] Add error handling with "Try Again" button for AI failures in GenerateSentencesButton
+- [x] T051 Validate word type is selected before allowing translation generation
+- [x] T052 Run quickstart.md validation scenarios
+- [x] T053 Build solution and verify zero warnings
 
 ---
 
