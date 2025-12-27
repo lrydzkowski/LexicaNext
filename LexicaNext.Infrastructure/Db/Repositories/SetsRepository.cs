@@ -72,7 +72,8 @@ internal class SetsRepository
             {
                 Entry entry = createSetCommand.Entries[i];
                 Guid wordTypeId = await GetWordTypeIdAsync(entry, cancellationToken);
-                WordEntity wordEntity = await AddWordAsync(entry, wordTypeId, i, setEntity, cancellationToken);
+                WordEntity wordEntity = await AddWordAsync(entry, wordTypeId, setEntity, cancellationToken);
+                await AddSetWordAsync(setEntity, wordEntity, i, cancellationToken);
 
                 for (int j = 0; j < entry.Translations.Count; j++)
                 {
@@ -120,14 +121,14 @@ internal class SetsRepository
                     SetId = setEntity.SetId,
                     Name = setEntity.Name,
                     CreatedAt = setEntity.CreatedAt,
-                    Entries = setEntity.Words.OrderBy(x => x.Order)
+                    Entries = setEntity.SetWords.OrderBy(sw => sw.Order)
                         .Select(
-                            x => new Entry
+                            sw => new Entry
                             {
-                                Word = x.Word,
-                                WordType = MapWordType(x.WordType!.Name),
-                                Translations = x.Translations.OrderBy(t => t.Order).Select(y => y.Translation).ToList(),
-                                ExampleSentences = x.ExampleSentences.OrderBy(s => s.Order)
+                                Word = sw.Word!.Word,
+                                WordType = MapWordType(sw.Word.WordType!.Name),
+                                Translations = sw.Word.Translations.OrderBy(t => t.Order).Select(y => y.Translation).ToList(),
+                                ExampleSentences = sw.Word.ExampleSentences.OrderBy(s => s.Order)
                                     .Select(s => new ExampleSentence { Sentence = s.Sentence, Order = s.Order })
                                     .ToList()
                             }
@@ -185,7 +186,7 @@ internal class SetsRepository
         try
         {
             SetEntity? setEntity = await _dbContext.Sets
-                .Include(setEntity => setEntity.Words)
+                .Include(setEntity => setEntity.SetWords)
                 .FirstOrDefaultAsync(setEntity => setEntity.SetId == updateSetCommand.SetId, cancellationToken);
             if (setEntity == null)
             {
@@ -195,14 +196,15 @@ internal class SetsRepository
             setEntity.Name = updateSetCommand.SetName;
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            _dbContext.RemoveRange(setEntity.Words);
+            _dbContext.RemoveRange(setEntity.SetWords);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             for (int i = 0; i < updateSetCommand.Entries.Count; i++)
             {
                 Entry entry = updateSetCommand.Entries[i];
                 Guid wordTypeId = await GetWordTypeIdAsync(entry, cancellationToken);
-                WordEntity wordEntity = await AddWordAsync(entry, wordTypeId, i, setEntity, cancellationToken);
+                WordEntity wordEntity = await AddWordAsync(entry, wordTypeId, setEntity, cancellationToken);
+                await AddSetWordAsync(setEntity, wordEntity, i, cancellationToken);
 
                 for (int j = 0; j < entry.Translations.Count; j++)
                 {
@@ -266,7 +268,6 @@ internal class SetsRepository
     private async Task<WordEntity> AddWordAsync(
         Entry entry,
         Guid wordTypeId,
-        int order,
         SetEntity setEntity,
         CancellationToken cancellationToken = default
     )
@@ -276,13 +277,31 @@ internal class SetsRepository
             WordId = Guid.CreateVersion7(),
             Word = entry.Word,
             WordTypeId = wordTypeId,
-            Order = order,
-            SetId = setEntity.SetId
+            CreatedAt = _dateTimeOffsetProvider.UtcNow
         };
         await _dbContext.Words.AddAsync(wordEntity, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return wordEntity;
+    }
+
+    private async Task<SetWordEntity> AddSetWordAsync(
+        SetEntity setEntity,
+        WordEntity wordEntity,
+        int order,
+        CancellationToken cancellationToken = default
+    )
+    {
+        SetWordEntity setWordEntity = new()
+        {
+            SetId = setEntity.SetId,
+            WordId = wordEntity.WordId,
+            Order = order
+        };
+        await _dbContext.SetWords.AddAsync(setWordEntity, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return setWordEntity;
     }
 
     private async Task<TranslationEntity> AddTranslationAsync(

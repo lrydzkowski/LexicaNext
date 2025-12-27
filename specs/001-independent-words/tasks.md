@@ -24,14 +24,14 @@
 
 **Purpose**: Database schema changes and entity modifications
 
-- [ ] T001 Modify WordEntity to add CreatedAt and EditedAt fields, remove SetId in `LexicaNext.Infrastructure/Db/Common/Entities/WordEntity.cs`
-- [ ] T002 Create SetWordEntity join table in `LexicaNext.Infrastructure/Db/Common/Entities/SetWordEntity.cs`
-- [ ] T003 [P] Update WordEntityTypeConfiguration for new schema in `LexicaNext.Infrastructure/Db/Common/Configurations/WordEntityTypeConfiguration.cs`
-- [ ] T004 [P] Create SetWordEntityTypeConfiguration in `LexicaNext.Infrastructure/Db/Common/Configurations/SetWordEntityTypeConfiguration.cs`
-- [ ] T005 Update SetEntity to use SetWords navigation in `LexicaNext.Infrastructure/Db/Common/Entities/SetEntity.cs`
-- [ ] T006 [P] Update SetEntityTypeConfiguration for new relationship in `LexicaNext.Infrastructure/Db/Common/Configurations/SetEntityTypeConfiguration.cs`
-- [ ] T007 Register new entities in AppDbContext in `LexicaNext.Infrastructure/Db/AppDbContext.cs`
-- [ ] T008 Create database migration for independent words schema in `LexicaNext.Infrastructure/Db/Migrations/`
+- [x] T001 Modify WordEntity to add CreatedAt and EditedAt fields, remove SetId in `LexicaNext.Infrastructure/Db/Common/Entities/WordEntity.cs`
+- [x] T002 Create SetWordEntity join table in `LexicaNext.Infrastructure/Db/Common/Entities/SetWordEntity.cs`
+- [x] T003 [P] Update WordEntityTypeConfiguration for new schema in `LexicaNext.Infrastructure/Db/Common/Configurations/WordEntityTypeConfiguration.cs`
+- [x] T004 [P] Create SetWordEntityTypeConfiguration in `LexicaNext.Infrastructure/Db/Common/Configurations/SetWordEntityTypeConfiguration.cs`
+- [x] T005 Update SetEntity to use SetWords navigation in `LexicaNext.Infrastructure/Db/Common/Entities/SetEntity.cs`
+- [x] T006 [P] Update SetEntityTypeConfiguration for new relationship in `LexicaNext.Infrastructure/Db/Common/Configurations/SetEntityTypeConfiguration.cs`
+- [x] T007 Register new entities in AppDbContext in `LexicaNext.Infrastructure/Db/AppDbContext.cs`
+- [x] T008 Create database migration for independent words schema in `LexicaNext.Infrastructure/Db/Migrations/`
 
 ---
 

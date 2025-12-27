@@ -1,4 +1,4 @@
-﻿namespace LexicaNext.Infrastructure.Db.Common.Entities;
+namespace LexicaNext.Infrastructure.Db.Common.Entities;
 
 internal class SetEntity
 {
@@ -10,5 +10,5 @@ internal class SetEntity
 
     public DateTimeOffset CreatedAt { get; set; }
 
-    public ICollection<WordEntity> Words { get; set; } = [];
+    public ICollection<SetWordEntity> SetWords { get; set; } = [];
 }
