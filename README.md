@@ -60,14 +60,13 @@ Advanced practice mode with open-ended questions. Type the meaning of words to t
 - React 19 with TypeScript
 - Vite for build tooling and development
 - Mantine UI component library
-- OpenAPI fetch for strongly typed API integration
 - TanStack Query for simplifying API calls
 - React Router 7 for navigation
 - Auth0 for authentication
 
 #### Backend
 
-- .NET 10.0
+- ASP.NET Core 10.0
 - PostgreSQL database
 - Entity Framework Core for data access
 - Clean Architecture with CQRS pattern
@@ -95,7 +94,7 @@ The application follows Clean Architecture principles:
 
 #### Prerequisites
 
-- [Node.js 22+ and npm](https://nodejs.org/)
+- [Node.js 24+ and npm](https://nodejs.org/)
 - [.NET 10.0 SDK](https://dotnet.microsoft.com/download)
 - [PostgreSQL 13+](https://www.postgresql.org/)
 
@@ -117,7 +116,12 @@ The application follows Clean Architecture principles:
     }
     ```
 
-3. Add other secrets to user secrets in `LexicaNext.WebApp` project.
+3. Add other secrets to user secrets in `LexicaNext.WebApp` project:
+
+    - Storage configuration
+    - Auth0 configuration
+    - Microsoft Foundry configuration
+
 4. Apply EF Core migration:
 
     ```powershell
