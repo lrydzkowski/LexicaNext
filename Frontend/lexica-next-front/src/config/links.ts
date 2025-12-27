@@ -66,4 +66,22 @@ export const links: Record<string, IAppLink> = {
     label: 'Full Mode',
     segment: 'full-mode',
   },
+  words: {
+    path: 'words',
+    url: '/words',
+    label: 'Words',
+    segment: 'words',
+  },
+  newWord: {
+    path: 'words/new',
+    url: '/words/new',
+    label: 'New Word',
+    segment: 'new',
+  },
+  editWord: {
+    path: 'words/:wordId/edit',
+    url: '/words/:wordId/edit',
+    label: 'Edit Word',
+    segment: 'edit',
+  },
 };

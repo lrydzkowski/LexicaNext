@@ -41,15 +41,15 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T009 Create Word domain model in `LexicaNext.Core/Common/Models/Word.cs`
-- [ ] T010 Create ICreateWordRepository interface in `LexicaNext.Core/Commands/CreateWord/Interfaces/ICreateWordRepository.cs`
-- [ ] T011 [P] Create IUpdateWordRepository interface in `LexicaNext.Core/Commands/UpdateWord/Interfaces/IUpdateWordRepository.cs`
-- [ ] T012 [P] Create IDeleteWordRepository interface in `LexicaNext.Core/Commands/DeleteWord/Interfaces/IDeleteWordRepository.cs`
-- [ ] T013 [P] Create IGetWordRepository interface in `LexicaNext.Core/Queries/GetWord/Interfaces/IGetWordRepository.cs`
-- [ ] T014 [P] Create IGetWordsRepository interface in `LexicaNext.Core/Queries/GetWords/Interfaces/IGetWordsRepository.cs`
-- [ ] T015 [P] Create IGetWordSetsRepository interface in `LexicaNext.Core/Queries/GetWordSets/Interfaces/IGetWordSetsRepository.cs`
-- [ ] T016 Implement WordsRepository with all interfaces in `LexicaNext.Infrastructure/Db/Repositories/WordsRepository.cs`
-- [ ] T017 Add word routes configuration in `Frontend/lexica-next-front/src/config/links.ts`
+- [x] T009 Create Word domain model in `LexicaNext.Core/Common/Models/Word.cs`
+- [x] T010 Create ICreateWordRepository interface in `LexicaNext.Core/Commands/CreateWord/Interfaces/ICreateWordRepository.cs`
+- [x] T011 [P] Create IUpdateWordRepository interface in `LexicaNext.Core/Commands/UpdateWord/Interfaces/IUpdateWordRepository.cs`
+- [x] T012 [P] Create IDeleteWordRepository interface in `LexicaNext.Core/Commands/DeleteWord/Interfaces/IDeleteWordRepository.cs`
+- [x] T013 [P] Create IGetWordRepository interface in `LexicaNext.Core/Queries/GetWord/Interfaces/IGetWordRepository.cs`
+- [x] T014 [P] Create IGetWordsRepository interface in `LexicaNext.Core/Queries/GetWords/Interfaces/IGetWordsRepository.cs`
+- [x] T015 [P] Create IGetWordSetsRepository interface in `LexicaNext.Core/Queries/GetWordSets/Interfaces/IGetWordSetsRepository.cs`
+- [x] T016 Implement WordsRepository with all interfaces in `LexicaNext.Infrastructure/Db/Repositories/WordsRepository.cs`
+- [x] T017 Add word routes configuration in `Frontend/lexica-next-front/src/config/links.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
