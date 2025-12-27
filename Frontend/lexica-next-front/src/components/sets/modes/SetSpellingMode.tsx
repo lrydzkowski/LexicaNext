@@ -17,6 +17,7 @@ import {
 import { serialize } from '@/utils/utils';
 import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
+import { ExampleSentences } from '../ExampleSentences';
 
 interface SpellingEntry extends EntryDto {
   counter: number;
@@ -245,6 +246,11 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
                   <Text mt="sm" fz={{ base: 'sm', md: 'md' }}>
                     <strong>Translations:</strong> {serialize(currentEntry.translations)}
                   </Text>
+                  {currentEntry.exampleSentences && currentEntry.exampleSentences.length > 0 && (
+                    <div style={{ marginTop: 'var(--mantine-spacing-sm)' }}>
+                      <ExampleSentences sentences={currentEntry.exampleSentences} />
+                    </div>
+                  )}
                 </div>
 
                 <Button size="lg" onClick={nextQuestion} autoFocus>

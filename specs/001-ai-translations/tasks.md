@@ -141,9 +141,9 @@
 
 ### Frontend Implementation for User Story 4
 
-- [ ] T044 [US4] Update SpellingMode results to display example sentences in Frontend/lexica-next-front/src/components/sets/modes/SpellingMode.tsx
-- [ ] T045 [US4] Update FullMode results to display example sentences in Frontend/lexica-next-front/src/components/sets/modes/FullMode.tsx
-- [ ] T046 [US4] Update OpenQuestionsMode results to display example sentences in Frontend/lexica-next-front/src/components/sets/modes/OpenQuestionsMode.tsx
+- [x] T044 [US4] Update SpellingMode results to display example sentences in Frontend/lexica-next-front/src/components/sets/modes/SpellingMode.tsx
+- [x] T045 [US4] Update FullMode results to display example sentences in Frontend/lexica-next-front/src/components/sets/modes/FullMode.tsx
+- [x] T046 [US4] Update OpenQuestionsMode results to display example sentences in Frontend/lexica-next-front/src/components/sets/modes/OpenQuestionsMode.tsx
 
 **Checkpoint**: User Story 4 complete - sentences visible in all study mode results
 

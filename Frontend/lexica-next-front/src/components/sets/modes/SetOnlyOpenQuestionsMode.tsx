@@ -5,6 +5,7 @@ import { Alert, Button, Container, Group, Paper, Progress, Stack, Text, TextInpu
 import { compareAnswers, serialize } from '@/utils/utils';
 import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
+import { ExampleSentences } from '../ExampleSentences';
 
 interface OpenQuestionsEntry extends EntryDto {
   englishOpenCounter: number;
@@ -277,6 +278,11 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
                   <Text mt="sm" fz={{ base: 'sm', md: 'md' }}>
                     <strong>Translations:</strong> {serialize(currentQuestion.entry.translations)}
                   </Text>
+                  {currentQuestion.entry.exampleSentences && currentQuestion.entry.exampleSentences.length > 0 && (
+                    <div style={{ marginTop: 'var(--mantine-spacing-sm)' }}>
+                      <ExampleSentences sentences={currentQuestion.entry.exampleSentences} />
+                    </div>
+                  )}
                 </div>
 
                 <Button size="lg" onClick={nextQuestion} autoFocus>
