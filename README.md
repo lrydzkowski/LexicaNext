@@ -1,24 +1,61 @@
 # LexicaNext
 
-A modern English vocabulary learning application built with React and .NET, featuring interactive study modes and pronunciation support.
+A comprehensive English vocabulary learning platform designed to help you master new words through various interactive learning modes.
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-blue.svg)](https://dotnet.microsoft.com/)
 [![React](https://img.shields.io/badge/React-19-blue.svg)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
 
+## Overview
+
+LexicaNext helps you build and expand your English vocabulary through custom word sets and multiple practice modes. Create personalized vocabulary sets with English words, translations, and example sentences, then reinforce your learning with interactive exercises.
+
 ## Features
 
-- Interactive Study Modes
-    - Spelling Mode - Practice spelling vocabulary words
-    - Full Mode - Complete vocabulary practice with all word details
-    - Open Questions Mode - Answer open-ended questions about vocabulary
-- Audio Pronunciation - Integration with English Dictionary API
-- User Authentication - Secure login with Auth0
-- Responsive Design - Modern UI with Mantine components
+### Vocabulary Set Management
 
-## Tech Stack
+Create and organize your vocabulary sets with:
 
-### Frontend
+- English words with grammatical types (noun, verb, adjective, etc.)
+- Translations in your native language
+- Example sentences for context
+- AI-powered translation and sentence generation
+
+![My Vocabulary Sets](docs/screenshots/vocabulary-sets.png)
+
+![Edit Set](docs/screenshots/edit-set.png)
+
+### Learning Modes
+
+#### Content Mode
+
+Review and study your vocabulary sets in a structured format. See all words with their translations, grammatical types, and example sentences at a glance.
+
+![Content Mode](docs/screenshots/content-mode.png)
+
+#### Spelling Mode
+
+Practice pronunciation and spelling by listening to words and typing them correctly.
+
+![Spelling Mode](docs/screenshots/spelling-mode.png)
+
+#### Full Mode
+
+Comprehensive learning with multiple-choice questions. Given a translation, select the correct English word from several options.
+
+![Full Mode](docs/screenshots/full-mode.png)
+
+#### Open Questions Mode
+
+Advanced practice mode with open-ended questions. Type the meaning of words to test your knowledge retention.
+
+![Open Questions Mode](docs/screenshots/open-questions-mode.png)
+
+## Technical Documentation
+
+### Tech Stack
+
+#### Frontend
 
 - React 19 with TypeScript
 - Vite for build tooling and development
@@ -28,7 +65,7 @@ A modern English vocabulary learning application built with React and .NET, feat
 - React Router 7 for navigation
 - Auth0 for authentication
 
-### Backend
+#### Backend
 
 - .NET 10.0
 - PostgreSQL database
@@ -37,15 +74,30 @@ A modern English vocabulary learning application built with React and .NET, feat
 - FluentValidation for input validation
 - OpenAPI/Swagger documentation
 
-## Getting Started
+### Architecture
 
-### Prerequisites
+The application follows Clean Architecture principles:
+
+- **Domain Layer** (`LexicaNext.Core`) - Business logic and domain models
+- **Infrastructure Layer** (`LexicaNext.Infrastructure`) - Data access, auth and external services
+- **Presentation Layer** (`LexicaNext.WebApp`) - API endpoints and web hosting
+- **Frontend** (`Frontend/lexica-next-front`) - React SPA with TypeScript
+- **MCP Server** (`Tools/mcp-server`) - MCP server to interact with the app through Claude Desktop
+
+### Key Patterns
+
+- **CQRS** - Command Query Responsibility Segregation for separating read and write operations
+- **Repository Pattern** - Data access abstraction
+- **Dependency Injection** - Service registration with Scrutor
+- **Type Safety** - Auto-generated TypeScript types from OpenAPI specification
+
+### Getting Started
+
+#### Prerequisites
 
 - [Node.js 22+ and npm](https://nodejs.org/)
 - [.NET 10.0 SDK](https://dotnet.microsoft.com/download)
 - [PostgreSQL 13+](https://www.postgresql.org/)
-
-### Development Setup
 
 #### Backend Setup
 
@@ -97,16 +149,9 @@ A modern English vocabulary learning application built with React and .NET, feat
     npm run dev
     ```
 
-## API Documentation
+### Development Commands
 
-When running the application locally, the OpenAPI specification is available at:
-
-- Spec: <https://localhost:7226/openapi/v1.json>
-- Swagger UI: <https://localhost:7226/swagger>
-
-## Development Commands
-
-### Frontend
+#### Frontend
 
 ```powershell
 cd Frontend/lexica-next-front
@@ -124,7 +169,7 @@ npm run lint
 npm run prettier
 ```
 
-### Backend
+#### Backend
 
 ```powershell
 # Build solution
@@ -137,7 +182,7 @@ dotnet run --project LexicaNext.WebApp
 dotnet run --project LexicaNext.CLI
 ```
 
-### Database Management
+#### Database Management
 
 ```powershell
 cd LexicaNext.Infrastructure
@@ -149,24 +194,18 @@ dotnet ef migrations add <migration_name> -o Db\Migrations
 dotnet ef database update
 ```
 
-## Architecture
+### Docker Deployment
 
-The application follows Clean Architecture principles:
+```powershell
+docker compose -f ./compose.yaml -p lexica-next up --build
+```
 
-- Domain Layer (`LexicaNext.Core`) - Business logic and domain models
-- Infrastructure Layer (`LexicaNext.Infrastructure`) - Data access, auth and external services
-- Presentation Layer (`LexicaNext.WebApp`) - API endpoints and web hosting
-- Frontend (`Frontend/lexica-next-front`) - React SPA with TypeScript
-- MCP Server (`Tools/mcp-server`) - MCP server to interact with the app through Claude Desktop
+### API Documentation
 
-### Key Patterns
+When running the application locally, the OpenAPI specification is available at:
 
-- CQRS - Command Query Responsibility Segregation
-- Repository Pattern - Data access abstraction
-- Dependency Injection - Service registration with Scrutor
-- Type Safety - Auto-generated TypeScript types from OpenAPI
-
-## Tools and Extensions
+- Spec: <https://localhost:7226/openapi/v1.json>
+- Swagger UI: <https://localhost:7226/swagger>
 
 ### MCP Server
 
