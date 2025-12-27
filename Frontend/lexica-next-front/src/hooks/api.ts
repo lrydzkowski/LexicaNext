@@ -7,6 +7,8 @@ export type EntryDto = components['schemas']['EntryDto'];
 export type SetRecordDto = components['schemas']['SetRecordDto'];
 export type GetSetResponse = components['schemas']['GetSetResponse'];
 export type GetSetsResponse = components['schemas']['GetSetsResponse'];
+export type WordRecordDto = components['schemas']['WordRecordDto'];
+export type GetWordsResponse = components['schemas']['GetWordsResponse'];
 export type CreateSetRequestPayload = components['schemas']['CreateSetRequestPayload'];
 export type UpdateSetRequestPayload = components['schemas']['UpdateSetRequestPayload'];
 export type GenerateTranslationsRequest = components['schemas']['GenerateTranslationsRequest'];
@@ -34,6 +36,35 @@ export const useSets = (params?: {
     queryKey: ['sets', params],
     queryFn: async ({ signal }): Promise<GetSetsResponse> => {
       const { data, error } = await client.GET('/api/sets', {
+        params: {
+          query: params,
+        },
+        signal,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+
+      return data!;
+    },
+    placeholderData: keepPreviousData,
+  });
+};
+
+export const useWords = (params?: {
+  page?: number;
+  pageSize?: number;
+  sortingFieldName?: string;
+  sortingOrder?: string;
+  searchQuery?: string;
+}) => {
+  const client = useApiClient();
+
+  return useQuery({
+    queryKey: ['words', params],
+    queryFn: async ({ signal }): Promise<GetWordsResponse> => {
+      const { data, error } = await client.GET('/api/words', {
         params: {
           query: params,
         },

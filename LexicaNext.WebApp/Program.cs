@@ -10,6 +10,7 @@ using LexicaNext.Core.Queries.GetAppStatus;
 using LexicaNext.Core.Queries.GetRecording;
 using LexicaNext.Core.Queries.GetSet;
 using LexicaNext.Core.Queries.GetSets;
+using LexicaNext.Core.Queries.GetWords;
 using LexicaNext.Infrastructure;
 using LexicaNext.WebApp;
 
@@ -39,6 +40,7 @@ app.UseStaticFiles();
 app.MapGetAppStatusEndpoint();
 app.MapGetSetEndpoint();
 app.MapGetSetsEndpoint();
+app.MapGetWordsEndpoint();
 app.MapCreateSetEndpoint();
 app.MapDeleteSetEndpoint();
 app.MapUpdateSetEndpoint();

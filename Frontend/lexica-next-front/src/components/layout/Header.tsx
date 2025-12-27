@@ -7,6 +7,7 @@ import classes from './Header.module.css';
 
 const items = [
   { label: 'Sets', href: '/sets' },
+  { label: 'Words', href: '/words' },
   { label: 'About', href: '/about' },
 ];
 

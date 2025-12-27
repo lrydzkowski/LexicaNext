@@ -1,0 +1,256 @@
+import { useEffect, useRef, useState } from 'react';
+import { IconDots, IconEdit, IconPlus, IconRefresh, IconSearch, IconTrash } from '@tabler/icons-react';
+import { Link, useSearchParams } from 'react-router';
+import {
+  ActionIcon,
+  Badge,
+  Box,
+  Button,
+  Group,
+  LoadingOverlay,
+  Menu,
+  Pagination,
+  Paper,
+  ScrollArea,
+  Stack,
+  Table,
+  Text,
+  TextInput,
+} from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { links } from '../../config/links';
+import { useWords, type WordRecordDto } from '../../hooks/api';
+import { formatDateTime } from '../../utils/date';
+import classes from './WordsList.module.css';
+
+export function WordsList() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const createButtonRef = useRef<HTMLAnchorElement | null>(null);
+
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+
+  const sortingFieldName = 'createdAt';
+  const sortingOrder = 'desc';
+  const pageSize = 10;
+
+  const {
+    data: wordsData,
+    isFetching,
+    error,
+    refetch,
+  } = useWords({
+    page: currentPage,
+    pageSize,
+    sortingFieldName,
+    sortingOrder,
+    searchQuery: debouncedSearchQuery || undefined,
+  });
+
+  const words = wordsData?.data || [];
+  const totalCount = wordsData?.count || 0;
+
+  useEffect(() => {
+    if (createButtonRef.current) {
+      createButtonRef.current.focus();
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const oldSearch = debouncedSearchQuery;
+      setDebouncedSearchQuery(searchQuery);
+      if (oldSearch !== searchQuery) {
+        setSearchParams((prev) => {
+          const newParams = new URLSearchParams(prev);
+          newParams.set('page', '1');
+
+          return newParams;
+        });
+      }
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (error) {
+      notifications.show({
+        title: 'Error Loading Words',
+        message: 'An unexpected error occurred',
+        color: 'red',
+        position: 'top-center',
+      });
+    }
+  }, [error]);
+
+  const totalPages = Math.ceil((totalCount as number) / pageSize);
+
+  const WordActionMenu = ({ word }: { word: WordRecordDto }) => (
+    <Menu shadow="md" width={180} position="bottom-end">
+      <Menu.Target>
+        <ActionIcon variant="light" color="blue" size="lg" aria-label={`Actions for ${word.word}`}>
+          <IconDots size={18} />
+        </ActionIcon>
+      </Menu.Target>
+      <Menu.Dropdown>
+        <Menu.Label>Word Management</Menu.Label>
+        <Menu.Item
+          leftSection={<IconEdit size={16} />}
+          component={Link}
+          to={`/words/${word.wordId}/edit?returnPage=${currentPage}`}>
+          Edit Word
+        </Menu.Item>
+        <Menu.Item leftSection={<IconTrash size={16} />} color="red" disabled>
+          Delete Word
+        </Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
+  );
+
+  const MobileWordCard = ({ word }: { word: WordRecordDto }) => (
+    <Paper p="md" withBorder mb="sm">
+      <Stack gap="sm">
+        <Group justify="space-between" align="flex-start">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <Text fw={600} fz="md" truncate>
+              {word.word}
+            </Text>
+            <Group gap="xs" mt="xs">
+              <Badge size="sm" variant="light">
+                {word.wordType}
+              </Badge>
+            </Group>
+            <Text fz="xs" c="dimmed" mt="xs">
+              Created: {formatDateTime(word.createdAt)}
+            </Text>
+            {word.editedAt && (
+              <Text fz="xs" c="dimmed">
+                Edited: {formatDateTime(word.editedAt)}
+              </Text>
+            )}
+          </div>
+          <WordActionMenu word={word} />
+        </Group>
+      </Stack>
+    </Paper>
+  );
+
+  const rows = words.map((word) => (
+    <Table.Tr key={word.wordId}>
+      <Table.Td>
+        <Text>{word.word}</Text>
+      </Table.Td>
+      <Table.Td className={classes.wordTypeCol}>
+        <Badge size="sm" variant="light">
+          {word.wordType}
+        </Badge>
+      </Table.Td>
+      <Table.Td className={classes.createdCol}>
+        <Text>{formatDateTime(word.createdAt)}</Text>
+      </Table.Td>
+      <Table.Td className={classes.editedCol}>
+        <Text>{word.editedAt ? formatDateTime(word.editedAt) : '-'}</Text>
+      </Table.Td>
+      <Table.Td className={classes.actionCol}>
+        <Group justify="center">
+          <WordActionMenu word={word} />
+        </Group>
+      </Table.Td>
+    </Table.Tr>
+  ));
+
+  return (
+    <>
+      <Stack gap="md">
+        <Group wrap="wrap" gap="sm">
+          <ActionIcon component={Link} to={links.newWord.url} size="xl" hiddenFrom="md">
+            <IconPlus size={22} />
+          </ActionIcon>
+          <Button
+            ref={createButtonRef}
+            leftSection={<IconPlus size={16} />}
+            component={Link}
+            to={`${links.newWord.url}?returnPage=${currentPage}`}
+            size="md"
+            visibleFrom="sm">
+            <Text>Create New Word</Text>
+          </Button>
+          <ActionIcon variant="light" size="xl" onClick={() => refetch()}>
+            <IconRefresh size={22} />
+          </ActionIcon>
+          <TextInput
+            placeholder="Search words..."
+            leftSection={<IconSearch size={16} />}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ flex: 1, minWidth: '100px' }}
+            size="md"
+          />
+        </Group>
+
+        <Box pos="relative">
+          <LoadingOverlay visible={isFetching} />
+
+          <Box hiddenFrom="md">
+            {words.length > 0 ? (
+              words.map((word) => <MobileWordCard key={word.wordId} word={word} />)
+            ) : (
+              <Text ta="center" c="dimmed" py="xl">
+                {debouncedSearchQuery
+                  ? 'No words found matching your search.'
+                  : 'No words created yet. Create your first word to get started!'}
+              </Text>
+            )}
+          </Box>
+
+          <ScrollArea visibleFrom="md">
+            <Table striped highlightOnHover>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>Word</Table.Th>
+                  <Table.Th>Word Type</Table.Th>
+                  <Table.Th>Created</Table.Th>
+                  <Table.Th>Edited</Table.Th>
+                  <Table.Th style={{ textAlign: 'center' }}>Actions</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {rows.length > 0 ? (
+                  rows
+                ) : (
+                  <Table.Tr>
+                    <Table.Td colSpan={5}>
+                      <Text ta="center" c="dimmed" py="xl">
+                        {debouncedSearchQuery
+                          ? 'No words found matching your search.'
+                          : 'No words created yet. Create your first word to get started!'}
+                      </Text>
+                    </Table.Td>
+                  </Table.Tr>
+                )}
+              </Table.Tbody>
+            </Table>
+          </ScrollArea>
+        </Box>
+
+        <Group justify="center" mt="md">
+          <Pagination
+            total={totalPages}
+            value={currentPage}
+            onChange={(page) => {
+              setSearchParams((prev) => {
+                const newParams = new URLSearchParams(prev);
+                newParams.set('page', page.toString());
+
+                return newParams;
+              });
+            }}
+            size="md"
+          />
+        </Group>
+      </Stack>
+    </>
+  );
+}

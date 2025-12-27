@@ -14,6 +14,7 @@ import { SetEditPage } from './pages/sets/SetEditPage';
 import { SetNewPage } from './pages/sets/SetNewPage';
 import { SetsPage } from './pages/sets/SetsPage';
 import { SignInPage } from './pages/SignInPage';
+import { WordsPage } from './pages/words/WordsPage';
 
 export function AppRouter() {
   return (
@@ -112,6 +113,16 @@ export function AppRouter() {
               <RequireAuth>
                 <PageWithBreadcrumbs>
                   <SetFullModePage />
+                </PageWithBreadcrumbs>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path={links.words.path}
+            element={
+              <RequireAuth>
+                <PageWithBreadcrumbs>
+                  <WordsPage />
                 </PageWithBreadcrumbs>
               </RequireAuth>
             }

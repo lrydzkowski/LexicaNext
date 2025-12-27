@@ -63,19 +63,19 @@
 
 ### Backend Implementation
 
-- [ ] T018 [P] [US1] Create GetWordsRequestValidator in `LexicaNext.Core/Queries/GetWords/Services/GetWordsRequestValidator.cs`
-- [ ] T019 [P] [US1] Create GetWordsRequestProcessor in `LexicaNext.Core/Queries/GetWords/Services/GetWordsRequestProcessor.cs`
-- [ ] T020 [P] [US1] Create WordRecordMapper in `LexicaNext.Core/Queries/GetWords/Services/WordRecordMapper.cs`
-- [ ] T021 [US1] Create GetWordsEndpoint in `LexicaNext.Core/Queries/GetWords/GetWordsEndpoint.cs`
-- [ ] T022 [US1] Register GetWordsEndpoint in `LexicaNext.WebApp/Program.cs`
+- [x] T018 [P] [US1] Create GetWordsRequestValidator in `LexicaNext.Core/Queries/GetWords/Services/GetWordsRequestValidator.cs`
+- [x] T019 [P] [US1] Create GetWordsRequestProcessor in `LexicaNext.Core/Queries/GetWords/Services/GetWordsRequestProcessor.cs`
+- [x] T020 [P] [US1] Create WordRecordMapper in `LexicaNext.Core/Queries/GetWords/Services/WordRecordMapper.cs`
+- [x] T021 [US1] Create GetWordsEndpoint in `LexicaNext.Core/Queries/GetWords/GetWordsEndpoint.cs`
+- [x] T022 [US1] Register GetWordsEndpoint in `LexicaNext.WebApp/Program.cs`
 
 ### Frontend Implementation
 
-- [ ] T023 [US1] Add useWords hook for listing words in `Frontend/lexica-next-front/src/hooks/api.ts`
-- [ ] T024 [US1] Create WordsList component in `Frontend/lexica-next-front/src/components/words/WordsList.tsx`
-- [ ] T025 [US1] Create WordsPage in `Frontend/lexica-next-front/src/pages/words/WordsPage.tsx`
-- [ ] T026 [US1] Add WordsPage route in `Frontend/lexica-next-front/src/AppRouter.tsx`
-- [ ] T027 [US1] Add Words link to navigation in `Frontend/lexica-next-front/src/components/layout/Header.tsx`
+- [x] T023 [US1] Add useWords hook for listing words in `Frontend/lexica-next-front/src/hooks/api.ts`
+- [x] T024 [US1] Create WordsList component in `Frontend/lexica-next-front/src/components/words/WordsList.tsx`
+- [x] T025 [US1] Create WordsPage in `Frontend/lexica-next-front/src/pages/words/WordsPage.tsx`
+- [x] T026 [US1] Add WordsPage route in `Frontend/lexica-next-front/src/AppRouter.tsx`
+- [x] T027 [US1] Add Words link to navigation in `Frontend/lexica-next-front/src/components/layout/Header.tsx`
 
 **Checkpoint**: User Story 1 complete - `/words` page displays word list with pagination
 
