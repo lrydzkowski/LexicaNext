@@ -10,6 +10,7 @@ public class GenerateExampleSentencesValidator : AbstractValidator<GenerateExamp
     {
         AddValidationForWord();
         AddValidationForWordType();
+        AddValidationForCount();
     }
 
     private void AddValidationForWord()
@@ -24,5 +25,12 @@ public class GenerateExampleSentencesValidator : AbstractValidator<GenerateExamp
             .WithName(nameof(GenerateExampleSentencesRequest.WordType))
             .WithMessage($"'{{PropertyName}}' must be one of the following: {WordTypes.Serialize()}.")
             .WithErrorCode(ValidationErrorCodes.ValueInSetValidator);
+    }
+
+    private void AddValidationForCount()
+    {
+        RuleFor(request => request.Count)
+            .InclusiveBetween(1, 10)
+            .WithName(nameof(GenerateExampleSentencesRequest.Count));
     }
 }

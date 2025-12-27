@@ -10,6 +10,7 @@ public class GenerateTranslationsRequestValidator : AbstractValidator<GenerateTr
     {
         AddValidationForWord();
         AddValidationForWordType();
+        AddValidationForCount();
     }
 
     private void AddValidationForWord()
@@ -24,5 +25,12 @@ public class GenerateTranslationsRequestValidator : AbstractValidator<GenerateTr
             .WithName(nameof(GenerateTranslationsRequest.WordType))
             .WithMessage($"'{{PropertyName}}' must be one of the following: {WordTypes.Serialize()}.")
             .WithErrorCode(ValidationErrorCodes.ValueInSetValidator);
+    }
+
+    private void AddValidationForCount()
+    {
+        RuleFor(request => request.Count)
+            .InclusiveBetween(1, 10)
+            .WithName(nameof(GenerateTranslationsRequest.Count));
     }
 }
