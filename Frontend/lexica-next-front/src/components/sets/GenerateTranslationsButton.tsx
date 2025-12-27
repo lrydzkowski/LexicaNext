@@ -1,24 +1,30 @@
 import { IconSparkles } from '@tabler/icons-react';
 import { Button } from '@mantine/core';
+import { UseFormReturnType } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useGenerateTranslations } from '../../hooks/api';
+import { FormValues } from './SetFormTypes';
 
 interface GenerateTranslationsButtonProps {
-  word: string;
-  wordType: string;
+  form: UseFormReturnType<FormValues>;
+  entryIndex: number;
   onTranslationsGenerated: (translations: string[]) => void;
   disabled?: boolean;
 }
 
 export function GenerateTranslationsButton({
-  word,
-  wordType,
+  form,
+  entryIndex,
   onTranslationsGenerated,
   disabled,
 }: GenerateTranslationsButtonProps) {
   const generateTranslationsMutation = useGenerateTranslations();
 
   const handleClick = () => {
+    const entry = form.getValues().entries[entryIndex];
+    const word = entry?.word || '';
+    const wordType = entry?.wordType || '';
+
     if (!word.trim()) {
       notifications.show({
         title: 'Error',
@@ -44,12 +50,6 @@ export function GenerateTranslationsButton({
       {
         onSuccess: (response) => {
           onTranslationsGenerated(response.translations);
-          notifications.show({
-            title: 'Success',
-            message: `Generated ${response.translations.length} translations`,
-            color: 'green',
-            position: 'top-center',
-          });
         },
         onError: () => {
           notifications.show({
@@ -65,6 +65,7 @@ export function GenerateTranslationsButton({
 
   return (
     <Button
+      w={180}
       variant="light"
       size="xs"
       leftSection={<IconSparkles size={14} />}

@@ -19,26 +19,7 @@ import { notifications } from '@mantine/notifications';
 import { useCreateSet, useUpdateSet, type GetSetResponse } from '../../hooks/api';
 import { GenerateSentencesButton } from './GenerateSentencesButton';
 import { GenerateTranslationsButton } from './GenerateTranslationsButton';
-
-interface FormValues {
-  setName: string;
-  entries: FormEntry[];
-}
-
-interface FormEntry {
-  word: string;
-  wordType: string;
-  translations: FormTranslation[];
-  exampleSentences: FormExampleSentence[];
-}
-
-interface FormTranslation {
-  name: string;
-}
-
-interface FormExampleSentence {
-  sentence: string;
-}
+import { FormValues } from './SetFormTypes';
 
 interface SetFormProps {
   mode: 'create' | 'edit';
@@ -57,6 +38,8 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   const [focusTranslation, setFocusTranslation] = useState<{ entryIndex: number; translationIndex: number } | null>(
     null,
   );
+  const sentenceRefs = useRef<{ [entryIndex: number]: (HTMLInputElement | null)[] }>({});
+  const [focusSentence, setFocusSentence] = useState<{ entryIndex: number; sentenceIndex: number } | null>(null);
   const [searchParams] = useSearchParams();
   const returnPage = searchParams.get('returnPage') || '1';
 
@@ -126,6 +109,23 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
             return null;
           },
         },
+        exampleSentences: {
+          sentence: (value) => {
+            if (!value?.trim()) {
+              return 'Sentence is required';
+            }
+
+            if (value.trim().length < 1) {
+              return 'Sentence must not be empty';
+            }
+
+            if (value.trim().length > 500) {
+              return 'Sentence must be less than 500 characters';
+            }
+
+            return null;
+          },
+        },
       },
     },
   });
@@ -181,80 +181,101 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
     }
   }, [focusTranslation]);
 
+  useEffect(() => {
+    if (focusSentence !== null) {
+      const { entryIndex, sentenceIndex } = focusSentence;
+      if (sentenceRefs.current[entryIndex]?.[sentenceIndex]) {
+        sentenceRefs.current[entryIndex][sentenceIndex]?.focus();
+        setFocusSentence(null);
+      }
+    }
+  }, [focusSentence]);
+
   const addEntry = () => {
     form.insertListItem('entries', { word: '', wordType: 'noun', translations: [{ name: '' }], exampleSentences: [] });
     setTimeout(() => {
-      const newEntryIndex = form.values.entries.length;
-      setFocusEntryIndex(newEntryIndex);
+      const newEntryIndex = form.getValues().entries.length;
+      setFocusEntryIndex(newEntryIndex - 1);
     }, 0);
   };
 
   const removeEntry = (index: number) => {
     form.removeListItem('entries', index);
     setTimeout(() => {
-      const remainingEntries = form.values.entries.length - 1;
-
+      const remainingEntries = form.getValues().entries.length;
       if (remainingEntries === 0) {
         return;
       }
 
-      let targetIndex: number;
-      if (index === 0) {
-        targetIndex = 0;
-      } else {
-        targetIndex = index - 1;
-      }
-
-      targetIndex = Math.min(targetIndex, remainingEntries - 1);
-      targetIndex = Math.max(targetIndex, 0);
-
-      setFocusEntryIndex(targetIndex);
+      setFocusEntryIndex(Math.max(0, index - 1));
     }, 0);
   };
 
   const addTranslation = (entryIndex: number) => {
     form.insertListItem(`entries.${entryIndex}.translations`, { name: '' });
     setTimeout(() => {
-      const newTranslationIndex = form.values.entries[entryIndex].translations.length;
-      setFocusTranslation({ entryIndex, translationIndex: newTranslationIndex });
+      const newTranslationIndex = form.getValues().entries[entryIndex].translations.length;
+      setFocusTranslation({ entryIndex, translationIndex: newTranslationIndex - 1 });
     }, 0);
   };
 
-  const handleTranslationsGenerated = (entryIndex: number, translations: string[]) => {
-    form.setFieldValue(
-      `entries.${entryIndex}.translations`,
-      translations.map((t) => ({ name: t })),
-    );
+  const addSentence = (entryIndex: number) => {
+    form.insertListItem(`entries.${entryIndex}.exampleSentences`, { sentence: '' });
+    setTimeout(() => {
+      const newSentenceIndex = form.getValues().entries[entryIndex].exampleSentences.length;
+      setFocusSentence({ entryIndex, sentenceIndex: newSentenceIndex - 1 });
+    }, 0);
   };
 
-  const handleSentencesGenerated = (entryIndex: number, sentences: string[]) => {
-    form.setFieldValue(
-      `entries.${entryIndex}.exampleSentences`,
-      sentences.map((s) => ({ sentence: s })),
-    );
+  const handleTranslationsGenerated = (entryIndex: number, newTranslations: string[]) => {
+    const currentTranslations = form.getValues().entries[entryIndex]?.translations || [];
+    currentTranslations.forEach((_, index) => {
+      form.clearFieldError(`entries.${entryIndex}.translations.${index}.name`);
+    });
+    const itemsToAdd = newTranslations.length - currentTranslations.length;
+    for (let i = 0; i < itemsToAdd; i++) {
+      form.insertListItem(`entries.${entryIndex}.translations`, { name: '' });
+    }
+    for (let index = 0; index < newTranslations.length; index++) {
+      form.setFieldValue(`entries.${entryIndex}.translations.${index}.name`, newTranslations[index]);
+    }
+  };
+
+  const handleSentencesGenerated = (entryIndex: number, newSentences: string[]) => {
+    const currentSentences = form.getValues().entries[entryIndex]?.exampleSentences || [];
+    currentSentences.forEach((_, index) => {
+      form.clearFieldError(`entries.${entryIndex}.exampleSentences.${index}.sentence`);
+    });
+    const itemsToAdd = newSentences.length - currentSentences.length;
+    for (let i = 0; i < itemsToAdd; i++) {
+      form.insertListItem(`entries.${entryIndex}.exampleSentences`, { sentence: '' });
+    }
+    for (let index = 0; index < newSentences.length; index++) {
+      form.setFieldValue(`entries.${entryIndex}.exampleSentences.${index}.sentence`, newSentences[index]);
+    }
   };
 
   const removeTranslation = (entryIndex: number, translationIndex: number) => {
     form.removeListItem(`entries.${entryIndex}.translations`, translationIndex);
     setTimeout(() => {
-      const currentEntry = form.values.entries[entryIndex];
-      const remainingTranslations = currentEntry.translations.length - 1;
-
+      const remainingTranslations = form.getValues().entries[entryIndex].translations.length;
       if (remainingTranslations === 0) {
         return;
       }
 
-      let targetIndex: number;
-      if (translationIndex === 0) {
-        targetIndex = 0;
-      } else {
-        targetIndex = translationIndex - 1;
+      setFocusTranslation({ entryIndex, translationIndex: Math.max(0, translationIndex - 1) });
+    }, 0);
+  };
+
+  const removeSentence = (entryIndex: number, sentenceIndex: number) => {
+    form.removeListItem(`entries.${entryIndex}.exampleSentences`, sentenceIndex);
+    setTimeout(() => {
+      const remainingSentences = form.getValues().entries[entryIndex].exampleSentences.length - 1;
+      if (remainingSentences === 0) {
+        return;
       }
 
-      targetIndex = Math.min(targetIndex, remainingTranslations - 1);
-      targetIndex = Math.max(targetIndex, 0);
-
-      setFocusTranslation({ entryIndex, translationIndex: targetIndex });
+      setFocusSentence({ entryIndex, sentenceIndex: Math.max(0, sentenceIndex - 1) });
     }, 0);
   };
 
@@ -343,11 +364,17 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
     <>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="lg">
-          <TextInput label="Set Name" placeholder="Enter set name..." size="md" {...form.getInputProps('setName')} />
+          <TextInput
+            label="Set Name"
+            placeholder="Enter set name..."
+            size="md"
+            {...form.getInputProps('setName')}
+            key={form.key('setName')}
+          />
 
           <Divider label="Vocabulary Entries" labelPosition="center" />
 
-          {form.values.entries.map((entry, entryIndex) => (
+          {form.getValues().entries.map((entry, entryIndex) => (
             <Paper key={entryIndex} p={{ base: 'sm', md: 'md' }} withBorder>
               <Stack gap="sm">
                 <Group wrap="wrap" align="top">
@@ -362,6 +389,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                     {...form.getInputProps(`entries.${entryIndex}.word`)}
                     lang="en"
                     spellCheck
+                    key={form.key(`entries.${entryIndex}.word`)}
                   />
                   <Select
                     label="Word Type"
@@ -376,8 +404,9 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                     size="md"
                     w={{ base: '100%', md: 200 }}
                     {...form.getInputProps(`entries.${entryIndex}.wordType`)}
+                    key={form.key(`entries.${entryIndex}.wordType`)}
                   />
-                  {form.values.entries.length > 1 && (
+                  {form.getValues().entries.length > 1 && (
                     <>
                       <ActionIcon
                         color="red"
@@ -420,6 +449,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                         {...form.getInputProps(`entries.${entryIndex}.translations.${translationIndex}.name`)}
                         lang="pl"
                         spellCheck
+                        key={form.key(`entries.${entryIndex}.translations.${translationIndex}.name`)}
                       />
                       {(entry.translations || []).length > 1 && (
                         <ActionIcon
@@ -435,6 +465,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                   ))}
                   <Group gap="xs">
                     <Button
+                      w={180}
                       variant="light"
                       size="xs"
                       leftSection={<IconPlus size={14} />}
@@ -442,9 +473,11 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                       Add Translation
                     </Button>
                     <GenerateTranslationsButton
-                      word={entry.word}
-                      wordType={entry.wordType}
-                      onTranslationsGenerated={(translations) => handleTranslationsGenerated(entryIndex, translations)}
+                      form={form}
+                      entryIndex={entryIndex}
+                      onTranslationsGenerated={(newTranslations) =>
+                        handleTranslationsGenerated(entryIndex, newTranslations)
+                      }
                     />
                   </Group>
                 </div>
@@ -456,17 +489,24 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                   {(entry.exampleSentences || []).map((_, sentenceIndex) => (
                     <Group key={sentenceIndex} mb="xs" wrap="nowrap" align="top">
                       <TextInput
+                        ref={(el) => {
+                          if (!sentenceRefs.current[entryIndex]) {
+                            sentenceRefs.current[entryIndex] = [];
+                          }
+                          sentenceRefs.current[entryIndex][sentenceIndex] = el;
+                        }}
                         placeholder="Enter example sentence..."
                         style={{ flex: 1 }}
                         size="md"
                         {...form.getInputProps(`entries.${entryIndex}.exampleSentences.${sentenceIndex}.sentence`)}
                         lang="en"
                         spellCheck
+                        key={form.key(`entries.${entryIndex}.exampleSentences.${sentenceIndex}.sentence`)}
                       />
                       <ActionIcon
                         color="red"
                         variant="light"
-                        onClick={() => form.removeListItem(`entries.${entryIndex}.exampleSentences`, sentenceIndex)}
+                        onClick={() => removeSentence(entryIndex, sentenceIndex)}
                         aria-label={`Remove sentence ${sentenceIndex + 1}`}
                         mt="7px">
                         <IconTrash size={16} />
@@ -475,16 +515,17 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                   ))}
                   <Group gap="xs">
                     <Button
+                      w={180}
                       variant="light"
                       size="xs"
                       leftSection={<IconPlus size={14} />}
-                      onClick={() => form.insertListItem(`entries.${entryIndex}.exampleSentences`, { sentence: '' })}>
+                      onClick={() => addSentence(entryIndex)}>
                       Add Sentence
                     </Button>
                     <GenerateSentencesButton
-                      word={entry.word}
-                      wordType={entry.wordType}
-                      onSentencesGenerated={(sentences) => handleSentencesGenerated(entryIndex, sentences)}
+                      form={form}
+                      entryIndex={entryIndex}
+                      onSentencesGenerated={(newSentences) => handleSentencesGenerated(entryIndex, newSentences)}
                     />
                   </Group>
                 </div>

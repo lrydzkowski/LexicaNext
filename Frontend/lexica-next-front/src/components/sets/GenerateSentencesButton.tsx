@@ -1,24 +1,30 @@
 import { IconSparkles } from '@tabler/icons-react';
 import { Button } from '@mantine/core';
+import { UseFormReturnType } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useGenerateExampleSentences } from '../../hooks/api';
+import { FormValues } from './SetFormTypes';
 
 interface GenerateSentencesButtonProps {
-  word: string;
-  wordType: string;
+  form: UseFormReturnType<FormValues>;
+  entryIndex: number;
   onSentencesGenerated: (sentences: string[]) => void;
   disabled?: boolean;
 }
 
 export function GenerateSentencesButton({
-  word,
-  wordType,
+  form,
+  entryIndex,
   onSentencesGenerated,
   disabled,
 }: GenerateSentencesButtonProps) {
   const generateSentencesMutation = useGenerateExampleSentences();
 
   const handleClick = () => {
+    const entry = form.getValues().entries[entryIndex];
+    const word = entry?.word || '';
+    const wordType = entry?.wordType || '';
+
     if (!word.trim()) {
       notifications.show({
         title: 'Error',
@@ -44,12 +50,6 @@ export function GenerateSentencesButton({
       {
         onSuccess: (response) => {
           onSentencesGenerated(response.sentences);
-          notifications.show({
-            title: 'Success',
-            message: `Generated ${response.sentences.length} example sentences`,
-            color: 'green',
-            position: 'top-center',
-          });
         },
         onError: () => {
           notifications.show({
@@ -65,6 +65,7 @@ export function GenerateSentencesButton({
 
   return (
     <Button
+      w={180}
       variant="light"
       size="xs"
       leftSection={<IconSparkles size={14} />}
