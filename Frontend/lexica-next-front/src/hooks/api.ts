@@ -9,7 +9,9 @@ export type GetSetResponse = components['schemas']['GetSetResponse'];
 export type GetSetsResponse = components['schemas']['GetSetsResponse'];
 export type WordRecordDto = components['schemas']['WordRecordDto'];
 export type GetWordsResponse = components['schemas']['GetWordsResponse'];
+export type GetWordResponse = components['schemas']['GetWordResponse'];
 export type CreateWordRequestPayload = components['schemas']['CreateWordRequestPayload'];
+export type UpdateWordRequestPayload = components['schemas']['UpdateWordRequestPayload'];
 export type CreateSetRequestPayload = components['schemas']['CreateSetRequestPayload'];
 export type UpdateSetRequestPayload = components['schemas']['UpdateSetRequestPayload'];
 export type GenerateTranslationsRequest = components['schemas']['GenerateTranslationsRequest'];
@@ -125,6 +127,29 @@ export const useCreateSet = () => {
   });
 };
 
+export const useWord = (wordId: string) => {
+  const client = useApiClient();
+
+  return useQuery({
+    queryKey: ['word', wordId],
+    queryFn: async ({ signal }): Promise<GetWordResponse> => {
+      const { data, error } = await client.GET('/api/words/{wordId}', {
+        params: {
+          path: { wordId },
+        },
+        signal,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+
+      return data!;
+    },
+    enabled: !!wordId,
+  });
+};
+
 export const useCreateWord = () => {
   const client = useApiClient();
   const queryClient = useQueryClient();
@@ -141,6 +166,30 @@ export const useCreateWord = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['words'] });
+    },
+  });
+};
+
+export const useUpdateWord = () => {
+  const client = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ wordId, data }: { wordId: string; data: UpdateWordRequestPayload }): Promise<void> => {
+      const { error } = await client.PUT('/api/words/{wordId}', {
+        params: {
+          path: { wordId },
+        },
+        body: data,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+    },
+    onSuccess: (_, { wordId }) => {
+      queryClient.invalidateQueries({ queryKey: ['words'] });
+      queryClient.invalidateQueries({ queryKey: ['word', wordId] });
     },
   });
 };

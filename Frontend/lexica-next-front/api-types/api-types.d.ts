@@ -76,6 +76,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/words/{wordId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Return a word represented by the given id */
+        get: operations["GetWord"];
+        /** Update an existing word */
+        put: operations["UpdateWord"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/recordings/{word}": {
         parameters: {
             query?: never;
@@ -212,6 +230,18 @@ export interface components {
             count?: number | string;
             data?: components["schemas"]["SetRecordDto"][];
         };
+        GetWordResponse: {
+            /** Format: uuid */
+            wordId?: string;
+            word?: string;
+            wordType?: string;
+            translations?: string[];
+            exampleSentences?: string[];
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            editedAt?: null | string;
+        };
         GetWordsResponse: {
             /** Format: int32 */
             count?: number | string;
@@ -240,6 +270,12 @@ export interface components {
         UpdateSetRequestPayload: {
             setName?: string;
             entries?: components["schemas"]["EntryDto"][];
+        };
+        UpdateWordRequestPayload: {
+            word?: string;
+            wordType?: string;
+            translations?: string[];
+            exampleSentences?: string[];
         };
         WordRecordDto: {
             /** Format: uuid */
@@ -612,6 +648,103 @@ export interface operations {
             };
             /** @description Unauthorized */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetWord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                wordId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetWordResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UpdateWord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                wordId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": null | components["schemas"]["UpdateWordRequestPayload"];
+            };
+        };
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

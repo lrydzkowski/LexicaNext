@@ -134,20 +134,20 @@
 
 ### Backend Implementation
 
-- [ ] T041 [P] [US4] Create GetWordEndpoint in `LexicaNext.Core/Queries/GetWord/GetWordEndpoint.cs`
-- [ ] T042 [P] [US4] Create WordMapper in `LexicaNext.Core/Queries/GetWord/Services/WordMapper.cs`
-- [ ] T043 [P] [US4] Create UpdateWordCommand model in `LexicaNext.Core/Commands/UpdateWord/Models/UpdateWordCommand.cs`
-- [ ] T044 [P] [US4] Create UpdateWordRequestValidator in `LexicaNext.Core/Commands/UpdateWord/Services/UpdateWordRequestValidator.cs`
-- [ ] T045 [P] [US4] Create UpdateWordCommandMapper in `LexicaNext.Core/Commands/UpdateWord/Services/UpdateWordCommandMapper.cs`
-- [ ] T046 [US4] Create UpdateWordEndpoint in `LexicaNext.Core/Commands/UpdateWord/UpdateWordEndpoint.cs`
-- [ ] T047 [US4] Register GetWordEndpoint and UpdateWordEndpoint in `LexicaNext.WebApp/Program.cs`
+- [x] T041 [P] [US4] Create GetWordEndpoint in `LexicaNext.Core/Queries/GetWord/GetWordEndpoint.cs`
+- [x] T042 [P] [US4] Create WordMapper in `LexicaNext.Core/Queries/GetWord/Services/WordMapper.cs`
+- [x] T043 [P] [US4] Create UpdateWordCommand model in `LexicaNext.Core/Commands/UpdateWord/Models/UpdateWordCommand.cs`
+- [x] T044 [P] [US4] Create UpdateWordRequestValidator in `LexicaNext.Core/Commands/UpdateWord/Services/UpdateWordRequestValidator.cs`
+- [x] T045 [P] [US4] Create UpdateWordCommandMapper in `LexicaNext.Core/Commands/UpdateWord/Services/UpdateWordCommandMapper.cs`
+- [x] T046 [US4] Create UpdateWordEndpoint in `LexicaNext.Core/Commands/UpdateWord/UpdateWordEndpoint.cs`
+- [x] T047 [US4] Register GetWordEndpoint and UpdateWordEndpoint in `LexicaNext.WebApp/Program.cs`
 
 ### Frontend Implementation
 
-- [ ] T048 [US4] Add useWord and useUpdateWord hooks in `Frontend/lexica-next-front/src/hooks/api.ts`
-- [ ] T049 [US4] Update WordForm to support edit mode in `Frontend/lexica-next-front/src/components/words/WordForm.tsx`
-- [ ] T050 [US4] Create WordEditPage in `Frontend/lexica-next-front/src/pages/words/WordEditPage.tsx`
-- [ ] T051 [US4] Add WordEditPage route in `Frontend/lexica-next-front/src/AppRouter.tsx`
+- [x] T048 [US4] Add useWord and useUpdateWord hooks in `Frontend/lexica-next-front/src/hooks/api.ts`
+- [x] T049 [US4] Update WordForm to support edit mode in `Frontend/lexica-next-front/src/components/words/WordForm.tsx`
+- [x] T050 [US4] Create WordEditPage in `Frontend/lexica-next-front/src/pages/words/WordEditPage.tsx`
+- [x] T051 [US4] Add WordEditPage route in `Frontend/lexica-next-front/src/AppRouter.tsx`
 
 **Checkpoint**: User Story 4 complete - can edit existing words
 

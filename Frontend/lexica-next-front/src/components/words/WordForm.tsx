@@ -3,18 +3,18 @@ import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
 import {
   ActionIcon,
+  Box,
   Button,
   Divider,
   Group,
   LoadingOverlay,
   Select,
   Stack,
-  Text,
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { useCreateWord } from '../../hooks/api';
+import { useCreateWord, useUpdateWord, type GetWordResponse } from '../../hooks/api';
 
 interface WordFormValues {
   word: string;
@@ -24,12 +24,16 @@ interface WordFormValues {
 }
 
 interface WordFormProps {
-  mode: 'create';
+  mode: 'create' | 'edit';
+  wordId?: string;
+  word?: GetWordResponse;
+  isLoading?: boolean;
 }
 
-export function WordForm({ mode }: WordFormProps) {
+export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
   const navigate = useNavigate();
   const createWordMutation = useCreateWord();
+  const updateWordMutation = useUpdateWord();
   const wordInputRef = useRef<HTMLInputElement | null>(null);
   const translationRefs = useRef<(HTMLInputElement | null)[]>([]);
   const sentenceRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -38,14 +42,27 @@ export function WordForm({ mode }: WordFormProps) {
   const [searchParams] = useSearchParams();
   const returnPage = searchParams.get('returnPage') || '1';
 
-  const form = useForm<WordFormValues>({
-    mode: 'uncontrolled',
-    initialValues: {
+  const getInitialValues = (): WordFormValues => {
+    if (mode === 'create') {
+      return {
+        word: '',
+        wordType: 'noun',
+        translations: [{ name: '' }],
+        exampleSentences: [],
+      };
+    }
+
+    return {
       word: '',
       wordType: 'noun',
       translations: [{ name: '' }],
       exampleSentences: [],
-    },
+    };
+  };
+
+  const form = useForm<WordFormValues>({
+    mode: 'uncontrolled',
+    initialValues: getInitialValues(),
     validate: {
       word: (value) => {
         if (!value?.trim()) {
@@ -80,6 +97,21 @@ export function WordForm({ mode }: WordFormProps) {
       },
     },
   });
+
+  useEffect(() => {
+    if (mode === 'edit' && word) {
+      form.setValues({
+        word: word.word || '',
+        wordType: word.wordType?.toLowerCase() || 'noun',
+        translations: word.translations?.length
+          ? word.translations.map((t) => ({ name: t }))
+          : [{ name: '' }],
+        exampleSentences: word.exampleSentences?.length
+          ? word.exampleSentences.map((s) => ({ sentence: s }))
+          : [],
+      });
+    }
+  }, [word, mode]);
 
   useEffect(() => {
     if (mode === 'create' && wordInputRef.current) {
@@ -138,14 +170,15 @@ export function WordForm({ mode }: WordFormProps) {
   };
 
   const handleSubmit = (values: WordFormValues) => {
-    createWordMutation.mutate(
-      {
-        word: values.word.trim(),
-        wordType: values.wordType,
-        translations: values.translations.map((t) => t.name.trim()),
-        exampleSentences: values.exampleSentences.map((s) => s.sentence.trim()),
-      },
-      {
+    const payload = {
+      word: values.word.trim(),
+      wordType: values.wordType,
+      translations: values.translations.map((t) => t.name.trim()),
+      exampleSentences: values.exampleSentences.map((s) => s.sentence.trim()),
+    };
+
+    if (mode === 'create') {
+      createWordMutation.mutate(payload, {
         onSuccess: () => {
           notifications.show({
             title: 'Success',
@@ -163,12 +196,38 @@ export function WordForm({ mode }: WordFormProps) {
             position: 'top-center',
           });
         },
-      },
-    );
+      });
+    } else if (mode === 'edit' && wordId) {
+      updateWordMutation.mutate(
+        { wordId, data: payload },
+        {
+          onSuccess: () => {
+            notifications.show({
+              title: 'Success',
+              message: 'Word updated successfully',
+              color: 'green',
+              position: 'top-center',
+            });
+            navigate(`/words?page=${returnPage}`);
+          },
+          onError: () => {
+            notifications.show({
+              title: 'Error Updating Word',
+              message: 'Failed to update word',
+              color: 'red',
+              position: 'top-center',
+            });
+          },
+        },
+      );
+    }
   };
 
+  const isPending = createWordMutation.isPending || updateWordMutation.isPending;
+
   return (
-    <>
+    <Box pos="relative">
+      <LoadingOverlay visible={isLoading} />
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="lg">
           <Group wrap="wrap" align="top">
@@ -270,12 +329,12 @@ export function WordForm({ mode }: WordFormProps) {
             <Button variant="light" onClick={() => navigate(`/words?page=${returnPage}`)} size="md">
               Cancel
             </Button>
-            <Button type="submit" loading={createWordMutation.isPending} size="md">
-              Create Word
+            <Button type="submit" loading={isPending} size="md">
+              {mode === 'create' ? 'Create Word' : 'Save Changes'}
             </Button>
           </Group>
         </Stack>
       </form>
-    </>
+    </Box>
   );
 }
