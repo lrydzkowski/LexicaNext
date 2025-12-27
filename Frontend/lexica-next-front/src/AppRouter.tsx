@@ -14,6 +14,7 @@ import { SetEditPage } from './pages/sets/SetEditPage';
 import { SetNewPage } from './pages/sets/SetNewPage';
 import { SetsPage } from './pages/sets/SetsPage';
 import { SignInPage } from './pages/SignInPage';
+import { WordNewPage } from './pages/words/WordNewPage';
 import { WordsPage } from './pages/words/WordsPage';
 
 export function AppRouter() {
@@ -123,6 +124,16 @@ export function AppRouter() {
               <RequireAuth>
                 <PageWithBreadcrumbs>
                   <WordsPage />
+                </PageWithBreadcrumbs>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path={links.newWord.path}
+            element={
+              <RequireAuth>
+                <PageWithBreadcrumbs>
+                  <WordNewPage />
                 </PageWithBreadcrumbs>
               </RequireAuth>
             }

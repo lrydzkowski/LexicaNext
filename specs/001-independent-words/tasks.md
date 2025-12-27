@@ -89,18 +89,18 @@
 
 ### Backend Implementation
 
-- [ ] T028 [P] [US2] Create CreateWordCommand model in `LexicaNext.Core/Commands/CreateWord/Models/CreateWordCommand.cs`
-- [ ] T029 [P] [US2] Create CreateWordRequestValidator in `LexicaNext.Core/Commands/CreateWord/Services/CreateWordRequestValidator.cs`
-- [ ] T030 [P] [US2] Create CreateWordCommandMapper in `LexicaNext.Core/Commands/CreateWord/Services/CreateWordCommandMapper.cs`
-- [ ] T031 [US2] Create CreateWordEndpoint in `LexicaNext.Core/Commands/CreateWord/CreateWordEndpoint.cs`
-- [ ] T032 [US2] Register CreateWordEndpoint in `LexicaNext.WebApp/Program.cs`
+- [x] T028 [P] [US2] Create CreateWordCommand model in `LexicaNext.Core/Commands/CreateWord/Models/CreateWordCommand.cs`
+- [x] T029 [P] [US2] Create CreateWordRequestValidator in `LexicaNext.Core/Commands/CreateWord/Services/CreateWordRequestValidator.cs`
+- [x] T030 [P] [US2] Create CreateWordCommandMapper in `LexicaNext.Core/Commands/CreateWord/Services/CreateWordCommandMapper.cs`
+- [x] T031 [US2] Create CreateWordEndpoint in `LexicaNext.Core/Commands/CreateWord/CreateWordEndpoint.cs`
+- [x] T032 [US2] Register CreateWordEndpoint in `LexicaNext.WebApp/Program.cs`
 
 ### Frontend Implementation
 
-- [ ] T033 [US2] Add useCreateWord mutation hook in `Frontend/lexica-next-front/src/hooks/api.ts`
-- [ ] T034 [US2] Create WordForm component in `Frontend/lexica-next-front/src/components/words/WordForm.tsx`
-- [ ] T035 [US2] Create WordNewPage in `Frontend/lexica-next-front/src/pages/words/WordNewPage.tsx`
-- [ ] T036 [US2] Add WordNewPage route in `Frontend/lexica-next-front/src/AppRouter.tsx`
+- [x] T033 [US2] Add useCreateWord mutation hook in `Frontend/lexica-next-front/src/hooks/api.ts`
+- [x] T034 [US2] Create WordForm component in `Frontend/lexica-next-front/src/components/words/WordForm.tsx`
+- [x] T035 [US2] Create WordNewPage in `Frontend/lexica-next-front/src/pages/words/WordNewPage.tsx`
+- [x] T036 [US2] Add WordNewPage route in `Frontend/lexica-next-front/src/AppRouter.tsx`
 
 **Checkpoint**: User Story 2 complete - can create new words independently
 

@@ -68,7 +68,8 @@ export interface paths {
         /** Return the list of words */
         get: operations["GetWords"];
         put?: never;
-        post?: never;
+        /** Create a new word */
+        post: operations["CreateWord"];
         delete?: never;
         options?: never;
         head?: never;
@@ -154,6 +155,16 @@ export interface components {
         CreateSetResponse: {
             /** Format: uuid */
             setId?: string;
+        };
+        CreateWordRequestPayload: {
+            word?: string;
+            wordType?: string;
+            translations?: string[];
+            exampleSentences?: string[];
+        };
+        CreateWordResponse: {
+            /** Format: uuid */
+            wordId?: string;
         };
         EntryDto: {
             word?: string;
@@ -541,6 +552,53 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GetWordsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CreateWord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": null | components["schemas"]["CreateWordRequestPayload"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateWordResponse"];
                 };
             };
             /** @description Bad Request */

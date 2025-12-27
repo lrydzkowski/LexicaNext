@@ -1,6 +1,7 @@
 using System.Globalization;
 using LexicaNext.Core;
 using LexicaNext.Core.Commands.CreateSet;
+using LexicaNext.Core.Commands.CreateWord;
 using LexicaNext.Core.Commands.DeleteSet;
 using LexicaNext.Core.Commands.GenerateExampleSentences;
 using LexicaNext.Core.Commands.GenerateTranslations;
@@ -41,6 +42,7 @@ app.MapGetAppStatusEndpoint();
 app.MapGetSetEndpoint();
 app.MapGetSetsEndpoint();
 app.MapGetWordsEndpoint();
+app.MapCreateWordEndpoint();
 app.MapCreateSetEndpoint();
 app.MapDeleteSetEndpoint();
 app.MapUpdateSetEndpoint();

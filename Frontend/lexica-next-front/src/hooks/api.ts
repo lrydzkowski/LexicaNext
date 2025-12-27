@@ -9,6 +9,7 @@ export type GetSetResponse = components['schemas']['GetSetResponse'];
 export type GetSetsResponse = components['schemas']['GetSetsResponse'];
 export type WordRecordDto = components['schemas']['WordRecordDto'];
 export type GetWordsResponse = components['schemas']['GetWordsResponse'];
+export type CreateWordRequestPayload = components['schemas']['CreateWordRequestPayload'];
 export type CreateSetRequestPayload = components['schemas']['CreateSetRequestPayload'];
 export type UpdateSetRequestPayload = components['schemas']['UpdateSetRequestPayload'];
 export type GenerateTranslationsRequest = components['schemas']['GenerateTranslationsRequest'];
@@ -120,6 +121,26 @@ export const useCreateSet = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sets'] });
+    },
+  });
+};
+
+export const useCreateWord = () => {
+  const client = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: CreateWordRequestPayload): Promise<void> => {
+      const { error } = await client.POST('/api/words', {
+        body: data,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['words'] });
     },
   });
 };
