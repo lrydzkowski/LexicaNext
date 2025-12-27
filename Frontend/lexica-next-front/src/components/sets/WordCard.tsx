@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { IconVolume } from '@tabler/icons-react';
 import { ActionIcon, Badge, Card, Group, Stack, Text } from '@mantine/core';
 import { useRecording, type EntryDto } from '../../hooks/api';
+import { ExampleSentences } from './ExampleSentences';
 
 export function WordCard({ entry, index }: { entry: EntryDto; index: number }) {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -109,6 +110,8 @@ export function WordCard({ entry, index }: { entry: EntryDto; index: number }) {
             ))}
           </Stack>
         </div>
+
+        <ExampleSentences sentences={entry.exampleSentences || []} />
       </Stack>
     </Card>
   );

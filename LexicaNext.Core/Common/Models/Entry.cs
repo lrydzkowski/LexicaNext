@@ -7,4 +7,6 @@ public class Entry
     public WordType WordType { get; init; } = WordType.None;
 
     public List<string> Translations { get; init; } = [];
+
+    public List<ExampleSentence> ExampleSentences { get; init; } = [];
 }

@@ -72,4 +72,6 @@ public class EntryDto
     public string WordType { get; set; } = "";
 
     public List<string> Translations { get; set; } = [];
+
+    public List<string> ExampleSentences { get; set; } = [];
 }

@@ -100,6 +100,7 @@ internal class EntryDtoValidator : AbstractValidator<EntryDto>
         AddValidationForWord();
         AddValidationForWordType();
         AddValidationForTranslations();
+        AddValidationForExampleSentences();
     }
 
     private void AddValidationForWord()
@@ -121,5 +122,10 @@ internal class EntryDtoValidator : AbstractValidator<EntryDto>
         RuleFor(entry => entry.Translations)
             .NotEmpty()
             .DependentRules(() => RuleForEach(entry => entry.Translations).NotEmpty().MaximumLength(200));
+    }
+
+    private void AddValidationForExampleSentences()
+    {
+        RuleForEach(entry => entry.ExampleSentences).NotEmpty().MaximumLength(500);
     }
 }
