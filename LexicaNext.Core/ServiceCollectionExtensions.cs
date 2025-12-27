@@ -55,6 +55,6 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
-        return services.AddScoped<ISerializer, Serializer>();
+        return services.AddSingleton<ISerializer, Serializer>();
     }
 }

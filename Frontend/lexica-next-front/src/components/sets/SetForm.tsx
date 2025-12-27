@@ -270,7 +270,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   const removeSentence = (entryIndex: number, sentenceIndex: number) => {
     form.removeListItem(`entries.${entryIndex}.exampleSentences`, sentenceIndex);
     setTimeout(() => {
-      const remainingSentences = form.getValues().entries[entryIndex].exampleSentences.length - 1;
+      const remainingSentences = form.getValues().entries[entryIndex].exampleSentences.length;
       if (remainingSentences === 0) {
         return;
       }

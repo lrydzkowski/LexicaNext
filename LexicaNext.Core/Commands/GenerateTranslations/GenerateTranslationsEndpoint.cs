@@ -1,7 +1,11 @@
+using FluentValidation;
+using FluentValidation.Results;
 using LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Auth;
+using LexicaNext.Core.Common.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LexicaNext.Core.Commands.GenerateTranslations;
@@ -22,12 +26,19 @@ public static class GenerateTranslationsEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<GenerateTranslationsResponse> HandleAsync(
+    private static async Task<Results<ProblemHttpResult, Ok<GenerateTranslationsResponse>>> HandleAsync(
         [FromBody] GenerateTranslationsRequest request,
         [FromServices] IAiGenerationService aiGenerationService,
+        [FromServices] IValidator<GenerateTranslationsRequest> validator,
         CancellationToken cancellationToken
     )
     {
+        ValidationResult? validationResult = await validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.Problem(validationResult.ToProblemDetails());
+        }
+
         IReadOnlyList<string> translations = await aiGenerationService.GenerateTranslationsAsync(
             request.Word,
             request.WordType,
@@ -35,7 +46,7 @@ public static class GenerateTranslationsEndpoint
             cancellationToken
         );
 
-        return new GenerateTranslationsResponse(translations);
+        return TypedResults.Ok(new GenerateTranslationsResponse(translations));
     }
 }
 

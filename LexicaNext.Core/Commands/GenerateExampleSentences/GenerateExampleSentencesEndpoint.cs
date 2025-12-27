@@ -1,7 +1,11 @@
+using FluentValidation;
+using FluentValidation.Results;
 using LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Auth;
+using LexicaNext.Core.Common.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LexicaNext.Core.Commands.GenerateExampleSentences;
@@ -22,12 +26,19 @@ public static class GenerateExampleSentencesEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<GenerateExampleSentencesResponse> HandleAsync(
+    private static async Task<Results<ProblemHttpResult, Ok<GenerateExampleSentencesResponse>>> HandleAsync(
         [FromBody] GenerateExampleSentencesRequest request,
         [FromServices] IAiGenerationService aiGenerationService,
+        [FromServices] IValidator<GenerateExampleSentencesRequest> validator,
         CancellationToken cancellationToken
     )
     {
+        ValidationResult? validationResult = await validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.Problem(validationResult.ToProblemDetails());
+        }
+
         IReadOnlyList<string> sentences = await aiGenerationService.GenerateExampleSentencesAsync(
             request.Word,
             request.WordType,
@@ -35,7 +46,7 @@ public static class GenerateExampleSentencesEndpoint
             cancellationToken
         );
 
-        return new GenerateExampleSentencesResponse(sentences);
+        return TypedResults.Ok(new GenerateExampleSentencesResponse(sentences));
     }
 }
 
