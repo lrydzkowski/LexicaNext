@@ -19,4 +19,6 @@ internal class WordEntity
     public SetEntity? Set { get; set; }
 
     public ICollection<TranslationEntity> Translations { get; set; } = [];
+
+    public ICollection<ExampleSentenceEntity> ExampleSentences { get; set; } = [];
 }

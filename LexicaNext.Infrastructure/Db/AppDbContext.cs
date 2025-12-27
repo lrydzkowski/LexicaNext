@@ -24,6 +24,8 @@ internal class AppDbContext : DbContext
 
     public DbSet<TestEntity> Tests => Set<TestEntity>();
 
+    public DbSet<ExampleSentenceEntity> ExampleSentences => Set<ExampleSentenceEntity>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

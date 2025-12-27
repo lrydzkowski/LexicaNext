@@ -1,6 +1,7 @@
 using LexicaNext.Infrastructure.Auth;
 using LexicaNext.Infrastructure.Db;
 using LexicaNext.Infrastructure.EnglishDictionary;
+using LexicaNext.Infrastructure.Foundry;
 using LexicaNext.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ public static class ServiceCollectionExtensions
         return services.AddInfrastructureAuth0Services(configuration)
             .AddInfrastructureDbServices(configuration)
             .AddInfrastructureEnglishDictionaryServices(configuration)
-            .AddInfrastructureStorageServices(configuration);
+            .AddInfrastructureStorageServices(configuration)
+            .AddFoundryServices(configuration);
     }
 }

@@ -45,7 +45,8 @@ internal class SetMapper
         {
             Word = entry.Word,
             WordType = _wordTypeMapper.Map(entry.WordType),
-            Translations = entry.Translations
+            Translations = entry.Translations,
+            ExampleSentences = entry.ExampleSentences.Select(s => s.Sentence).ToList()
         };
     }
 }

@@ -9,6 +9,10 @@ export type GetSetResponse = components['schemas']['GetSetResponse'];
 export type GetSetsResponse = components['schemas']['GetSetsResponse'];
 export type CreateSetRequestPayload = components['schemas']['CreateSetRequestPayload'];
 export type UpdateSetRequestPayload = components['schemas']['UpdateSetRequestPayload'];
+export type GenerateTranslationsRequest = components['schemas']['GenerateTranslationsRequest'];
+export type GenerateTranslationsResponse = components['schemas']['GenerateTranslationsResponse'];
+export type GenerateExampleSentencesRequest = components['schemas']['GenerateExampleSentencesRequest'];
+export type GenerateExampleSentencesResponse = components['schemas']['GenerateExampleSentencesResponse'];
 
 export const useApiClient = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -161,5 +165,41 @@ export const useRecording = (word: string, wordType?: string, enabled = true) =>
       return data as Blob;
     },
     enabled: enabled && !!word,
+  });
+};
+
+export const useGenerateTranslations = () => {
+  const client = useApiClient();
+
+  return useMutation({
+    mutationFn: async (request: GenerateTranslationsRequest): Promise<GenerateTranslationsResponse> => {
+      const { data, error } = await client.POST('/api/translations/generate', {
+        body: request,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${JSON.stringify(error)}`);
+      }
+
+      return data!;
+    },
+  });
+};
+
+export const useGenerateExampleSentences = () => {
+  const client = useApiClient();
+
+  return useMutation({
+    mutationFn: async (request: GenerateExampleSentencesRequest): Promise<GenerateExampleSentencesResponse> => {
+      const { data, error } = await client.POST('/api/sentences/generate', {
+        body: request,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${JSON.stringify(error)}`);
+      }
+
+      return data!;
+    },
   });
 };

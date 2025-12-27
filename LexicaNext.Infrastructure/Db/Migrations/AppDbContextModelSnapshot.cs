@@ -17,7 +17,7 @@ namespace LexicaNext.Infrastructure.Db.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -53,6 +53,34 @@ namespace LexicaNext.Infrastructure.Db.Migrations
                     b.HasKey("AnswerId");
 
                     b.ToTable("answer", (string)null);
+                });
+
+            modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.ExampleSentenceEntity", b =>
+                {
+                    b.Property<Guid>("ExampleSentenceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("example_sentence_id");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer")
+                        .HasColumnName("order");
+
+                    b.Property<string>("Sentence")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("sentence");
+
+                    b.Property<Guid>("WordId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("word_id");
+
+                    b.HasKey("ExampleSentenceId");
+
+                    b.HasIndex("WordId");
+
+                    b.ToTable("example_sentence", (string)null);
                 });
 
             modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.RecordingEntity", b =>
@@ -238,6 +266,17 @@ namespace LexicaNext.Infrastructure.Db.Migrations
                         });
                 });
 
+            modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.ExampleSentenceEntity", b =>
+                {
+                    b.HasOne("LexicaNext.Infrastructure.Db.Common.Entities.WordEntity", "Word")
+                        .WithMany("ExampleSentences")
+                        .HasForeignKey("WordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Word");
+                });
+
             modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.RecordingEntity", b =>
                 {
                     b.HasOne("LexicaNext.Infrastructure.Db.Common.Entities.WordTypeEntity", "WordType")
@@ -286,6 +325,8 @@ namespace LexicaNext.Infrastructure.Db.Migrations
 
             modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.WordEntity", b =>
                 {
+                    b.Navigation("ExampleSentences");
+
                     b.Navigation("Translations");
                 });
 
