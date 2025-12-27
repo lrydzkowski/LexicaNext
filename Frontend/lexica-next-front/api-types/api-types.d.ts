@@ -88,6 +88,24 @@ export interface paths {
         /** Update an existing word */
         put: operations["UpdateWord"];
         post?: never;
+        /** Delete an existing word */
+        delete: operations["DeleteWord"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/words/{wordId}/sets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Return the sets that contain a specific word */
+        get: operations["GetWordSets"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -241,6 +259,9 @@ export interface components {
             createdAt?: string;
             /** Format: date-time */
             editedAt?: null | string;
+        };
+        GetWordSetsResponse: {
+            sets?: components["schemas"]["SetRecordDto"][];
         };
         GetWordsResponse: {
             /** Format: int32 */
@@ -734,6 +755,90 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DeleteWord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                wordId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetWordSets: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                wordId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetWordSetsResponse"];
                 };
             };
             /** @description Unauthorized */

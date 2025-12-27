@@ -10,6 +10,7 @@ export type GetSetsResponse = components['schemas']['GetSetsResponse'];
 export type WordRecordDto = components['schemas']['WordRecordDto'];
 export type GetWordsResponse = components['schemas']['GetWordsResponse'];
 export type GetWordResponse = components['schemas']['GetWordResponse'];
+export type GetWordSetsResponse = components['schemas']['GetWordSetsResponse'];
 export type CreateWordRequestPayload = components['schemas']['CreateWordRequestPayload'];
 export type UpdateWordRequestPayload = components['schemas']['UpdateWordRequestPayload'];
 export type CreateSetRequestPayload = components['schemas']['CreateSetRequestPayload'];
@@ -191,6 +192,51 @@ export const useUpdateWord = () => {
       queryClient.invalidateQueries({ queryKey: ['words'] });
       queryClient.invalidateQueries({ queryKey: ['word', wordId] });
     },
+  });
+};
+
+export const useDeleteWord = () => {
+  const client = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (wordId: string): Promise<void> => {
+      const { error } = await client.DELETE('/api/words/{wordId}', {
+        params: {
+          path: { wordId },
+        },
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['words'] });
+    },
+  });
+};
+
+export const useWordSets = (wordId: string, enabled = true) => {
+  const client = useApiClient();
+
+  return useQuery({
+    queryKey: ['wordSets', wordId],
+    queryFn: async ({ signal }): Promise<GetWordSetsResponse> => {
+      const { data, error } = await client.GET('/api/words/{wordId}/sets', {
+        params: {
+          path: { wordId },
+        },
+        signal,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+
+      return data!;
+    },
+    enabled: enabled && !!wordId,
   });
 };
 

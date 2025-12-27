@@ -31,7 +31,8 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
-import { useWords, type WordRecordDto } from '../../hooks/api';
+import { useDeleteWord, useWords, type WordRecordDto } from '../../hooks/api';
+import { DeleteWordModal } from './DeleteWordModal';
 import { formatDateTime } from '../../utils/date';
 import classes from './WordsList.module.css';
 
@@ -69,6 +70,11 @@ export function WordsList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
+  const [deleteModalState, setDeleteModalState] = useState<{
+    opened: boolean;
+    wordId: string;
+    wordText: string;
+  }>({ opened: false, wordId: '', wordText: '' });
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const sortField = (searchParams.get('sortField') as SortField) || 'createdAt';
@@ -88,6 +94,8 @@ export function WordsList() {
     sortingOrder: sortOrder,
     searchQuery: debouncedSearchQuery || undefined,
   });
+
+  const deleteWordMutation = useDeleteWord();
 
   const handleSort = (field: SortField) => {
     setSearchParams((prev) => {
@@ -140,6 +148,37 @@ export function WordsList() {
     }
   }, [error]);
 
+  const openDeleteModal = (wordId: string, wordText: string) => {
+    setDeleteModalState({ opened: true, wordId, wordText });
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalState({ opened: false, wordId: '', wordText: '' });
+  };
+
+  const handleDelete = () => {
+    deleteWordMutation.mutate(deleteModalState.wordId, {
+      onSuccess: () => {
+        notifications.show({
+          title: 'Success',
+          message: 'Word deleted successfully',
+          color: 'green',
+          position: 'top-center',
+        });
+        closeDeleteModal();
+        refetch();
+      },
+      onError: () => {
+        notifications.show({
+          title: 'Error Deleting Word',
+          message: 'Failed to delete word',
+          color: 'red',
+          position: 'top-center',
+        });
+      },
+    });
+  };
+
   const totalPages = Math.ceil((totalCount as number) / pageSize);
 
   const WordActionMenu = ({ word }: { word: WordRecordDto }) => (
@@ -157,7 +196,10 @@ export function WordsList() {
           to={`/words/${word.wordId}/edit?returnPage=${currentPage}`}>
           Edit Word
         </Menu.Item>
-        <Menu.Item leftSection={<IconTrash size={16} />} color="red" disabled>
+        <Menu.Item
+          leftSection={<IconTrash size={16} />}
+          color="red"
+          onClick={() => openDeleteModal(word.wordId || '', word.word || '')}>
           Delete Word
         </Menu.Item>
       </Menu.Dropdown>
@@ -218,6 +260,15 @@ export function WordsList() {
 
   return (
     <>
+      <DeleteWordModal
+        opened={deleteModalState.opened}
+        onClose={closeDeleteModal}
+        wordId={deleteModalState.wordId}
+        wordText={deleteModalState.wordText}
+        onConfirm={handleDelete}
+        isDeleting={deleteWordMutation.isPending}
+      />
+
       <Stack gap="md">
         <Group wrap="wrap" gap="sm">
           <ActionIcon component={Link} to={links.newWord.url} size="xl" hiddenFrom="md">

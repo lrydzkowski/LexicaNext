@@ -161,14 +161,14 @@
 
 ### Backend Implementation
 
-- [ ] T052 [P] [US5] Create GetWordSetsEndpoint in `LexicaNext.Core/Queries/GetWordSets/GetWordSetsEndpoint.cs`
-- [ ] T053 [P] [US5] Create DeleteWordEndpoint in `LexicaNext.Core/Commands/DeleteWord/DeleteWordEndpoint.cs`
-- [ ] T054 [US5] Register GetWordSetsEndpoint and DeleteWordEndpoint in `LexicaNext.WebApp/Program.cs`
+- [x] T052 [P] [US5] Create GetWordSetsEndpoint in `LexicaNext.Core/Queries/GetWordSets/GetWordSetsEndpoint.cs`
+- [x] T053 [P] [US5] Create DeleteWordEndpoint in `LexicaNext.Core/Commands/DeleteWord/DeleteWordEndpoint.cs`
+- [x] T054 [US5] Register GetWordSetsEndpoint and DeleteWordEndpoint in `LexicaNext.WebApp/Program.cs`
 
 ### Frontend Implementation
 
-- [ ] T055 [US5] Add useWordSets and useDeleteWord hooks in `Frontend/lexica-next-front/src/hooks/api.ts`
-- [ ] T056 [US5] Add delete action with confirmation modal to WordsList showing affected sets in `Frontend/lexica-next-front/src/components/words/WordsList.tsx`
+- [x] T055 [US5] Add useWordSets and useDeleteWord hooks in `Frontend/lexica-next-front/src/hooks/api.ts`
+- [x] T056 [US5] Add delete action with confirmation modal to WordsList showing affected sets in `Frontend/lexica-next-front/src/components/words/WordsList.tsx`
 
 **Checkpoint**: User Story 5 complete - can delete words with warning about affected sets
 
