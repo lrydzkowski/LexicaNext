@@ -1,17 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
-import {
-  ActionIcon,
-  Box,
-  Button,
-  Divider,
-  Group,
-  LoadingOverlay,
-  Select,
-  Stack,
-  TextInput,
-} from '@mantine/core';
+import { ActionIcon, Box, Button, Divider, Group, LoadingOverlay, Select, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useCreateWord, useUpdateWord, type GetWordResponse } from '../../hooks/api';
@@ -103,12 +93,8 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
       form.setValues({
         word: word.word || '',
         wordType: word.wordType?.toLowerCase() || 'noun',
-        translations: word.translations?.length
-          ? word.translations.map((t) => ({ name: t }))
-          : [{ name: '' }],
-        exampleSentences: word.exampleSentences?.length
-          ? word.exampleSentences.map((s) => ({ sentence: s }))
-          : [],
+        translations: word.translations?.length ? word.translations.map((t) => ({ name: t })) : [{ name: '' }],
+        exampleSentences: word.exampleSentences?.length ? word.exampleSentences.map((s) => ({ sentence: s })) : [],
       });
     }
   }, [word, mode]);

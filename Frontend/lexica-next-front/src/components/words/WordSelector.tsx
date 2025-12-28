@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  IconChevronDown,
-  IconChevronUp,
-  IconPlus,
-  IconSearch,
-  IconSelector,
-  IconX,
-} from '@tabler/icons-react';
+import { IconChevronDown, IconChevronUp, IconPlus, IconSearch, IconSelector, IconX } from '@tabler/icons-react';
 import {
   ActionIcon,
   Badge,
@@ -87,7 +80,11 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
   const [createModalOpened, setCreateModalOpened] = useState(false);
   const pageSize = 5;
 
-  const { data: wordsData, isFetching, refetch } = useWords({
+  const {
+    data: wordsData,
+    isFetching,
+    refetch,
+  } = useWords({
     page,
     pageSize,
     sortingFieldName: sortField,
@@ -201,7 +198,7 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
             position: 'top-center',
           });
         },
-      }
+      },
     );
   };
 
@@ -236,8 +233,7 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
         onClose={() => setCreateModalOpened(false)}
         title="Create New Word"
         centered
-        size="md"
-      >
+        size="md">
         <form onSubmit={form.onSubmit(handleCreateWord)}>
           <Stack gap="md">
             <Group wrap="wrap" align="top">
@@ -299,12 +295,10 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
                       size="xs"
                       variant="transparent"
                       color="white"
-                      onClick={() => handleRemoveSelectedWord(word.wordId)}
-                    >
+                      onClick={() => handleRemoveSelectedWord(word.wordId)}>
                       <IconX size={12} />
                     </ActionIcon>
-                  }
-                >
+                  }>
                   {word.word} ({word.wordType})
                 </Badge>
               ))}
@@ -313,11 +307,7 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
         )}
 
         <Group gap="sm">
-          <Button
-            leftSection={<IconPlus size={16} />}
-            variant="light"
-            onClick={() => setCreateModalOpened(true)}
-          >
+          <Button leftSection={<IconPlus size={16} />} variant="light" onClick={() => setCreateModalOpened(true)}>
             Create New Word
           </Button>
           <TextInput
@@ -335,7 +325,7 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
             <Table striped highlightOnHover>
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th style={{ width: '2.5rem' }}></Table.Th>
+                  <Table.Th style={{ width: '2.5rem' }} />
                   <Table.Th>
                     <SortableHeader
                       label="Word"
@@ -369,12 +359,7 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
 
         {totalPages > 1 && (
           <Group justify="center">
-            <Pagination
-              total={totalPages}
-              value={page}
-              onChange={setPage}
-              size="sm"
-            />
+            <Pagination total={totalPages} value={page} onChange={setPage} size="sm" />
           </Group>
         )}
       </Stack>

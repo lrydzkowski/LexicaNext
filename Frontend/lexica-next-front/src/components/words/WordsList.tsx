@@ -32,8 +32,8 @@ import {
 import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
 import { useDeleteWord, useWords, type WordRecordDto } from '../../hooks/api';
-import { DeleteWordModal } from './DeleteWordModal';
 import { formatDateTime } from '../../utils/date';
+import { DeleteWordModal } from './DeleteWordModal';
 import classes from './WordsList.module.css';
 
 type SortField = 'word' | 'createdAt' | 'editedAt';

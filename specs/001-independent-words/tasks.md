@@ -219,13 +219,13 @@
 
 **Purpose**: Ensure learning modes work with new structure and final cleanup
 
-- [ ] T069 Update SetSpellingMode to work with new word-set structure in `Frontend/lexica-next-front/src/components/sets/modes/SetSpellingMode.tsx`
-- [ ] T070 [P] Update SetFullMode to work with new word-set structure in `Frontend/lexica-next-front/src/components/sets/modes/SetFullMode.tsx`
-- [ ] T071 [P] Update SetOnlyOpenQuestionsMode to work with new word-set structure in `Frontend/lexica-next-front/src/components/sets/modes/SetOnlyOpenQuestionsMode.tsx`
-- [ ] T072 Verify Generate Translations button works in WordForm in `Frontend/lexica-next-front/src/components/words/WordForm.tsx`
-- [ ] T073 [P] Verify Generate Sentences button works in WordForm in `Frontend/lexica-next-front/src/components/words/WordForm.tsx`
-- [ ] T074 Run build and fix any type errors with `dotnet build LexicaNext.sln` and `npm run build`
-- [ ] T075 Run linting and fix issues with `npm run lint` and `npm run prettier`
+- [x] T069 Update SetSpellingMode to work with new word-set structure in `Frontend/lexica-next-front/src/components/sets/modes/SetSpellingMode.tsx`
+- [x] T070 [P] Update SetFullMode to work with new word-set structure in `Frontend/lexica-next-front/src/components/sets/modes/SetFullMode.tsx`
+- [x] T071 [P] Update SetOnlyOpenQuestionsMode to work with new word-set structure in `Frontend/lexica-next-front/src/components/sets/modes/SetOnlyOpenQuestionsMode.tsx`
+- [x] T072 Verify Generate Translations button works in WordForm in `Frontend/lexica-next-front/src/components/words/WordForm.tsx`
+- [x] T073 [P] Verify Generate Sentences button works in WordForm in `Frontend/lexica-next-front/src/components/words/WordForm.tsx`
+- [x] T074 Run build and fix any type errors with `dotnet build LexicaNext.sln` and `npm run build`
+- [x] T075 Run linting and fix issues with `npm run lint` and `npm run prettier`
 
 ---
 

@@ -1,14 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  Button,
-  Divider,
-  Group,
-  LoadingOverlay,
-  Stack,
-  TextInput,
-} from '@mantine/core';
+import { Button, Divider, Group, LoadingOverlay, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useCreateSet, useUpdateSet, type GetSetResponse } from '../../hooks/api';
@@ -74,7 +67,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
           wordId: entry.wordId || '',
           word: entry.word || '',
           wordType: entry.wordType || '',
-        }))
+        })),
       );
     }
   }, [set, mode]);
@@ -117,7 +110,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
               position: 'top-center',
             });
           },
-        }
+        },
       );
     } else {
       if (!setId) {
@@ -150,7 +143,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
               position: 'top-center',
             });
           },
-        }
+        },
       );
     }
   };

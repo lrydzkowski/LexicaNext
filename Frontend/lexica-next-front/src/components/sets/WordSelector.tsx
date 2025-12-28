@@ -1,12 +1,5 @@
-import { useState, useMemo } from 'react';
-import {
-  IconChevronDown,
-  IconChevronUp,
-  IconPlus,
-  IconSearch,
-  IconTrash,
-  IconX,
-} from '@tabler/icons-react';
+import { useMemo, useState } from 'react';
+import { IconChevronDown, IconChevronUp, IconPlus, IconSearch, IconTrash, IconX } from '@tabler/icons-react';
 import { Link } from 'react-router';
 import {
   ActionIcon,
@@ -25,8 +18,8 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useWords, type WordRecordDto } from '../../hooks/api';
 import { links } from '../../config/links';
+import { useWords, type WordRecordDto } from '../../hooks/api';
 
 interface SelectedWord {
   wordId: string;
@@ -119,11 +112,7 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
             Selected Words ({selectedWords.length})
           </Text>
           <Group gap="xs">
-            <Button
-              variant="light"
-              size="xs"
-              leftSection={<IconPlus size={14} />}
-              onClick={open}>
+            <Button variant="light" size="xs" leftSection={<IconPlus size={14} />} onClick={open}>
               Add Words
             </Button>
             <Button
@@ -211,11 +200,7 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
             onChange={(e) => handleSearchChange(e.target.value)}
             rightSection={
               searchQuery ? (
-                <ActionIcon
-                  variant="subtle"
-                  size="sm"
-                  onClick={() => handleSearchChange('')}
-                  aria-label="Clear search">
+                <ActionIcon variant="subtle" size="sm" onClick={() => handleSearchChange('')} aria-label="Clear search">
                   <IconX size={14} />
                 </ActionIcon>
               ) : null
