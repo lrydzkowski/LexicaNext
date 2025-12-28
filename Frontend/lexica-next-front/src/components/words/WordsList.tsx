@@ -159,12 +159,6 @@ export function WordsList() {
   const handleDelete = () => {
     deleteWordMutation.mutate(deleteModalState.wordId, {
       onSuccess: () => {
-        notifications.show({
-          title: 'Success',
-          message: 'Word deleted successfully',
-          color: 'green',
-          position: 'top-center',
-        });
         closeDeleteModal();
         refetch();
       },

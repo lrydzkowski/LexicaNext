@@ -107,12 +107,6 @@ export function SetsList() {
       onConfirm: () => {
         deleteSetMutation.mutate(setId, {
           onSuccess: () => {
-            notifications.show({
-              title: 'Success',
-              message: 'Set deleted successfully',
-              color: 'green',
-              position: 'top-center',
-            });
             refetch();
           },
           onError: () => {

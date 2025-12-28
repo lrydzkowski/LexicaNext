@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { IconChevronDown, IconChevronUp, IconPlus, IconSearch, IconTrash, IconX } from '@tabler/icons-react';
 import { Link } from 'react-router';
 import {
@@ -53,13 +53,17 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
 
   const selectedWordIds = useMemo(() => new Set(selectedWords.map((w) => w.wordId)), [selectedWords]);
 
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
-    setTimeout(() => {
-      setDebouncedSearchQuery(value);
-      setCurrentPage(1);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const oldSearch = debouncedSearchQuery;
+      setDebouncedSearchQuery(searchQuery);
+      if (oldSearch !== searchQuery) {
+        setCurrentPage(1);
+      }
     }, 150);
-  };
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const handleSelectWord = (word: WordRecordDto) => {
     if (!word.wordId) {
@@ -197,10 +201,10 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
             placeholder="Search words..."
             leftSection={<IconSearch size={16} />}
             value={searchQuery}
-            onChange={(e) => handleSearchChange(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
             rightSection={
               searchQuery ? (
-                <ActionIcon variant="subtle" size="sm" onClick={() => handleSearchChange('')} aria-label="Clear search">
+                <ActionIcon variant="subtle" size="sm" onClick={() => setSearchQuery('')} aria-label="Clear search">
                   <IconX size={14} />
                 </ActionIcon>
               ) : null

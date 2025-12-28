@@ -5,6 +5,8 @@ import { ActionIcon, Box, Button, Divider, Group, LoadingOverlay, Select, Stack,
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useCreateWord, useUpdateWord, type GetWordResponse } from '../../hooks/api';
+import { GenerateSentencesButton } from './GenerateSentencesButton';
+import { GenerateTranslationsButton } from './GenerateTranslationsButton';
 
 interface WordFormValues {
   word: string;
@@ -96,6 +98,9 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
         translations: word.translations?.length ? word.translations.map((t) => ({ name: t })) : [{ name: '' }],
         exampleSentences: word.exampleSentences?.length ? word.exampleSentences.map((s) => ({ sentence: s })) : [],
       });
+      setTimeout(() => {
+        wordInputRef.current?.focus();
+      }, 0);
     }
   }, [word, mode]);
 
@@ -155,6 +160,34 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
     }, 0);
   };
 
+  const handleTranslationsGenerated = (newTranslations: string[]) => {
+    const currentTranslations = form.getValues().translations || [];
+    currentTranslations.forEach((_, index) => {
+      form.clearFieldError(`translations.${index}.name`);
+    });
+    const itemsToAdd = newTranslations.length - currentTranslations.length;
+    for (let i = 0; i < itemsToAdd; i++) {
+      form.insertListItem('translations', { name: '' });
+    }
+    for (let index = 0; index < newTranslations.length; index++) {
+      form.setFieldValue(`translations.${index}.name`, newTranslations[index]);
+    }
+  };
+
+  const handleSentencesGenerated = (newSentences: string[]) => {
+    const currentSentences = form.getValues().exampleSentences || [];
+    currentSentences.forEach((_, index) => {
+      form.clearFieldError(`exampleSentences.${index}.sentence`);
+    });
+    const itemsToAdd = newSentences.length - currentSentences.length;
+    for (let i = 0; i < itemsToAdd; i++) {
+      form.insertListItem(`exampleSentences`, { sentence: '' });
+    }
+    for (let index = 0; index < newSentences.length; index++) {
+      form.setFieldValue(`exampleSentences.${index}.sentence`, newSentences[index]);
+    }
+  };
+
   const handleSubmit = (values: WordFormValues) => {
     const payload = {
       word: values.word.trim(),
@@ -188,12 +221,6 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
         { wordId, data: payload },
         {
           onSuccess: () => {
-            notifications.show({
-              title: 'Success',
-              message: 'Word updated successfully',
-              color: 'green',
-              position: 'top-center',
-            });
             navigate(`/words?page=${returnPage}`);
           },
           onError: () => {
@@ -274,9 +301,12 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
                 )}
               </Group>
             ))}
-            <Button variant="light" size="xs" leftSection={<IconPlus size={14} />} onClick={addTranslation}>
-              Add Translation
-            </Button>
+            <Group gap="xs">
+              <Button variant="light" size="xs" leftSection={<IconPlus size={14} />} onClick={addTranslation} w={180}>
+                Add Translation
+              </Button>
+              <GenerateTranslationsButton form={form} onTranslationsGenerated={handleTranslationsGenerated} />
+            </Group>
           </div>
 
           <Divider label="Example Sentences (Optional)" labelPosition="center" />
@@ -306,17 +336,20 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
                 </ActionIcon>
               </Group>
             ))}
-            <Button variant="light" size="xs" leftSection={<IconPlus size={14} />} onClick={addSentence}>
-              Add Sentence
-            </Button>
+            <Group gap="xs">
+              <Button variant="light" size="xs" leftSection={<IconPlus size={14} />} onClick={addSentence} w={180}>
+                Add Sentence
+              </Button>
+              <GenerateSentencesButton form={form} onSentencesGenerated={handleSentencesGenerated} />
+            </Group>
           </div>
 
           <Group justify="space-between" mt="xl" wrap="wrap">
-            <Button variant="light" onClick={() => navigate(`/words?page=${returnPage}`)} size="md">
+            <Button variant="light" onClick={() => navigate(`/words?page=${returnPage}`)} size="md" w={120}>
               Cancel
             </Button>
-            <Button type="submit" loading={isPending} size="md">
-              {mode === 'create' ? 'Create Word' : 'Save Changes'}
+            <Button type="submit" loading={isPending} size="md" w={120}>
+              Save
             </Button>
           </Group>
         </Stack>

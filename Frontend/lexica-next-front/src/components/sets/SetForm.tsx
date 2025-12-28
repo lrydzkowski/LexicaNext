@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
 import { Button, Divider, Group, LoadingOverlay, Stack, TextInput } from '@mantine/core';
@@ -30,6 +30,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   const updateSetMutation = useUpdateSet();
   const [searchParams] = useSearchParams();
   const returnPage = searchParams.get('returnPage') || '1';
+  const setNameInputRef = useRef<HTMLInputElement | null>(null);
 
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([]);
 
@@ -69,8 +70,17 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
           wordType: entry.wordType || '',
         })),
       );
+      setTimeout(() => {
+        setNameInputRef.current?.focus();
+      }, 0);
     }
   }, [set, mode]);
+
+  useEffect(() => {
+    if (mode === 'create') {
+      setNameInputRef.current?.focus();
+    }
+  }, [mode]);
 
   const handleSubmit = (values: FormValues) => {
     if (selectedWords.length === 0) {
@@ -94,12 +104,6 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         },
         {
           onSuccess: () => {
-            notifications.show({
-              title: 'Success',
-              message: 'Set created successfully',
-              color: 'green',
-              position: 'top-center',
-            });
             navigate('/sets');
           },
           onError: () => {
@@ -127,12 +131,6 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         },
         {
           onSuccess: () => {
-            notifications.show({
-              title: 'Success',
-              message: 'Set updated successfully',
-              color: 'green',
-              position: 'top-center',
-            });
             navigate('/sets');
           },
           onError: () => {
@@ -160,6 +158,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="lg">
         <TextInput
+          ref={setNameInputRef}
           label="Set Name"
           placeholder="Enter set name..."
           size="md"
@@ -172,14 +171,15 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         <WordSelector selectedWords={selectedWords} onWordsChange={setSelectedWords} />
 
         <Group justify="space-between" mt="xl" wrap="wrap">
-          <Button variant="light" onClick={() => navigate(`/sets?page=${returnPage}`)} size="md">
+          <Button variant="light" onClick={() => navigate(`/sets?page=${returnPage}`)} size="md" w={120}>
             Cancel
           </Button>
           <Button
             type="submit"
             loading={mode === 'create' ? createSetMutation.isPending : updateSetMutation.isPending}
-            size="md">
-            {mode === 'create' ? 'Create Set' : 'Update Set'}
+            size="md"
+            w={120}>
+            Save
           </Button>
         </Group>
       </Stack>
