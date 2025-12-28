@@ -125,6 +125,19 @@ internal class WordsRepository
         return word;
     }
 
+    public async Task<List<Guid>> GetExistingWordIdsAsync(
+        List<Guid> wordIds,
+        CancellationToken cancellationToken = default
+    )
+    {
+        List<Guid> existingIds = await _dbContext.Words.AsNoTracking()
+            .Where(entity => wordIds.Contains(entity.WordId))
+            .Select(entity => entity.WordId)
+            .ToListAsync(cancellationToken);
+
+        return existingIds;
+    }
+
     public async Task<List<SetRecord>> GetWordSetsAsync(Guid wordId, CancellationToken cancellationToken = default)
     {
         List<SetRecord> sets = await _dbContext.SetWords.AsNoTracking()

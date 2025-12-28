@@ -182,19 +182,19 @@
 
 ### Backend Implementation
 
-- [ ] T057 [US6] Modify SetsRepository to use word references instead of embedded words in `LexicaNext.Infrastructure/Db/Repositories/SetsRepository.cs`
-- [ ] T058 [US6] Update CreateSetRequestValidator to accept wordIds in `LexicaNext.Core/Commands/CreateSet/Services/CreateSetRequestValidator.cs`
-- [ ] T059 [US6] Update CreateSetCommandMapper for word references in `LexicaNext.Core/Commands/CreateSet/Services/CreateSetCommandMapper.cs`
-- [ ] T060 [US6] Update UpdateSetRequestValidator to accept wordIds in `LexicaNext.Core/Commands/UpdateSet/Services/UpdateSetRequestValidator.cs`
-- [ ] T061 [US6] Update UpdateSetCommandMapper for word references in `LexicaNext.Core/Commands/UpdateSet/Services/UpdateSetCommandMapper.cs`
-- [ ] T062 [US6] Update GetSetEndpoint response to include word details in `LexicaNext.Core/Queries/GetSet/GetSetEndpoint.cs`
-- [ ] T063 [US6] Update SetMapper for new word structure in `LexicaNext.Core/Queries/GetSet/Services/SetMapper.cs`
+- [x] T057 [US6] Modify SetsRepository to use word references instead of embedded words in `LexicaNext.Infrastructure/Db/Repositories/SetsRepository.cs`
+- [x] T058 [US6] Update CreateSetRequestValidator to accept wordIds in `LexicaNext.Core/Commands/CreateSet/Services/CreateSetRequestValidator.cs`
+- [x] T059 [US6] Update CreateSetCommandMapper for word references in `LexicaNext.Core/Commands/CreateSet/Services/CreateSetCommandMapper.cs`
+- [x] T060 [US6] Update UpdateSetRequestValidator to accept wordIds in `LexicaNext.Core/Commands/UpdateSet/Services/UpdateSetRequestValidator.cs`
+- [x] T061 [US6] Update UpdateSetCommandMapper for word references in `LexicaNext.Core/Commands/UpdateSet/Services/UpdateSetCommandMapper.cs`
+- [x] T062 [US6] Update GetSetEndpoint response to include word details in `LexicaNext.Core/Queries/GetSet/GetSetEndpoint.cs`
+- [x] T063 [US6] Update SetMapper for new word structure in `LexicaNext.Core/Queries/GetSet/Services/SetMapper.cs`
 
 ### Frontend Implementation
 
-- [ ] T064 [US6] Create WordSelector component with table and inline create in `Frontend/lexica-next-front/src/components/words/WordSelector.tsx`
-- [ ] T065 [US6] Replace SetForm entry list with WordSelector in `Frontend/lexica-next-front/src/components/sets/SetForm.tsx`
-- [ ] T066 [US6] Update useCreateSet and useUpdateSet hooks for word references in `Frontend/lexica-next-front/src/hooks/api.ts`
+- [x] T064 [US6] Create WordSelector component with table and inline create in `Frontend/lexica-next-front/src/components/words/WordSelector.tsx`
+- [x] T065 [US6] Replace SetForm entry list with WordSelector in `Frontend/lexica-next-front/src/components/sets/SetForm.tsx`
+- [x] T066 [US6] Update useCreateSet and useUpdateSet hooks for word references in `Frontend/lexica-next-front/src/hooks/api.ts`
 
 **Checkpoint**: User Story 6 complete - sets use word selection instead of embedded entries
 

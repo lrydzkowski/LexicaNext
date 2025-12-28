@@ -186,7 +186,7 @@ export interface components {
     schemas: {
         CreateSetRequestPayload: {
             setName?: string;
-            entries?: components["schemas"]["EntryDto"][];
+            wordIds?: string[];
         };
         CreateSetResponse: {
             /** Format: uuid */
@@ -203,6 +203,8 @@ export interface components {
             wordId?: string;
         };
         EntryDto: {
+            /** Format: uuid */
+            wordId?: string;
             word?: string;
             wordType?: string;
             translations?: string[];
@@ -290,7 +292,7 @@ export interface components {
         };
         UpdateSetRequestPayload: {
             setName?: string;
-            entries?: components["schemas"]["EntryDto"][];
+            wordIds?: string[];
         };
         UpdateWordRequestPayload: {
             word?: string;

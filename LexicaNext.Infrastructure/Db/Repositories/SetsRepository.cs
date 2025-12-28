@@ -1,4 +1,4 @@
-﻿using LexicaNext.Core.Commands.CreateSet.Interfaces;
+using LexicaNext.Core.Commands.CreateSet.Interfaces;
 using LexicaNext.Core.Commands.CreateSet.Models;
 using LexicaNext.Core.Commands.DeleteSet.Interfaces;
 using LexicaNext.Core.Commands.UpdateSet.Interfaces;
@@ -12,7 +12,6 @@ using LexicaNext.Core.Queries.GetSet.Interfaces;
 using LexicaNext.Core.Queries.GetSets.Interfaces;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LexicaNext.Infrastructure.Db.Repositories;
 
@@ -26,16 +25,13 @@ internal class SetsRepository
 {
     private readonly IDateTimeOffsetProvider _dateTimeOffsetProvider;
     private readonly AppDbContext _dbContext;
-    private readonly IWordTypesRepository _wordTypesRepository;
 
     public SetsRepository(
         AppDbContext dbContext,
-        IWordTypesRepository wordTypesRepository,
         IDateTimeOffsetProvider dateTimeOffsetProvider
     )
     {
         _dbContext = dbContext;
-        _wordTypesRepository = wordTypesRepository;
         _dateTimeOffsetProvider = dateTimeOffsetProvider;
     }
 
@@ -61,42 +57,28 @@ internal class SetsRepository
         CancellationToken cancellationToken = default
     )
     {
-        await using IDbContextTransaction transaction =
-            await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-
-        try
+        SetEntity setEntity = new()
         {
-            SetEntity setEntity = await AddSetAsync(createSetCommand, cancellationToken);
+            SetId = Guid.CreateVersion7(),
+            Name = createSetCommand.SetName,
+            CreatedAt = _dateTimeOffsetProvider.UtcNow
+        };
+        await _dbContext.Sets.AddAsync(setEntity, cancellationToken);
 
-            for (int i = 0; i < createSetCommand.Entries.Count; i++)
+        for (int i = 0; i < createSetCommand.WordIds.Count; i++)
+        {
+            SetWordEntity setWordEntity = new()
             {
-                Entry entry = createSetCommand.Entries[i];
-                Guid wordTypeId = await GetWordTypeIdAsync(entry, cancellationToken);
-                WordEntity wordEntity = await AddWordAsync(entry, wordTypeId, setEntity, cancellationToken);
-                await AddSetWordAsync(setEntity, wordEntity, i, cancellationToken);
-
-                for (int j = 0; j < entry.Translations.Count; j++)
-                {
-                    string translation = entry.Translations[j];
-                    await AddTranslationAsync(translation, j, wordEntity, cancellationToken);
-                }
-
-                for (int j = 0; j < entry.ExampleSentences.Count; j++)
-                {
-                    ExampleSentence sentence = entry.ExampleSentences[j];
-                    await AddExampleSentenceAsync(sentence.Sentence, j, wordEntity, cancellationToken);
-                }
-            }
-
-            await transaction.CommitAsync(cancellationToken);
-
-            return setEntity.SetId;
+                SetId = setEntity.SetId,
+                WordId = createSetCommand.WordIds[i],
+                Order = i
+            };
+            await _dbContext.SetWords.AddAsync(setWordEntity, cancellationToken);
         }
-        catch (Exception)
-        {
-            await transaction.RollbackAsync(cancellationToken);
-            throw;
-        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return setEntity.SetId;
     }
 
     public async Task DeleteSetAsync(Guid setId, CancellationToken cancellationToken = default)
@@ -125,7 +107,8 @@ internal class SetsRepository
                         .Select(
                             sw => new Entry
                             {
-                                Word = sw.Word!.Word,
+                                WordId = sw.Word!.WordId,
+                                Word = sw.Word.Word,
                                 WordType = MapWordType(sw.Word.WordType!.Name),
                                 Translations = sw.Word.Translations.OrderBy(t => t.Order).Select(y => y.Translation).ToList(),
                                 ExampleSentences = sw.Word.ExampleSentences.OrderBy(s => s.Order)
@@ -180,52 +163,30 @@ internal class SetsRepository
 
     public async Task UpdateSetAsync(UpdateSetCommand updateSetCommand, CancellationToken cancellationToken = default)
     {
-        await using IDbContextTransaction transaction =
-            await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-
-        try
+        SetEntity? setEntity = await _dbContext.Sets
+            .Include(s => s.SetWords)
+            .FirstOrDefaultAsync(s => s.SetId == updateSetCommand.SetId, cancellationToken);
+        if (setEntity == null)
         {
-            SetEntity? setEntity = await _dbContext.Sets
-                .Include(setEntity => setEntity.SetWords)
-                .FirstOrDefaultAsync(setEntity => setEntity.SetId == updateSetCommand.SetId, cancellationToken);
-            if (setEntity == null)
-            {
-                return;
-            }
-
-            setEntity.Name = updateSetCommand.SetName;
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
-            _dbContext.RemoveRange(setEntity.SetWords);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
-            for (int i = 0; i < updateSetCommand.Entries.Count; i++)
-            {
-                Entry entry = updateSetCommand.Entries[i];
-                Guid wordTypeId = await GetWordTypeIdAsync(entry, cancellationToken);
-                WordEntity wordEntity = await AddWordAsync(entry, wordTypeId, setEntity, cancellationToken);
-                await AddSetWordAsync(setEntity, wordEntity, i, cancellationToken);
-
-                for (int j = 0; j < entry.Translations.Count; j++)
-                {
-                    string translation = entry.Translations[j];
-                    await AddTranslationAsync(translation, j, wordEntity, cancellationToken);
-                }
-
-                for (int j = 0; j < entry.ExampleSentences.Count; j++)
-                {
-                    ExampleSentence sentence = entry.ExampleSentences[j];
-                    await AddExampleSentenceAsync(sentence.Sentence, j, wordEntity, cancellationToken);
-                }
-            }
-
-            await transaction.CommitAsync(cancellationToken);
+            return;
         }
-        catch (Exception)
+
+        setEntity.Name = updateSetCommand.SetName;
+
+        _dbContext.RemoveRange(setEntity.SetWords);
+
+        for (int i = 0; i < updateSetCommand.WordIds.Count; i++)
         {
-            await transaction.RollbackAsync(cancellationToken);
-            throw;
+            SetWordEntity setWordEntity = new()
+            {
+                SetId = setEntity.SetId,
+                WordId = updateSetCommand.WordIds[i],
+                Order = i
+            };
+            await _dbContext.SetWords.AddAsync(setWordEntity, cancellationToken);
         }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<bool> SetExistsAsync(Guid setId, CancellationToken cancellationToken = default)
@@ -235,113 +196,6 @@ internal class SetsRepository
             .AnyAsync(entrySetId => entrySetId == setId, cancellationToken);
 
         return setExists;
-    }
-
-    private async Task<SetEntity> AddSetAsync(
-        CreateSetCommand createSetCommand,
-        CancellationToken cancellationToken = default
-    )
-    {
-        SetEntity setEntity = new()
-        {
-            SetId = Guid.CreateVersion7(),
-            Name = createSetCommand.SetName,
-            CreatedAt = _dateTimeOffsetProvider.UtcNow
-        };
-        await _dbContext.Sets.AddAsync(setEntity, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return setEntity;
-    }
-
-    private async Task<Guid> GetWordTypeIdAsync(Entry entry, CancellationToken cancellationToken = default)
-    {
-        Guid? wordTypeId = await _wordTypesRepository.GetWordTypeIdAsync(entry.WordType, cancellationToken);
-        if (wordTypeId is null)
-        {
-            throw new InvalidOperationException($"Word type = '{entry.WordType}' doesn't exist.");
-        }
-
-        return (Guid)wordTypeId;
-    }
-
-    private async Task<WordEntity> AddWordAsync(
-        Entry entry,
-        Guid wordTypeId,
-        SetEntity setEntity,
-        CancellationToken cancellationToken = default
-    )
-    {
-        WordEntity wordEntity = new()
-        {
-            WordId = Guid.CreateVersion7(),
-            Word = entry.Word,
-            WordTypeId = wordTypeId,
-            CreatedAt = _dateTimeOffsetProvider.UtcNow
-        };
-        await _dbContext.Words.AddAsync(wordEntity, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return wordEntity;
-    }
-
-    private async Task<SetWordEntity> AddSetWordAsync(
-        SetEntity setEntity,
-        WordEntity wordEntity,
-        int order,
-        CancellationToken cancellationToken = default
-    )
-    {
-        SetWordEntity setWordEntity = new()
-        {
-            SetId = setEntity.SetId,
-            WordId = wordEntity.WordId,
-            Order = order
-        };
-        await _dbContext.SetWords.AddAsync(setWordEntity, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return setWordEntity;
-    }
-
-    private async Task<TranslationEntity> AddTranslationAsync(
-        string translation,
-        int order,
-        WordEntity wordEntity,
-        CancellationToken cancellationToken = default
-    )
-    {
-        TranslationEntity translationEntity = new()
-        {
-            TranslationId = Guid.CreateVersion7(),
-            Translation = translation,
-            Order = order,
-            WordId = wordEntity.WordId
-        };
-        await _dbContext.Translations.AddAsync(translationEntity, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return translationEntity;
-    }
-
-    private async Task<ExampleSentenceEntity> AddExampleSentenceAsync(
-        string sentence,
-        int order,
-        WordEntity wordEntity,
-        CancellationToken cancellationToken = default
-    )
-    {
-        ExampleSentenceEntity exampleSentenceEntity = new()
-        {
-            ExampleSentenceId = Guid.CreateVersion7(),
-            Sentence = sentence,
-            Order = order,
-            WordId = wordEntity.WordId
-        };
-        await _dbContext.ExampleSentences.AddAsync(exampleSentenceEntity, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return exampleSentenceEntity;
     }
 
     private static WordType MapWordType(string wordTypeName)

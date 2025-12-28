@@ -43,6 +43,7 @@ internal class SetMapper
     {
         return new EntryDto
         {
+            WordId = entry.WordId,
             Word = entry.Word,
             WordType = _wordTypeMapper.Map(entry.WordType),
             Translations = entry.Translations,

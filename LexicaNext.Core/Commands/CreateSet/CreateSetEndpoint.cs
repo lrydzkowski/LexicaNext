@@ -64,18 +64,7 @@ public class CreateSetRequestPayload
 {
     public string SetName { get; init; } = "";
 
-    public List<EntryDto> Entries { get; set; } = [];
-}
-
-public class EntryDto
-{
-    public string Word { get; set; } = "";
-
-    public string WordType { get; set; } = "";
-
-    public List<string> Translations { get; set; } = [];
-
-    public List<string> ExampleSentences { get; set; } = [];
+    public List<string> WordIds { get; set; } = [];
 }
 
 public class CreateSetResponse
