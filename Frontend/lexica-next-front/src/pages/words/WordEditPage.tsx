@@ -3,6 +3,7 @@ import { IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { ActionIcon, Container, Group, Stack, Title } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import { links } from '@/config/links';
 import { WordForm } from '../../components/words/WordForm';
 import { useWord } from '../../hooks/api';
 
@@ -22,7 +23,7 @@ export function WordEditPage() {
         color: 'red',
         position: 'top-center',
       });
-      navigate('/words');
+      navigate(links.words.getUrl());
     }
   }, [error, navigate]);
 
@@ -32,7 +33,7 @@ export function WordEditPage() {
         <Group>
           <ActionIcon
             variant="subtle"
-            onClick={() => navigate(`/words?page=${returnPage}`)}
+            onClick={() => navigate(links.words.getUrl({}, { returnPage }))}
             aria-label="Go back to words">
             <IconArrowLeft size={16} />
           </ActionIcon>

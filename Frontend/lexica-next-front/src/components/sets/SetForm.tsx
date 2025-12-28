@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Button, Divider, Group, LoadingOverlay, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import { links } from '@/config/links';
 import { useCreateSet, useUpdateSet, type GetSetResponse } from '../../hooks/api';
 import { WordSelector } from './WordSelector';
 
@@ -104,7 +105,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         },
         {
           onSuccess: () => {
-            navigate('/sets');
+            navigate(links.sets.getUrl());
           },
           onError: () => {
             notifications.show({
@@ -131,7 +132,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         },
         {
           onSuccess: () => {
-            navigate('/sets');
+            navigate(links.sets.getUrl());
           },
           onError: () => {
             notifications.show({
@@ -171,7 +172,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         <WordSelector selectedWords={selectedWords} onWordsChange={setSelectedWords} />
 
         <Group justify="space-between" mt="xl" wrap="wrap">
-          <Button variant="light" onClick={() => navigate(`/sets?page=${returnPage}`)} size="md" w={120}>
+          <Button variant="light" onClick={() => navigate(links.sets.getUrl({}, { returnPage }))} size="md" w={120}>
             Cancel
           </Button>
           <Button

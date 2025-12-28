@@ -187,7 +187,7 @@ export function WordsList() {
         <Menu.Item
           leftSection={<IconEdit size={16} />}
           component={Link}
-          to={`/words/${word.wordId}/edit?returnPage=${currentPage}`}>
+          to={links.editWord.getUrl({ wordId: word.wordId }, { returnPage: currentPage.toString() })}>
           Edit Word
         </Menu.Item>
         <Menu.Item
@@ -265,14 +265,18 @@ export function WordsList() {
 
       <Stack gap="md">
         <Group wrap="wrap" gap="sm">
-          <ActionIcon component={Link} to={links.newWord.url} size="xl" hiddenFrom="md">
+          <ActionIcon
+            component={Link}
+            to={links.newWord.getUrl({}, { returnPage: currentPage.toString() })}
+            size="xl"
+            hiddenFrom="md">
             <IconPlus size={22} />
           </ActionIcon>
           <Button
             ref={createButtonRef}
             leftSection={<IconPlus size={16} />}
             component={Link}
-            to={`${links.newWord.url}?returnPage=${currentPage}`}
+            to={links.newWord.getUrl({}, { returnPage: currentPage.toString() })}
             size="md"
             visibleFrom="sm">
             <Text>Create New Word</Text>

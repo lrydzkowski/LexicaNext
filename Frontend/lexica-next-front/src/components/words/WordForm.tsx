@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { ActionIcon, Box, Button, Divider, Group, LoadingOverlay, Select, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import { links } from '@/config/links';
 import { useCreateWord, useUpdateWord, type GetWordResponse } from '../../hooks/api';
 import { GenerateSentencesButton } from './GenerateSentencesButton';
 import { GenerateTranslationsButton } from './GenerateTranslationsButton';
@@ -205,7 +206,7 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
             color: 'green',
             position: 'top-center',
           });
-          navigate('/words');
+          navigate(links.words.getUrl());
         },
         onError: () => {
           notifications.show({
@@ -221,7 +222,7 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
         { wordId, data: payload },
         {
           onSuccess: () => {
-            navigate(`/words?page=${returnPage}`);
+            navigate(links.words.getUrl({}, { returnPage }));
           },
           onError: () => {
             notifications.show({
@@ -345,7 +346,7 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
           </div>
 
           <Group justify="space-between" mt="xl" wrap="wrap">
-            <Button variant="light" onClick={() => navigate(`/words?page=${returnPage}`)} size="md" w={120}>
+            <Button variant="light" onClick={() => navigate(links.words.getUrl({}, { returnPage }))} size="md" w={120}>
               Cancel
             </Button>
             <Button type="submit" loading={isPending} size="md" w={120}>

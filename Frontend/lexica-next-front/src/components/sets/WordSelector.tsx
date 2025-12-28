@@ -121,7 +121,7 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
             </Button>
             <Button
               component={Link}
-              to={links.newWord.url}
+              to={links.newWord.getUrl()}
               variant="subtle"
               size="xs"
               leftSection={<IconPlus size={14} />}>

@@ -1,87 +1,121 @@
 export interface IAppLink {
-  path: string;
-  url: string;
-  label: string;
-  segment: string;
+  getUrl: (
+    params?: Record<string, string | undefined> | null,
+    query?: Record<string, string | undefined> | null,
+  ) => string;
 }
 
 export const links: Record<string, IAppLink> = {
   home: {
-    path: '/',
-    url: '/',
-    label: 'Home',
-    segment: '',
+    getUrl: () => '/',
   },
   about: {
-    path: 'about',
-    url: '/about',
-    label: 'About',
-    segment: 'about',
+    getUrl: (_, query) => {
+      let url = '/about';
+      url = addQuery(url, query);
+
+      return url;
+    },
   },
   signIn: {
-    path: 'sign-in',
-    url: '/sign-in',
-    label: 'Sign In',
-    segment: 'sign-in',
+    getUrl: (_, query) => {
+      let url = '/sign-in';
+      url = addQuery(url, query);
+
+      return url;
+    },
   },
   sets: {
-    path: 'sets',
-    url: '/sets',
-    label: 'Sets',
-    segment: 'sets',
+    getUrl: (_, query) => {
+      let url = '/sets';
+      url = addQuery(url, query);
+
+      return url;
+    },
   },
   newSet: {
-    path: 'sets/new',
-    url: '/sets/new',
-    label: 'New Set',
-    segment: 'new',
+    getUrl: (_, query) => {
+      let url = '/sets/new';
+      url = addQuery(url, query);
+
+      return url;
+    },
   },
   editSet: {
-    path: 'sets/:setId/edit',
-    url: '/sets/:setId/edit',
-    label: 'Edit Set',
-    segment: 'edit',
+    getUrl: (params, query) => {
+      let url = `/sets/${params?.setId}/edit`;
+      url = addQuery(url, query);
+
+      return url;
+    },
   },
   setContent: {
-    path: 'sets/:setId/content',
-    url: '/sets/:setId/content',
-    label: 'Content',
-    segment: 'content',
+    getUrl: (params, query) => {
+      let url = `/sets/${params?.setId}/content`;
+      url = addQuery(url, query);
+
+      return url;
+    },
   },
   spellingMode: {
-    path: 'sets/:setId/spelling-mode',
-    url: '/sets/:setId/spelling-mode',
-    label: 'Spelling Mode',
-    segment: 'spelling-mode',
+    getUrl: (params, query) => {
+      let url = `/sets/${params?.setId}/spelling-mode`;
+      url = addQuery(url, query);
+
+      return url;
+    },
   },
-  onlyOpenQuestionsMode: {
-    path: 'sets/:setId/only-open-questions-mode',
-    url: '/sets/:setId/only-open-questions-mode',
-    label: 'Open Questions Mode',
-    segment: 'only-open-questions-mode',
+  openQuestionsMode: {
+    getUrl: (params, query) => {
+      let url = `/sets/${params?.setId}/open-questions-mode`;
+      url = addQuery(url, query);
+
+      return url;
+    },
   },
   fullMode: {
-    path: 'sets/:setId/full-mode',
-    url: '/sets/:setId/full-mode',
-    label: 'Full Mode',
-    segment: 'full-mode',
+    getUrl: (params, query) => {
+      let url = `/sets/${params?.setId}/full-mode`;
+      url = addQuery(url, query);
+
+      return url;
+    },
   },
   words: {
-    path: 'words',
-    url: '/words',
-    label: 'Words',
-    segment: 'words',
+    getUrl: (_, query) => {
+      let url = '/words';
+      url = addQuery(url, query);
+
+      return url;
+    },
   },
   newWord: {
-    path: 'words/new',
-    url: '/words/new',
-    label: 'New Word',
-    segment: 'new',
+    getUrl: (_, query) => {
+      let url = '/words/new';
+      url = addQuery(url, query);
+
+      return url;
+    },
   },
   editWord: {
-    path: 'words/:wordId/edit',
-    url: '/words/:wordId/edit',
-    label: 'Edit Word',
-    segment: 'edit',
+    getUrl: (params, query) => {
+      let url = `/words/${params?.wordId}/edit`;
+      url = addQuery(url, query);
+
+      return url;
+    },
   },
+};
+
+const addQuery = (url: string, query: Record<string, string | undefined> | null | undefined): string => {
+  if (!query) {
+    return url;
+  }
+
+  const queryString = Object.entries(query)
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value ?? '')}`)
+    .join('&');
+  const urlWithQuery = `${url}?${queryString}`;
+
+  return urlWithQuery;
 };
