@@ -208,8 +208,8 @@
 
 ### Frontend Implementation
 
-- [ ] T067 [US7] Add remove word functionality to WordSelector in `Frontend/lexica-next-front/src/components/words/WordSelector.tsx`
-- [ ] T068 [US7] Update SetForm to track removed words and send updated wordIds in `Frontend/lexica-next-front/src/components/sets/SetForm.tsx`
+- [x] T067 [US7] Add remove word functionality to WordSelector in `Frontend/lexica-next-front/src/components/words/WordSelector.tsx`
+- [x] T068 [US7] Update SetForm to track removed words and send updated wordIds in `Frontend/lexica-next-front/src/components/sets/SetForm.tsx`
 
 **Checkpoint**: User Story 7 complete - can remove words from sets without deletion
 
