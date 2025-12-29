@@ -3,27 +3,24 @@ import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { ActionIcon, Box, Button, Divider, Group, LoadingOverlay, Select, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { randomId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { links } from '@/config/links';
 import { useCreateWord, useUpdateWord, type GetWordResponse } from '../../hooks/api';
 import { GenerateSentencesButton } from './GenerateSentencesButton';
 import { GenerateTranslationsButton } from './GenerateTranslationsButton';
-
-interface WordFormValues {
-  word: string;
-  wordType: string;
-  translations: { name: string }[];
-  exampleSentences: { sentence: string }[];
-}
+import { WordFormSuccessData, WordFormValues } from './WordFormTypes';
 
 interface WordFormProps {
   mode: 'create' | 'edit';
   wordId?: string;
   word?: GetWordResponse;
   isLoading?: boolean;
+  onSuccess?: (data: WordFormSuccessData) => void;
+  onCancel?: () => void;
 }
 
-export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
+export function WordForm({ mode, wordId, word, isLoading, onSuccess, onCancel }: WordFormProps) {
   const navigate = useNavigate();
   const createWordMutation = useCreateWord();
   const updateWordMutation = useUpdateWord();
@@ -40,7 +37,7 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
       return {
         word: '',
         wordType: 'noun',
-        translations: [{ name: '' }],
+        translations: [{ name: '', key: randomId() }],
         exampleSentences: [],
       };
     }
@@ -48,7 +45,7 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
     return {
       word: '',
       wordType: 'noun',
-      translations: [{ name: '' }],
+      translations: [{ name: '', key: randomId() }],
       exampleSentences: [],
     };
   };
@@ -96,8 +93,12 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
       form.setValues({
         word: word.word || '',
         wordType: word.wordType?.toLowerCase() || 'noun',
-        translations: word.translations?.length ? word.translations.map((t) => ({ name: t })) : [{ name: '' }],
-        exampleSentences: word.exampleSentences?.length ? word.exampleSentences.map((s) => ({ sentence: s })) : [],
+        translations: word.translations?.length
+          ? word.translations.map((t) => ({ name: t, key: randomId() }))
+          : [{ name: '', key: randomId() }],
+        exampleSentences: word.exampleSentences?.length
+          ? word.exampleSentences.map((s) => ({ sentence: s, key: randomId() }))
+          : [],
       });
       setTimeout(() => {
         wordInputRef.current?.focus();
@@ -126,7 +127,7 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
   }, [focusSentence]);
 
   const addTranslation = () => {
-    form.insertListItem('translations', { name: '' });
+    form.insertListItem('translations', { name: '', key: randomId() });
     setTimeout(() => {
       const newIndex = form.getValues().translations.length;
       setFocusTranslation(newIndex - 1);
@@ -144,7 +145,7 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
   };
 
   const addSentence = () => {
-    form.insertListItem('exampleSentences', { sentence: '' });
+    form.insertListItem('exampleSentences', { sentence: '', key: randomId() });
     setTimeout(() => {
       const newIndex = form.getValues().exampleSentences.length;
       setFocusSentence(newIndex - 1);
@@ -168,7 +169,7 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
     });
     const itemsToAdd = newTranslations.length - currentTranslations.length;
     for (let i = 0; i < itemsToAdd; i++) {
-      form.insertListItem('translations', { name: '' });
+      form.insertListItem('translations', { name: '', key: randomId() });
     }
     for (let index = 0; index < newTranslations.length; index++) {
       form.setFieldValue(`translations.${index}.name`, newTranslations[index]);
@@ -182,7 +183,7 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
     });
     const itemsToAdd = newSentences.length - currentSentences.length;
     for (let i = 0; i < itemsToAdd; i++) {
-      form.insertListItem(`exampleSentences`, { sentence: '' });
+      form.insertListItem(`exampleSentences`, { sentence: '', key: randomId() });
     }
     for (let index = 0; index < newSentences.length; index++) {
       form.setFieldValue(`exampleSentences.${index}.sentence`, newSentences[index]);
@@ -199,14 +200,16 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
 
     if (mode === 'create') {
       createWordMutation.mutate(payload, {
-        onSuccess: () => {
-          notifications.show({
-            title: 'Success',
-            message: 'Word created successfully',
-            color: 'green',
-            position: 'top-center',
-          });
-          navigate(links.words.getUrl());
+        onSuccess: (data) => {
+          if (onSuccess && data.wordId) {
+            onSuccess({
+              wordId: data.wordId,
+              word: payload.word,
+              wordType: payload.wordType,
+            });
+          } else {
+            navigate(links.words.getUrl());
+          }
         },
         onError: () => {
           notifications.show({
@@ -222,7 +225,15 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
         { wordId, data: payload },
         {
           onSuccess: () => {
-            navigate(links.words.getUrl({}, { returnPage }));
+            if (onSuccess) {
+              onSuccess({
+                wordId,
+                word: payload.word,
+                wordType: payload.wordType,
+              });
+            } else {
+              navigate(links.words.getUrl({}, { returnPage }));
+            }
           },
           onError: () => {
             notifications.show({
@@ -276,8 +287,8 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
           <Divider label="Translations" labelPosition="center" />
 
           <div>
-            {form.getValues().translations.map((_, index) => (
-              <Group key={index} mb="xs" wrap="nowrap" align="top">
+            {form.getValues().translations.map((item, index) => (
+              <Group key={item.key} mb="xs" wrap="nowrap" align="top">
                 <TextInput
                   ref={(el) => {
                     translationRefs.current[index] = el;
@@ -313,8 +324,8 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
           <Divider label="Example Sentences (Optional)" labelPosition="center" />
 
           <div>
-            {form.getValues().exampleSentences.map((_, index) => (
-              <Group key={index} mb="xs" wrap="nowrap" align="top">
+            {form.getValues().exampleSentences.map((item, index) => (
+              <Group key={item.key} mb="xs" wrap="nowrap" align="top">
                 <TextInput
                   ref={(el) => {
                     sentenceRefs.current[index] = el;
@@ -346,7 +357,11 @@ export function WordForm({ mode, wordId, word, isLoading }: WordFormProps) {
           </div>
 
           <Group justify="space-between" mt="xl" wrap="wrap">
-            <Button variant="light" onClick={() => navigate(links.words.getUrl({}, { returnPage }))} size="md" w={120}>
+            <Button
+              variant="light"
+              onClick={() => (onCancel ? onCancel() : navigate(links.words.getUrl({}, { returnPage })))}
+              size="md"
+              w={120}>
               Cancel
             </Button>
             <Button type="submit" loading={isPending} size="md" w={120}>

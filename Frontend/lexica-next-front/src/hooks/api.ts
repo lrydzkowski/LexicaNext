@@ -12,6 +12,7 @@ export type GetWordsResponse = components['schemas']['GetWordsResponse'];
 export type GetWordResponse = components['schemas']['GetWordResponse'];
 export type GetWordSetsResponse = components['schemas']['GetWordSetsResponse'];
 export type CreateWordRequestPayload = components['schemas']['CreateWordRequestPayload'];
+export type CreateWordResponse = components['schemas']['CreateWordResponse'];
 export type UpdateWordRequestPayload = components['schemas']['UpdateWordRequestPayload'];
 export type CreateSetRequestPayload = components['schemas']['CreateSetRequestPayload'];
 export type UpdateSetRequestPayload = components['schemas']['UpdateSetRequestPayload'];
@@ -156,14 +157,16 @@ export const useCreateWord = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: CreateWordRequestPayload): Promise<void> => {
-      const { error } = await client.POST('/api/words', {
+    mutationFn: async (data: CreateWordRequestPayload): Promise<CreateWordResponse> => {
+      const { data: responseData, error } = await client.POST('/api/words', {
         body: data,
       });
 
-      if (error) {
+      if (error || !responseData) {
         throw new Error(`API error: ${error}`);
       }
+
+      return responseData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['words'] });

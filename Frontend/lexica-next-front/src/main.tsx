@@ -30,7 +30,7 @@ createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <MantineProvider>
         <ModalsProvider>
-          <Notifications zIndex={200} />
+          <Notifications zIndex={210} />
           <Auth0Provider
             domain={appConfig.auth0Domain}
             clientId={appConfig.auth0ClientId}

@@ -3,13 +3,7 @@ import { Button } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useGenerateExampleSentences } from '../../hooks/api';
-
-interface WordFormValues {
-  word: string;
-  wordType: string;
-  translations: { name: string }[];
-  exampleSentences: { sentence: string }[];
-}
+import { WordFormValues } from './WordFormTypes';
 
 interface GenerateSentencesButtonProps {
   form: UseFormReturnType<WordFormValues>;

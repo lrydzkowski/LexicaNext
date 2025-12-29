@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { IconChevronDown, IconChevronUp, IconPlus, IconSearch, IconTrash, IconX } from '@tabler/icons-react';
-import { Link } from 'react-router';
 import {
   ActionIcon,
   Badge,
   Box,
   Button,
+  Container,
   Group,
   LoadingOverlay,
   Modal,
@@ -16,10 +16,12 @@ import {
   Table,
   Text,
   TextInput,
+  Title,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { links } from '../../config/links';
 import { useWords, type WordRecordDto } from '../../hooks/api';
+import { WordForm } from '../words/WordForm';
+import { WordFormSuccessData } from '../words/WordFormTypes';
 
 interface SelectedWord {
   wordId: string;
@@ -34,6 +36,7 @@ interface WordSelectorProps {
 
 export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps) {
   const [opened, { open, close }] = useDisclosure(false);
+  const [createModalOpened, { open: openCreateModal, close: closeCreateModal }] = useDisclosure(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -108,6 +111,17 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
     onWordsChange(newWords);
   };
 
+  const handleWordCreated = (data: WordFormSuccessData) => {
+    onWordsChange([
+      ...selectedWords,
+      {
+        wordId: data.wordId,
+        word: data.word,
+        wordType: data.wordType,
+      },
+    ]);
+  };
+
   return (
     <>
       <Stack gap="sm">
@@ -119,12 +133,7 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
             <Button variant="light" size="xs" leftSection={<IconPlus size={14} />} onClick={open}>
               Add Words
             </Button>
-            <Button
-              component={Link}
-              to={links.newWord.getUrl()}
-              variant="subtle"
-              size="xs"
-              leftSection={<IconPlus size={14} />}>
+            <Button variant="subtle" size="xs" leftSection={<IconPlus size={14} />} onClick={openCreateModal}>
               Create New Word
             </Button>
           </Group>
@@ -195,87 +204,136 @@ export function WordSelector({ selectedWords, onWordsChange }: WordSelectorProps
         )}
       </Stack>
 
-      <Modal opened={opened} onClose={close} title="Select Words" size="lg">
-        <Stack gap="md">
-          <TextInput
-            placeholder="Search words..."
-            leftSection={<IconSearch size={16} />}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            rightSection={
-              searchQuery ? (
-                <ActionIcon variant="subtle" size="sm" onClick={() => setSearchQuery('')} aria-label="Clear search">
-                  <IconX size={14} />
-                </ActionIcon>
-              ) : null
-            }
-          />
+      <Modal.Root opened={opened} onClose={close} size="lg" fullScreen>
+        <Modal.Overlay />
+        <Modal.Content>
+          <Modal.Header>
+            <Container size="md" p={0} w="100%">
+              <Group justify="space-between">
+                <Title size={16} fw={500}>
+                  Select Words
+                </Title>
+                <Modal.CloseButton />
+              </Group>
+            </Container>
+          </Modal.Header>
+          <Modal.Body>
+            <Container size="md" p={0}>
+              <Stack gap="md">
+                <TextInput
+                  placeholder="Search words..."
+                  leftSection={<IconSearch size={16} />}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  rightSection={
+                    searchQuery ? (
+                      <ActionIcon
+                        variant="subtle"
+                        size="sm"
+                        onClick={() => setSearchQuery('')}
+                        aria-label="Clear search">
+                        <IconX size={14} />
+                      </ActionIcon>
+                    ) : null
+                  }
+                />
 
-          <Box pos="relative" mih={300}>
-            <LoadingOverlay visible={isFetching} />
+                <Box pos="relative" mb={20}>
+                  <LoadingOverlay visible={isFetching} />
 
-            {words.length === 0 ? (
-              <Text ta="center" c="dimmed" py="xl">
-                {debouncedSearchQuery
-                  ? 'No words found matching your search.'
-                  : 'No words available. Create some words first!'}
-              </Text>
-            ) : (
-              <ScrollArea h={350}>
-                <Table striped highlightOnHover>
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th style={{ width: 50 }} />
-                      <Table.Th>Word</Table.Th>
-                      <Table.Th style={{ width: 120 }}>Type</Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {words.map((word) => {
-                      const isSelected = word.wordId ? selectedWordIds.has(word.wordId) : false;
+                  {words.length === 0 ? (
+                    <Text ta="center" c="dimmed" py="xl">
+                      {debouncedSearchQuery
+                        ? 'No words found matching your search.'
+                        : 'No words available. Create some words first!'}
+                    </Text>
+                  ) : (
+                    <ScrollArea>
+                      <Table striped highlightOnHover>
+                        <Table.Thead>
+                          <Table.Tr>
+                            <Table.Th style={{ width: 50 }} />
+                            <Table.Th>Word</Table.Th>
+                            <Table.Th style={{ width: 120 }}>Type</Table.Th>
+                          </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>
+                          {words.map((word) => {
+                            const isSelected = word.wordId ? selectedWordIds.has(word.wordId) : false;
 
-                      return (
-                        <Table.Tr
-                          key={word.wordId}
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => handleSelectWord(word)}
-                          bg={isSelected ? 'var(--mantine-color-blue-light)' : undefined}>
-                          <Table.Td>
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => handleSelectWord(word)}
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                          </Table.Td>
-                          <Table.Td>
-                            <Text fw={500}>{word.word}</Text>
-                          </Table.Td>
-                          <Table.Td>
-                            <Badge size="sm" variant="light">
-                              {word.wordType}
-                            </Badge>
-                          </Table.Td>
-                        </Table.Tr>
-                      );
-                    })}
-                  </Table.Tbody>
-                </Table>
-              </ScrollArea>
-            )}
-          </Box>
+                            return (
+                              <Table.Tr
+                                key={word.wordId}
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => handleSelectWord(word)}
+                                bg={isSelected ? 'var(--mantine-color-blue-light)' : undefined}>
+                                <Table.Td>
+                                  <input
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={() => handleSelectWord(word)}
+                                    onClick={(e) => e.stopPropagation()}
+                                  />
+                                </Table.Td>
+                                <Table.Td>
+                                  <Text fw={500}>{word.word}</Text>
+                                </Table.Td>
+                                <Table.Td>
+                                  <Badge size="sm" variant="light">
+                                    {word.wordType}
+                                  </Badge>
+                                </Table.Td>
+                              </Table.Tr>
+                            );
+                          })}
+                        </Table.Tbody>
+                      </Table>
+                    </ScrollArea>
+                  )}
+                </Box>
+                {totalPages > 1 && (
+                  <Group justify="center">
+                    <Pagination total={totalPages} value={currentPage} onChange={setCurrentPage} size="sm" />
+                  </Group>
+                )}
+                <Group justify="flex-end">
+                  <Button size="md" onClick={close}>
+                    Done
+                  </Button>
+                </Group>
+              </Stack>
+            </Container>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
 
-          {totalPages > 1 && (
-            <Group justify="center">
-              <Pagination total={totalPages} value={currentPage} onChange={setCurrentPage} size="sm" />
-            </Group>
-          )}
-
-          <Group justify="flex-end">
-            <Button onClick={close}>Done</Button>
-          </Group>
-        </Stack>
-      </Modal>
+      <Modal.Root opened={createModalOpened} onClose={closeCreateModal} size="lg" fullScreen>
+        <Modal.Overlay />
+        <Modal.Content>
+          <Modal.Header>
+            <Container size="md" p={0} w="100%">
+              <Group justify="space-between">
+                <Title size={16} fw={500}>
+                  Create New Word
+                </Title>
+                <Modal.CloseButton />
+              </Group>
+            </Container>
+          </Modal.Header>
+          <Modal.Body>
+            <Container size="md" p={5}>
+              <WordForm
+                mode="create"
+                onSuccess={(data) => {
+                  handleWordCreated(data);
+                  closeCreateModal();
+                }}
+                onCancel={closeCreateModal}
+              />
+            </Container>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
     </>
   );
 }
