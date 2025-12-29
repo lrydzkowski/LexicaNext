@@ -1,17 +1,22 @@
 using FluentValidation;
 using LexicaNext.Core.Commands.UpdateSet.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Models;
-using LexicaNext.Core.Common.Models;
+using LexicaNext.Core.Queries.GetWord.Interfaces;
 
 namespace LexicaNext.Core.Commands.UpdateSet.Services;
 
 public class UpdateSetRequestValidator : AbstractValidator<UpdateSetRequest>
 {
     private readonly IUpdateSetRepository _updateSetRepository;
+    private readonly IGetWordRepository _getWordRepository;
 
-    public UpdateSetRequestValidator(IUpdateSetRepository updateSetRepository)
+    public UpdateSetRequestValidator(
+        IUpdateSetRepository updateSetRepository,
+        IGetWordRepository getWordRepository
+    )
     {
         _updateSetRepository = updateSetRepository;
+        _getWordRepository = getWordRepository;
 
         AddValidationForPayload();
     }
@@ -25,7 +30,7 @@ public class UpdateSetRequestValidator : AbstractValidator<UpdateSetRequest>
                 {
                     Guid.TryParse(x.SetId, out Guid parsedSetId);
 
-                    return new UpdateSetRequestPayloadValidator(parsedSetId, _updateSetRepository);
+                    return new UpdateSetRequestPayloadValidator(parsedSetId, _updateSetRepository, _getWordRepository);
                 }
             );
     }
@@ -35,14 +40,20 @@ internal class UpdateSetRequestPayloadValidator : AbstractValidator<UpdateSetReq
 {
     private readonly Guid _setId;
     private readonly IUpdateSetRepository _updateSetRepository;
+    private readonly IGetWordRepository _getWordRepository;
 
-    public UpdateSetRequestPayloadValidator(Guid setId, IUpdateSetRepository updateSetRepository)
+    public UpdateSetRequestPayloadValidator(
+        Guid setId,
+        IUpdateSetRepository updateSetRepository,
+        IGetWordRepository getWordRepository
+    )
     {
         _setId = setId;
         _updateSetRepository = updateSetRepository;
+        _getWordRepository = getWordRepository;
 
         AddValidationForSetName();
-        AddValidationForEntries();
+        AddValidationForWordIds();
     }
 
     private void AddValidationForSetName()
@@ -75,57 +86,48 @@ internal class UpdateSetRequestPayloadValidator : AbstractValidator<UpdateSetReq
             .WithErrorCode(ValidationErrorCodes.UniquenessValidator);
     }
 
-    private void AddValidationForEntries()
+    private void AddValidationForWordIds()
     {
-        RuleFor(request => request.Entries)
+        RuleFor(request => request.WordIds)
             .NotEmpty()
             .Must(
-                entries =>
+                wordIds =>
                 {
-                    List<string> distinctWords = entries.Select(entry => entry.Word).Distinct().ToList();
+                    List<string> distinctWordIds = wordIds.Distinct().ToList();
 
-                    return distinctWords.Count == entries.Count;
+                    return distinctWordIds.Count == wordIds.Count;
                 }
             )
-            .WithMessage("'{PropertyName}' cannot contain repeated words.")
+            .WithMessage("'{PropertyName}' cannot contain duplicate word IDs.")
             .WithErrorCode(ValidationErrorCodes.UniquenessValidator);
-        RuleForEach(request => request.Entries).SetValidator(new EntryDtoValidator());
-    }
-}
 
-internal class EntryDtoValidator : AbstractValidator<EntryDto>
-{
-    public EntryDtoValidator()
-    {
-        AddValidationForWord();
-        AddValidationForWordType();
-        AddValidationForTranslations();
-        AddValidationForExampleSentences();
-    }
+        RuleForEach(request => request.WordIds)
+            .Must(wordId => Guid.TryParse(wordId, out _))
+            .WithMessage("'{PropertyValue}' is not a valid word ID format.");
 
-    private void AddValidationForWord()
-    {
-        RuleFor(entry => entry.Word).NotEmpty().MaximumLength(200);
-    }
+        RuleFor(request => request.WordIds)
+            .MustAsync(
+                async (wordIds, cancellationToken) =>
+                {
+                    List<Guid> parsedIds = wordIds
+                        .Where(id => Guid.TryParse(id, out _))
+                        .Select(Guid.Parse)
+                        .ToList();
 
-    private void AddValidationForWordType()
-    {
-        RuleFor(entry => entry.WordType)
-            .Must(WordTypes.IsCorrect)
-            .WithName(nameof(EntryDto.WordType))
-            .WithMessage($"'{{PropertyName}}' must be one of the following: {WordTypes.Serialize()}.")
-            .WithErrorCode(ValidationErrorCodes.ValueInSetValidator);
-    }
+                    if (parsedIds.Count != wordIds.Count)
+                    {
+                        return true;
+                    }
 
-    private void AddValidationForTranslations()
-    {
-        RuleFor(entry => entry.Translations)
-            .NotEmpty()
-            .DependentRules(() => RuleForEach(entry => entry.Translations).NotEmpty().MaximumLength(200));
-    }
+                    List<Guid> existingIds = await _getWordRepository.GetExistingWordIdsAsync(
+                        parsedIds,
+                        cancellationToken
+                    );
 
-    private void AddValidationForExampleSentences()
-    {
-        RuleForEach(entry => entry.ExampleSentences).NotEmpty().MaximumLength(500);
+                    return existingIds.Count == parsedIds.Count;
+                }
+            )
+            .WithMessage("One or more word IDs do not exist.")
+            .WithErrorCode(ValidationErrorCodes.ExistenceValidator);
     }
 }

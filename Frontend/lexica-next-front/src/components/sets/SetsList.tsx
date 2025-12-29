@@ -107,12 +107,6 @@ export function SetsList() {
       onConfirm: () => {
         deleteSetMutation.mutate(setId, {
           onSuccess: () => {
-            notifications.show({
-              title: 'Success',
-              message: 'Set deleted successfully',
-              color: 'green',
-              position: 'top-center',
-            });
             refetch();
           },
           onError: () => {
@@ -142,19 +136,19 @@ export function SetsList() {
         <Menu.Item
           leftSection={<IconHeadphones size={16} />}
           component={Link}
-          to={`/sets/${set.setId}/spelling-mode?returnPage=${currentPage}`}>
+          to={links.spellingMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
           Spelling Mode
         </Menu.Item>
         <Menu.Item
           leftSection={<IconBrain size={16} />}
           component={Link}
-          to={`/sets/${set.setId}/full-mode?returnPage=${currentPage}`}>
+          to={links.fullMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
           Full Mode
         </Menu.Item>
         <Menu.Item
           leftSection={<IconTarget size={16} />}
           component={Link}
-          to={`/sets/${set.setId}/only-open-questions-mode?returnPage=${currentPage}`}>
+          to={links.openQuestionsMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
           Open Questions Mode
         </Menu.Item>
 
@@ -164,13 +158,13 @@ export function SetsList() {
         <Menu.Item
           leftSection={<IconEye size={16} />}
           component={Link}
-          to={`/sets/${set.setId}/content?returnPage=${currentPage}`}>
+          to={links.setContent.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
           View Content
         </Menu.Item>
         <Menu.Item
           leftSection={<IconEdit size={16} />}
           component={Link}
-          to={`/sets/${set.setId}/edit?returnPage=${currentPage}`}>
+          to={links.editSet.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
           Edit Set
         </Menu.Item>
         <Menu.Item
@@ -223,16 +217,16 @@ export function SetsList() {
     <>
       <Stack gap="md">
         <Group wrap="wrap" gap="sm">
-          <ActionIcon component={Link} to={links.newSet.url} size="xl" hiddenFrom="md">
+          <ActionIcon component={Link} to={links.newSet.getUrl()} size="xl" hiddenFrom="md">
             <IconPlus size={22} />
           </ActionIcon>
           <Button
             ref={createButtonRef}
             leftSection={<IconPlus size={16} />}
             component={Link}
-            to={`${links.newSet.url}?returnPage=${currentPage}`}
+            to={links.newSet.getUrl({}, { returnPage: currentPage.toString() })}
             size="md"
-            visibleFrom="sm">
+            visibleFrom="md">
             <Text>Create New Set</Text>
           </Button>
           <ActionIcon variant="light" size="xl" onClick={() => refetch()}>

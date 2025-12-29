@@ -67,6 +67,8 @@ public class GetSetResponse
 
 public class EntryDto
 {
+    public Guid WordId { get; set; }
+
     public string Word { get; set; } = "";
 
     public string WordType { get; set; } = "";

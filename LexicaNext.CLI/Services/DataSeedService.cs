@@ -130,6 +130,7 @@ internal class DataSeedService : IDataSeedService
 
     public async Task ClearAllDataAsync()
     {
+        await _context.Set<SetWordEntity>().ExecuteDeleteAsync();
         await _context.Set<TranslationEntity>().ExecuteDeleteAsync();
         await _context.Set<WordEntity>().ExecuteDeleteAsync();
         await _context.Set<SetEntity>().ExecuteDeleteAsync();
@@ -146,21 +147,30 @@ internal class DataSeedService : IDataSeedService
             wordTypes = await _context.Set<WordTypeEntity>().ToListAsync();
         }
 
-        Faker<WordEntity>? wordFaker = new Faker<WordEntity>()
+        Faker<WordEntity> wordFaker = new Faker<WordEntity>()
             .RuleFor(w => w.WordId, f => Guid.NewGuid())
             .RuleFor(w => w.Word, f => f.Lorem.Word())
-            .RuleFor(w => w.SetId, setId)
             .RuleFor(w => w.WordTypeId, f => f.PickRandom(wordTypes).WordTypeId)
-            .RuleFor(w => w.Order, f => f.IndexFaker);
+            .RuleFor(w => w.CreatedAt, f => f.Date.PastOffset(365).ToUniversalTime());
 
-        List<WordEntity>? words = wordFaker.Generate(count);
+        List<WordEntity> words = wordFaker.Generate(count);
         _context.Set<WordEntity>().AddRange(words);
         await _context.SaveChangesAsync();
 
-        foreach (WordEntity word in words)
+        for (int i = 0; i < words.Count; i++)
         {
+            WordEntity word = words[i];
+            SetWordEntity setWord = new()
+            {
+                SetId = setId,
+                WordId = word.WordId,
+                Order = i
+            };
+            _context.Set<SetWordEntity>().Add(setWord);
             await SeedTranslationsForWordAsync(word.WordId);
         }
+
+        await _context.SaveChangesAsync();
 
         _logger.LogInformation("Seeded {Count} words for set {SetId}", count, setId);
     }

@@ -1,25 +1,44 @@
-import { useEffect, useRef, useState } from 'react';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { IconChevronDown, IconChevronUp, IconPlus, IconSearch, IconTrash, IconX } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
 import {
   ActionIcon,
+  Badge,
+  Box,
   Button,
+  Container,
   Divider,
   Group,
   LoadingOverlay,
+  Modal,
+  Pagination,
   Paper,
-  Select,
+  ScrollArea,
   Stack,
+  Table,
   Text,
   TextInput,
+  Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { useCreateSet, useUpdateSet, type GetSetResponse } from '../../hooks/api';
-import { GenerateSentencesButton } from './GenerateSentencesButton';
-import { GenerateTranslationsButton } from './GenerateTranslationsButton';
-import { FormValues } from './SetFormTypes';
+import { links } from '@/config/links';
+import { formatDateTime } from '@/utils/date';
+import { useCreateSet, useUpdateSet, useWords, type GetSetResponse, type WordRecordDto } from '../../hooks/api';
+import { WordForm } from '../words/WordForm';
+import { WordFormSuccessData } from '../words/WordFormTypes';
+
+interface SelectedWord {
+  wordId: string;
+  word: string;
+  wordType: string;
+}
+
+interface FormValues {
+  setName: string;
+}
 
 interface SetFormProps {
   mode: 'create' | 'edit';
@@ -32,34 +51,37 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   const navigate = useNavigate();
   const createSetMutation = useCreateSet();
   const updateSetMutation = useUpdateSet();
-  const englishWordRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const translationRefs = useRef<{ [entryIndex: number]: (HTMLInputElement | null)[] }>({});
-  const [focusEntryIndex, setFocusEntryIndex] = useState<number | null>(null);
-  const [focusTranslation, setFocusTranslation] = useState<{ entryIndex: number; translationIndex: number } | null>(
-    null,
-  );
-  const sentenceRefs = useRef<{ [entryIndex: number]: (HTMLInputElement | null)[] }>({});
-  const [focusSentence, setFocusSentence] = useState<{ entryIndex: number; sentenceIndex: number } | null>(null);
   const [searchParams] = useSearchParams();
   const returnPage = searchParams.get('returnPage') || '1';
+  const setNameInputRef = useRef<HTMLInputElement | null>(null);
 
-  const getInitialValues = (): FormValues => {
-    if (mode === 'create') {
-      return {
-        setName: uuidv4(),
-        entries: [{ word: '', wordType: 'noun', translations: [{ name: '' }], exampleSentences: [] }],
-      };
-    }
+  const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([]);
+  const [selectModalOpened, { open: openSelectModal, close: closeSelectModal }] = useDisclosure(false);
+  const [createModalOpened, { open: openCreateModal, close: closeCreateModal }] = useDisclosure(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
-    return {
-      setName: '',
-      entries: [],
-    };
-  };
+  const { data: wordsData, isFetching } = useWords({
+    page: currentPage,
+    pageSize,
+    sortingFieldName: 'createdAt',
+    sortingOrder: 'desc',
+    searchQuery: debouncedSearchQuery || undefined,
+  });
+
+  const words = wordsData?.data || [];
+  const totalCount = wordsData?.count || 0;
+  const totalPages = Math.ceil((totalCount as number) / pageSize);
+
+  const selectedWordIds = useMemo(() => new Set(selectedWords.map((w) => w.wordId)), [selectedWords]);
 
   const form = useForm<FormValues>({
     mode: 'uncontrolled',
-    initialValues: getInitialValues(),
+    initialValues: {
+      setName: mode === 'create' ? uuidv4() : '',
+    },
     validate: {
       setName: (value) => {
         if (!value?.trim()) {
@@ -76,230 +98,122 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
 
         return null;
       },
-      entries: {
-        word: (value) => {
-          if (!value?.trim()) {
-            return 'Word is required';
-          }
-
-          if (value.trim().length < 1) {
-            return 'Word must not be empty';
-          }
-
-          if (value.trim().length > 200) {
-            return 'Word must be less than 200 characters';
-          }
-
-          return null;
-        },
-        translations: {
-          name: (value) => {
-            if (!value?.trim()) {
-              return 'Translation is required';
-            }
-
-            if (value.trim().length < 1) {
-              return 'Translation must not be empty';
-            }
-
-            if (value.trim().length > 200) {
-              return 'Translation must be less than 200 characters';
-            }
-
-            return null;
-          },
-        },
-        exampleSentences: {
-          sentence: (value) => {
-            if (!value?.trim()) {
-              return 'Sentence is required';
-            }
-
-            if (value.trim().length < 1) {
-              return 'Sentence must not be empty';
-            }
-
-            if (value.trim().length > 500) {
-              return 'Sentence must be less than 500 characters';
-            }
-
-            return null;
-          },
-        },
-      },
     },
   });
-
-  useEffect(() => {
-    if (mode === 'create') {
-      if (englishWordRefs.current[0]) {
-        englishWordRefs.current[0].focus();
-      }
-    }
-  }, [mode]);
 
   useEffect(() => {
     if (mode === 'edit' && set) {
       form.setValues({
         setName: set.name || '',
-        entries:
-          set.entries?.map((entry) => ({
-            word: entry.word || '',
-            wordType: entry.wordType || 'noun',
-            translations:
-              entry.translations?.map((translation) => ({
-                name: translation || '',
-              })) || [],
-            exampleSentences:
-              entry.exampleSentences?.map((sentence) => ({
-                sentence: sentence || '',
-              })) || [],
-          })) || [],
       });
+      setSelectedWords(
+        (set.entries || []).map((entry) => ({
+          wordId: entry.wordId || '',
+          word: entry.word || '',
+          wordType: entry.wordType || '',
+        })),
+      );
       setTimeout(() => {
-        if (englishWordRefs.current[0]) {
-          englishWordRefs.current[0].focus();
-        }
+        setNameInputRef.current?.focus();
       }, 0);
     }
   }, [set, mode]);
 
   useEffect(() => {
-    if (focusEntryIndex !== null && englishWordRefs.current[focusEntryIndex]) {
-      englishWordRefs.current[focusEntryIndex].focus();
-      setFocusEntryIndex(null);
+    if (mode === 'create') {
+      setNameInputRef.current?.focus();
     }
-  }, [focusEntryIndex]);
+  }, [mode]);
 
   useEffect(() => {
-    if (focusTranslation !== null) {
-      const { entryIndex, translationIndex } = focusTranslation;
-      if (translationRefs.current[entryIndex]?.[translationIndex]) {
-        translationRefs.current[entryIndex][translationIndex]?.focus();
-        setFocusTranslation(null);
+    const timer = setTimeout(() => {
+      const oldSearch = debouncedSearchQuery;
+      setDebouncedSearchQuery(searchQuery);
+      if (oldSearch !== searchQuery) {
+        setCurrentPage(1);
       }
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const handleSelectWord = (word: WordRecordDto) => {
+    if (!word.wordId) {
+      return;
     }
-  }, [focusTranslation]);
 
-  useEffect(() => {
-    if (focusSentence !== null) {
-      const { entryIndex, sentenceIndex } = focusSentence;
-      if (sentenceRefs.current[entryIndex]?.[sentenceIndex]) {
-        sentenceRefs.current[entryIndex][sentenceIndex]?.focus();
-        setFocusSentence(null);
-      }
-    }
-  }, [focusSentence]);
-
-  const addEntry = () => {
-    form.insertListItem('entries', { word: '', wordType: 'noun', translations: [{ name: '' }], exampleSentences: [] });
-    setTimeout(() => {
-      const newEntryIndex = form.getValues().entries.length;
-      setFocusEntryIndex(newEntryIndex - 1);
-    }, 0);
-  };
-
-  const removeEntry = (index: number) => {
-    form.removeListItem('entries', index);
-    setTimeout(() => {
-      const remainingEntries = form.getValues().entries.length;
-      if (remainingEntries === 0) {
-        return;
-      }
-
-      setFocusEntryIndex(Math.max(0, index - 1));
-    }, 0);
-  };
-
-  const addTranslation = (entryIndex: number) => {
-    form.insertListItem(`entries.${entryIndex}.translations`, { name: '' });
-    setTimeout(() => {
-      const newTranslationIndex = form.getValues().entries[entryIndex].translations.length;
-      setFocusTranslation({ entryIndex, translationIndex: newTranslationIndex - 1 });
-    }, 0);
-  };
-
-  const addSentence = (entryIndex: number) => {
-    form.insertListItem(`entries.${entryIndex}.exampleSentences`, { sentence: '' });
-    setTimeout(() => {
-      const newSentenceIndex = form.getValues().entries[entryIndex].exampleSentences.length;
-      setFocusSentence({ entryIndex, sentenceIndex: newSentenceIndex - 1 });
-    }, 0);
-  };
-
-  const handleTranslationsGenerated = (entryIndex: number, newTranslations: string[]) => {
-    const currentTranslations = form.getValues().entries[entryIndex]?.translations || [];
-    currentTranslations.forEach((_, index) => {
-      form.clearFieldError(`entries.${entryIndex}.translations.${index}.name`);
-    });
-    const itemsToAdd = newTranslations.length - currentTranslations.length;
-    for (let i = 0; i < itemsToAdd; i++) {
-      form.insertListItem(`entries.${entryIndex}.translations`, { name: '' });
-    }
-    for (let index = 0; index < newTranslations.length; index++) {
-      form.setFieldValue(`entries.${entryIndex}.translations.${index}.name`, newTranslations[index]);
+    if (selectedWordIds.has(word.wordId)) {
+      setSelectedWords(selectedWords.filter((w) => w.wordId !== word.wordId));
+    } else {
+      setSelectedWords([
+        ...selectedWords,
+        {
+          wordId: word.wordId,
+          word: word.word || '',
+          wordType: word.wordType || '',
+        },
+      ]);
     }
   };
 
-  const handleSentencesGenerated = (entryIndex: number, newSentences: string[]) => {
-    const currentSentences = form.getValues().entries[entryIndex]?.exampleSentences || [];
-    currentSentences.forEach((_, index) => {
-      form.clearFieldError(`entries.${entryIndex}.exampleSentences.${index}.sentence`);
-    });
-    const itemsToAdd = newSentences.length - currentSentences.length;
-    for (let i = 0; i < itemsToAdd; i++) {
-      form.insertListItem(`entries.${entryIndex}.exampleSentences`, { sentence: '' });
-    }
-    for (let index = 0; index < newSentences.length; index++) {
-      form.setFieldValue(`entries.${entryIndex}.exampleSentences.${index}.sentence`, newSentences[index]);
-    }
+  const handleRemoveWord = (wordId: string) => {
+    setSelectedWords(selectedWords.filter((w) => w.wordId !== wordId));
   };
 
-  const removeTranslation = (entryIndex: number, translationIndex: number) => {
-    form.removeListItem(`entries.${entryIndex}.translations`, translationIndex);
-    setTimeout(() => {
-      const remainingTranslations = form.getValues().entries[entryIndex].translations.length;
-      if (remainingTranslations === 0) {
-        return;
-      }
+  const handleMoveUp = (index: number) => {
+    if (index === 0) {
+      return;
+    }
 
-      setFocusTranslation({ entryIndex, translationIndex: Math.max(0, translationIndex - 1) });
-    }, 0);
+    const newWords = [...selectedWords];
+    [newWords[index - 1], newWords[index]] = [newWords[index], newWords[index - 1]];
+    setSelectedWords(newWords);
   };
 
-  const removeSentence = (entryIndex: number, sentenceIndex: number) => {
-    form.removeListItem(`entries.${entryIndex}.exampleSentences`, sentenceIndex);
-    setTimeout(() => {
-      const remainingSentences = form.getValues().entries[entryIndex].exampleSentences.length;
-      if (remainingSentences === 0) {
-        return;
-      }
+  const handleMoveDown = (index: number) => {
+    if (index === selectedWords.length - 1) {
+      return;
+    }
 
-      setFocusSentence({ entryIndex, sentenceIndex: Math.max(0, sentenceIndex - 1) });
-    }, 0);
+    const newWords = [...selectedWords];
+    [newWords[index], newWords[index + 1]] = [newWords[index + 1], newWords[index]];
+    setSelectedWords(newWords);
+  };
+
+  const handleWordCreated = (data: WordFormSuccessData) => {
+    setSelectedWords([
+      ...selectedWords,
+      {
+        wordId: data.wordId,
+        word: data.word,
+        wordType: data.wordType,
+      },
+    ]);
   };
 
   const handleSubmit = (values: FormValues) => {
+    if (selectedWords.length === 0) {
+      notifications.show({
+        title: 'Validation Error',
+        message: 'Please select at least one word for the set',
+        color: 'red',
+        position: 'top-center',
+      });
+
+      return;
+    }
+
+    const wordIds = selectedWords.map((w) => w.wordId);
+
     if (mode === 'create') {
       createSetMutation.mutate(
         {
           setName: values.setName,
-          entries: values.entries.map((entry) => ({
-            word: entry.word.trim(),
-            wordType: entry.wordType,
-            translations: entry.translations.map((translation) => translation.name.trim()),
-            exampleSentences: entry.exampleSentences.map((s) => s.sentence.trim()),
-          })),
+          wordIds,
         },
         {
           onSuccess: () => {
-            notifications.show({
-              title: 'Success',
-              message: 'Set created successfully',
-              color: 'green',
-              position: 'top-center',
-            });
-            navigate('/sets');
+            navigate(links.sets.getUrl());
           },
           onError: () => {
             notifications.show({
@@ -321,23 +235,12 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
           setId,
           data: {
             setName: values.setName,
-            entries: values.entries.map((entry) => ({
-              word: entry.word.trim(),
-              wordType: entry.wordType,
-              translations: entry.translations.map((translation) => translation.name.trim()),
-              exampleSentences: entry.exampleSentences.map((s) => s.sentence.trim()),
-            })),
+            wordIds,
           },
         },
         {
           onSuccess: () => {
-            notifications.show({
-              title: 'Success',
-              message: 'Set updated successfully',
-              color: 'green',
-              position: 'top-center',
-            });
-            navigate('/sets');
+            navigate(links.sets.getUrl());
           },
           onError: () => {
             notifications.show({
@@ -365,6 +268,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="lg">
           <TextInput
+            ref={setNameInputRef}
             label="Set Name"
             placeholder="Enter set name..."
             size="md"
@@ -372,186 +276,247 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
             key={form.key('setName')}
           />
 
-          <Divider label="Vocabulary Entries" labelPosition="center" />
+          <Divider label="Words in Set" labelPosition="center" />
 
-          {form.getValues().entries.map((entry, entryIndex) => (
-            <Paper key={entryIndex} p={{ base: 'sm', md: 'md' }} withBorder>
-              <Stack gap="sm">
-                <Group wrap="wrap" align="top">
-                  <TextInput
-                    ref={(el) => {
-                      englishWordRefs.current[entryIndex] = el;
-                    }}
-                    label="English Word"
-                    placeholder="Enter English word..."
-                    style={{ flex: 1, minWidth: '200px' }}
-                    size="md"
-                    {...form.getInputProps(`entries.${entryIndex}.word`)}
-                    lang="en"
-                    spellCheck
-                    key={form.key(`entries.${entryIndex}.word`)}
-                  />
-                  <Select
-                    label="Word Type"
-                    data={[
-                      { value: 'none', label: 'None' },
-                      { value: 'noun', label: 'Noun' },
-                      { value: 'verb', label: 'Verb' },
-                      { value: 'adjective', label: 'Adjective' },
-                      { value: 'adverb', label: 'Adverb' },
-                      { value: 'other', label: 'Other' },
-                    ]}
-                    size="md"
-                    w={{ base: '100%', md: 200 }}
-                    {...form.getInputProps(`entries.${entryIndex}.wordType`)}
-                    key={form.key(`entries.${entryIndex}.wordType`)}
-                  />
-                  {form.getValues().entries.length > 1 && (
-                    <>
-                      <ActionIcon
-                        color="red"
-                        variant="light"
-                        onClick={() => removeEntry(entryIndex)}
-                        mt={{ base: '0', md: '1.8em' }}
-                        visibleFrom="sm"
-                        aria-label={`Remove entry ${entryIndex + 1}`}>
-                        <IconTrash size={16} />
-                      </ActionIcon>
-                      <Button
-                        color="red"
-                        variant="light"
-                        size="xs"
-                        hiddenFrom="sm"
-                        leftSection={<IconTrash size={14} />}
-                        onClick={() => removeEntry(entryIndex)}>
-                        Remove Entry
-                      </Button>
-                    </>
-                  )}
-                </Group>
+          <Stack gap="sm">
+            <Group justify="space-between">
+              <Text size="sm" fw={500}>
+                Selected Words ({selectedWords.length})
+              </Text>
+              <Group gap="xs">
+                <Button variant="light" size="xs" leftSection={<IconPlus size={14} />} onClick={openSelectModal}>
+                  Add Words
+                </Button>
+                <Button variant="subtle" size="xs" leftSection={<IconPlus size={14} />} onClick={openCreateModal}>
+                  Create New Word
+                </Button>
+              </Group>
+            </Group>
 
-                <div>
-                  <Text size="sm" fw={500} mb="xs">
-                    Translations
-                  </Text>
-                  {(entry.translations || []).map((_, translationIndex) => (
-                    <Group key={translationIndex} mb="xs" wrap="nowrap" align="top">
-                      <TextInput
-                        ref={(el) => {
-                          if (!translationRefs.current[entryIndex]) {
-                            translationRefs.current[entryIndex] = [];
-                          }
-                          translationRefs.current[entryIndex][translationIndex] = el;
-                        }}
-                        placeholder="Enter translation..."
-                        style={{ flex: 1 }}
-                        size="md"
-                        {...form.getInputProps(`entries.${entryIndex}.translations.${translationIndex}.name`)}
-                        lang="pl"
-                        spellCheck
-                        key={form.key(`entries.${entryIndex}.translations.${translationIndex}.name`)}
-                      />
-                      {(entry.translations || []).length > 1 && (
-                        <ActionIcon
-                          color="red"
-                          variant="light"
-                          onClick={() => removeTranslation(entryIndex, translationIndex)}
-                          aria-label={`Remove translation ${translationIndex + 1}`}
-                          mt="7px">
-                          <IconTrash size={16} />
-                        </ActionIcon>
-                      )}
-                    </Group>
-                  ))}
-                  <Group gap="xs">
-                    <Button
-                      w={180}
-                      variant="light"
-                      size="xs"
-                      leftSection={<IconPlus size={14} />}
-                      onClick={() => addTranslation(entryIndex)}>
-                      Add Translation
-                    </Button>
-                    <GenerateTranslationsButton
-                      form={form}
-                      entryIndex={entryIndex}
-                      onTranslationsGenerated={(newTranslations) =>
-                        handleTranslationsGenerated(entryIndex, newTranslations)
-                      }
-                    />
-                  </Group>
-                </div>
-
-                <div>
-                  <Text size="sm" fw={500} mb="xs">
-                    Example Sentences
-                  </Text>
-                  {(entry.exampleSentences || []).map((_, sentenceIndex) => (
-                    <Group key={sentenceIndex} mb="xs" wrap="nowrap" align="top">
-                      <TextInput
-                        ref={(el) => {
-                          if (!sentenceRefs.current[entryIndex]) {
-                            sentenceRefs.current[entryIndex] = [];
-                          }
-                          sentenceRefs.current[entryIndex][sentenceIndex] = el;
-                        }}
-                        placeholder="Enter example sentence..."
-                        style={{ flex: 1 }}
-                        size="md"
-                        {...form.getInputProps(`entries.${entryIndex}.exampleSentences.${sentenceIndex}.sentence`)}
-                        lang="en"
-                        spellCheck
-                        key={form.key(`entries.${entryIndex}.exampleSentences.${sentenceIndex}.sentence`)}
-                      />
-                      <ActionIcon
-                        color="red"
-                        variant="light"
-                        onClick={() => removeSentence(entryIndex, sentenceIndex)}
-                        aria-label={`Remove sentence ${sentenceIndex + 1}`}
-                        mt="7px">
-                        <IconTrash size={16} />
-                      </ActionIcon>
-                    </Group>
-                  ))}
-                  <Group gap="xs">
-                    <Button
-                      w={180}
-                      variant="light"
-                      size="xs"
-                      leftSection={<IconPlus size={14} />}
-                      onClick={() => addSentence(entryIndex)}>
-                      Add Sentence
-                    </Button>
-                    <GenerateSentencesButton
-                      form={form}
-                      entryIndex={entryIndex}
-                      onSentencesGenerated={(newSentences) => handleSentencesGenerated(entryIndex, newSentences)}
-                    />
-                  </Group>
-                </div>
-              </Stack>
-            </Paper>
-          ))}
-
-          <Group justify="center">
-            <Button variant="light" leftSection={<IconPlus size={16} />} onClick={addEntry} size="md">
-              Add Another Word
-            </Button>
-          </Group>
+            {selectedWords.length === 0 ? (
+              <Paper p="md" withBorder>
+                <Text ta="center" c="dimmed" size="sm">
+                  No words selected. Click "Add Words" to select words from your library.
+                </Text>
+              </Paper>
+            ) : (
+              <Paper withBorder>
+                <ScrollArea type="auto">
+                  <Table striped style={{ tableLayout: 'fixed', minWidth: 300 }}>
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th style={{ width: 60 }}>#</Table.Th>
+                        <Table.Th>Word</Table.Th>
+                        <Table.Th style={{ width: 120 }}>Type</Table.Th>
+                        <Table.Th style={{ width: 100, textAlign: 'center' }}>Actions</Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {selectedWords.map((word, index) => (
+                        <Table.Tr key={word.wordId}>
+                          <Table.Td>{index + 1}</Table.Td>
+                          <Table.Td>
+                            <Text fw={500}>{word.word}</Text>
+                          </Table.Td>
+                          <Table.Td>
+                            <Badge size="sm" variant="light">
+                              {word.wordType}
+                            </Badge>
+                          </Table.Td>
+                          <Table.Td>
+                            <Group gap={4} justify="center">
+                              <ActionIcon
+                                variant="subtle"
+                                size="sm"
+                                onClick={() => handleMoveUp(index)}
+                                disabled={index === 0}
+                                aria-label="Move up">
+                                <IconChevronUp size={14} />
+                              </ActionIcon>
+                              <ActionIcon
+                                variant="subtle"
+                                size="sm"
+                                onClick={() => handleMoveDown(index)}
+                                disabled={index === selectedWords.length - 1}
+                                aria-label="Move down">
+                                <IconChevronDown size={14} />
+                              </ActionIcon>
+                              <ActionIcon
+                                variant="subtle"
+                                color="red"
+                                size="sm"
+                                onClick={() => handleRemoveWord(word.wordId)}
+                                aria-label="Remove word">
+                                <IconTrash size={14} />
+                              </ActionIcon>
+                            </Group>
+                          </Table.Td>
+                        </Table.Tr>
+                      ))}
+                    </Table.Tbody>
+                  </Table>
+                </ScrollArea>
+              </Paper>
+            )}
+          </Stack>
 
           <Group justify="space-between" mt="xl" wrap="wrap">
-            <Button variant="light" onClick={() => navigate(`/sets?page=${returnPage}`)} size="md">
+            <Button variant="light" onClick={() => navigate(links.sets.getUrl({}, { returnPage }))} size="md" w={120}>
               Cancel
             </Button>
             <Button
               type="submit"
               loading={mode === 'create' ? createSetMutation.isPending : updateSetMutation.isPending}
-              size="md">
-              {mode === 'create' ? 'Create Set' : 'Update Set'}
+              size="md"
+              w={120}>
+              Save
             </Button>
           </Group>
         </Stack>
       </form>
+
+      <Modal.Root opened={selectModalOpened} onClose={closeSelectModal} size="lg" fullScreen>
+        <Modal.Overlay />
+        <Modal.Content>
+          <Modal.Header>
+            <Container size="md" p={0} w="100%">
+              <Group justify="space-between">
+                <Title size={16} fw={500}>
+                  Select Words
+                </Title>
+                <Modal.CloseButton />
+              </Group>
+            </Container>
+          </Modal.Header>
+          <Modal.Body>
+            <Container size="md" p={0}>
+              <Stack gap="md">
+                <TextInput
+                  placeholder="Search words..."
+                  leftSection={<IconSearch size={16} />}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  rightSection={
+                    searchQuery ? (
+                      <ActionIcon
+                        variant="subtle"
+                        size="sm"
+                        onClick={() => setSearchQuery('')}
+                        aria-label="Clear search">
+                        <IconX size={14} />
+                      </ActionIcon>
+                    ) : null
+                  }
+                />
+
+                <Box pos="relative" mb={20}>
+                  <LoadingOverlay visible={isFetching} />
+
+                  {words.length === 0 ? (
+                    <Text ta="center" c="dimmed" py="xl">
+                      {debouncedSearchQuery
+                        ? 'No words found matching your search.'
+                        : 'No words available. Create some words first!'}
+                    </Text>
+                  ) : (
+                    <ScrollArea type="auto">
+                      <Table striped highlightOnHover style={{ minWidth: 600 }}>
+                        <Table.Thead>
+                          <Table.Tr>
+                            <Table.Th style={{ width: 50, minWidth: 50 }} />
+                            <Table.Th style={{ whiteSpace: 'nowrap' }}>Word</Table.Th>
+                            <Table.Th style={{ width: 100, minWidth: 100 }}>Type</Table.Th>
+                            <Table.Th style={{ width: 150, minWidth: 150, whiteSpace: 'nowrap' }}>Created</Table.Th>
+                            <Table.Th style={{ width: 150, minWidth: 150, whiteSpace: 'nowrap' }}>Edited</Table.Th>
+                          </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>
+                          {words.map((word) => {
+                            const isSelected = word.wordId ? selectedWordIds.has(word.wordId) : false;
+
+                            return (
+                              <Table.Tr
+                                key={word.wordId}
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => handleSelectWord(word)}
+                                bg={isSelected ? 'var(--mantine-color-blue-light)' : undefined}>
+                                <Table.Td style={{ width: 50, minWidth: 50 }}>
+                                  <input
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={() => handleSelectWord(word)}
+                                    onClick={(e) => e.stopPropagation()}
+                                  />
+                                </Table.Td>
+                                <Table.Td style={{ whiteSpace: 'nowrap' }}>
+                                  <Text fw={500}>{word.word}</Text>
+                                </Table.Td>
+                                <Table.Td style={{ width: 100, minWidth: 100 }}>
+                                  <Badge size="sm" variant="light">
+                                    {word.wordType}
+                                  </Badge>
+                                </Table.Td>
+                                <Table.Td style={{ width: 150, minWidth: 150, whiteSpace: 'nowrap' }}>
+                                  <Text size="sm" c="dimmed">
+                                    {formatDateTime(word.createdAt)}
+                                  </Text>
+                                </Table.Td>
+                                <Table.Td style={{ width: 150, minWidth: 150, whiteSpace: 'nowrap' }}>
+                                  <Text size="sm" c="dimmed">
+                                    {word.editedAt ? formatDateTime(word.editedAt) : '-'}
+                                  </Text>
+                                </Table.Td>
+                              </Table.Tr>
+                            );
+                          })}
+                        </Table.Tbody>
+                      </Table>
+                    </ScrollArea>
+                  )}
+                </Box>
+                {totalPages > 1 && (
+                  <Group justify="center">
+                    <Pagination total={totalPages} value={currentPage} onChange={setCurrentPage} size="sm" />
+                  </Group>
+                )}
+                <Group justify="flex-end">
+                  <Button size="md" onClick={closeSelectModal}>
+                    Done
+                  </Button>
+                </Group>
+              </Stack>
+            </Container>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
+
+      <Modal.Root opened={createModalOpened} onClose={closeCreateModal} size="lg" fullScreen>
+        <Modal.Overlay />
+        <Modal.Content>
+          <Modal.Header>
+            <Container size="md" p={0} w="100%">
+              <Group justify="space-between">
+                <Title size={16} fw={500}>
+                  Create New Word
+                </Title>
+                <Modal.CloseButton />
+              </Group>
+            </Container>
+          </Modal.Header>
+          <Modal.Body>
+            <Container size="md" p={5}>
+              <WordForm
+                mode="create"
+                onSuccess={(data) => {
+                  handleWordCreated(data);
+                  closeCreateModal();
+                }}
+                onCancel={closeCreateModal}
+              />
+            </Container>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
     </>
   );
 }

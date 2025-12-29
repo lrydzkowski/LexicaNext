@@ -1,62 +1,53 @@
-import { useMemo } from 'react';
-import { Link, useLocation, useParams } from 'react-router';
+import { type ReactNode } from 'react';
+import { Link, useMatches } from 'react-router';
 import { Anchor, Breadcrumbs as MantineBreadcrumbs, Text } from '@mantine/core';
-import { links, type IAppLink } from '../../config/links';
-import { useSet } from '../../hooks/api';
+import { type BreadcrumbHandle, type BreadcrumbItem } from '../../AppRouter';
+import { DynamicBreadcrumbLabel } from './DynamicBreadcrumbLabel';
 import classes from './Breadcrumbs.module.css';
 
-interface BreadcrumbItem {
-  title: string;
-  href?: string;
+function renderLabel(crumb: BreadcrumbItem): ReactNode {
+  if (crumb.resolver) {
+    return <DynamicBreadcrumbLabel resolver={crumb.resolver} />;
+  }
+
+  return crumb.label;
 }
 
 export function Breadcrumbs() {
-  const location = useLocation();
-  const params = useParams();
-  const pathSegments = location.pathname.split('/').filter(Boolean);
-  const { data: set } = useSet(params.setId || '');
+  const matches = useMatches();
 
-  const segmentLabels = useMemo(() => {
-    return Object.values(links).reduce<Record<string, IAppLink>>((acc, link) => {
-      acc[link.segment] = link;
-      return acc;
-    }, {});
-  }, []);
+  const crumbs = matches
+    .filter((match) => {
+      const handle = match.handle as BreadcrumbHandle | undefined;
 
-  const breadcrumbItems: BreadcrumbItem[] = [{ title: links.home.label, href: links.home.url }];
-  for (let i = 0; i < pathSegments.length; i++) {
-    const segment = pathSegments[i];
+      return handle?.breadcrumb;
+    })
+    .flatMap((match) => {
+      const handle = match.handle as BreadcrumbHandle;
 
-    let title: string;
-    let href: string | undefined;
-    if (segment === params.setId) {
-      title = set?.name || params.setId;
-    } else {
-      title = segmentLabels[segment]?.label || segment;
-      href = segmentLabels[segment]?.url;
-    }
+      return handle.breadcrumb(match.params).map((crumb, index) => {
+        return {
+          id: `${match.id}-${index}`,
+          ...crumb,
+        };
+      });
+    });
 
-    const isLast = i === pathSegments.length - 1;
-    if (isLast || (segment === params.setId && i < pathSegments.length - 1)) {
-      href = undefined;
-    }
+  const items = crumbs.map((crumb, index) => {
+    const isLast = index === crumbs.length - 1;
 
-    breadcrumbItems.push({ title, href });
-  }
-
-  const items = breadcrumbItems.map((item, index) => {
-    if (item.href) {
+    if (isLast || !crumb.link) {
       return (
-        <Anchor key={index} component={Link} to={item.href} size="sm" fw={500}>
-          {item.title}
-        </Anchor>
+        <Text key={crumb.id} size="sm" c="dimmed" fw={500}>
+          {renderLabel(crumb)}
+        </Text>
       );
     }
 
     return (
-      <Text key={index} size="sm" c="dimmed" fw={500}>
-        {item.title}
-      </Text>
+      <Anchor key={crumb.id} component={Link} to={crumb.link} size="sm" fw={500}>
+        {renderLabel(crumb)}
+      </Anchor>
     );
   });
 

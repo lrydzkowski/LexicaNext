@@ -3,14 +3,16 @@ import { IconLogout } from '@tabler/icons-react';
 import { NavLink } from 'react-router';
 import { Box, Burger, Button, Container, Divider, Drawer, Group, Stack, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { links } from '@/config/links';
 import classes from './Header.module.css';
 
 const items = [
-  { label: 'Sets', href: '/sets' },
-  { label: 'About', href: '/about' },
+  { label: 'Sets', href: links.sets.getUrl() },
+  { label: 'Words', href: links.words.getUrl() },
+  { label: 'About', href: links.about.getUrl() },
 ];
 
-const publicItems = [{ label: 'Sign In', href: '/sign-in' }];
+const publicItems = [{ label: 'Sign In', href: links.signIn.getUrl() }];
 
 export function Header() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);

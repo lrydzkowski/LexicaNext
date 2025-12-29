@@ -73,16 +73,5 @@ public class UpdateSetRequestPayload
 {
     public string SetName { get; set; } = "";
 
-    public List<EntryDto> Entries { get; set; } = [];
-}
-
-public class EntryDto
-{
-    public string Word { get; set; } = "";
-
-    public string WordType { get; set; } = "";
-
-    public List<string> Translations { get; set; } = [];
-
-    public List<string> ExampleSentences { get; set; } = [];
+    public List<string> WordIds { get; set; } = [];
 }

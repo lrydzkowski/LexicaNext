@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { notifications } from '@mantine/notifications';
+import { links } from '@/config/links';
 import { useSet } from '../../hooks/api';
 import { SetForm } from './SetForm';
 
@@ -17,7 +18,7 @@ export function SetEditForm() {
         color: 'red',
         position: 'top-center',
       });
-      navigate('/sets');
+      navigate(links.sets.getUrl());
     }
   }, [error, navigate]);
 

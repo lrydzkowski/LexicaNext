@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { Alert, Button, Container, Group, Paper, Progress, Stack, Text, TextInput, Title } from '@mantine/core';
+import { links } from '@/config/links';
 import { compareAnswers, serialize } from '@/utils/utils';
 import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
@@ -189,7 +190,11 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
               You've mastered all the words through advanced open question practice.
             </Text>
             <Group wrap="wrap" justify="center">
-              <Button variant="light" onClick={() => navigate(`/sets?page=${returnPage}`)} size="md" autoFocus>
+              <Button
+                variant="light"
+                onClick={() => navigate(links.sets.getUrl({}, { returnPage }))}
+                size="md"
+                autoFocus>
                 Back to Sets
               </Button>
               <Button onClick={() => window.location.reload()} size="md">

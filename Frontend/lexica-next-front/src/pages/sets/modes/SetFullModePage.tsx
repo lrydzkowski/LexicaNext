@@ -3,6 +3,7 @@ import { IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { ActionIcon, Container, Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import { links } from '@/config/links';
 import { SetFullMode } from '../../../components/sets/modes/SetFullMode';
 import { useSet } from '../../../hooks/api';
 
@@ -21,7 +22,7 @@ export function SetFullModePage() {
         color: 'red',
         position: 'top-center',
       });
-      navigate('/sets');
+      navigate(links.sets.getUrl());
     }
   }, [error, navigate]);
 
@@ -50,7 +51,7 @@ export function SetFullModePage() {
           <Group>
             <ActionIcon
               variant="subtle"
-              onClick={() => navigate(`/sets?page=${returnPage}`)}
+              onClick={() => navigate(links.sets.getUrl({}, { returnPage }))}
               aria-label="Go back to sets">
               <IconArrowLeft size={16} />
             </ActionIcon>

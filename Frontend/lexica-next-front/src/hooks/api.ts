@@ -7,6 +7,13 @@ export type EntryDto = components['schemas']['EntryDto'];
 export type SetRecordDto = components['schemas']['SetRecordDto'];
 export type GetSetResponse = components['schemas']['GetSetResponse'];
 export type GetSetsResponse = components['schemas']['GetSetsResponse'];
+export type WordRecordDto = components['schemas']['WordRecordDto'];
+export type GetWordsResponse = components['schemas']['GetWordsResponse'];
+export type GetWordResponse = components['schemas']['GetWordResponse'];
+export type GetWordSetsResponse = components['schemas']['GetWordSetsResponse'];
+export type CreateWordRequestPayload = components['schemas']['CreateWordRequestPayload'];
+export type CreateWordResponse = components['schemas']['CreateWordResponse'];
+export type UpdateWordRequestPayload = components['schemas']['UpdateWordRequestPayload'];
 export type CreateSetRequestPayload = components['schemas']['CreateSetRequestPayload'];
 export type UpdateSetRequestPayload = components['schemas']['UpdateSetRequestPayload'];
 export type GenerateTranslationsRequest = components['schemas']['GenerateTranslationsRequest'];
@@ -34,6 +41,35 @@ export const useSets = (params?: {
     queryKey: ['sets', params],
     queryFn: async ({ signal }): Promise<GetSetsResponse> => {
       const { data, error } = await client.GET('/api/sets', {
+        params: {
+          query: params,
+        },
+        signal,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+
+      return data!;
+    },
+    placeholderData: keepPreviousData,
+  });
+};
+
+export const useWords = (params?: {
+  page?: number;
+  pageSize?: number;
+  sortingFieldName?: string;
+  sortingOrder?: string;
+  searchQuery?: string;
+}) => {
+  const client = useApiClient();
+
+  return useQuery({
+    queryKey: ['words', params],
+    queryFn: async ({ signal }): Promise<GetWordsResponse> => {
+      const { data, error } = await client.GET('/api/words', {
         params: {
           query: params,
         },
@@ -90,6 +126,120 @@ export const useCreateSet = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sets'] });
     },
+  });
+};
+
+export const useWord = (wordId: string) => {
+  const client = useApiClient();
+
+  return useQuery({
+    queryKey: ['word', wordId],
+    queryFn: async ({ signal }): Promise<GetWordResponse> => {
+      const { data, error } = await client.GET('/api/words/{wordId}', {
+        params: {
+          path: { wordId },
+        },
+        signal,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+
+      return data!;
+    },
+    enabled: !!wordId,
+  });
+};
+
+export const useCreateWord = () => {
+  const client = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: CreateWordRequestPayload): Promise<CreateWordResponse> => {
+      const { data: responseData, error } = await client.POST('/api/words', {
+        body: data,
+      });
+
+      if (error || !responseData) {
+        throw new Error(`API error: ${error}`);
+      }
+
+      return responseData;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['words'] });
+    },
+  });
+};
+
+export const useUpdateWord = () => {
+  const client = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ wordId, data }: { wordId: string; data: UpdateWordRequestPayload }): Promise<void> => {
+      const { error } = await client.PUT('/api/words/{wordId}', {
+        params: {
+          path: { wordId },
+        },
+        body: data,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+    },
+    onSuccess: (_, { wordId }) => {
+      queryClient.invalidateQueries({ queryKey: ['words'] });
+      queryClient.invalidateQueries({ queryKey: ['word', wordId] });
+    },
+  });
+};
+
+export const useDeleteWord = () => {
+  const client = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (wordId: string): Promise<void> => {
+      const { error } = await client.DELETE('/api/words/{wordId}', {
+        params: {
+          path: { wordId },
+        },
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['words'] });
+    },
+  });
+};
+
+export const useWordSets = (wordId: string, enabled = true) => {
+  const client = useApiClient();
+
+  return useQuery({
+    queryKey: ['wordSets', wordId],
+    queryFn: async ({ signal }): Promise<GetWordSetsResponse> => {
+      const { data, error } = await client.GET('/api/words/{wordId}/sets', {
+        params: {
+          path: { wordId },
+        },
+        signal,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+
+      return data!;
+    },
+    enabled: enabled && !!wordId,
   });
 };
 
