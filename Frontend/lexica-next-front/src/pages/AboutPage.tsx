@@ -44,7 +44,7 @@ export function AboutPage() {
                     Full Mode
                   </Text>
                   <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
-                    Comprehensive learning with both close and open questions to master word meanings.
+                    Comprehensive learning with both closed and open questions to master word meanings.
                   </Text>
                 </div>
               </Group>
@@ -87,30 +87,30 @@ export function AboutPage() {
               <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
                 1.{' '}
                 <Text span c="black" fw={600} fz={{ base: 'md', md: 'lg' }}>
-                  Create Sets:
+                  Create Words:
                 </Text>{' '}
-                Build custom vocabulary sets with English words and their translations.
+                Add English words along with their translations and example sentences to build your vocabulary list.
               </Text>
               <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
                 2.{' '}
                 <Text span c="black" fw={600} fz={{ base: 'md', md: 'lg' }}>
-                  Choose Mode:
+                  Create Sets:
                 </Text>{' '}
-                Select from our four learning modes based on your current level and goals.
+                Build custom vocabulary sets using words you've previously added.
               </Text>
               <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
                 3.{' '}
                 <Text span c="black" fw={600} fz={{ base: 'md', md: 'lg' }}>
                   Practice:
                 </Text>{' '}
-                Engage with interactive exercises that adapt to your progress.
+                Do one round of practice in spelling mode, full mode, and open questions mode.
               </Text>
               <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
                 4.{' '}
                 <Text span c="black" fw={600} fz={{ base: 'md', md: 'lg' }}>
                   Master:
                 </Text>{' '}
-                Repeat and reinforce until you've mastered each word.
+                Repeat and reinforce in open questions mode.
               </Text>
             </Stack>
           </Paper>
