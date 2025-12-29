@@ -25,6 +25,7 @@ import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { links } from '@/config/links';
+import { formatDateTime } from '@/utils/date';
 import { useCreateSet, useUpdateSet, useWords, type GetSetResponse, type WordRecordDto } from '../../hooks/api';
 import { WordForm } from '../words/WordForm';
 import { WordFormSuccessData } from '../words/WordFormTypes';
@@ -65,8 +66,8 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   const { data: wordsData, isFetching } = useWords({
     page: currentPage,
     pageSize,
-    sortingFieldName: 'word',
-    sortingOrder: 'asc',
+    sortingFieldName: 'createdAt',
+    sortingOrder: 'desc',
     searchQuery: debouncedSearchQuery || undefined,
   });
 
@@ -300,59 +301,61 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
               </Paper>
             ) : (
               <Paper withBorder>
-                <Table striped>
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th style={{ width: 60 }}>#</Table.Th>
-                      <Table.Th>Word</Table.Th>
-                      <Table.Th style={{ width: 120 }}>Type</Table.Th>
-                      <Table.Th style={{ width: 100, textAlign: 'center' }}>Actions</Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {selectedWords.map((word, index) => (
-                      <Table.Tr key={word.wordId}>
-                        <Table.Td>{index + 1}</Table.Td>
-                        <Table.Td>
-                          <Text fw={500}>{word.word}</Text>
-                        </Table.Td>
-                        <Table.Td>
-                          <Badge size="sm" variant="light">
-                            {word.wordType}
-                          </Badge>
-                        </Table.Td>
-                        <Table.Td>
-                          <Group gap={4} justify="center">
-                            <ActionIcon
-                              variant="subtle"
-                              size="sm"
-                              onClick={() => handleMoveUp(index)}
-                              disabled={index === 0}
-                              aria-label="Move up">
-                              <IconChevronUp size={14} />
-                            </ActionIcon>
-                            <ActionIcon
-                              variant="subtle"
-                              size="sm"
-                              onClick={() => handleMoveDown(index)}
-                              disabled={index === selectedWords.length - 1}
-                              aria-label="Move down">
-                              <IconChevronDown size={14} />
-                            </ActionIcon>
-                            <ActionIcon
-                              variant="subtle"
-                              color="red"
-                              size="sm"
-                              onClick={() => handleRemoveWord(word.wordId)}
-                              aria-label="Remove word">
-                              <IconTrash size={14} />
-                            </ActionIcon>
-                          </Group>
-                        </Table.Td>
+                <ScrollArea type="auto">
+                  <Table striped style={{ tableLayout: 'fixed', minWidth: 300 }}>
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th style={{ width: 60 }}>#</Table.Th>
+                        <Table.Th>Word</Table.Th>
+                        <Table.Th style={{ width: 120 }}>Type</Table.Th>
+                        <Table.Th style={{ width: 100, textAlign: 'center' }}>Actions</Table.Th>
                       </Table.Tr>
-                    ))}
-                  </Table.Tbody>
-                </Table>
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {selectedWords.map((word, index) => (
+                        <Table.Tr key={word.wordId}>
+                          <Table.Td>{index + 1}</Table.Td>
+                          <Table.Td>
+                            <Text fw={500}>{word.word}</Text>
+                          </Table.Td>
+                          <Table.Td>
+                            <Badge size="sm" variant="light">
+                              {word.wordType}
+                            </Badge>
+                          </Table.Td>
+                          <Table.Td>
+                            <Group gap={4} justify="center">
+                              <ActionIcon
+                                variant="subtle"
+                                size="sm"
+                                onClick={() => handleMoveUp(index)}
+                                disabled={index === 0}
+                                aria-label="Move up">
+                                <IconChevronUp size={14} />
+                              </ActionIcon>
+                              <ActionIcon
+                                variant="subtle"
+                                size="sm"
+                                onClick={() => handleMoveDown(index)}
+                                disabled={index === selectedWords.length - 1}
+                                aria-label="Move down">
+                                <IconChevronDown size={14} />
+                              </ActionIcon>
+                              <ActionIcon
+                                variant="subtle"
+                                color="red"
+                                size="sm"
+                                onClick={() => handleRemoveWord(word.wordId)}
+                                aria-label="Remove word">
+                                <IconTrash size={14} />
+                              </ActionIcon>
+                            </Group>
+                          </Table.Td>
+                        </Table.Tr>
+                      ))}
+                    </Table.Tbody>
+                  </Table>
+                </ScrollArea>
               </Paper>
             )}
           </Stack>
@@ -395,7 +398,11 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   rightSection={
                     searchQuery ? (
-                      <ActionIcon variant="subtle" size="sm" onClick={() => setSearchQuery('')} aria-label="Clear search">
+                      <ActionIcon
+                        variant="subtle"
+                        size="sm"
+                        onClick={() => setSearchQuery('')}
+                        aria-label="Clear search">
                         <IconX size={14} />
                       </ActionIcon>
                     ) : null
@@ -412,13 +419,15 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                         : 'No words available. Create some words first!'}
                     </Text>
                   ) : (
-                    <ScrollArea>
-                      <Table striped highlightOnHover>
+                    <ScrollArea type="auto">
+                      <Table striped highlightOnHover style={{ minWidth: 600 }}>
                         <Table.Thead>
                           <Table.Tr>
-                            <Table.Th style={{ width: 50 }} />
-                            <Table.Th>Word</Table.Th>
-                            <Table.Th style={{ width: 120 }}>Type</Table.Th>
+                            <Table.Th style={{ width: 50, minWidth: 50 }} />
+                            <Table.Th style={{ whiteSpace: 'nowrap' }}>Word</Table.Th>
+                            <Table.Th style={{ width: 100, minWidth: 100 }}>Type</Table.Th>
+                            <Table.Th style={{ width: 150, minWidth: 150, whiteSpace: 'nowrap' }}>Created</Table.Th>
+                            <Table.Th style={{ width: 150, minWidth: 150, whiteSpace: 'nowrap' }}>Edited</Table.Th>
                           </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>
@@ -431,7 +440,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                                 style={{ cursor: 'pointer' }}
                                 onClick={() => handleSelectWord(word)}
                                 bg={isSelected ? 'var(--mantine-color-blue-light)' : undefined}>
-                                <Table.Td>
+                                <Table.Td style={{ width: 50, minWidth: 50 }}>
                                   <input
                                     type="checkbox"
                                     checked={isSelected}
@@ -439,13 +448,23 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                                     onClick={(e) => e.stopPropagation()}
                                   />
                                 </Table.Td>
-                                <Table.Td>
+                                <Table.Td style={{ whiteSpace: 'nowrap' }}>
                                   <Text fw={500}>{word.word}</Text>
                                 </Table.Td>
-                                <Table.Td>
+                                <Table.Td style={{ width: 100, minWidth: 100 }}>
                                   <Badge size="sm" variant="light">
                                     {word.wordType}
                                   </Badge>
+                                </Table.Td>
+                                <Table.Td style={{ width: 150, minWidth: 150, whiteSpace: 'nowrap' }}>
+                                  <Text size="sm" c="dimmed">
+                                    {formatDateTime(word.createdAt)}
+                                  </Text>
+                                </Table.Td>
+                                <Table.Td style={{ width: 150, minWidth: 150, whiteSpace: 'nowrap' }}>
+                                  <Text size="sm" c="dimmed">
+                                    {word.editedAt ? formatDateTime(word.editedAt) : '-'}
+                                  </Text>
                                 </Table.Td>
                               </Table.Tr>
                             );
