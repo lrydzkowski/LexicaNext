@@ -278,7 +278,7 @@ export function WordsList() {
             component={Link}
             to={links.newWord.getUrl({}, { returnPage: currentPage.toString() })}
             size="md"
-            visibleFrom="sm">
+            visibleFrom="md">
             <Text>Create New Word</Text>
           </Button>
           <ActionIcon variant="light" size="xl" onClick={() => refetch()}>

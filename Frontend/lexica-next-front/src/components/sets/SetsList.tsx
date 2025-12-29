@@ -226,7 +226,7 @@ export function SetsList() {
             component={Link}
             to={links.newSet.getUrl({}, { returnPage: currentPage.toString() })}
             size="md"
-            visibleFrom="sm">
+            visibleFrom="md">
             <Text>Create New Set</Text>
           </Button>
           <ActionIcon variant="light" size="xl" onClick={() => refetch()}>
