@@ -1,69 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  IconChevronDown,
-  IconChevronUp,
-  IconDots,
-  IconEdit,
-  IconPlus,
-  IconRefresh,
-  IconSearch,
-  IconSelector,
-  IconTrash,
-} from '@tabler/icons-react';
+import { IconDots, IconEdit, IconPlus, IconRefresh, IconSearch, IconTrash } from '@tabler/icons-react';
 import { Link, useSearchParams } from 'react-router';
 import {
   ActionIcon,
   Badge,
   Box,
   Button,
-  Center,
   Group,
   LoadingOverlay,
   Menu,
   Pagination,
   Paper,
-  ScrollArea,
   Stack,
   Table,
   Text,
   TextInput,
-  UnstyledButton,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
 import { useDeleteWord, useWords, type WordRecordDto } from '../../hooks/api';
 import { formatDateTime } from '../../utils/date';
 import { DeleteWordModal } from './DeleteWordModal';
-import classes from './WordsList.module.css';
-
-type SortField = 'word' | 'createdAt' | 'editedAt';
-type SortOrder = 'asc' | 'desc';
-
-interface SortableHeaderProps {
-  label: string;
-  field: SortField;
-  currentField: SortField;
-  currentOrder: SortOrder;
-  onSort: (field: SortField) => void;
-}
-
-function SortableHeader({ label, field, currentField, currentOrder, onSort }: SortableHeaderProps) {
-  const isActive = field === currentField;
-  const Icon = isActive ? (currentOrder === 'asc' ? IconChevronUp : IconChevronDown) : IconSelector;
-
-  return (
-    <UnstyledButton onClick={() => onSort(field)} className={classes.sortableHeader}>
-      <Group gap={4} wrap="nowrap">
-        <Text fw={700} fz="sm">
-          {label}
-        </Text>
-        <Center>
-          <Icon size={14} style={{ opacity: isActive ? 1 : 0.5 }} />
-        </Center>
-      </Group>
-    </UnstyledButton>
-  );
-}
 
 export function WordsList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -77,10 +34,9 @@ export function WordsList() {
   }>({ opened: false, wordId: '', wordText: '' });
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
-  const sortField = (searchParams.get('sortField') as SortField) || 'createdAt';
-  const sortOrder = (searchParams.get('sortOrder') as SortOrder) || 'desc';
-
   const pageSize = 10;
+  const sortingFieldName = 'createdAt';
+  const sortingOrder = 'desc';
 
   const {
     data: wordsData,
@@ -90,26 +46,12 @@ export function WordsList() {
   } = useWords({
     page: currentPage,
     pageSize,
-    sortingFieldName: sortField,
-    sortingOrder: sortOrder,
+    sortingFieldName,
+    sortingOrder,
     searchQuery: debouncedSearchQuery || undefined,
   });
 
   const deleteWordMutation = useDeleteWord();
-
-  const handleSort = (field: SortField) => {
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      if (field === sortField) {
-        newParams.set('sortOrder', sortOrder === 'asc' ? 'desc' : 'asc');
-      } else {
-        newParams.set('sortField', field);
-        newParams.set('sortOrder', 'asc');
-      }
-      newParams.set('page', '1');
-      return newParams;
-    });
-  };
 
   const words = wordsData?.data || [];
   const totalCount = wordsData?.count || 0;
@@ -200,58 +142,6 @@ export function WordsList() {
     </Menu>
   );
 
-  const MobileWordCard = ({ word }: { word: WordRecordDto }) => (
-    <Paper p="md" withBorder mb="sm">
-      <Stack gap="sm">
-        <Group justify="space-between" align="flex-start">
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <Text fw={600} fz="md" truncate>
-              {word.word}
-            </Text>
-            <Group gap="xs" mt="xs">
-              <Badge size="sm" variant="light">
-                {word.wordType}
-              </Badge>
-            </Group>
-            <Text fz="xs" c="dimmed" mt="xs">
-              Created: {formatDateTime(word.createdAt)}
-            </Text>
-            {word.editedAt && (
-              <Text fz="xs" c="dimmed">
-                Edited: {formatDateTime(word.editedAt)}
-              </Text>
-            )}
-          </div>
-          <WordActionMenu word={word} />
-        </Group>
-      </Stack>
-    </Paper>
-  );
-
-  const rows = words.map((word) => (
-    <Table.Tr key={word.wordId}>
-      <Table.Td>
-        <Text>{word.word}</Text>
-      </Table.Td>
-      <Table.Td className={classes.wordTypeCol}>
-        <Badge size="sm" variant="light">
-          {word.wordType}
-        </Badge>
-      </Table.Td>
-      <Table.Td className={classes.createdCol}>
-        <Text>{formatDateTime(word.createdAt)}</Text>
-      </Table.Td>
-      <Table.Td className={classes.editedCol}>
-        <Text>{word.editedAt ? formatDateTime(word.editedAt) : '-'}</Text>
-      </Table.Td>
-      <Table.Td className={classes.actionCol}>
-        <Group justify="center">
-          <WordActionMenu word={word} />
-        </Group>
-      </Table.Td>
-    </Table.Tr>
-  ));
-
   return (
     <>
       <DeleteWordModal
@@ -296,10 +186,33 @@ export function WordsList() {
 
         <Box pos="relative">
           <LoadingOverlay visible={isFetching} />
-
           <Box hiddenFrom="md">
             {words.length > 0 ? (
-              words.map((word) => <MobileWordCard key={word.wordId} word={word} />)
+              words.map((word) => (
+                <Paper p="md" withBorder mb="sm" key={word.wordId}>
+                  <Stack gap="sm">
+                    <Group justify="space-between" align="flex-start">
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <Text fw={600} fz="md" truncate>
+                          {word.word}
+                        </Text>
+                        <Group gap="xs" mt="xs">
+                          <Badge size="sm" variant="light">
+                            {word.wordType}
+                          </Badge>
+                        </Group>
+                        <Text fz="xs" c="dimmed" mt="xs">
+                          Created: {formatDateTime(word.createdAt)}
+                        </Text>
+                        <Text fz="xs" c="dimmed">
+                          Edited: {word.editedAt ? formatDateTime(word.editedAt) : '-'}
+                        </Text>
+                      </div>
+                      <WordActionMenu word={word} />
+                    </Group>
+                  </Stack>
+                </Paper>
+              ))
             ) : (
               <Text ta="center" c="dimmed" py="xl">
                 {debouncedSearchQuery
@@ -308,59 +221,56 @@ export function WordsList() {
               </Text>
             )}
           </Box>
-
-          <ScrollArea visibleFrom="md">
-            <Table striped highlightOnHover>
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th>
-                    <SortableHeader
-                      label="Word"
-                      field="word"
-                      currentField={sortField}
-                      currentOrder={sortOrder}
-                      onSort={handleSort}
-                    />
-                  </Table.Th>
-                  <Table.Th>Word Type</Table.Th>
-                  <Table.Th>
-                    <SortableHeader
-                      label="Created"
-                      field="createdAt"
-                      currentField={sortField}
-                      currentOrder={sortOrder}
-                      onSort={handleSort}
-                    />
-                  </Table.Th>
-                  <Table.Th>
-                    <SortableHeader
-                      label="Edited"
-                      field="editedAt"
-                      currentField={sortField}
-                      currentOrder={sortOrder}
-                      onSort={handleSort}
-                    />
-                  </Table.Th>
-                  <Table.Th style={{ textAlign: 'center' }}>Actions</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {rows.length > 0 ? (
-                  rows
-                ) : (
-                  <Table.Tr>
-                    <Table.Td colSpan={5}>
-                      <Text ta="center" c="dimmed" py="xl">
-                        {debouncedSearchQuery
-                          ? 'No words found matching your search.'
-                          : 'No words created yet. Create your first word to get started!'}
-                      </Text>
+          <Table striped highlightOnHover style={{ tableLayout: 'fixed' }} visibleFrom="md">
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Word</Table.Th>
+                <Table.Th w={100}>Word Type</Table.Th>
+                <Table.Th w={180}>Created</Table.Th>
+                <Table.Th w={180}>Edited</Table.Th>
+                <Table.Th w={80} style={{ textAlign: 'center' }}>
+                  Actions
+                </Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {words.length > 0 ? (
+                words.map((word) => (
+                  <Table.Tr key={word.wordId}>
+                    <Table.Td>
+                      <Text truncate="end">{word.word}</Text>
+                    </Table.Td>
+                    <Table.Td w={100}>
+                      <Badge size="sm" variant="light">
+                        {word.wordType}
+                      </Badge>
+                    </Table.Td>
+                    <Table.Td w={180}>
+                      <Text>{formatDateTime(word.createdAt)}</Text>
+                    </Table.Td>
+                    <Table.Td w={180}>
+                      <Text>{word.editedAt ? formatDateTime(word.editedAt) : '-'}</Text>
+                    </Table.Td>
+                    <Table.Td w={80}>
+                      <Group justify="center">
+                        <WordActionMenu word={word} />
+                      </Group>
                     </Table.Td>
                   </Table.Tr>
-                )}
-              </Table.Tbody>
-            </Table>
-          </ScrollArea>
+                ))
+              ) : (
+                <Table.Tr>
+                  <Table.Td colSpan={5}>
+                    <Text ta="center" c="dimmed" py="xl">
+                      {debouncedSearchQuery
+                        ? 'No words found matching your search.'
+                        : 'No words created yet. Create your first word to get started!'}
+                    </Text>
+                  </Table.Td>
+                </Table.Tr>
+              )}
+            </Table.Tbody>
+          </Table>
         </Box>
 
         <Group justify="center" mt="md">

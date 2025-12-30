@@ -14,7 +14,6 @@ import {
   Modal,
   Pagination,
   Paper,
-  ScrollArea,
   Stack,
   Table,
   Text,
@@ -300,63 +299,112 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                 </Text>
               </Paper>
             ) : (
-              <Paper withBorder>
-                <ScrollArea type="auto">
-                  <Table striped style={{ tableLayout: 'fixed', minWidth: 300 }}>
-                    <Table.Thead>
-                      <Table.Tr>
-                        <Table.Th style={{ width: 60 }}>#</Table.Th>
-                        <Table.Th>Word</Table.Th>
-                        <Table.Th style={{ width: 120 }}>Type</Table.Th>
-                        <Table.Th style={{ width: 100, textAlign: 'center' }}>Actions</Table.Th>
-                      </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>
-                      {selectedWords.map((word, index) => (
-                        <Table.Tr key={word.wordId}>
-                          <Table.Td>{index + 1}</Table.Td>
-                          <Table.Td>
-                            <Text fw={500}>{word.word}</Text>
-                          </Table.Td>
-                          <Table.Td>
+              <>
+                <Box hiddenFrom="md">
+                  {selectedWords.map((word, index) => (
+                    <Paper key={word.wordId} p="md" withBorder mb="sm">
+                      <Group justify="space-between" align="flex-start">
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <Group gap="xs" mb="xs">
+                            <Text size="sm" c="dimmed">
+                              #{index + 1}
+                            </Text>
                             <Badge size="sm" variant="light">
                               {word.wordType}
                             </Badge>
-                          </Table.Td>
-                          <Table.Td>
-                            <Group gap={4} justify="center">
-                              <ActionIcon
-                                variant="subtle"
-                                size="sm"
-                                onClick={() => handleMoveUp(index)}
-                                disabled={index === 0}
-                                aria-label="Move up">
-                                <IconChevronUp size={14} />
-                              </ActionIcon>
-                              <ActionIcon
-                                variant="subtle"
-                                size="sm"
-                                onClick={() => handleMoveDown(index)}
-                                disabled={index === selectedWords.length - 1}
-                                aria-label="Move down">
-                                <IconChevronDown size={14} />
-                              </ActionIcon>
-                              <ActionIcon
-                                variant="subtle"
-                                color="red"
-                                size="sm"
-                                onClick={() => handleRemoveWord(word.wordId)}
-                                aria-label="Remove word">
-                                <IconTrash size={14} />
-                              </ActionIcon>
-                            </Group>
-                          </Table.Td>
-                        </Table.Tr>
-                      ))}
-                    </Table.Tbody>
-                  </Table>
-                </ScrollArea>
-              </Paper>
+                          </Group>
+                          <Text fw={600} fz="md" truncate>
+                            {word.word}
+                          </Text>
+                        </div>
+                        <Group gap={4}>
+                          <ActionIcon
+                            variant="subtle"
+                            size="sm"
+                            onClick={() => handleMoveUp(index)}
+                            disabled={index === 0}
+                            aria-label="Move up">
+                            <IconChevronUp size={14} />
+                          </ActionIcon>
+                          <ActionIcon
+                            variant="subtle"
+                            size="sm"
+                            onClick={() => handleMoveDown(index)}
+                            disabled={index === selectedWords.length - 1}
+                            aria-label="Move down">
+                            <IconChevronDown size={14} />
+                          </ActionIcon>
+                          <ActionIcon
+                            variant="subtle"
+                            color="red"
+                            size="sm"
+                            onClick={() => handleRemoveWord(word.wordId)}
+                            aria-label="Remove word">
+                            <IconTrash size={14} />
+                          </ActionIcon>
+                        </Group>
+                      </Group>
+                    </Paper>
+                  ))}
+                </Box>
+                <Table striped style={{ tableLayout: 'fixed' }} visibleFrom="md">
+                  <Table.Thead>
+                    <Table.Tr>
+                      <Table.Th w={60}>#</Table.Th>
+                      <Table.Th>Word</Table.Th>
+                      <Table.Th w={120}>Type</Table.Th>
+                      <Table.Th w={100} style={{ textAlign: 'center' }}>
+                        Actions
+                      </Table.Th>
+                    </Table.Tr>
+                  </Table.Thead>
+                  <Table.Tbody>
+                    {selectedWords.map((word, index) => (
+                      <Table.Tr key={word.wordId}>
+                        <Table.Td w={60}>{index + 1}</Table.Td>
+                        <Table.Td>
+                          <Text fw={500} truncate="end">
+                            {word.word}
+                          </Text>
+                        </Table.Td>
+                        <Table.Td w={120}>
+                          <Badge size="sm" variant="light">
+                            {word.wordType}
+                          </Badge>
+                        </Table.Td>
+                        <Table.Td w={100}>
+                          <Group gap={4} justify="center">
+                            <ActionIcon
+                              variant="subtle"
+                              size="sm"
+                              onClick={() => handleMoveUp(index)}
+                              disabled={index === 0}
+                              aria-label="Move up">
+                              <IconChevronUp size={14} />
+                            </ActionIcon>
+                            <ActionIcon
+                              variant="subtle"
+                              size="sm"
+                              onClick={() => handleMoveDown(index)}
+                              disabled={index === selectedWords.length - 1}
+                              aria-label="Move down">
+                              <IconChevronDown size={14} />
+                            </ActionIcon>
+                            <ActionIcon
+                              variant="subtle"
+                              color="red"
+                              size="sm"
+                              onClick={() => handleRemoveWord(word.wordId)}
+                              aria-label="Remove word">
+                              <IconTrash size={14} />
+                            </ActionIcon>
+                          </Group>
+                        </Table.Td>
+                      </Table.Tr>
+                    ))}
+                  </Table.Tbody>
+                </Table>
+              </>
             )}
           </Stack>
 
@@ -408,26 +456,59 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                     ) : null
                   }
                 />
-
                 <Box pos="relative" mb={20}>
                   <LoadingOverlay visible={isFetching} />
+                  {words.length > 0 ? (
+                    <>
+                      <Box hiddenFrom="md">
+                        {words.map((word) => {
+                          const isSelected = word.wordId ? selectedWordIds.has(word.wordId) : false;
 
-                  {words.length === 0 ? (
-                    <Text ta="center" c="dimmed" py="xl">
-                      {debouncedSearchQuery
-                        ? 'No words found matching your search.'
-                        : 'No words available. Create some words first!'}
-                    </Text>
-                  ) : (
-                    <ScrollArea type="auto">
-                      <Table striped highlightOnHover style={{ minWidth: 600 }}>
+                          return (
+                            <Paper
+                              key={word.wordId}
+                              p="md"
+                              withBorder
+                              mb="sm"
+                              style={{ cursor: 'pointer' }}
+                              bg={isSelected ? 'var(--mantine-color-blue-light)' : undefined}
+                              onClick={() => handleSelectWord(word)}>
+                              <Group justify="space-between" align="flex-start">
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => handleSelectWord(word)}
+                                  onClick={(e) => e.stopPropagation()}
+                                />
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <Text fw={600} fz="md" truncate>
+                                    {word.word}
+                                  </Text>
+                                  <Group gap="xs" mt="xs">
+                                    <Badge size="sm" variant="light">
+                                      {word.wordType}
+                                    </Badge>
+                                  </Group>
+                                  <Text fz="xs" c="dimmed" mt="xs">
+                                    Created: {formatDateTime(word.createdAt)}
+                                  </Text>
+                                  <Text fz="xs" c="dimmed">
+                                    Edited: {word.editedAt ? formatDateTime(word.editedAt) : '-'}
+                                  </Text>
+                                </div>
+                              </Group>
+                            </Paper>
+                          );
+                        })}
+                      </Box>
+                      <Table striped highlightOnHover style={{ tableLayout: 'fixed' }} visibleFrom="md">
                         <Table.Thead>
                           <Table.Tr>
-                            <Table.Th style={{ width: 50, minWidth: 50 }} />
-                            <Table.Th style={{ whiteSpace: 'nowrap' }}>Word</Table.Th>
-                            <Table.Th style={{ width: 100, minWidth: 100 }}>Type</Table.Th>
-                            <Table.Th style={{ width: 150, minWidth: 150, whiteSpace: 'nowrap' }}>Created</Table.Th>
-                            <Table.Th style={{ width: 150, minWidth: 150, whiteSpace: 'nowrap' }}>Edited</Table.Th>
+                            <Table.Th w={50} />
+                            <Table.Th>Word</Table.Th>
+                            <Table.Th w={100}>Type</Table.Th>
+                            <Table.Th w={150}>Created</Table.Th>
+                            <Table.Th w={150}>Edited</Table.Th>
                           </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>
@@ -440,7 +521,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                                 style={{ cursor: 'pointer' }}
                                 onClick={() => handleSelectWord(word)}
                                 bg={isSelected ? 'var(--mantine-color-blue-light)' : undefined}>
-                                <Table.Td style={{ width: 50, minWidth: 50 }}>
+                                <Table.Td w={50}>
                                   <input
                                     type="checkbox"
                                     checked={isSelected}
@@ -448,20 +529,22 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                                     onClick={(e) => e.stopPropagation()}
                                   />
                                 </Table.Td>
-                                <Table.Td style={{ whiteSpace: 'nowrap' }}>
-                                  <Text fw={500}>{word.word}</Text>
+                                <Table.Td>
+                                  <Text fw={500} truncate="end">
+                                    {word.word}
+                                  </Text>
                                 </Table.Td>
-                                <Table.Td style={{ width: 100, minWidth: 100 }}>
+                                <Table.Td w={100}>
                                   <Badge size="sm" variant="light">
                                     {word.wordType}
                                   </Badge>
                                 </Table.Td>
-                                <Table.Td style={{ width: 150, minWidth: 150, whiteSpace: 'nowrap' }}>
+                                <Table.Td w={150}>
                                   <Text size="sm" c="dimmed">
                                     {formatDateTime(word.createdAt)}
                                   </Text>
                                 </Table.Td>
-                                <Table.Td style={{ width: 150, minWidth: 150, whiteSpace: 'nowrap' }}>
+                                <Table.Td w={150}>
                                   <Text size="sm" c="dimmed">
                                     {word.editedAt ? formatDateTime(word.editedAt) : '-'}
                                   </Text>
@@ -471,7 +554,22 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                           })}
                         </Table.Tbody>
                       </Table>
-                    </ScrollArea>
+                    </>
+                  ) : (
+                    <>
+                      <Box hiddenFrom="md">
+                        <Text ta="center" c="dimmed" py="xl">
+                          {debouncedSearchQuery
+                            ? 'No words found matching your search.'
+                            : 'No words available. Create some words first!'}
+                        </Text>
+                      </Box>
+                      <Text ta="center" c="dimmed" py="xl" visibleFrom="md">
+                        {debouncedSearchQuery
+                          ? 'No words found matching your search.'
+                          : 'No words available. Create some words first!'}
+                      </Text>
+                    </>
                   )}
                 </Box>
                 {totalPages > 1 && (

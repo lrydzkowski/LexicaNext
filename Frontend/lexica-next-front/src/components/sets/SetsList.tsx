@@ -21,7 +21,6 @@ import {
   Menu,
   Pagination,
   Paper,
-  ScrollArea,
   Stack,
   Table,
   Text,
@@ -32,7 +31,6 @@ import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
 import { useDeleteSet, useSets, type SetRecordDto } from '../../hooks/api';
 import { formatDateTime } from '../../utils/date';
-import classes from './SetsList.module.css';
 
 export function SetsList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -41,10 +39,9 @@ export function SetsList() {
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
-
+  const pageSize = 10;
   const sortingFieldName = 'createdAt';
   const sortingOrder = 'desc';
-  const pageSize = 10;
 
   const {
     data: setsData,
@@ -177,42 +174,6 @@ export function SetsList() {
     </Menu>
   );
 
-  const MobileSetCard = ({ set }: { set: SetRecordDto }) => (
-    <Paper p="md" withBorder mb="sm">
-      <Stack gap="sm">
-        <Group justify="space-between" align="flex-start">
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <Text fw={600} fz="md" truncate>
-              {set.name}
-            </Text>
-            <Text fz="xs" c="dimmed">
-              {formatDateTime(set.createdAt)}
-            </Text>
-          </div>
-          <SetActionMenu set={set} />
-        </Group>
-      </Stack>
-    </Paper>
-  );
-
-  const rows = sets.map((set) => (
-    <Table.Tr key={set.setId}>
-      <Table.Td>
-        <div>
-          <Text>{set.name}</Text>
-        </div>
-      </Table.Td>
-      <Table.Td className={classes.createdCol}>
-        <Text>{formatDateTime(set.createdAt)}</Text>
-      </Table.Td>
-      <Table.Td className={classes.actionCol}>
-        <Group justify="center">
-          <SetActionMenu set={set} />
-        </Group>
-      </Table.Td>
-    </Table.Tr>
-  ));
-
   return (
     <>
       <Stack gap="md">
@@ -247,7 +208,23 @@ export function SetsList() {
 
           <Box hiddenFrom="md">
             {sets.length > 0 ? (
-              sets.map((set) => <MobileSetCard key={set.setId} set={set} />)
+              sets.map((set) => (
+                <Paper key={set.setId} p="md" withBorder mb="sm">
+                  <Stack gap="sm">
+                    <Group justify="space-between" align="flex-start">
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <Text fw={600} fz="md" truncate>
+                          {set.name}
+                        </Text>
+                        <Text fz="xs" c="dimmed">
+                          {formatDateTime(set.createdAt)}
+                        </Text>
+                      </div>
+                      <SetActionMenu set={set} />
+                    </Group>
+                  </Stack>
+                </Paper>
+              ))
             ) : (
               <Text ta="center" c="dimmed" py="xl">
                 {debouncedSearchQuery
@@ -257,32 +234,46 @@ export function SetsList() {
             )}
           </Box>
 
-          <ScrollArea visibleFrom="md">
-            <Table striped highlightOnHover>
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th>Name</Table.Th>
-                  <Table.Th>Created</Table.Th>
-                  <Table.Th style={{ textAlign: 'center' }}>Actions</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {rows.length > 0 ? (
-                  rows
-                ) : (
-                  <Table.Tr>
-                    <Table.Td colSpan={3}>
-                      <Text ta="center" c="dimmed" py="xl">
-                        {debouncedSearchQuery
-                          ? 'No sets found matching your search.'
-                          : 'No sets created yet. Create your first set to get started!'}
-                      </Text>
+          <Table striped highlightOnHover style={{ tableLayout: 'fixed' }} visibleFrom="md">
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Name</Table.Th>
+                <Table.Th w={180}>Created</Table.Th>
+                <Table.Th w={80} style={{ textAlign: 'center' }}>
+                  Actions
+                </Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {sets.length > 0 ? (
+                sets.map((set) => (
+                  <Table.Tr key={set.setId}>
+                    <Table.Td>
+                      <Text truncate="end">{set.name}</Text>
+                    </Table.Td>
+                    <Table.Td w={180}>
+                      <Text>{formatDateTime(set.createdAt)}</Text>
+                    </Table.Td>
+                    <Table.Td w={80}>
+                      <Group justify="center">
+                        <SetActionMenu set={set} />
+                      </Group>
                     </Table.Td>
                   </Table.Tr>
-                )}
-              </Table.Tbody>
-            </Table>
-          </ScrollArea>
+                ))
+              ) : (
+                <Table.Tr>
+                  <Table.Td colSpan={3}>
+                    <Text ta="center" c="dimmed" py="xl">
+                      {debouncedSearchQuery
+                        ? 'No sets found matching your search.'
+                        : 'No sets created yet. Create your first set to get started!'}
+                    </Text>
+                  </Table.Td>
+                </Table.Tr>
+              )}
+            </Table.Tbody>
+          </Table>
         </Box>
 
         <Group justify="center" mt="md">
