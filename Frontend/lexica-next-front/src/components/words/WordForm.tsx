@@ -33,15 +33,6 @@ export function WordForm({ mode, wordId, word, isLoading, onSuccess, onCancel }:
   const returnPage = searchParams.get('returnPage') || '1';
 
   const getInitialValues = (): WordFormValues => {
-    if (mode === 'create') {
-      return {
-        word: '',
-        wordType: 'noun',
-        translations: [{ name: '', key: randomId() }],
-        exampleSentences: [],
-      };
-    }
-
     return {
       word: '',
       wordType: 'noun',

@@ -1,5 +1,6 @@
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Lists;
+using LexicaNext.Core.Common.Mappers;
 using LexicaNext.Core.Common.Models;
 
 namespace LexicaNext.Core.Queries.GetWords.Services;
@@ -16,6 +17,13 @@ public interface IWordRecordMapper
 internal class WordRecordMapper
     : ISingletonService, IWordRecordMapper
 {
+    private readonly IWordTypeMapper _wordTypeMapper;
+
+    public WordRecordMapper(IWordTypeMapper wordTypeMapper)
+    {
+        _wordTypeMapper = wordTypeMapper;
+    }
+
     public ListInfo<WordRecordDto> Map(ListInfo<WordRecord> listInfo)
     {
         return new ListInfo<WordRecordDto>
@@ -36,7 +44,7 @@ internal class WordRecordMapper
         {
             WordId = record.WordId,
             Word = record.Text,
-            WordType = record.WordType.ToString(),
+            WordType = _wordTypeMapper.Map(record.WordType),
             CreatedAt = record.CreatedAt,
             EditedAt = record.EditedAt
         };

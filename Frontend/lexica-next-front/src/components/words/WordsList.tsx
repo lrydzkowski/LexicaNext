@@ -17,6 +17,7 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
@@ -27,7 +28,7 @@ import { DeleteWordModal } from './DeleteWordModal';
 export function WordsList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 150);
   const [selectedWordIds, setSelectedWordIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
   const [deleteModalState, setDeleteModalState] = useState<{
@@ -67,21 +68,13 @@ export function WordsList() {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const oldSearch = debouncedSearchQuery;
-      setDebouncedSearchQuery(searchQuery);
-      if (oldSearch !== searchQuery) {
-        setSearchParams((prev) => {
-          const newParams = new URLSearchParams(prev);
-          newParams.set('page', '1');
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set('page', '1');
 
-          return newParams;
-        });
-      }
-    }, 150);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+      return newParams;
+    });
+  }, [debouncedSearchQuery]);
 
   useEffect(() => {
     if (error) {

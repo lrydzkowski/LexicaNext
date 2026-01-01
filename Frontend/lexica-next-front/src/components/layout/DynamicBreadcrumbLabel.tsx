@@ -6,7 +6,7 @@ interface DynamicBreadcrumbLabelProps {
 }
 
 export function DynamicBreadcrumbLabel({ resolver }: DynamicBreadcrumbLabelProps) {
-  const { label, isLoading } = resolver.useResolver(resolver.id);
+  const { label, isLoading } = resolver.resolveLabel(resolver.id);
 
   if (isLoading) {
     return (

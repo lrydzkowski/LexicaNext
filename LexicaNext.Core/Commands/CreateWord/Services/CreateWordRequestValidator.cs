@@ -1,5 +1,4 @@
 using FluentValidation;
-using LexicaNext.Core.Commands.CreateWord.Models;
 using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 
@@ -30,14 +29,14 @@ internal class CreateWordRequestPayloadValidator : AbstractValidator<CreateWordR
         RuleFor(request => request.Word)
             .NotEmpty()
             .MaximumLength(200)
-            .WithName(nameof(CreateWordCommand.Word));
+            .WithName(nameof(CreateWordRequestPayload.Word));
     }
 
     private void AddValidationForWordType()
     {
         RuleFor(request => request.WordType)
             .Must(WordTypes.IsCorrect)
-            .WithName(nameof(CreateWordCommand.WordType))
+            .WithName(nameof(CreateWordRequestPayload.WordType))
             .WithMessage($"'{{PropertyName}}' must be one of the following: {WordTypes.Serialize()}.")
             .WithErrorCode(ValidationErrorCodes.ValueInSetValidator);
     }
@@ -51,6 +50,9 @@ internal class CreateWordRequestPayloadValidator : AbstractValidator<CreateWordR
 
     private void AddValidationForExampleSentences()
     {
-        RuleForEach(request => request.ExampleSentences).NotEmpty().MaximumLength(500);
+        RuleForEach(request => request.ExampleSentences)
+            .NotEmpty()
+            .MaximumLength(500)
+            .WithName(nameof(CreateWordRequestPayload.ExampleSentences));
     }
 }

@@ -23,7 +23,7 @@ export type BreadcrumbResolver = (id: string) => { label: string; isLoading: boo
 
 export interface BreadcrumbResolverData {
   id: string;
-  useResolver: BreadcrumbResolver;
+  resolveLabel: BreadcrumbResolver;
 }
 
 export interface BreadcrumbItem {
@@ -33,7 +33,7 @@ export interface BreadcrumbItem {
 }
 
 export interface BreadcrumbHandle {
-  breadcrumb: (params: Record<string, string | undefined>) => [BreadcrumbItem];
+  breadcrumb: (params: Record<string, string | undefined>) => BreadcrumbItem[];
 }
 
 const router = createBrowserRouter([
@@ -108,7 +108,7 @@ const router = createBrowserRouter([
               breadcrumb: (params: Record<string, string | undefined>) => [
                 {
                   label: params.setId ?? '',
-                  resolver: { id: params.setId, useResolver: useSetLabel },
+                  resolver: { id: params.setId, resolveLabel: useSetLabel },
                 },
                 {
                   link: links.editSet.getUrl({ setId: params.setId }),
@@ -130,7 +130,7 @@ const router = createBrowserRouter([
               breadcrumb: (params: Record<string, string | undefined>) => [
                 {
                   label: params.setId ?? '',
-                  resolver: { id: params.setId, useResolver: useSetLabel },
+                  resolver: { id: params.setId, resolveLabel: useSetLabel },
                 },
                 {
                   link: links.setContent.getUrl({ setId: params.setId }),
@@ -152,7 +152,7 @@ const router = createBrowserRouter([
               breadcrumb: (params: Record<string, string | undefined>) => [
                 {
                   label: params.setId ?? '',
-                  resolver: { id: params.setId, useResolver: useSetLabel },
+                  resolver: { id: params.setId, resolveLabel: useSetLabel },
                 },
                 {
                   link: links.spellingMode.getUrl({ setId: params.setId }),
@@ -174,7 +174,7 @@ const router = createBrowserRouter([
               breadcrumb: (params: Record<string, string | undefined>) => [
                 {
                   label: params.setId ?? '',
-                  resolver: { id: params.setId, useResolver: useSetLabel },
+                  resolver: { id: params.setId, resolveLabel: useSetLabel },
                 },
                 {
                   link: links.openQuestionsMode.getUrl({ setId: params.setId }),
@@ -196,7 +196,7 @@ const router = createBrowserRouter([
               breadcrumb: (params: Record<string, string | undefined>) => [
                 {
                   label: params.setId ?? '',
-                  resolver: { id: params.setId, useResolver: useSetLabel },
+                  resolver: { id: params.setId, resolveLabel: useSetLabel },
                 },
                 {
                   link: links.fullMode.getUrl({ setId: params.setId }),
@@ -249,7 +249,7 @@ const router = createBrowserRouter([
               breadcrumb: (params: Record<string, string | undefined>) => [
                 {
                   label: params.wordId ?? '',
-                  resolver: { id: params.wordId, useResolver: useWordLabel },
+                  resolver: { id: params.wordId, resolveLabel: useWordLabel },
                 },
                 {
                   link: links.editWord.getUrl({ wordId: params.wordId }),

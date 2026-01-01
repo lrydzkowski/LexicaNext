@@ -5,6 +5,7 @@ import {
   Badge,
   Box,
   Button,
+  Checkbox,
   Container,
   Group,
   LoadingOverlay,
@@ -17,6 +18,7 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { formatDateTime } from '@/utils/date';
 import { useWords, type WordRecordDto } from '../../hooks/api';
 
@@ -29,7 +31,7 @@ interface SelectWordsModalProps {
 
 export function SelectWordsModal({ opened, onClose, selectedWordIds, onSelectWord }: SelectWordsModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 150);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
@@ -46,16 +48,8 @@ export function SelectWordsModal({ opened, onClose, selectedWordIds, onSelectWor
   const totalPages = Math.ceil((totalCount as number) / pageSize);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const oldSearch = debouncedSearchQuery;
-      setDebouncedSearchQuery(searchQuery);
-      if (oldSearch !== searchQuery) {
-        setCurrentPage(1);
-      }
-    }, 150);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+    setCurrentPage(1);
+  }, [debouncedSearchQuery]);
 
   return (
     <Modal.Root opened={opened} onClose={onClose} size="lg" fullScreen>
@@ -81,11 +75,7 @@ export function SelectWordsModal({ opened, onClose, selectedWordIds, onSelectWor
                 onChange={(e) => setSearchQuery(e.target.value)}
                 rightSection={
                   searchQuery ? (
-                    <ActionIcon
-                      variant="subtle"
-                      size="sm"
-                      onClick={() => setSearchQuery('')}
-                      aria-label="Clear search">
+                    <ActionIcon variant="subtle" size="sm" onClick={() => setSearchQuery('')} aria-label="Clear search">
                       <IconX size={14} />
                     </ActionIcon>
                   ) : null
@@ -109,8 +99,7 @@ export function SelectWordsModal({ opened, onClose, selectedWordIds, onSelectWor
                             bg={isSelected ? 'var(--mantine-color-blue-light)' : undefined}
                             onClick={() => onSelectWord(word)}>
                             <Group justify="space-between" align="flex-start">
-                              <input
-                                type="checkbox"
+                              <Checkbox
                                 checked={isSelected}
                                 onChange={() => onSelectWord(word)}
                                 onClick={(e) => e.stopPropagation()}
@@ -157,8 +146,7 @@ export function SelectWordsModal({ opened, onClose, selectedWordIds, onSelectWor
                               onClick={() => onSelectWord(word)}
                               bg={isSelected ? 'var(--mantine-color-blue-light)' : undefined}>
                               <Table.Td w={50}>
-                                <input
-                                  type="checkbox"
+                                <Checkbox
                                   checked={isSelected}
                                   onChange={() => onSelectWord(word)}
                                   onClick={(e) => e.stopPropagation()}
