@@ -48,21 +48,21 @@ export function SetContentPage() {
     <>
       <Container p={0}>
         <Stack gap="lg">
-          <Group>
+          <Group wrap="nowrap" w="100%">
             <ActionIcon
               variant="subtle"
               onClick={() => navigate(links.sets.getUrl({}, { returnPage }))}
               aria-label="Go back to sets">
               <IconArrowLeft size={16} />
             </ActionIcon>
-            <div style={{ flex: 1 }}>
+            <Stack gap={0} style={{ overflow: 'hidden' }}>
               <Title order={2} mt="sm">
                 Content Mode
               </Title>
-              <Text c="dimmed" fz={{ base: 'sm', md: 'md' }}>
+              <Text c="dimmed" fz={{ base: 'sm', md: 'md' }} truncate>
                 {set.name}
               </Text>
-            </div>
+            </Stack>
           </Group>
           <SetContent set={set} />
         </Stack>

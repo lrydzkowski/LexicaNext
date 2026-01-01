@@ -98,7 +98,11 @@ export function SetsList() {
   const handleDelete = (setId: string, setName: string) => {
     modals.openConfirmModal({
       title: 'Delete Set',
-      children: <Text>Are you sure you want to delete "{setName}"? This action cannot be undone.</Text>,
+      children: (
+        <Text style={{ wordWrap: 'break-word' }}>
+          Are you sure you want to delete "{setName}"? This action cannot be undone.
+        </Text>
+      ),
       labels: { confirm: 'Delete', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
       onConfirm: () => {

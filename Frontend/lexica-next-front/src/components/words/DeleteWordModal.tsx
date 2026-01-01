@@ -17,7 +17,7 @@ export function DeleteWordModal({ opened, onClose, wordId, wordText, onConfirm, 
   return (
     <Modal opened={opened} onClose={onClose} title="Delete Word" centered>
       <Stack gap="md">
-        <Text>
+        <Text style={{ wordBreak: 'break-word' }}>
           Are you sure you want to delete "<strong>{wordText}</strong>"? This action cannot be undone.
         </Text>
 
@@ -30,9 +30,13 @@ export function DeleteWordModal({ opened, onClose, wordId, wordText, onConfirm, 
             <Text fw={500} mb="xs" c="orange">
               This word is used in {affectedSets.length} set{affectedSets.length > 1 ? 's' : ''}:
             </Text>
-            <List size="sm" spacing="xs">
+            <List size="sm" spacing="xs" styles={{ itemWrapper: { width: '100%' }, itemLabel: { width: '100%' } }}>
               {affectedSets.map((set) => (
-                <List.Item key={set.setId}>{set.name}</List.Item>
+                <List.Item key={set.setId}>
+                  <Text size="sm" truncate>
+                    {set.name}
+                  </Text>
+                </List.Item>
               ))}
             </List>
             <Text size="sm" c="dimmed" mt="xs">
