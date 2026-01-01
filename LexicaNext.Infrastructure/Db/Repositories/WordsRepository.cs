@@ -41,24 +41,6 @@ internal class WordsRepository
         _dateTimeOffsetProvider = dateTimeOffsetProvider;
     }
 
-    public async Task<bool> WordExistsAsync(
-        string word,
-        Guid wordTypeId,
-        Guid? ignoreWordId,
-        CancellationToken cancellationToken = default
-    )
-    {
-        bool wordExists = await _dbContext.Words.AsNoTracking()
-            .Where(
-                entity => entity.Word.ToLower() == word.ToLower()
-                          && entity.WordTypeId == wordTypeId
-                          && (ignoreWordId == null || entity.WordId != ignoreWordId)
-            )
-            .AnyAsync(cancellationToken);
-
-        return wordExists;
-    }
-
     public async Task<Guid> CreateWordAsync(
         CreateWordCommand createWordCommand,
         CancellationToken cancellationToken = default
