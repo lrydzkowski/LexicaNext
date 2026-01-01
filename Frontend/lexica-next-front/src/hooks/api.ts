@@ -220,6 +220,34 @@ export const useDeleteWord = () => {
   });
 };
 
+export const useDeleteWords = () => {
+  const client = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (wordIds: string[]): Promise<number> => {
+      let failedCount = 0;
+
+      for (const wordId of wordIds) {
+        const { error } = await client.DELETE('/api/words/{wordId}', {
+          params: {
+            path: { wordId },
+          },
+        });
+
+        if (error) {
+          failedCount++;
+        }
+      }
+
+      return failedCount;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['words'] });
+    },
+  });
+};
+
 export const useWordSets = (wordId: string, enabled = true) => {
   const client = useApiClient();
 
@@ -282,6 +310,34 @@ export const useDeleteSet = () => {
       if (error) {
         throw new Error(`API error: ${error}`);
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sets'] });
+    },
+  });
+};
+
+export const useDeleteSets = () => {
+  const client = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (setIds: string[]): Promise<number> => {
+      let failedCount = 0;
+
+      for (const setId of setIds) {
+        const { error } = await client.DELETE('/api/sets/{setId}', {
+          params: {
+            path: { setId },
+          },
+        });
+
+        if (error) {
+          failedCount++;
+        }
+      }
+
+      return failedCount;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sets'] });

@@ -16,6 +16,7 @@ import {
   ActionIcon,
   Box,
   Button,
+  Checkbox,
   Group,
   LoadingOverlay,
   Menu,
@@ -29,13 +30,14 @@ import {
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
-import { useDeleteSet, useSets, type SetRecordDto } from '../../hooks/api';
+import { useDeleteSet, useDeleteSets, useSets, type SetRecordDto } from '../../hooks/api';
 import { formatDateTime } from '../../utils/date';
 
 export function SetsList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
@@ -57,6 +59,7 @@ export function SetsList() {
   });
 
   const deleteSetMutation = useDeleteSet();
+  const deleteSetsMutation = useDeleteSets();
 
   const sets = setsData?.data || [];
   const totalCount = setsData?.count || 0;
@@ -95,6 +98,68 @@ export function SetsList() {
     }
   }, [error]);
 
+  useEffect(() => {
+    setSelectedSetIds(new Set());
+  }, [currentPage, debouncedSearchQuery]);
+
+  const toggleSetSelection = (setId: string) => {
+    setSelectedSetIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(setId)) {
+        next.delete(setId);
+      } else {
+        next.add(setId);
+      }
+      return next;
+    });
+  };
+
+  const toggleAllSets = () => {
+    if (selectedSetIds.size === sets.length) {
+      setSelectedSetIds(new Set());
+    } else {
+      setSelectedSetIds(new Set(sets.map((s) => s.setId || '')));
+    }
+  };
+
+  const handleBulkDelete = () => {
+    const count = selectedSetIds.size;
+    modals.openConfirmModal({
+      title: 'Delete Sets',
+      children: (
+        <Text>
+          Are you sure you want to delete {count} set{count > 1 ? 's' : ''}? This action cannot be undone.
+        </Text>
+      ),
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => {
+        const idsToDelete = Array.from(selectedSetIds);
+        deleteSetsMutation.mutate(idsToDelete, {
+          onSuccess: (failedCount) => {
+            setSelectedSetIds(new Set());
+            if (failedCount > 0) {
+              notifications.show({
+                title: 'Partial Failure',
+                message: `Failed to delete ${failedCount} set${failedCount > 1 ? 's' : ''}`,
+                color: 'red',
+                position: 'top-center',
+              });
+            }
+          },
+          onError: () => {
+            notifications.show({
+              title: 'Error',
+              message: 'Failed to delete sets',
+              color: 'red',
+              position: 'top-center',
+            });
+          },
+        });
+      },
+    });
+  };
+
   const handleDelete = (setId: string, setName: string) => {
     modals.openConfirmModal({
       title: 'Delete Set',
@@ -128,7 +193,12 @@ export function SetsList() {
   const SetActionMenu = ({ set }: { set: SetRecordDto }) => (
     <Menu shadow="md" width={220} position="bottom-end">
       <Menu.Target>
-        <ActionIcon variant="light" color="blue" size="lg" aria-label={`Actions for ${set.name}`}>
+        <ActionIcon
+          variant="light"
+          color="blue"
+          size="lg"
+          aria-label={`Actions for ${set.name}`}
+          onClick={(e) => e.stopPropagation()}>
           <IconDots size={18} />
         </ActionIcon>
       </Menu.Target>
@@ -194,6 +264,23 @@ export function SetsList() {
             visibleFrom="md">
             <Text>Create New Set</Text>
           </Button>
+          <ActionIcon
+            color="red"
+            size="xl"
+            disabled={selectedSetIds.size === 0}
+            onClick={handleBulkDelete}
+            hiddenFrom="md">
+            <IconTrash size={22} />
+          </ActionIcon>
+          <Button
+            leftSection={<IconTrash size={16} />}
+            color="red"
+            size="md"
+            disabled={selectedSetIds.size === 0}
+            onClick={handleBulkDelete}
+            visibleFrom="md">
+            Delete{selectedSetIds.size > 0 ? ` (${selectedSetIds.size})` : ''}
+          </Button>
           <ActionIcon variant="light" size="xl" onClick={() => refetch()}>
             <IconRefresh size={22} />
           </ActionIcon>
@@ -213,9 +300,21 @@ export function SetsList() {
           <Box hiddenFrom="md">
             {sets.length > 0 ? (
               sets.map((set) => (
-                <Paper key={set.setId} p="md" withBorder mb="sm">
+                <Paper
+                  key={set.setId}
+                  p="md"
+                  withBorder
+                  mb="sm"
+                  onClick={() => toggleSetSelection(set.setId || '')}
+                  style={{ cursor: 'pointer' }}>
                   <Stack gap="sm">
-                    <Group justify="space-between" align="flex-start">
+                    <Group justify="space-between" align="center">
+                      <Checkbox
+                        checked={selectedSetIds.has(set.setId || '')}
+                        onChange={() => toggleSetSelection(set.setId || '')}
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label={`Select ${set.name}`}
+                      />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <Text fw={600} fz="md" truncate>
                           {set.name}
@@ -224,7 +323,9 @@ export function SetsList() {
                           {formatDateTime(set.createdAt)}
                         </Text>
                       </div>
-                      <SetActionMenu set={set} />
+                      <Box onClick={(e) => e.stopPropagation()}>
+                        <SetActionMenu set={set} />
+                      </Box>
                     </Group>
                   </Stack>
                 </Paper>
@@ -241,6 +342,14 @@ export function SetsList() {
           <Table striped highlightOnHover style={{ tableLayout: 'fixed' }} visibleFrom="md">
             <Table.Thead>
               <Table.Tr>
+                <Table.Th w={40}>
+                  <Checkbox
+                    checked={sets.length > 0 && selectedSetIds.size === sets.length}
+                    indeterminate={selectedSetIds.size > 0 && selectedSetIds.size < sets.length}
+                    onChange={toggleAllSets}
+                    aria-label="Select all sets"
+                  />
+                </Table.Th>
                 <Table.Th>Name</Table.Th>
                 <Table.Th w={180}>Created</Table.Th>
                 <Table.Th w={80} style={{ textAlign: 'center' }}>
@@ -251,7 +360,17 @@ export function SetsList() {
             <Table.Tbody>
               {sets.length > 0 ? (
                 sets.map((set) => (
-                  <Table.Tr key={set.setId}>
+                  <Table.Tr
+                    key={set.setId}
+                    onClick={() => toggleSetSelection(set.setId || '')}
+                    style={{ cursor: 'pointer' }}>
+                    <Table.Td w={40} onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={selectedSetIds.has(set.setId || '')}
+                        onChange={() => toggleSetSelection(set.setId || '')}
+                        aria-label={`Select ${set.name}`}
+                      />
+                    </Table.Td>
                     <Table.Td>
                       <Text truncate="end">{set.name}</Text>
                     </Table.Td>
@@ -267,7 +386,7 @@ export function SetsList() {
                 ))
               ) : (
                 <Table.Tr>
-                  <Table.Td colSpan={3}>
+                  <Table.Td colSpan={4}>
                     <Text ta="center" c="dimmed" py="xl">
                       {debouncedSearchQuery
                         ? 'No sets found matching your search.'

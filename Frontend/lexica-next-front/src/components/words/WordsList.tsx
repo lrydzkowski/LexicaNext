@@ -6,6 +6,7 @@ import {
   Badge,
   Box,
   Button,
+  Checkbox,
   Group,
   LoadingOverlay,
   Menu,
@@ -16,9 +17,10 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
-import { useDeleteWord, useWords, type WordRecordDto } from '../../hooks/api';
+import { useDeleteWord, useDeleteWords, useWords, type WordRecordDto } from '../../hooks/api';
 import { formatDateTime } from '../../utils/date';
 import { DeleteWordModal } from './DeleteWordModal';
 
@@ -26,6 +28,7 @@ export function WordsList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [selectedWordIds, setSelectedWordIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
   const [deleteModalState, setDeleteModalState] = useState<{
     opened: boolean;
@@ -52,6 +55,7 @@ export function WordsList() {
   });
 
   const deleteWordMutation = useDeleteWord();
+  const deleteWordsMutation = useDeleteWords();
 
   const words = wordsData?.data || [];
   const totalCount = wordsData?.count || 0;
@@ -90,6 +94,68 @@ export function WordsList() {
     }
   }, [error]);
 
+  useEffect(() => {
+    setSelectedWordIds(new Set());
+  }, [currentPage, debouncedSearchQuery]);
+
+  const toggleWordSelection = (wordId: string) => {
+    setSelectedWordIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(wordId)) {
+        next.delete(wordId);
+      } else {
+        next.add(wordId);
+      }
+      return next;
+    });
+  };
+
+  const toggleAllWords = () => {
+    if (selectedWordIds.size === words.length) {
+      setSelectedWordIds(new Set());
+    } else {
+      setSelectedWordIds(new Set(words.map((w) => w.wordId || '')));
+    }
+  };
+
+  const handleBulkDelete = () => {
+    const count = selectedWordIds.size;
+    modals.openConfirmModal({
+      title: 'Delete Words',
+      children: (
+        <Text>
+          Are you sure you want to delete {count} word{count > 1 ? 's' : ''}? This action cannot be undone.
+        </Text>
+      ),
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => {
+        const idsToDelete = Array.from(selectedWordIds);
+        deleteWordsMutation.mutate(idsToDelete, {
+          onSuccess: (failedCount) => {
+            setSelectedWordIds(new Set());
+            if (failedCount > 0) {
+              notifications.show({
+                title: 'Partial Failure',
+                message: `Failed to delete ${failedCount} word${failedCount > 1 ? 's' : ''}`,
+                color: 'red',
+                position: 'top-center',
+              });
+            }
+          },
+          onError: () => {
+            notifications.show({
+              title: 'Error',
+              message: 'Failed to delete words',
+              color: 'red',
+              position: 'top-center',
+            });
+          },
+        });
+      },
+    });
+  };
+
   const openDeleteModal = (wordId: string, wordText: string) => {
     setDeleteModalState({ opened: true, wordId, wordText });
   };
@@ -120,7 +186,12 @@ export function WordsList() {
   const WordActionMenu = ({ word }: { word: WordRecordDto }) => (
     <Menu shadow="md" width={180} position="bottom-end">
       <Menu.Target>
-        <ActionIcon variant="light" color="blue" size="lg" aria-label={`Actions for ${word.word}`}>
+        <ActionIcon
+          variant="light"
+          color="blue"
+          size="lg"
+          aria-label={`Actions for ${word.word}`}
+          onClick={(e) => e.stopPropagation()}>
           <IconDots size={18} />
         </ActionIcon>
       </Menu.Target>
@@ -171,6 +242,23 @@ export function WordsList() {
             visibleFrom="md">
             <Text>Create New Word</Text>
           </Button>
+          <ActionIcon
+            color="red"
+            size="xl"
+            disabled={selectedWordIds.size === 0}
+            onClick={handleBulkDelete}
+            hiddenFrom="md">
+            <IconTrash size={22} />
+          </ActionIcon>
+          <Button
+            leftSection={<IconTrash size={16} />}
+            color="red"
+            size="md"
+            disabled={selectedWordIds.size === 0}
+            onClick={handleBulkDelete}
+            visibleFrom="md">
+            Delete{selectedWordIds.size > 0 ? ` (${selectedWordIds.size})` : ''}
+          </Button>
           <ActionIcon variant="light" size="xl" onClick={() => refetch()}>
             <IconRefresh size={22} />
           </ActionIcon>
@@ -189,9 +277,21 @@ export function WordsList() {
           <Box hiddenFrom="md">
             {words.length > 0 ? (
               words.map((word) => (
-                <Paper p="md" withBorder mb="sm" key={word.wordId}>
+                <Paper
+                  p="md"
+                  withBorder
+                  mb="sm"
+                  key={word.wordId}
+                  onClick={() => toggleWordSelection(word.wordId || '')}
+                  style={{ cursor: 'pointer' }}>
                   <Stack gap="sm">
-                    <Group justify="space-between" align="flex-start">
+                    <Group justify="space-between" align="center">
+                      <Checkbox
+                        checked={selectedWordIds.has(word.wordId || '')}
+                        onChange={() => toggleWordSelection(word.wordId || '')}
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label={`Select ${word.word}`}
+                      />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <Text fw={600} fz="md" truncate>
                           {word.word}
@@ -208,7 +308,9 @@ export function WordsList() {
                           Edited: {word.editedAt ? formatDateTime(word.editedAt) : '-'}
                         </Text>
                       </div>
-                      <WordActionMenu word={word} />
+                      <Box>
+                        <WordActionMenu word={word} />
+                      </Box>
                     </Group>
                   </Stack>
                 </Paper>
@@ -224,6 +326,14 @@ export function WordsList() {
           <Table striped highlightOnHover style={{ tableLayout: 'fixed' }} visibleFrom="md">
             <Table.Thead>
               <Table.Tr>
+                <Table.Th w={40}>
+                  <Checkbox
+                    checked={words.length > 0 && selectedWordIds.size === words.length}
+                    indeterminate={selectedWordIds.size > 0 && selectedWordIds.size < words.length}
+                    onChange={toggleAllWords}
+                    aria-label="Select all words"
+                  />
+                </Table.Th>
                 <Table.Th>Word</Table.Th>
                 <Table.Th w={100}>Word Type</Table.Th>
                 <Table.Th w={180}>Created</Table.Th>
@@ -236,7 +346,17 @@ export function WordsList() {
             <Table.Tbody>
               {words.length > 0 ? (
                 words.map((word) => (
-                  <Table.Tr key={word.wordId}>
+                  <Table.Tr
+                    key={word.wordId}
+                    onClick={() => toggleWordSelection(word.wordId || '')}
+                    style={{ cursor: 'pointer' }}>
+                    <Table.Td w={40} onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={selectedWordIds.has(word.wordId || '')}
+                        onChange={() => toggleWordSelection(word.wordId || '')}
+                        aria-label={`Select ${word.word}`}
+                      />
+                    </Table.Td>
                     <Table.Td>
                       <Text truncate="end">{word.word}</Text>
                     </Table.Td>
@@ -260,7 +380,7 @@ export function WordsList() {
                 ))
               ) : (
                 <Table.Tr>
-                  <Table.Td colSpan={5}>
+                  <Table.Td colSpan={6}>
                     <Text ta="center" c="dimmed" py="xl">
                       {debouncedSearchQuery
                         ? 'No words found matching your search.'
