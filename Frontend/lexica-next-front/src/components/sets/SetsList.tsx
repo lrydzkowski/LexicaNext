@@ -323,7 +323,7 @@ export function SetsList() {
                           {formatDateTime(set.createdAt)}
                         </Text>
                       </div>
-                      <Box onClick={(e) => e.stopPropagation()}>
+                      <Box>
                         <SetActionMenu set={set} />
                       </Box>
                     </Group>
