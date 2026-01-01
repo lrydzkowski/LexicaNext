@@ -96,6 +96,10 @@ export function SetsList() {
   }, [currentPage, debouncedSearchQuery]);
 
   const toggleSetSelection = (setId: string) => {
+    if (!setId) {
+      return;
+    }
+
     setSelectedSetIds((prev) => {
       const next = new Set(prev);
       if (next.has(setId)) {
