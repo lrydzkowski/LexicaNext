@@ -1,4 +1,4 @@
-﻿namespace LexicaNext.Infrastructure.Db.Common.Entities;
+namespace LexicaNext.Infrastructure.Db.Common.Entities;
 
 internal class WordEntity
 {
@@ -12,13 +12,13 @@ internal class WordEntity
 
     public WordTypeEntity? WordType { get; set; }
 
-    public int Order { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
-    public Guid SetId { get; set; }
-
-    public SetEntity? Set { get; set; }
+    public DateTimeOffset? EditedAt { get; set; }
 
     public ICollection<TranslationEntity> Translations { get; set; } = [];
 
     public ICollection<ExampleSentenceEntity> ExampleSentences { get; set; } = [];
+
+    public ICollection<SetWordEntity> SetWords { get; set; } = [];
 }

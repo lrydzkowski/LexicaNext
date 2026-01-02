@@ -1,6 +1,7 @@
 import { IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { ActionIcon, Container, Group, Stack, Title } from '@mantine/core';
+import { links } from '@/config/links';
 import { SetEditForm } from '../../components/sets/SetEditForm';
 
 export function SetEditPage() {
@@ -15,7 +16,7 @@ export function SetEditPage() {
           <Group>
             <ActionIcon
               variant="subtle"
-              onClick={() => navigate(`/sets?page=${returnPage}`)}
+              onClick={() => navigate(links.sets.getUrl({}, { returnPage }))}
               aria-label="Go back to sets">
               <IconArrowLeft size={16} />
             </ActionIcon>

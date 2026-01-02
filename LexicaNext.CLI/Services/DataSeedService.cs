@@ -130,6 +130,7 @@ internal class DataSeedService : IDataSeedService
 
     public async Task ClearAllDataAsync()
     {
+        await _context.Set<SetWordEntity>().ExecuteDeleteAsync();
         await _context.Set<TranslationEntity>().ExecuteDeleteAsync();
         await _context.Set<WordEntity>().ExecuteDeleteAsync();
         await _context.Set<SetEntity>().ExecuteDeleteAsync();
@@ -146,21 +147,68 @@ internal class DataSeedService : IDataSeedService
             wordTypes = await _context.Set<WordTypeEntity>().ToListAsync();
         }
 
-        Faker<WordEntity>? wordFaker = new Faker<WordEntity>()
-            .RuleFor(w => w.WordId, f => Guid.NewGuid())
-            .RuleFor(w => w.Word, f => f.Lorem.Word())
-            .RuleFor(w => w.SetId, setId)
-            .RuleFor(w => w.WordTypeId, f => f.PickRandom(wordTypes).WordTypeId)
-            .RuleFor(w => w.Order, f => f.IndexFaker);
+        HashSet<(string Word, Guid WordTypeId)> existingWords = (await _context.Set<WordEntity>()
+                .Select(w => new { w.Word, w.WordTypeId })
+                .ToListAsync())
+            .Select(w => (w.Word.ToLower(), w.WordTypeId))
+            .ToHashSet();
 
-        List<WordEntity>? words = wordFaker.Generate(count);
+        List<WordEntity> words = new();
+        int attempts = 0;
+        int maxAttempts = count * 10;
+        Faker faker = new();
+
+        while (words.Count < count && attempts < maxAttempts)
+        {
+            attempts++;
+
+            string word = faker.Lorem.Word();
+            Guid wordTypeId = faker.PickRandom(wordTypes).WordTypeId;
+            var key = (word.ToLower(), wordTypeId);
+
+            if (existingWords.Contains(key))
+            {
+                continue;
+            }
+
+            existingWords.Add(key);
+            words.Add(new WordEntity
+            {
+                WordId = Guid.NewGuid(),
+                Word = word,
+                WordTypeId = wordTypeId,
+                CreatedAt = faker.Date.PastOffset(365).ToUniversalTime()
+            });
+        }
+
+        if (words.Count < count)
+        {
+            _logger.LogWarning(
+                "Could only generate {ActualCount} unique words out of {RequestedCount} for set {SetId} after {Attempts} attempts",
+                words.Count,
+                count,
+                setId,
+                attempts
+            );
+        }
+
         _context.Set<WordEntity>().AddRange(words);
         await _context.SaveChangesAsync();
 
-        foreach (WordEntity word in words)
+        for (int i = 0; i < words.Count; i++)
         {
+            WordEntity word = words[i];
+            SetWordEntity setWord = new()
+            {
+                SetId = setId,
+                WordId = word.WordId,
+                Order = i
+            };
+            _context.Set<SetWordEntity>().Add(setWord);
             await SeedTranslationsForWordAsync(word.WordId);
         }
+
+        await _context.SaveChangesAsync();
 
         _logger.LogInformation("Seeded {Count} words for set {SetId}", count, setId);
     }

@@ -3,6 +3,7 @@ import { IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { ActionIcon, Container, Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import { links } from '@/config/links';
 import { SetOnlyOpenQuestionsMode } from '../../../components/sets/modes/SetOnlyOpenQuestionsMode';
 import { useSet } from '../../../hooks/api';
 
@@ -21,7 +22,7 @@ export function SetOnlyOpenQuestionsModePage() {
         color: 'red',
         position: 'top-center',
       });
-      navigate('/sets');
+      navigate(links.sets.getUrl());
     }
   }, [error, navigate]);
 
@@ -47,21 +48,21 @@ export function SetOnlyOpenQuestionsModePage() {
     <>
       <Container p={0}>
         <Stack gap="lg">
-          <Group>
+          <Group wrap="nowrap" w="100%">
             <ActionIcon
               variant="subtle"
-              onClick={() => navigate(`/sets?page=${returnPage}`)}
+              onClick={() => navigate(links.sets.getUrl({}, { returnPage }))}
               aria-label="Go back to sets">
               <IconArrowLeft size={16} />
             </ActionIcon>
-            <div style={{ flex: 1 }}>
+            <Stack gap={0} style={{ overflow: 'hidden' }}>
               <Title order={2} mt="sm">
                 Open Questions Mode
               </Title>
-              <Text c="dimmed" fz={{ base: 'sm', md: 'md' }}>
+              <Text c="dimmed" fz={{ base: 'sm', md: 'md' }} truncate>
                 {set.name}
               </Text>
-            </div>
+            </Stack>
           </Group>
           <SetOnlyOpenQuestionsMode set={set} />
         </Stack>

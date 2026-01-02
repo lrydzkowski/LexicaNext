@@ -2,28 +2,25 @@ import { IconSparkles } from '@tabler/icons-react';
 import { Button } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { useGenerateExampleSentences } from '../../hooks/api';
-import { FormValues } from './SetFormTypes';
+import { useGenerateTranslations } from '../../hooks/api';
+import { WordFormValues } from './WordFormTypes';
 
-interface GenerateSentencesButtonProps {
-  form: UseFormReturnType<FormValues>;
-  entryIndex: number;
-  onSentencesGenerated: (sentences: string[]) => void;
+interface GenerateTranslationsButtonProps {
+  form: UseFormReturnType<WordFormValues>;
+  onTranslationsGenerated: (translations: string[]) => void;
   disabled?: boolean;
 }
 
-export function GenerateSentencesButton({
+export function GenerateTranslationsButton({
   form,
-  entryIndex,
-  onSentencesGenerated,
+  onTranslationsGenerated,
   disabled,
-}: GenerateSentencesButtonProps) {
-  const generateSentencesMutation = useGenerateExampleSentences();
+}: GenerateTranslationsButtonProps) {
+  const generateTranslationsMutation = useGenerateTranslations();
 
   const handleClick = () => {
-    const entry = form.getValues().entries[entryIndex];
-    const word = entry?.word || '';
-    const wordType = entry?.wordType || '';
+    const word = form.getValues().word || '';
+    const wordType = form.getValues().wordType || '';
 
     if (!word.trim()) {
       notifications.show({
@@ -45,16 +42,16 @@ export function GenerateSentencesButton({
       return;
     }
 
-    generateSentencesMutation.mutate(
+    generateTranslationsMutation.mutate(
       { word: word.trim(), wordType, count: 3 },
       {
         onSuccess: (response) => {
-          onSentencesGenerated(response.sentences);
+          onTranslationsGenerated(response.translations);
         },
         onError: () => {
           notifications.show({
             title: 'Error',
-            message: 'Failed to generate example sentences. Please try again.',
+            message: 'Failed to generate translations. Please try again.',
             color: 'red',
             position: 'top-center',
           });
@@ -65,14 +62,14 @@ export function GenerateSentencesButton({
 
   return (
     <Button
-      w={180}
       variant="light"
       size="xs"
       leftSection={<IconSparkles size={14} />}
       onClick={handleClick}
-      loading={generateSentencesMutation.isPending}
-      disabled={disabled}>
-      Generate Sentences
+      loading={generateTranslationsMutation.isPending}
+      disabled={disabled}
+      w={180}>
+      Generate Translations
     </Button>
   );
 }

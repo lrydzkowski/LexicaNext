@@ -58,6 +58,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/words": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Return the list of words */
+        get: operations["GetWords"];
+        put?: never;
+        /** Create a new word */
+        post: operations["CreateWord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/words/{wordId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Return a word represented by the given id */
+        get: operations["GetWord"];
+        /** Update an existing word */
+        put: operations["UpdateWord"];
+        post?: never;
+        /** Delete an existing word */
+        delete: operations["DeleteWord"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/words/{wordId}/sets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Return the sets that contain a specific word */
+        get: operations["GetWordSets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/recordings/{word}": {
         parameters: {
             query?: never;
@@ -132,13 +186,25 @@ export interface components {
     schemas: {
         CreateSetRequestPayload: {
             setName?: string;
-            entries?: components["schemas"]["EntryDto"][];
+            wordIds?: string[];
         };
         CreateSetResponse: {
             /** Format: uuid */
             setId?: string;
         };
+        CreateWordRequestPayload: {
+            word?: string;
+            wordType?: string;
+            translations?: string[];
+            exampleSentences?: string[];
+        };
+        CreateWordResponse: {
+            /** Format: uuid */
+            wordId?: string;
+        };
         EntryDto: {
+            /** Format: uuid */
+            wordId?: string;
             word?: string;
             wordType?: string;
             translations?: string[];
@@ -184,6 +250,26 @@ export interface components {
             count?: number | string;
             data?: components["schemas"]["SetRecordDto"][];
         };
+        GetWordResponse: {
+            /** Format: uuid */
+            wordId?: string;
+            word?: string;
+            wordType?: string;
+            translations?: string[];
+            exampleSentences?: string[];
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            editedAt?: null | string;
+        };
+        GetWordSetsResponse: {
+            sets?: components["schemas"]["SetRecordDto"][];
+        };
+        GetWordsResponse: {
+            /** Format: int32 */
+            count?: number | string;
+            data?: components["schemas"]["WordRecordDto"][];
+        };
         ProblemDetails: {
             type?: null | string;
             title?: null | string;
@@ -206,7 +292,23 @@ export interface components {
         };
         UpdateSetRequestPayload: {
             setName?: string;
-            entries?: components["schemas"]["EntryDto"][];
+            wordIds?: string[];
+        };
+        UpdateWordRequestPayload: {
+            word?: string;
+            wordType?: string;
+            translations?: string[];
+            exampleSentences?: string[];
+        };
+        WordRecordDto: {
+            /** Format: uuid */
+            wordId?: string;
+            word?: string;
+            wordType?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            editedAt?: null | string;
         };
     };
     responses: never;
@@ -473,6 +575,283 @@ export interface operations {
             };
             /** @description Unauthorized */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetWords: {
+        parameters: {
+            query?: {
+                page?: number | string;
+                pageSize?: number | string;
+                sortingFieldName?: string;
+                sortingOrder?: string;
+                searchQuery?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetWordsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CreateWord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": null | components["schemas"]["CreateWordRequestPayload"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateWordResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetWord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                wordId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetWordResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UpdateWord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                wordId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": null | components["schemas"]["UpdateWordRequestPayload"];
+            };
+        };
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DeleteWord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                wordId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetWordSets: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                wordId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetWordSetsResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

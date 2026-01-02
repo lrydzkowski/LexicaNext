@@ -1,4 +1,4 @@
-﻿using LexicaNext.Infrastructure.Db.Common.Entities;
+using LexicaNext.Infrastructure.Db.Common.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,6 +12,7 @@ internal class WordEntityTypeConfiguration : IEntityTypeConfiguration<WordEntity
         SetPrimaryKey(builder);
         ConfigureRelations(builder);
         ConfigureColumns(builder);
+        ConfigureIndexes(builder);
     }
 
     private void SetTableName(EntityTypeBuilder<WordEntity> builder)
@@ -27,7 +28,6 @@ internal class WordEntityTypeConfiguration : IEntityTypeConfiguration<WordEntity
     private void ConfigureRelations(EntityTypeBuilder<WordEntity> builder)
     {
         ConfigureRelationWithWordType(builder);
-        ConfigureRelationWithSet(builder);
     }
 
     private static void ConfigureRelationWithWordType(EntityTypeBuilder<WordEntity> builder)
@@ -35,14 +35,6 @@ internal class WordEntityTypeConfiguration : IEntityTypeConfiguration<WordEntity
         builder.HasOne(entity => entity.WordType)
             .WithMany(parent => parent.Words)
             .HasForeignKey(entity => entity.WordTypeId)
-            .OnDelete(DeleteBehavior.Cascade);
-    }
-
-    private static void ConfigureRelationWithSet(EntityTypeBuilder<WordEntity> builder)
-    {
-        builder.HasOne(entity => entity.Set)
-            .WithMany(parent => parent.Words)
-            .HasForeignKey(entity => entity.SetId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 
@@ -61,12 +53,23 @@ internal class WordEntityTypeConfiguration : IEntityTypeConfiguration<WordEntity
             .HasColumnName("word_type_id")
             .IsRequired();
 
-        builder.Property(entity => entity.Order)
-            .HasColumnName("order")
+        builder.Property(entity => entity.CreatedAt)
+            .HasColumnName("created_at")
             .IsRequired();
 
-        builder.Property(entity => entity.SetId)
-            .HasColumnName("set_id")
-            .IsRequired();
+        builder.Property(entity => entity.EditedAt)
+            .HasColumnName("edited_at");
+    }
+
+    private void ConfigureIndexes(EntityTypeBuilder<WordEntity> builder)
+    {
+        builder.HasIndex(entity => new { entity.Word, entity.WordTypeId })
+            .IsUnique();
+
+        builder.HasIndex(entity => entity.Word);
+
+        builder.HasIndex(entity => entity.CreatedAt);
+
+        builder.HasIndex(entity => entity.EditedAt);
     }
 }

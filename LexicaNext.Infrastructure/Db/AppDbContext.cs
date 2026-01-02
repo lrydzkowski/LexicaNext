@@ -18,6 +18,8 @@ internal class AppDbContext : DbContext
 
     public DbSet<SetEntity> Sets => Set<SetEntity>();
 
+    public DbSet<SetWordEntity> SetWords => Set<SetWordEntity>();
+
     public DbSet<RecordingEntity> Recordings => Set<RecordingEntity>();
 
     public DbSet<AnswerEntity> Answers => Set<AnswerEntity>();
