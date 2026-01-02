@@ -11,7 +11,7 @@ interface DeleteWordModalProps {
 }
 
 export function DeleteWordModal({ opened, onClose, wordId, wordText, onConfirm, isDeleting }: DeleteWordModalProps) {
-  const { data: wordSetsData, isLoading } = useWordSets(wordId, opened);
+  const { data: wordSetsData, isLoading, isError } = useWordSets(wordId, opened);
   const affectedSets = wordSetsData?.sets || [];
 
   return (
@@ -21,7 +21,11 @@ export function DeleteWordModal({ opened, onClose, wordId, wordText, onConfirm, 
           Are you sure you want to delete "<strong>{wordText}</strong>"? This action cannot be undone.
         </Text>
 
-        {isLoading ? (
+        {isError ? (
+          <Text c="red" size="sm">
+            Failed to load affected sets. The word may still be deleted.
+          </Text>
+        ) : isLoading ? (
           <Text c="dimmed" size="sm">
             Loading affected sets...
           </Text>
