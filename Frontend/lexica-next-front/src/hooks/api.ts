@@ -109,6 +109,26 @@ export const useSet = (setId: string) => {
   });
 };
 
+export const useProposedSetName = () => {
+  const client = useApiClient();
+
+  return useQuery({
+    queryKey: ['proposedSetName'],
+    queryFn: async ({ signal }): Promise<string> => {
+      const { data, error } = await client.GET('/api/sets/proposed-name', {
+        signal,
+      });
+
+      if (error) {
+        throw new Error(`API error: ${error}`);
+      }
+
+      return data!.proposedName!;
+    },
+    staleTime: 0,
+  });
+};
+
 export const useCreateSet = () => {
   const client = useApiClient();
   const queryClient = useQueryClient();
@@ -120,7 +140,12 @@ export const useCreateSet = () => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        const errorDetails = error as { errors?: Record<string, string[]> };
+        if (errorDetails.errors) {
+          const messages = Object.values(errorDetails.errors).flat();
+          throw new Error(messages.join(', '));
+        }
+        throw new Error(`Failed to create set`);
       }
     },
     onSuccess: () => {
@@ -285,7 +310,12 @@ export const useUpdateSet = () => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        const errorDetails = error as { errors?: Record<string, string[]> };
+        if (errorDetails.errors) {
+          const messages = Object.values(errorDetails.errors).flat();
+          throw new Error(messages.join(', '));
+        }
+        throw new Error(`Failed to update set`);
       }
     },
     onSuccess: (_, { setId }) => {

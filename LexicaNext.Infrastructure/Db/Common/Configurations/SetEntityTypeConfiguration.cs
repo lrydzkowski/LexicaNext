@@ -35,7 +35,6 @@ internal class SetEntityTypeConfiguration : IEntityTypeConfiguration<SetEntity>
             .HasMaxLength(200);
 
         builder.HasIndex(entity => entity.Name)
-            .HasDatabaseName("ix_set_name_lower")
             .IsUnique();
 
         builder.Property(entity => entity.CreatedAt)

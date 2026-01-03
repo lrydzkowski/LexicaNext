@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using LexicaNext.Core.Commands.CreateSet.Interfaces;
 using LexicaNext.Core.Commands.CreateSet.Models;
 using LexicaNext.Core.Commands.DeleteSet.Interfaces;
@@ -81,6 +82,8 @@ internal class SetsRepository
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
+        await UpdateSequenceIfMatchesPatternAsync(createSetCommand.SetName, cancellationToken);
+
         return setEntity.SetId;
     }
 
@@ -94,6 +97,15 @@ internal class SetsRepository
         SetEntity setEntity = new() { SetId = setId };
         _dbContext.Entry(setEntity).State = EntityState.Deleted;
         await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<string> GetProposedSetNameAsync(CancellationToken cancellationToken = default)
+    {
+        long nextValue = await _dbContext.Database
+            .SqlQuery<long>($"SELECT COALESCE(last_value, 0) AS \"Value\" FROM set_name_sequence")
+            .FirstAsync(cancellationToken);
+
+        return $"set_{nextValue:D4}";
     }
 
     public async Task<Set?> GetSetAsync(Guid setId, CancellationToken cancellationToken = default)
@@ -204,13 +216,29 @@ internal class SetsRepository
         return setExists;
     }
 
-    public async Task<string> GetProposedSetNameAsync(CancellationToken cancellationToken = default)
+    private async Task UpdateSequenceIfMatchesPatternAsync(string setName, CancellationToken cancellationToken)
     {
-        long nextValue = await _dbContext.Database
-            .SqlQuery<long>($"SELECT COALESCE(last_value, 0) + 1 AS \"Value\" FROM set_name_sequence")
+        Match match = Regex.Match(setName, @"^set_(\d+)$", RegexOptions.IgnoreCase);
+        if (!match.Success)
+        {
+            return;
+        }
+
+        if (!long.TryParse(match.Groups[1].Value, out long extractedNumber))
+        {
+            return;
+        }
+
+        long currentSequenceValue = await _dbContext.Database
+            .SqlQuery<long>($"SELECT last_value AS \"Value\" FROM set_name_sequence")
             .FirstAsync(cancellationToken);
 
-        return $"set_{nextValue:D4}";
+        if (extractedNumber >= currentSequenceValue)
+        {
+            long newValue = extractedNumber + 1;
+            await _dbContext.Database
+                .ExecuteSqlAsync($"SELECT setval('set_name_sequence', {newValue})", cancellationToken);
+        }
     }
 
     private static WordType MapWordType(string wordTypeName)

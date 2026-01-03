@@ -48,12 +48,12 @@
 
 ### Implementation for User Story 1
 
-- [ ] T005 [P] [US1] Create GetProposedSetNameResponse model in LexicaNext.Core/Queries/GetProposedSetName/Models/GetProposedSetNameResponse.cs
-- [ ] T006 [US1] Create GetProposedSetNameEndpoint in LexicaNext.Core/Queries/GetProposedSetName/GetProposedSetNameEndpoint.cs
-- [ ] T007 [US1] Register GetProposedSetNameEndpoint in LexicaNext.WebApp/Program.cs
-- [ ] T008 [US1] Add useProposedSetName hook in Frontend/lexica-next-front/src/hooks/api.ts
-- [ ] T009 [US1] Integrate proposed name in set creation form component in Frontend/lexica-next-front/src/components/sets/
-- [ ] T010 [US1] Regenerate TypeScript API types from OpenAPI spec
+- [x] T005 [P] [US1] Create GetProposedSetNameResponse model in LexicaNext.Core/Queries/GetProposedSetName/Models/GetProposedSetNameResponse.cs
+- [x] T006 [US1] Create GetProposedSetNameEndpoint in LexicaNext.Core/Queries/GetProposedSetName/GetProposedSetNameEndpoint.cs
+- [x] T007 [US1] Register GetProposedSetNameEndpoint in LexicaNext.WebApp/Program.cs
+- [x] T008 [US1] Add useProposedSetName hook in Frontend/lexica-next-front/src/hooks/api.ts
+- [x] T009 [US1] Integrate proposed name in set creation form component in Frontend/lexica-next-front/src/components/sets/
+- [x] T010 [US1] Regenerate TypeScript API types from OpenAPI spec
 
 **Checkpoint**: User Story 1 complete - new set form displays proposed name
 
@@ -67,9 +67,9 @@
 
 ### Implementation for User Story 2
 
-- [ ] T011 [US2] Add sequence update logic when saving set with set_XXXX pattern in LexicaNext.Infrastructure/Db/Repositories/SetsRepository.cs
-- [ ] T012 [US2] Update CreateSetRequestValidator to display clear duplicate name error in LexicaNext.Core/Commands/CreateSet/Services/CreateSetRequestValidator.cs
-- [ ] T013 [US2] Handle validation error display in frontend set form component in Frontend/lexica-next-front/src/components/sets/
+- [x] T011 [US2] Add sequence update logic when saving set with set_XXXX pattern in LexicaNext.Infrastructure/Db/Repositories/SetsRepository.cs
+- [x] T012 [US2] Update CreateSetRequestValidator to display clear duplicate name error in LexicaNext.Core/Commands/CreateSet/Services/CreateSetRequestValidator.cs
+- [x] T013 [US2] Handle validation error display in frontend set form component in Frontend/lexica-next-front/src/components/sets/
 
 **Checkpoint**: User Story 2 complete - duplicate name validation works on create
 
@@ -83,8 +83,8 @@
 
 ### Implementation for User Story 3
 
-- [ ] T014 [US3] Update UpdateSetRequestValidator to use case-insensitive comparison in LexicaNext.Core/Commands/UpdateSet/Services/UpdateSetRequestValidator.cs
-- [ ] T015 [US3] Verify edit form displays validation errors correctly in Frontend/lexica-next-front/src/components/sets/
+- [x] T014 [US3] Update UpdateSetRequestValidator to use case-insensitive comparison in LexicaNext.Core/Commands/UpdateSet/Services/UpdateSetRequestValidator.cs
+- [x] T015 [US3] Verify edit form displays validation errors correctly in Frontend/lexica-next-front/src/components/sets/
 
 **Checkpoint**: User Story 3 complete - duplicate name validation works on update
 
@@ -94,9 +94,9 @@
 
 **Purpose**: Final verification and cleanup
 
-- [ ] T016 Build backend solution and verify zero warnings with dotnet build LexicaNext.sln
-- [ ] T017 Build frontend and verify no errors with npm run build in Frontend/lexica-next-front/
-- [ ] T018 Run frontend linting with npm run lint in Frontend/lexica-next-front/
+- [x] T016 Build backend solution and verify zero warnings with dotnet build LexicaNext.sln
+- [x] T017 Build frontend and verify no errors with npm run build in Frontend/lexica-next-front/
+- [x] T018 Run frontend linting with npm run lint in Frontend/lexica-next-front/
 
 ---
 
