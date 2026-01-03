@@ -8,6 +8,7 @@ using LexicaNext.Core.Common.Infrastructure.Lists;
 using LexicaNext.Core.Common.Infrastructure.Lists.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Services;
 using LexicaNext.Core.Common.Models;
+using LexicaNext.Core.Queries.GetProposedSetName.Interfaces;
 using LexicaNext.Core.Queries.GetSet.Interfaces;
 using LexicaNext.Core.Queries.GetSets.Interfaces;
 using LexicaNext.Infrastructure.Db.Common.Entities;
@@ -21,7 +22,8 @@ internal class SetsRepository
         IGetSetRepository,
         ICreateSetRepository,
         IDeleteSetRepository,
-        IUpdateSetRepository
+        IUpdateSetRepository,
+        IGetProposedSetNameRepository
 {
     private readonly IDateTimeOffsetProvider _dateTimeOffsetProvider;
     private readonly AppDbContext _dbContext;
@@ -200,6 +202,15 @@ internal class SetsRepository
             .AnyAsync(entrySetId => entrySetId == setId, cancellationToken);
 
         return setExists;
+    }
+
+    public async Task<string> GetProposedSetNameAsync(CancellationToken cancellationToken = default)
+    {
+        long nextValue = await _dbContext.Database
+            .SqlQuery<long>($"SELECT COALESCE(last_value, 0) + 1 AS \"Value\" FROM set_name_sequence")
+            .FirstAsync(cancellationToken);
+
+        return $"set_{nextValue:D4}";
     }
 
     private static WordType MapWordType(string wordTypeName)
