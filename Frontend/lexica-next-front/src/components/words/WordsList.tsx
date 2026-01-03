@@ -188,7 +188,7 @@ export function WordsList() {
           <IconDots size={18} />
         </ActionIcon>
       </Menu.Target>
-      <Menu.Dropdown>
+      <Menu.Dropdown onClick={(e) => e.stopPropagation()}>
         <Menu.Label>Word Management</Menu.Label>
         <Menu.Item
           leftSection={<IconEdit size={16} />}
@@ -239,6 +239,7 @@ export function WordsList() {
             color="red"
             size="xl"
             disabled={selectedWordIds.size === 0}
+            loading={deleteWordsMutation.isPending}
             onClick={handleBulkDelete}
             hiddenFrom="md">
             <IconTrash size={22} />
@@ -248,6 +249,7 @@ export function WordsList() {
             color="red"
             size="md"
             disabled={selectedWordIds.size === 0}
+            loading={deleteWordsMutation.isPending}
             onClick={handleBulkDelete}
             visibleFrom="md">
             Delete{selectedWordIds.size > 0 ? ` (${selectedWordIds.size})` : ''}
