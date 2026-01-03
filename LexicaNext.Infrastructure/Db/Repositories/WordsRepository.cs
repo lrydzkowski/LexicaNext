@@ -77,6 +77,20 @@ internal class WordsRepository
         }
     }
 
+    public async Task<bool> WordExistsAsync(string word, string wordType, CancellationToken cancellationToken = default)
+    {
+        bool wordExists = await _dbContext.Words.AsNoTracking()
+            .Include(entity => entity.WordType)
+            .AnyAsync(
+                entity => entity.Word.ToLower() == word.ToLower()
+                          && entity.WordType != null
+                          && entity.WordType.Name.ToLower() == wordType.ToLower(),
+                cancellationToken
+            );
+
+        return wordExists;
+    }
+
     public async Task DeleteWordAsync(Guid wordId, CancellationToken cancellationToken = default)
     {
         await _dbContext.Words
@@ -171,6 +185,26 @@ internal class WordsRepository
             Data = words,
             Count = count
         };
+    }
+
+    public async Task<bool> WordExistsAsync(
+        string word,
+        string wordType,
+        Guid ignoreWordId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        bool wordExists = await _dbContext.Words.AsNoTracking()
+            .Include(entity => entity.WordType)
+            .AnyAsync(
+                entity => entity.WordId != ignoreWordId
+                          && entity.Word.ToLower() == word.ToLower()
+                          && entity.WordType != null
+                          && entity.WordType.Name.ToLower() == wordType.ToLower(),
+                cancellationToken
+            );
+
+        return wordExists;
     }
 
     public async Task<bool> WordExistsAsync(Guid wordId, CancellationToken cancellationToken = default)
