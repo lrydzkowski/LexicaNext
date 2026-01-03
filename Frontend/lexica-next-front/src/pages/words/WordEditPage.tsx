@@ -22,6 +22,7 @@ export function WordEditPage() {
         message: 'Failed to load word',
         color: 'red',
         position: 'top-center',
+        autoClose: false,
       });
       navigate(links.words.getUrl());
     }

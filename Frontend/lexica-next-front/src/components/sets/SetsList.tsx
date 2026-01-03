@@ -93,6 +93,7 @@ export function SetsList() {
         message: 'An unexpected error occurred',
         color: 'red',
         position: 'top-center',
+        autoClose: false,
       });
     }
   }, [error]);
@@ -147,6 +148,7 @@ export function SetsList() {
                 message: `Failed to delete ${failedCount} set${failedCount > 1 ? 's' : ''}`,
                 color: 'red',
                 position: 'top-center',
+                autoClose: false,
               });
             }
           },
@@ -156,6 +158,7 @@ export function SetsList() {
               message: 'Failed to delete sets',
               color: 'red',
               position: 'top-center',
+              autoClose: false,
             });
           },
         });
@@ -183,6 +186,7 @@ export function SetsList() {
           message: 'Failed to delete set',
           color: 'red',
           position: 'top-center',
+          autoClose: false,
         });
       },
     });

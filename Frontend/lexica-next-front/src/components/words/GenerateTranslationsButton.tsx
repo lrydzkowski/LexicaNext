@@ -54,6 +54,7 @@ export function GenerateTranslationsButton({
             message: 'Failed to generate translations. Please try again.',
             color: 'red',
             position: 'top-center',
+            autoClose: false,
           });
         },
       },

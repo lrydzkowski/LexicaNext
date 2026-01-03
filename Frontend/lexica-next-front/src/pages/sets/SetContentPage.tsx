@@ -21,6 +21,7 @@ export function SetContentPage() {
         message: 'Failed to load set',
         color: 'red',
         position: 'top-center',
+        autoClose: false,
       });
       navigate(links.sets.getUrl());
     }

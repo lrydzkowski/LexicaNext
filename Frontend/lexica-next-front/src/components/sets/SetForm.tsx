@@ -19,7 +19,13 @@ import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { links } from '@/config/links';
-import { useCreateSet, useProposedSetName, useUpdateSet, type GetSetResponse, type WordRecordDto } from '../../hooks/api';
+import {
+  useCreateSet,
+  useProposedSetName,
+  useUpdateSet,
+  type GetSetResponse,
+  type WordRecordDto,
+} from '../../hooks/api';
 import { WordFormSuccessData } from '../words/WordFormTypes';
 import { CreateWordModal } from './CreateWordModal';
 import { SelectWordsModal } from './SelectWordsModal';
@@ -196,6 +202,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
               message: error.message || 'Failed to create set',
               color: 'red',
               position: 'top-center',
+              autoClose: false,
             });
           },
         },
@@ -223,6 +230,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
               message: error.message || 'Failed to update set',
               color: 'red',
               position: 'top-center',
+              autoClose: false,
             });
           },
         },

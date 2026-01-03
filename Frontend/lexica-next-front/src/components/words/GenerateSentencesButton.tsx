@@ -50,6 +50,7 @@ export function GenerateSentencesButton({ form, onSentencesGenerated, disabled }
             message: 'Failed to generate example sentences. Please try again.',
             color: 'red',
             position: 'top-center',
+            autoClose: false,
           });
         },
       },

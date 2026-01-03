@@ -83,6 +83,7 @@ export function WordsList() {
         message: 'An unexpected error occurred',
         color: 'red',
         position: 'top-center',
+        autoClose: false,
       });
     }
   }, [error]);
@@ -133,6 +134,7 @@ export function WordsList() {
                 message: `Failed to delete ${failedCount} word${failedCount > 1 ? 's' : ''}`,
                 color: 'red',
                 position: 'top-center',
+                autoClose: false,
               });
             }
           },
@@ -142,6 +144,7 @@ export function WordsList() {
               message: 'Failed to delete words',
               color: 'red',
               position: 'top-center',
+              autoClose: false,
             });
           },
         });
@@ -169,6 +172,7 @@ export function WordsList() {
           message: 'Failed to delete word',
           color: 'red',
           position: 'top-center',
+          autoClose: false,
         });
       },
     });

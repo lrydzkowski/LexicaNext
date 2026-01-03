@@ -208,6 +208,7 @@ export function WordForm({ mode, wordId, word, isLoading, onSuccess, onCancel }:
             message: 'Failed to create word',
             color: 'red',
             position: 'top-center',
+            autoClose: false,
           });
         },
       });
@@ -232,6 +233,7 @@ export function WordForm({ mode, wordId, word, isLoading, onSuccess, onCancel }:
               message: 'Failed to update word',
               color: 'red',
               position: 'top-center',
+              autoClose: false,
             });
           },
         },
