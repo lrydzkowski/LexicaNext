@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace LexicaNext.Infrastructure.DbMigrations
+namespace LexicaNext.Infrastructure.Db.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251225155457_AddExampleSentences")]
-    partial class AddExampleSentences
+    [Migration("20260103111509_AddSetNameSequence")]
+    partial class AddSetNameSequence
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -141,6 +141,29 @@ namespace LexicaNext.Infrastructure.DbMigrations
                     b.ToTable("set", (string)null);
                 });
 
+            modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.SetWordEntity", b =>
+                {
+                    b.Property<Guid>("SetId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("set_id");
+
+                    b.Property<Guid>("WordId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("word_id");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer")
+                        .HasColumnName("order");
+
+                    b.HasKey("SetId", "WordId");
+
+                    b.HasIndex("WordId");
+
+                    b.HasIndex("SetId", "Order");
+
+                    b.ToTable("set_word", (string)null);
+                });
+
             modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.TestEntity", b =>
                 {
                     b.Property<Guid>("TestId")
@@ -194,13 +217,13 @@ namespace LexicaNext.Infrastructure.DbMigrations
                         .HasColumnType("uuid")
                         .HasColumnName("word_id");
 
-                    b.Property<int>("Order")
-                        .HasColumnType("integer")
-                        .HasColumnName("order");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
-                    b.Property<Guid>("SetId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("set_id");
+                    b.Property<DateTimeOffset?>("EditedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("edited_at");
 
                     b.Property<string>("Word")
                         .IsRequired()
@@ -214,9 +237,16 @@ namespace LexicaNext.Infrastructure.DbMigrations
 
                     b.HasKey("WordId");
 
-                    b.HasIndex("SetId");
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("EditedAt");
+
+                    b.HasIndex("Word");
 
                     b.HasIndex("WordTypeId");
+
+                    b.HasIndex("Word", "WordTypeId")
+                        .IsUnique();
 
                     b.ToTable("word", (string)null);
                 });
@@ -291,6 +321,25 @@ namespace LexicaNext.Infrastructure.DbMigrations
                     b.Navigation("WordType");
                 });
 
+            modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.SetWordEntity", b =>
+                {
+                    b.HasOne("LexicaNext.Infrastructure.Db.Common.Entities.SetEntity", "Set")
+                        .WithMany("SetWords")
+                        .HasForeignKey("SetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LexicaNext.Infrastructure.Db.Common.Entities.WordEntity", "Word")
+                        .WithMany("SetWords")
+                        .HasForeignKey("WordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Set");
+
+                    b.Navigation("Word");
+                });
+
             modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.TranslationEntity", b =>
                 {
                     b.HasOne("LexicaNext.Infrastructure.Db.Common.Entities.WordEntity", "Word")
@@ -304,31 +353,25 @@ namespace LexicaNext.Infrastructure.DbMigrations
 
             modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.WordEntity", b =>
                 {
-                    b.HasOne("LexicaNext.Infrastructure.Db.Common.Entities.SetEntity", "Set")
-                        .WithMany("Words")
-                        .HasForeignKey("SetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("LexicaNext.Infrastructure.Db.Common.Entities.WordTypeEntity", "WordType")
                         .WithMany("Words")
                         .HasForeignKey("WordTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Set");
-
                     b.Navigation("WordType");
                 });
 
             modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.SetEntity", b =>
                 {
-                    b.Navigation("Words");
+                    b.Navigation("SetWords");
                 });
 
             modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.WordEntity", b =>
                 {
                     b.Navigation("ExampleSentences");
+
+                    b.Navigation("SetWords");
 
                     b.Navigation("Translations");
                 });
