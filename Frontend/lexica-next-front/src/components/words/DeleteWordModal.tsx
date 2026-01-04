@@ -15,7 +15,12 @@ interface DeleteWordModalProps {
 
 export function DeleteWordModal({ opened, onClose, onConfirm, isDeleting, words }: DeleteWordModalProps) {
   return (
-    <Modal opened={opened} onClose={onClose} title="Delete Words">
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title="Delete Words"
+      closeOnClickOutside={!isDeleting}
+      closeOnEscape={!isDeleting}>
       <Stack gap="md">
         <>
           <Text>Are you sure you want to delete the following words? This action cannot be undone.</Text>

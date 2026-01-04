@@ -15,7 +15,12 @@ interface DeleteSetModalProps {
 
 export function DeleteSetModal({ opened, onClose, onConfirm, isDeleting, sets }: DeleteSetModalProps) {
   return (
-    <Modal opened={opened} onClose={onClose} title="Delete Sets">
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title="Delete Sets"
+      closeOnClickOutside={!isDeleting}
+      closeOnEscape={!isDeleting}>
       <Stack gap="md">
         <Text>Are you sure you want to delete the following sets? This action cannot be undone.</Text>
         <List size="sm" spacing="xs" styles={{ itemWrapper: { width: '100%' }, itemLabel: { width: '100%' } }}>

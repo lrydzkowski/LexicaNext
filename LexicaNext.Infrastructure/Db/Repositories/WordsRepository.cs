@@ -271,13 +271,6 @@ internal class WordsRepository
         }
     }
 
-    public async Task DeleteWordAsync(Guid wordId, CancellationToken cancellationToken = default)
-    {
-        await _dbContext.Words
-            .Where(entity => entity.WordId == wordId)
-            .ExecuteDeleteAsync(cancellationToken);
-    }
-
     private async Task<Guid> GetWordTypeIdAsync(WordType wordType, CancellationToken cancellationToken = default)
     {
         Guid? wordTypeId = await _wordTypesRepository.GetWordTypeIdAsync(wordType, cancellationToken);

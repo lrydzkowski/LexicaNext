@@ -21,10 +21,15 @@ export function DictionaryLinks({ word }: DictionaryLinksProps) {
       <Anchor
         href={`https://dictionary.cambridge.org/dictionary/english/${encodedWord}`}
         target="_blank"
-        size="sm">
+        size="sm"
+        rel="noopener noreferrer">
         Cambridge Dictionary
       </Anchor>
-      <Anchor href={`https://ling.pl/slownik/angielsko-polski/${encodedWord}`} target="_blank" size="sm">
+      <Anchor
+        href={`https://ling.pl/slownik/angielsko-polski/${encodedWord}`}
+        target="_blank"
+        size="sm"
+        rel="noopener noreferrer">
         Ling.pl
       </Anchor>
     </Group>
