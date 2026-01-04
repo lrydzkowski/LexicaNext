@@ -219,49 +219,19 @@ export const useUpdateWord = () => {
   });
 };
 
-export const useDeleteWord = () => {
-  const client = useApiClient();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (wordId: string): Promise<void> => {
-      const { error } = await client.DELETE('/api/words/{wordId}', {
-        params: {
-          path: { wordId },
-        },
-      });
-
-      if (error) {
-        throwApiError(error, 'Failed to delete word');
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['words'] });
-    },
-  });
-};
-
 export const useDeleteWords = () => {
   const client = useApiClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (wordIds: string[]): Promise<number> => {
-      let failedCount = 0;
+    mutationFn: async (wordIds: string[]): Promise<void> => {
+      const { error } = await client.DELETE('/api/words', {
+        body: { ids: wordIds },
+      });
 
-      for (const wordId of wordIds) {
-        const { error } = await client.DELETE('/api/words/{wordId}', {
-          params: {
-            path: { wordId },
-          },
-        });
-
-        if (error) {
-          failedCount++;
-        }
+      if (error) {
+        throwApiError(error, 'Failed to delete words');
       }
-
-      return failedCount;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['words'] });
@@ -316,49 +286,19 @@ export const useUpdateSet = () => {
   });
 };
 
-export const useDeleteSet = () => {
-  const client = useApiClient();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (setId: string): Promise<void> => {
-      const { error } = await client.DELETE('/api/sets/{setId}', {
-        params: {
-          path: { setId },
-        },
-      });
-
-      if (error) {
-        throwApiError(error, 'Failed to delete set');
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sets'] });
-    },
-  });
-};
-
 export const useDeleteSets = () => {
   const client = useApiClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (setIds: string[]): Promise<number> => {
-      let failedCount = 0;
+    mutationFn: async (setIds: string[]): Promise<void> => {
+      const { error } = await client.DELETE('/api/sets', {
+        body: { ids: setIds },
+      });
 
-      for (const setId of setIds) {
-        const { error } = await client.DELETE('/api/sets/{setId}', {
-          params: {
-            path: { setId },
-          },
-        });
-
-        if (error) {
-          failedCount++;
-        }
+      if (error) {
+        throwApiError(error, 'Failed to delete sets');
       }
-
-      return failedCount;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sets'] });

@@ -95,6 +95,39 @@
   },
   {
     RequestHttpMethod: {
+      Method: DELETE
+    },
+    RequestPath: /api/sets,
+    ResponseStatusCode: Unauthorized,
+    LogMessages:
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "Failed to validate the token."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "Auth0 was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): \u0027{Scrubbed}\u0027, Current time (UTC): \u0027{Scrubbed}\u0027."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "Auth0 was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): \u0027{Scrubbed}\u0027, Current time (UTC): \u0027{Scrubbed}\u0027."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "AuthenticationScheme: Auth0 was challenged."
+      }
+  },
+  {
+    RequestHttpMethod: {
       Method: GET
     },
     RequestPath: /api/sets,
@@ -175,34 +208,6 @@
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
         "Message": "Auth0 was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): \u0027{Scrubbed}\u0027, Current time (UTC): \u0027{Scrubbed}\u0027."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): \u0027{Scrubbed}\u0027, Current time (UTC): \u0027{Scrubbed}\u0027."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "AuthenticationScheme: Auth0 was challenged."
-      }
-  },
-  {
-    RequestHttpMethod: {
-      Method: DELETE
-    },
-    RequestPath: /api/sets/test,
-    ResponseStatusCode: Unauthorized,
-    LogMessages:
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Failed to validate the token."
       }
       {
         "LogLevel": "Information",
@@ -321,6 +326,39 @@
   },
   {
     RequestHttpMethod: {
+      Method: DELETE
+    },
+    RequestPath: /api/words,
+    ResponseStatusCode: Unauthorized,
+    LogMessages:
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "Failed to validate the token."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "Auth0 was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): \u0027{Scrubbed}\u0027, Current time (UTC): \u0027{Scrubbed}\u0027."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "Auth0 was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): \u0027{Scrubbed}\u0027, Current time (UTC): \u0027{Scrubbed}\u0027."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "AuthenticationScheme: Auth0 was challenged."
+      }
+  },
+  {
+    RequestHttpMethod: {
       Method: GET
     },
     RequestPath: /api/words,
@@ -357,39 +395,6 @@
       Method: POST
     },
     RequestPath: /api/words,
-    ResponseStatusCode: Unauthorized,
-    LogMessages:
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Failed to validate the token."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): \u0027{Scrubbed}\u0027, Current time (UTC): \u0027{Scrubbed}\u0027."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): \u0027{Scrubbed}\u0027, Current time (UTC): \u0027{Scrubbed}\u0027."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "AuthenticationScheme: Auth0 was challenged."
-      }
-  },
-  {
-    RequestHttpMethod: {
-      Method: DELETE
-    },
-    RequestPath: /api/words/test,
     ResponseStatusCode: Unauthorized,
     LogMessages:
       {

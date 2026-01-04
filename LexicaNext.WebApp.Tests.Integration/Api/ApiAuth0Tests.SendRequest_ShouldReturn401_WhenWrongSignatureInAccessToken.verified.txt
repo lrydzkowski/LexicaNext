@@ -95,6 +95,39 @@
   },
   {
     RequestHttpMethod: {
+      Method: DELETE
+    },
+    RequestPath: /api/sets,
+    ResponseStatusCode: Unauthorized,
+    LogMessages:
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "Failed to validate the token."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027.  Number of keys in TokenValidationParameters: \u00270\u0027.  Number of keys in Configuration: \u00274\u0027.  Matched key was in \u0027Configuration\u0027.  kid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027.  Exceptions caught:  \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. token: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027.  Number of keys in TokenValidationParameters: \u00270\u0027.  Number of keys in Configuration: \u00274\u0027.  Matched key was in \u0027Configuration\u0027.  kid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027.  Exceptions caught:  \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. token: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "AuthenticationScheme: Auth0 was challenged."
+      }
+  },
+  {
+    RequestHttpMethod: {
       Method: GET
     },
     RequestPath: /api/sets,
@@ -175,34 +208,6 @@
         "LogLevel": "Information",
         "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
         "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027.  Number of keys in TokenValidationParameters: \u00270\u0027.  Number of keys in Configuration: \u00274\u0027.  Matched key was in \u0027Configuration\u0027.  kid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027.  Exceptions caught:  \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. token: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027.  Number of keys in TokenValidationParameters: \u00270\u0027.  Number of keys in Configuration: \u00274\u0027.  Matched key was in \u0027Configuration\u0027.  kid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027.  Exceptions caught:  \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. token: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "AuthenticationScheme: Auth0 was challenged."
-      }
-  },
-  {
-    RequestHttpMethod: {
-      Method: DELETE
-    },
-    RequestPath: /api/sets/test,
-    ResponseStatusCode: Unauthorized,
-    LogMessages:
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Failed to validate the token."
       }
       {
         "LogLevel": "Information",
@@ -321,6 +326,39 @@
   },
   {
     RequestHttpMethod: {
+      Method: DELETE
+    },
+    RequestPath: /api/words,
+    ResponseStatusCode: Unauthorized,
+    LogMessages:
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "Failed to validate the token."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027.  Number of keys in TokenValidationParameters: \u00270\u0027.  Number of keys in Configuration: \u00274\u0027.  Matched key was in \u0027Configuration\u0027.  kid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027.  Exceptions caught:  \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. token: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027.  Number of keys in TokenValidationParameters: \u00270\u0027.  Number of keys in Configuration: \u00274\u0027.  Matched key was in \u0027Configuration\u0027.  kid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027.  Exceptions caught:  \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. token: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "AuthenticationScheme: Auth0 was challenged."
+      }
+  },
+  {
+    RequestHttpMethod: {
       Method: GET
     },
     RequestPath: /api/words,
@@ -357,39 +395,6 @@
       Method: POST
     },
     RequestPath: /api/words,
-    ResponseStatusCode: Unauthorized,
-    LogMessages:
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Failed to validate the token."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027.  Number of keys in TokenValidationParameters: \u00270\u0027.  Number of keys in Configuration: \u00274\u0027.  Matched key was in \u0027Configuration\u0027.  kid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027.  Exceptions caught:  \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. token: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "Auth0 was not authenticated. Failure message: IDX10511: Signature validation failed. Keys tried: \u0027Microsoft.IdentityModel.Tokens.X509SecurityKey, KeyId: \u0027cexwQdlQh7R4w_wG-pOD9\u0027, InternalId: \u0027UPXrDO-7doMSalpBLHmby9WwVi0\u0027. , KeyId: cexwQdlQh7R4w_wG-pOD9 \u0027.  Number of keys in TokenValidationParameters: \u00270\u0027.  Number of keys in Configuration: \u00274\u0027.  Matched key was in \u0027Configuration\u0027.  kid: \u0027cexwQdlQh7R4w_wG-pOD9\u0027.  Exceptions caught:  \u0027[PII of type \u0027System.String\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. token: \u0027[PII of type \u0027Microsoft.IdentityModel.JsonWebTokens.JsonWebToken\u0027 is hidden. For more details, see https://aka.ms/IdentityModel/PII.]\u0027. See https://aka.ms/IDX10511 for details."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "AuthenticationScheme: Auth0 was challenged."
-      }
-  },
-  {
-    RequestHttpMethod: {
-      Method: DELETE
-    },
-    RequestPath: /api/words/test,
     ResponseStatusCode: Unauthorized,
     LogMessages:
       {

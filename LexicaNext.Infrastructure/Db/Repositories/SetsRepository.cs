@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using LexicaNext.Core.Commands.CreateSet.Interfaces;
 using LexicaNext.Core.Commands.CreateSet.Models;
-using LexicaNext.Core.Commands.DeleteSet.Interfaces;
+using LexicaNext.Core.Commands.DeleteSets.Interfaces;
 using LexicaNext.Core.Commands.UpdateSet.Interfaces;
 using LexicaNext.Core.Commands.UpdateSet.Models;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
@@ -22,7 +22,7 @@ internal class SetsRepository
         IGetSetsRepository,
         IGetSetRepository,
         ICreateSetRepository,
-        IDeleteSetRepository,
+        IDeleteSetsRepository,
         IUpdateSetRepository,
         IGetProposedSetNameRepository
 {
@@ -87,16 +87,16 @@ internal class SetsRepository
         return setEntity.SetId;
     }
 
-    public async Task DeleteSetAsync(Guid setId, CancellationToken cancellationToken = default)
+    public async Task DeleteSetsAsync(List<Guid> setIds, CancellationToken cancellationToken = default)
     {
-        if (!await SetExistsAsync(setId, cancellationToken))
+        if (setIds.Count == 0)
         {
             return;
         }
 
-        SetEntity setEntity = new() { SetId = setId };
-        _dbContext.Entry(setEntity).State = EntityState.Deleted;
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.Sets
+            .Where(entity => setIds.Contains(entity.SetId))
+            .ExecuteDeleteAsync(cancellationToken);
     }
 
     public async Task<string> GetProposedSetNameAsync(CancellationToken cancellationToken = default)
@@ -214,6 +214,18 @@ internal class SetsRepository
             .AnyAsync(entrySetId => entrySetId == setId, cancellationToken);
 
         return setExists;
+    }
+
+    public async Task DeleteSetAsync(Guid setId, CancellationToken cancellationToken = default)
+    {
+        if (!await SetExistsAsync(setId, cancellationToken))
+        {
+            return;
+        }
+
+        SetEntity setEntity = new() { SetId = setId };
+        _dbContext.Entry(setEntity).State = EntityState.Deleted;
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     private async Task UpdateSequenceIfMatchesPatternAsync(string setName, CancellationToken cancellationToken)

@@ -1,6 +1,6 @@
 using LexicaNext.Core.Commands.CreateWord.Interfaces;
 using LexicaNext.Core.Commands.CreateWord.Models;
-using LexicaNext.Core.Commands.DeleteWord.Interfaces;
+using LexicaNext.Core.Commands.DeleteWords.Interfaces;
 using LexicaNext.Core.Commands.UpdateWord.Interfaces;
 using LexicaNext.Core.Commands.UpdateWord.Models;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
@@ -21,7 +21,7 @@ internal class WordsRepository
     : IScopedService,
         ICreateWordRepository,
         IUpdateWordRepository,
-        IDeleteWordRepository,
+        IDeleteWordsRepository,
         IGetWordRepository,
         IGetWordsRepository,
         IGetWordSetsRepository
@@ -91,10 +91,15 @@ internal class WordsRepository
         return wordExists;
     }
 
-    public async Task DeleteWordAsync(Guid wordId, CancellationToken cancellationToken = default)
+    public async Task DeleteWordsAsync(List<Guid> wordIds, CancellationToken cancellationToken = default)
     {
+        if (wordIds.Count == 0)
+        {
+            return;
+        }
+
         await _dbContext.Words
-            .Where(entity => entity.WordId == wordId)
+            .Where(entity => wordIds.Contains(entity.WordId))
             .ExecuteDeleteAsync(cancellationToken);
     }
 
@@ -264,6 +269,13 @@ internal class WordsRepository
             await transaction.RollbackAsync(cancellationToken);
             throw;
         }
+    }
+
+    public async Task DeleteWordAsync(Guid wordId, CancellationToken cancellationToken = default)
+    {
+        await _dbContext.Words
+            .Where(entity => entity.WordId == wordId)
+            .ExecuteDeleteAsync(cancellationToken);
     }
 
     private async Task<Guid> GetWordTypeIdAsync(WordType wordType, CancellationToken cancellationToken = default)
