@@ -175,6 +175,18 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
     }
   };
 
+  if (entries.length === 0) {
+    return (
+      <>
+        <Container size="md">
+          <Alert color="orange" title="No entries found">
+            This set doesn't contain any vocabulary entries.
+          </Alert>
+        </Container>
+      </>
+    );
+  }
+
   if (isComplete) {
     return (
       <>
