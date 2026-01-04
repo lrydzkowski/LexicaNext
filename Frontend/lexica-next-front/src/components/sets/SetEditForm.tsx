@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { notifications } from '@mantine/notifications';
 import { links } from '@/config/links';
+import { showErrorNotification } from '@/services/error-notifications';
 import { useSet } from '../../hooks/api';
 import { SetForm } from './SetForm';
 
@@ -12,13 +12,7 @@ export function SetEditForm() {
 
   useEffect(() => {
     if (error) {
-      notifications.show({
-        title: 'Error Loading Set',
-        message: 'Failed to load set',
-        color: 'red',
-        position: 'top-center',
-        autoClose: false,
-      });
+      showErrorNotification('Error Loading Set', error);
       navigate(links.sets.getUrl());
     }
   }, [error, navigate]);

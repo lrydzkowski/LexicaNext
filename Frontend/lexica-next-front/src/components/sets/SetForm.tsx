@@ -17,8 +17,8 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
 import { links } from '@/config/links';
+import { showErrorNotification, showErrorTextNotification } from '@/services/error-notifications';
 import {
   useCreateSet,
   useProposedSetName,
@@ -174,13 +174,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
 
   const handleSubmit = (values: FormValues) => {
     if (selectedWords.length === 0) {
-      notifications.show({
-        title: 'Validation Error',
-        message: 'Please select at least one word for the set',
-        color: 'red',
-        position: 'top-center',
-      });
-
+      showErrorTextNotification('Validation Error', 'Please select at least one word for the set');
       return;
     }
 
@@ -197,13 +191,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
             navigate(links.sets.getUrl());
           },
           onError: (error) => {
-            notifications.show({
-              title: 'Error Creating Set',
-              message: error.message || 'Failed to create set',
-              color: 'red',
-              position: 'top-center',
-              autoClose: false,
-            });
+            showErrorNotification('Error Creating Set', error);
           },
         },
       );
@@ -225,13 +213,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
             navigate(links.sets.getUrl());
           },
           onError: (error) => {
-            notifications.show({
-              title: 'Error Updating Set',
-              message: error.message || 'Failed to update set',
-              color: 'red',
-              position: 'top-center',
-              autoClose: false,
-            });
+            showErrorNotification('Error Updating Set', error);
           },
         },
       );

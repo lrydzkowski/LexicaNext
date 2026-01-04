@@ -2,6 +2,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { components } from '../../api-types/api-types';
 import { createAuthenticatedClient } from '../services/api-client';
+import { throwApiError } from '../services/validation-errors';
 
 export type EntryDto = components['schemas']['EntryDto'];
 export type SetRecordDto = components['schemas']['SetRecordDto'];
@@ -48,7 +49,7 @@ export const useSets = (params?: {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to fetch sets');
       }
 
       return data!;
@@ -77,7 +78,7 @@ export const useWords = (params?: {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to fetch words');
       }
 
       return data!;
@@ -100,7 +101,7 @@ export const useSet = (setId: string) => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to fetch set');
       }
 
       return data!;
@@ -120,7 +121,7 @@ export const useProposedSetName = () => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to fetch proposed set name');
       }
 
       return data!.proposedName!;
@@ -140,12 +141,7 @@ export const useCreateSet = () => {
       });
 
       if (error) {
-        const errorDetails = error as { errors?: Record<string, string[]> };
-        if (errorDetails.errors) {
-          const messages = Object.values(errorDetails.errors).flat();
-          throw new Error(messages.join(', '));
-        }
-        throw new Error(`Failed to create set`);
+        throwApiError(error, 'Failed to create set');
       }
     },
     onSuccess: () => {
@@ -168,7 +164,7 @@ export const useWord = (wordId: string) => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to fetch word');
       }
 
       return data!;
@@ -188,7 +184,7 @@ export const useCreateWord = () => {
       });
 
       if (error || !responseData) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to create word');
       }
 
       return responseData;
@@ -213,7 +209,7 @@ export const useUpdateWord = () => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to update word');
       }
     },
     onSuccess: (_, { wordId }) => {
@@ -236,7 +232,7 @@ export const useDeleteWord = () => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to delete word');
       }
     },
     onSuccess: () => {
@@ -287,7 +283,7 @@ export const useWordSets = (wordId: string, enabled = true) => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to fetch word sets');
       }
 
       return data!;
@@ -310,12 +306,7 @@ export const useUpdateSet = () => {
       });
 
       if (error) {
-        const errorDetails = error as { errors?: Record<string, string[]> };
-        if (errorDetails.errors) {
-          const messages = Object.values(errorDetails.errors).flat();
-          throw new Error(messages.join(', '));
-        }
-        throw new Error(`Failed to update set`);
+        throwApiError(error, 'Failed to update set');
       }
     },
     onSuccess: (_, { setId }) => {
@@ -338,7 +329,7 @@ export const useDeleteSet = () => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to delete set');
       }
     },
     onSuccess: () => {
@@ -391,7 +382,7 @@ export const useRecording = (word: string, wordType?: string, enabled = true) =>
       });
 
       if (error) {
-        throw new Error(`API error: ${JSON.stringify(error)}`);
+        throwApiError(error, 'Failed to fetch recording');
       }
 
       if (!response.ok) {
@@ -414,7 +405,7 @@ export const useGenerateTranslations = () => {
       });
 
       if (error) {
-        throw new Error(`API error: ${JSON.stringify(error)}`);
+        throwApiError(error, 'Failed to generate translations');
       }
 
       return data!;
@@ -432,7 +423,7 @@ export const useGenerateExampleSentences = () => {
       });
 
       if (error) {
-        throw new Error(`API error: ${JSON.stringify(error)}`);
+        throwApiError(error, 'Failed to generate example sentences');
       }
 
       return data!;

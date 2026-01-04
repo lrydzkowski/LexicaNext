@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { ActionIcon, Container, Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
 import { links } from '@/config/links';
+import { showErrorNotification } from '@/services/error-notifications';
 import { SetFullMode } from '../../../components/sets/modes/SetFullMode';
 import { useSet } from '../../../hooks/api';
 
@@ -16,13 +16,7 @@ export function SetFullModePage() {
 
   useEffect(() => {
     if (error) {
-      notifications.show({
-        title: 'Error Loading Set',
-        message: 'Failed to load set',
-        color: 'red',
-        position: 'top-center',
-        autoClose: false,
-      });
+      showErrorNotification('Error Loading Set', error);
       navigate(links.sets.getUrl());
     }
   }, [error, navigate]);

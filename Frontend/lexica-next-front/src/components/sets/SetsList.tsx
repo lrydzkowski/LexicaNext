@@ -29,9 +29,9 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
 import { useDeleteSet, useDeleteSets, useSets, type SetRecordDto } from '../../hooks/api';
+import { showErrorNotification, showErrorTextNotification } from '../../services/error-notifications';
 import { formatDateTime } from '../../utils/date';
 import { DeleteSetModal } from './DeleteSetModal';
 
@@ -88,13 +88,7 @@ export function SetsList() {
 
   useEffect(() => {
     if (error) {
-      notifications.show({
-        title: 'Error Loading Sets',
-        message: 'An unexpected error occurred',
-        color: 'red',
-        position: 'top-center',
-        autoClose: false,
-      });
+      showErrorNotification('Error Loading Sets', error);
     }
   }, [error]);
 
@@ -143,23 +137,14 @@ export function SetsList() {
           onSuccess: (failedCount) => {
             setSelectedSetIds(new Set());
             if (failedCount > 0) {
-              notifications.show({
-                title: 'Partial Failure',
-                message: `Failed to delete ${failedCount} set${failedCount > 1 ? 's' : ''}`,
-                color: 'red',
-                position: 'top-center',
-                autoClose: false,
-              });
+              showErrorTextNotification(
+                'Partial Failure',
+                `Failed to delete ${failedCount} set${failedCount > 1 ? 's' : ''}`,
+              );
             }
           },
-          onError: () => {
-            notifications.show({
-              title: 'Error',
-              message: 'Failed to delete sets',
-              color: 'red',
-              position: 'top-center',
-              autoClose: false,
-            });
+          onError: (error) => {
+            showErrorNotification('Error', error);
           },
         });
       },
@@ -180,14 +165,8 @@ export function SetsList() {
         closeDeleteModal();
         refetch();
       },
-      onError: () => {
-        notifications.show({
-          title: 'Error Deleting Set',
-          message: 'Failed to delete set',
-          color: 'red',
-          position: 'top-center',
-          autoClose: false,
-        });
+      onError: (error) => {
+        showErrorNotification('Error Deleting Set', error);
       },
     });
   };
