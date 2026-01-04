@@ -10,7 +10,7 @@ interface DeleteSetModalProps {
 
 export function DeleteSetModal({ opened, onClose, setName, onConfirm, isDeleting }: DeleteSetModalProps) {
   return (
-    <Modal opened={opened} onClose={onClose} title="Delete Set" centered>
+    <Modal opened={opened} onClose={onClose} title="Delete Set">
       <Stack gap="md">
         <Text style={{ wordBreak: 'break-word' }}>
           Are you sure you want to delete "<strong>{setName}</strong>"? This action cannot be undone.

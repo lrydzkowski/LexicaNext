@@ -15,7 +15,7 @@ export function DeleteWordModal({ opened, onClose, wordId, wordText, onConfirm, 
   const affectedSets = wordSetsData?.sets || [];
 
   return (
-    <Modal opened={opened} onClose={onClose} title="Delete Word" centered>
+    <Modal opened={opened} onClose={onClose} title="Delete Word">
       <Stack gap="md">
         <Text style={{ wordBreak: 'break-word' }}>
           Are you sure you want to delete "<strong>{wordText}</strong>"? This action cannot be undone.
