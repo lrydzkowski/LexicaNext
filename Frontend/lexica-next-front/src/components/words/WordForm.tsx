@@ -7,6 +7,7 @@ import { randomId } from '@mantine/hooks';
 import { links } from '@/config/links';
 import { showErrorNotification } from '@/services/error-notifications';
 import { useCreateWord, useUpdateWord, type GetWordResponse } from '../../hooks/api';
+import { DictionaryLinks } from './DictionaryLinks';
 import { GenerateSentencesButton } from './GenerateSentencesButton';
 import { GenerateTranslationsButton } from './GenerateTranslationsButton';
 import { WordFormSuccessData, WordFormValues } from './WordFormTypes';
@@ -336,6 +337,13 @@ export function WordForm({ mode, wordId, word, isLoading, onSuccess, onCancel }:
               <GenerateSentencesButton form={form} onSentencesGenerated={handleSentencesGenerated} />
             </Group>
           </div>
+
+          {form.getValues().word?.trim() && (
+            <>
+              <Divider label="Dictionary Links" labelPosition="center" />
+              <DictionaryLinks word={form.getValues().word} />
+            </>
+          )}
 
           <Group justify="space-between" mt="xl" wrap="wrap">
             <Button
