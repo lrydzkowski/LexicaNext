@@ -37,6 +37,24 @@
   },
   {
     RequestHttpMethod: {
+      Method: DELETE
+    },
+    RequestPath: /api/sets,
+    ResponseStatusCode: Unauthorized,
+    LogMessages:
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "AuthenticationScheme: Auth0 was challenged."
+      }
+  },
+  {
+    RequestHttpMethod: {
       Method: GET
     },
     RequestPath: /api/sets,
@@ -58,6 +76,24 @@
       Method: POST
     },
     RequestPath: /api/sets,
+    ResponseStatusCode: Unauthorized,
+    LogMessages:
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "AuthenticationScheme: Auth0 was challenged."
+      }
+  },
+  {
+    RequestHttpMethod: {
+      Method: GET
+    },
+    RequestPath: /api/sets/proposed-name,
     ResponseStatusCode: Unauthorized,
     LogMessages:
       {
@@ -127,6 +163,24 @@
   },
   {
     RequestHttpMethod: {
+      Method: DELETE
+    },
+    RequestPath: /api/words,
+    ResponseStatusCode: Unauthorized,
+    LogMessages:
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
+        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
+      }
+      {
+        "LogLevel": "Information",
+        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
+        "Message": "AuthenticationScheme: Auth0 was challenged."
+      }
+  },
+  {
+    RequestHttpMethod: {
       Method: GET
     },
     RequestPath: /api/words,
@@ -148,24 +202,6 @@
       Method: POST
     },
     RequestPath: /api/words,
-    ResponseStatusCode: Unauthorized,
-    LogMessages:
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authorization.DefaultAuthorizationService",
-        "Message": "Authorization failed. These requirements were not met: DenyAnonymousAuthorizationRequirement: Requires an authenticated user."
-      }
-      {
-        "LogLevel": "Information",
-        "Category": "Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler",
-        "Message": "AuthenticationScheme: Auth0 was challenged."
-      }
-  },
-  {
-    RequestHttpMethod: {
-      Method: DELETE
-    },
-    RequestPath: /api/words/test,
     ResponseStatusCode: Unauthorized,
     LogMessages:
       {

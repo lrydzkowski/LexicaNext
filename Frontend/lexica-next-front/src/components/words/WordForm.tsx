@@ -4,9 +4,10 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { ActionIcon, Box, Button, Divider, Group, LoadingOverlay, Select, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { randomId } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
 import { links } from '@/config/links';
+import { showErrorNotification } from '@/services/error-notifications';
 import { useCreateWord, useUpdateWord, type GetWordResponse } from '../../hooks/api';
+import { DictionaryLinks } from './DictionaryLinks';
 import { GenerateSentencesButton } from './GenerateSentencesButton';
 import { GenerateTranslationsButton } from './GenerateTranslationsButton';
 import { WordFormSuccessData, WordFormValues } from './WordFormTypes';
@@ -202,13 +203,8 @@ export function WordForm({ mode, wordId, word, isLoading, onSuccess, onCancel }:
             navigate(links.words.getUrl());
           }
         },
-        onError: () => {
-          notifications.show({
-            title: 'Error Creating Word',
-            message: 'Failed to create word',
-            color: 'red',
-            position: 'top-center',
-          });
+        onError: (error) => {
+          showErrorNotification('Error Creating Word', error);
         },
       });
     } else if (mode === 'edit' && wordId) {
@@ -226,13 +222,8 @@ export function WordForm({ mode, wordId, word, isLoading, onSuccess, onCancel }:
               navigate(links.words.getUrl({}, { returnPage }));
             }
           },
-          onError: () => {
-            notifications.show({
-              title: 'Error Updating Word',
-              message: 'Failed to update word',
-              color: 'red',
-              position: 'top-center',
-            });
+          onError: (error) => {
+            showErrorNotification('Error Updating Word', error);
           },
         },
       );
@@ -346,6 +337,13 @@ export function WordForm({ mode, wordId, word, isLoading, onSuccess, onCancel }:
               <GenerateSentencesButton form={form} onSentencesGenerated={handleSentencesGenerated} />
             </Group>
           </div>
+
+          {form.getValues().word?.trim() && (
+            <>
+              <Divider label="Dictionary Links" labelPosition="center" />
+              <DictionaryLinks word={form.getValues().word} />
+            </>
+          )}
 
           <Group justify="space-between" mt="xl" wrap="wrap">
             <Button

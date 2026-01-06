@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { ActionIcon, Container, Group, Stack, Title } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
 import { links } from '@/config/links';
+import { showErrorNotification } from '@/services/error-notifications';
 import { WordForm } from '../../components/words/WordForm';
 import { useWord } from '../../hooks/api';
 
@@ -17,12 +17,7 @@ export function WordEditPage() {
 
   useEffect(() => {
     if (error) {
-      notifications.show({
-        title: 'Error Loading Word',
-        message: 'Failed to load word',
-        color: 'red',
-        position: 'top-center',
-      });
+      showErrorNotification('Error Loading Word', error);
       navigate(links.words.getUrl());
     }
   }, [error, navigate]);

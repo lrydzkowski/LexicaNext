@@ -5,4 +5,6 @@ namespace LexicaNext.Core.Commands.CreateWord.Interfaces;
 public interface ICreateWordRepository
 {
     Task<Guid> CreateWordAsync(CreateWordCommand createWordCommand, CancellationToken cancellationToken = default);
+
+    Task<bool> WordExistsAsync(string word, string wordType, CancellationToken cancellationToken = default);
 }

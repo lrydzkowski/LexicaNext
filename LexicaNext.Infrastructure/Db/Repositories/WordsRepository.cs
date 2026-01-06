@@ -1,6 +1,6 @@
 using LexicaNext.Core.Commands.CreateWord.Interfaces;
 using LexicaNext.Core.Commands.CreateWord.Models;
-using LexicaNext.Core.Commands.DeleteWord.Interfaces;
+using LexicaNext.Core.Commands.DeleteWords.Interfaces;
 using LexicaNext.Core.Commands.UpdateWord.Interfaces;
 using LexicaNext.Core.Commands.UpdateWord.Models;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
@@ -21,7 +21,7 @@ internal class WordsRepository
     : IScopedService,
         ICreateWordRepository,
         IUpdateWordRepository,
-        IDeleteWordRepository,
+        IDeleteWordsRepository,
         IGetWordRepository,
         IGetWordsRepository,
         IGetWordSetsRepository
@@ -77,10 +77,29 @@ internal class WordsRepository
         }
     }
 
-    public async Task DeleteWordAsync(Guid wordId, CancellationToken cancellationToken = default)
+    public async Task<bool> WordExistsAsync(string word, string wordType, CancellationToken cancellationToken = default)
     {
+        bool wordExists = await _dbContext.Words.AsNoTracking()
+            .Include(entity => entity.WordType)
+            .AnyAsync(
+                entity => entity.Word.ToLower() == word.ToLower()
+                          && entity.WordType != null
+                          && entity.WordType.Name.ToLower() == wordType.ToLower(),
+                cancellationToken
+            );
+
+        return wordExists;
+    }
+
+    public async Task DeleteWordsAsync(List<Guid> wordIds, CancellationToken cancellationToken = default)
+    {
+        if (wordIds.Count == 0)
+        {
+            return;
+        }
+
         await _dbContext.Words
-            .Where(entity => entity.WordId == wordId)
+            .Where(entity => wordIds.Contains(entity.WordId))
             .ExecuteDeleteAsync(cancellationToken);
     }
 
@@ -171,6 +190,26 @@ internal class WordsRepository
             Data = words,
             Count = count
         };
+    }
+
+    public async Task<bool> WordExistsAsync(
+        string word,
+        string wordType,
+        Guid ignoreWordId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        bool wordExists = await _dbContext.Words.AsNoTracking()
+            .Include(entity => entity.WordType)
+            .AnyAsync(
+                entity => entity.WordId != ignoreWordId
+                          && entity.Word.ToLower() == word.ToLower()
+                          && entity.WordType != null
+                          && entity.WordType.Name.ToLower() == wordType.ToLower(),
+                cancellationToken
+            );
+
+        return wordExists;
     }
 
     public async Task<bool> WordExistsAsync(Guid wordId, CancellationToken cancellationToken = default)

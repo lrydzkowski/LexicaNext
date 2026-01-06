@@ -1,0 +1,51 @@
+# OpenAPI Additions for Set Name Auto-Proposal
+# These additions will be automatically included in the generated OpenAPI spec
+
+paths:
+  /api/sets/proposed-name:
+    get:
+      operationId: getProposedSetName
+      summary: Get the next proposed set name
+      description: |
+        Returns the next available set name in the format set_XXXX.
+        The sequence is not incremented by this call; it only reads the current value.
+      tags:
+        - Sets
+      security:
+        - Auth0: []
+        - ApiKey: []
+      responses:
+        '200':
+          description: Proposed set name retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProposedSetNameResponse'
+        '401':
+          description: Unauthorized
+
+components:
+  schemas:
+    GetProposedSetNameResponse:
+      type: object
+      required:
+        - proposedName
+      properties:
+        proposedName:
+          type: string
+          description: The proposed set name in format set_XXXX
+          example: set_0042
+
+# Existing endpoints with updated validation behavior:
+# POST /api/sets - Now includes case-insensitive uniqueness validation
+# PUT /api/sets/{setId} - Now includes case-insensitive uniqueness validation
+#
+# Error response for duplicate name (existing ProblemDetails format):
+# {
+#   "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+#   "title": "One or more validation errors occurred.",
+#   "status": 400,
+#   "errors": {
+#     "SetName": ["'Set Name' with the given name ('set_0001') exists."]
+#   }
+# }

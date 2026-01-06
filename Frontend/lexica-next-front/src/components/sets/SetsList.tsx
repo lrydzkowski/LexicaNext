@@ -28,11 +28,11 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { modals } from '@mantine/modals';
-import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
-import { useDeleteSet, useDeleteSets, useSets, type SetRecordDto } from '../../hooks/api';
+import { useDeleteSets, useSets, type SetRecordDto } from '../../hooks/api';
+import { showErrorNotification } from '../../services/error-notifications';
 import { formatDateTime } from '../../utils/date';
+import { DeleteSetModal } from './DeleteSetModal';
 
 export function SetsList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -40,6 +40,10 @@ export function SetsList() {
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 150);
   const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
+  const [deleteModalState, setDeleteModalState] = useState<{
+    opened: boolean;
+    sets: { setId: string; setName: string }[];
+  }>({ opened: false, sets: [] });
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const pageSize = 10;
@@ -59,7 +63,6 @@ export function SetsList() {
     searchQuery: debouncedSearchQuery || undefined,
   });
 
-  const deleteSetMutation = useDeleteSet();
   const deleteSetsMutation = useDeleteSets();
 
   const sets = setsData?.data || [];
@@ -82,12 +85,7 @@ export function SetsList() {
 
   useEffect(() => {
     if (error) {
-      notifications.show({
-        title: 'Error Loading Sets',
-        message: 'An unexpected error occurred',
-        color: 'red',
-        position: 'top-center',
-      });
+      showErrorNotification('Error Loading Sets', error);
     }
   }, [error]);
 
@@ -119,68 +117,35 @@ export function SetsList() {
     }
   };
 
-  const handleBulkDelete = () => {
-    const count = selectedSetIds.size;
-    modals.openConfirmModal({
-      title: 'Delete Sets',
-      children: (
-        <Text>
-          Are you sure you want to delete {count} set{count > 1 ? 's' : ''}? This action cannot be undone.
-        </Text>
-      ),
-      labels: { confirm: 'Delete', cancel: 'Cancel' },
-      confirmProps: { color: 'red' },
-      onConfirm: () => {
-        const idsToDelete = Array.from(selectedSetIds);
-        deleteSetsMutation.mutate(idsToDelete, {
-          onSuccess: (failedCount) => {
-            setSelectedSetIds(new Set());
-            if (failedCount > 0) {
-              notifications.show({
-                title: 'Partial Failure',
-                message: `Failed to delete ${failedCount} set${failedCount > 1 ? 's' : ''}`,
-                color: 'red',
-                position: 'top-center',
-              });
-            }
-          },
-          onError: () => {
-            notifications.show({
-              title: 'Error',
-              message: 'Failed to delete sets',
-              color: 'red',
-              position: 'top-center',
-            });
-          },
-        });
-      },
-    });
+  const openDeleteModal = (setId: string, setName: string) => {
+    setDeleteModalState({ opened: true, sets: [{ setId, setName }] });
   };
 
-  const handleDelete = (setId: string, setName: string) => {
-    modals.openConfirmModal({
-      title: 'Delete Set',
-      children: (
-        <Text style={{ wordWrap: 'break-word' }}>
-          Are you sure you want to delete "{setName}"? This action cannot be undone.
-        </Text>
-      ),
-      labels: { confirm: 'Delete', cancel: 'Cancel' },
-      confirmProps: { color: 'red' },
-      onConfirm: () => {
-        deleteSetMutation.mutate(setId, {
-          onSuccess: () => {
-            refetch();
-          },
-          onError: () => {
-            notifications.show({
-              title: 'Error Deleting Set',
-              message: 'Failed to delete set',
-              color: 'red',
-              position: 'top-center',
-            });
-          },
-        });
+  const openBulkDeleteModal = () => {
+    const setsToDelete = sets
+      .filter((s) => selectedSetIds.has(s.setId || ''))
+      .map((s) => ({ setId: s.setId || '', setName: s.name || '' }));
+    setDeleteModalState({ opened: true, sets: setsToDelete });
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalState({ opened: false, sets: [] });
+  };
+
+  const handleDelete = () => {
+    if (!deleteModalState.opened || deleteModalState.sets.length === 0) {
+      return;
+    }
+
+    const setIds = deleteModalState.sets.map((s) => s.setId);
+
+    deleteSetsMutation.mutate(setIds, {
+      onSuccess: () => {
+        closeDeleteModal();
+        setSelectedSetIds(new Set());
+      },
+      onError: (error) => {
+        showErrorNotification('Error Deleting Sets', error);
       },
     });
   };
@@ -199,7 +164,7 @@ export function SetsList() {
           <IconDots size={18} />
         </ActionIcon>
       </Menu.Target>
-      <Menu.Dropdown>
+      <Menu.Dropdown onClick={(e) => e.stopPropagation()}>
         <Menu.Label>Learning Modes</Menu.Label>
         <Menu.Item
           leftSection={<IconHeadphones size={16} />}
@@ -238,7 +203,7 @@ export function SetsList() {
         <Menu.Item
           leftSection={<IconTrash size={16} />}
           color="red"
-          onClick={() => handleDelete(set.setId || '', set.name || '')}>
+          onClick={() => openDeleteModal(set.setId || '', set.name || '')}>
           Delete Set
         </Menu.Item>
       </Menu.Dropdown>
@@ -247,6 +212,14 @@ export function SetsList() {
 
   return (
     <>
+      <DeleteSetModal
+        opened={deleteModalState.opened}
+        onClose={closeDeleteModal}
+        sets={deleteModalState.sets}
+        onConfirm={handleDelete}
+        isDeleting={deleteSetsMutation.isPending}
+      />
+
       <Stack gap="md">
         <Group wrap="wrap" gap="sm">
           <ActionIcon component={Link} to={links.newSet.getUrl()} size="xl" hiddenFrom="md">
@@ -265,7 +238,8 @@ export function SetsList() {
             color="red"
             size="xl"
             disabled={selectedSetIds.size === 0}
-            onClick={handleBulkDelete}
+            loading={deleteSetsMutation.isPending}
+            onClick={openBulkDeleteModal}
             hiddenFrom="md">
             <IconTrash size={22} />
           </ActionIcon>
@@ -274,7 +248,8 @@ export function SetsList() {
             color="red"
             size="md"
             disabled={selectedSetIds.size === 0}
-            onClick={handleBulkDelete}
+            loading={deleteSetsMutation.isPending}
+            onClick={openBulkDeleteModal}
             visibleFrom="md">
             Delete{selectedSetIds.size > 0 ? ` (${selectedSetIds.size})` : ''}
           </Button>

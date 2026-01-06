@@ -1,7 +1,7 @@
 import { IconSparkles } from '@tabler/icons-react';
 import { Button } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
+import { showErrorNotification, showErrorTextNotification } from '@/services/error-notifications';
 import { useGenerateTranslations } from '../../hooks/api';
 import { WordFormValues } from './WordFormTypes';
 
@@ -23,22 +23,12 @@ export function GenerateTranslationsButton({
     const wordType = form.getValues().wordType || '';
 
     if (!word.trim()) {
-      notifications.show({
-        title: 'Error',
-        message: 'Please enter a word first',
-        color: 'red',
-        position: 'top-center',
-      });
+      showErrorTextNotification('Error', 'Please enter a word first');
       return;
     }
 
     if (!wordType || wordType === 'none') {
-      notifications.show({
-        title: 'Error',
-        message: 'Please select a word type first',
-        color: 'red',
-        position: 'top-center',
-      });
+      showErrorTextNotification('Error', 'Please select a word type first');
       return;
     }
 
@@ -48,13 +38,8 @@ export function GenerateTranslationsButton({
         onSuccess: (response) => {
           onTranslationsGenerated(response.translations);
         },
-        onError: () => {
-          notifications.show({
-            title: 'Error',
-            message: 'Failed to generate translations. Please try again.',
-            color: 'red',
-            position: 'top-center',
-          });
+        onError: (error) => {
+          showErrorNotification('Error', error);
         },
       },
     );

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { IconChevronDown, IconChevronUp, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { v4 as uuidv4 } from 'uuid';
 import {
   ActionIcon,
   Badge,
@@ -18,9 +17,15 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
 import { links } from '@/config/links';
-import { useCreateSet, useUpdateSet, type GetSetResponse, type WordRecordDto } from '../../hooks/api';
+import { showErrorNotification, showErrorTextNotification } from '@/services/error-notifications';
+import {
+  useCreateSet,
+  useProposedSetName,
+  useUpdateSet,
+  type GetSetResponse,
+  type WordRecordDto,
+} from '../../hooks/api';
 import { WordFormSuccessData } from '../words/WordFormTypes';
 import { CreateWordModal } from './CreateWordModal';
 import { SelectWordsModal } from './SelectWordsModal';
@@ -46,6 +51,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   const navigate = useNavigate();
   const createSetMutation = useCreateSet();
   const updateSetMutation = useUpdateSet();
+  const proposedSetNameQuery = useProposedSetName();
   const [searchParams] = useSearchParams();
   const returnPage = searchParams.get('returnPage') || '1';
   const setNameInputRef = useRef<HTMLInputElement | null>(null);
@@ -59,7 +65,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   const form = useForm<FormValues>({
     mode: 'uncontrolled',
     initialValues: {
-      setName: mode === 'create' ? uuidv4() : '',
+      setName: '',
     },
     validate: {
       setName: (value) => {
@@ -97,6 +103,14 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
       }, 0);
     }
   }, [set, mode]);
+
+  useEffect(() => {
+    if (mode === 'create' && proposedSetNameQuery.data) {
+      form.setValues({
+        setName: proposedSetNameQuery.data,
+      });
+    }
+  }, [mode, proposedSetNameQuery.data]);
 
   useEffect(() => {
     if (mode === 'create') {
@@ -160,13 +174,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
 
   const handleSubmit = (values: FormValues) => {
     if (selectedWords.length === 0) {
-      notifications.show({
-        title: 'Validation Error',
-        message: 'Please select at least one word for the set',
-        color: 'red',
-        position: 'top-center',
-      });
-
+      showErrorTextNotification('Validation Error', 'Please select at least one word for the set');
       return;
     }
 
@@ -182,13 +190,8 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
           onSuccess: () => {
             navigate(links.sets.getUrl());
           },
-          onError: () => {
-            notifications.show({
-              title: 'Error Creating Set',
-              message: 'Failed to create set',
-              color: 'red',
-              position: 'top-center',
-            });
+          onError: (error) => {
+            showErrorNotification('Error Creating Set', error);
           },
         },
       );
@@ -209,20 +212,15 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
           onSuccess: () => {
             navigate(links.sets.getUrl());
           },
-          onError: () => {
-            notifications.show({
-              title: 'Error Updating Set',
-              message: 'Failed to update set',
-              color: 'red',
-              position: 'top-center',
-            });
+          onError: (error) => {
+            showErrorNotification('Error Updating Set', error);
           },
         },
       );
     }
   };
 
-  if (isLoading) {
+  if (isLoading || (mode === 'create' && proposedSetNameQuery.isLoading)) {
     return (
       <Stack pos="relative" mih="12rem">
         <LoadingOverlay visible />

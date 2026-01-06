@@ -18,10 +18,9 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { modals } from '@mantine/modals';
-import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
-import { useDeleteWord, useDeleteWords, useWords, type WordRecordDto } from '../../hooks/api';
+import { useDeleteWords, useWords, type WordRecordDto } from '../../hooks/api';
+import { showErrorNotification } from '../../services/error-notifications';
 import { formatDateTime } from '../../utils/date';
 import { DeleteWordModal } from './DeleteWordModal';
 
@@ -33,9 +32,8 @@ export function WordsList() {
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
   const [deleteModalState, setDeleteModalState] = useState<{
     opened: boolean;
-    wordId: string;
-    wordText: string;
-  }>({ opened: false, wordId: '', wordText: '' });
+    words: { wordId: string; wordName: string }[];
+  }>({ opened: false, words: [] });
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const pageSize = 10;
@@ -55,7 +53,6 @@ export function WordsList() {
     searchQuery: debouncedSearchQuery || undefined,
   });
 
-  const deleteWordMutation = useDeleteWord();
   const deleteWordsMutation = useDeleteWords();
 
   const words = wordsData?.data || [];
@@ -78,12 +75,7 @@ export function WordsList() {
 
   useEffect(() => {
     if (error) {
-      notifications.show({
-        title: 'Error Loading Words',
-        message: 'An unexpected error occurred',
-        color: 'red',
-        position: 'top-center',
-      });
+      showErrorNotification('Error Loading Words', error);
     }
   }, [error]);
 
@@ -111,65 +103,35 @@ export function WordsList() {
     }
   };
 
-  const handleBulkDelete = () => {
-    const count = selectedWordIds.size;
-    modals.openConfirmModal({
-      title: 'Delete Words',
-      children: (
-        <Text>
-          Are you sure you want to delete {count} word{count > 1 ? 's' : ''}? This action cannot be undone.
-        </Text>
-      ),
-      labels: { confirm: 'Delete', cancel: 'Cancel' },
-      confirmProps: { color: 'red' },
-      onConfirm: () => {
-        const idsToDelete = Array.from(selectedWordIds);
-        deleteWordsMutation.mutate(idsToDelete, {
-          onSuccess: (failedCount) => {
-            setSelectedWordIds(new Set());
-            if (failedCount > 0) {
-              notifications.show({
-                title: 'Partial Failure',
-                message: `Failed to delete ${failedCount} word${failedCount > 1 ? 's' : ''}`,
-                color: 'red',
-                position: 'top-center',
-              });
-            }
-          },
-          onError: () => {
-            notifications.show({
-              title: 'Error',
-              message: 'Failed to delete words',
-              color: 'red',
-              position: 'top-center',
-            });
-          },
-        });
-      },
-    });
+  const openDeleteModal = (wordId: string, wordName: string) => {
+    setDeleteModalState({ opened: true, words: [{ wordId, wordName }] });
   };
 
-  const openDeleteModal = (wordId: string, wordText: string) => {
-    setDeleteModalState({ opened: true, wordId, wordText });
+  const openBulkDeleteModal = () => {
+    const wordsToDelete = words
+      .filter((w) => selectedWordIds.has(w.wordId || ''))
+      .map((w) => ({ wordId: w.wordId || '', wordName: w.word || '' }));
+    setDeleteModalState({ opened: true, words: wordsToDelete });
   };
 
   const closeDeleteModal = () => {
-    setDeleteModalState({ opened: false, wordId: '', wordText: '' });
+    setDeleteModalState({ opened: false, words: [] });
   };
 
   const handleDelete = () => {
-    deleteWordMutation.mutate(deleteModalState.wordId, {
+    if (!deleteModalState.opened || deleteModalState.words.length === 0) {
+      return;
+    }
+
+    const wordIds = deleteModalState.words.map((w) => w.wordId);
+
+    deleteWordsMutation.mutate(wordIds, {
       onSuccess: () => {
         closeDeleteModal();
-        refetch();
+        setSelectedWordIds(new Set());
       },
-      onError: () => {
-        notifications.show({
-          title: 'Error Deleting Word',
-          message: 'Failed to delete word',
-          color: 'red',
-          position: 'top-center',
-        });
+      onError: (error) => {
+        showErrorNotification('Error Deleting Words', error);
       },
     });
   };
@@ -188,7 +150,7 @@ export function WordsList() {
           <IconDots size={18} />
         </ActionIcon>
       </Menu.Target>
-      <Menu.Dropdown>
+      <Menu.Dropdown onClick={(e) => e.stopPropagation()}>
         <Menu.Label>Word Management</Menu.Label>
         <Menu.Item
           leftSection={<IconEdit size={16} />}
@@ -211,10 +173,9 @@ export function WordsList() {
       <DeleteWordModal
         opened={deleteModalState.opened}
         onClose={closeDeleteModal}
-        wordId={deleteModalState.wordId}
-        wordText={deleteModalState.wordText}
+        words={deleteModalState.words}
         onConfirm={handleDelete}
-        isDeleting={deleteWordMutation.isPending}
+        isDeleting={deleteWordsMutation.isPending}
       />
 
       <Stack gap="md">
@@ -239,7 +200,8 @@ export function WordsList() {
             color="red"
             size="xl"
             disabled={selectedWordIds.size === 0}
-            onClick={handleBulkDelete}
+            loading={deleteWordsMutation.isPending}
+            onClick={openBulkDeleteModal}
             hiddenFrom="md">
             <IconTrash size={22} />
           </ActionIcon>
@@ -248,7 +210,8 @@ export function WordsList() {
             color="red"
             size="md"
             disabled={selectedWordIds.size === 0}
-            onClick={handleBulkDelete}
+            loading={deleteWordsMutation.isPending}
+            onClick={openBulkDeleteModal}
             visibleFrom="md">
             Delete{selectedWordIds.size > 0 ? ` (${selectedWordIds.size})` : ''}
           </Button>

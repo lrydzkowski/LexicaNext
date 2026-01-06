@@ -2,6 +2,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { components } from '../../api-types/api-types';
 import { createAuthenticatedClient } from '../services/api-client';
+import { throwApiError } from '../services/validation-errors';
 
 export type EntryDto = components['schemas']['EntryDto'];
 export type SetRecordDto = components['schemas']['SetRecordDto'];
@@ -48,7 +49,7 @@ export const useSets = (params?: {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to fetch sets');
       }
 
       return data!;
@@ -77,7 +78,7 @@ export const useWords = (params?: {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to fetch words');
       }
 
       return data!;
@@ -100,12 +101,32 @@ export const useSet = (setId: string) => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to fetch set');
       }
 
       return data!;
     },
     enabled: !!setId,
+  });
+};
+
+export const useProposedSetName = () => {
+  const client = useApiClient();
+
+  return useQuery({
+    queryKey: ['proposedSetName'],
+    queryFn: async ({ signal }): Promise<string> => {
+      const { data, error } = await client.GET('/api/sets/proposed-name', {
+        signal,
+      });
+
+      if (error) {
+        throwApiError(error, 'Failed to fetch proposed set name');
+      }
+
+      return data!.proposedName!;
+    },
+    staleTime: 0,
   });
 };
 
@@ -120,7 +141,7 @@ export const useCreateSet = () => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to create set');
       }
     },
     onSuccess: () => {
@@ -143,7 +164,7 @@ export const useWord = (wordId: string) => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to fetch word');
       }
 
       return data!;
@@ -163,7 +184,7 @@ export const useCreateWord = () => {
       });
 
       if (error || !responseData) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to create word');
       }
 
       return responseData;
@@ -188,7 +209,7 @@ export const useUpdateWord = () => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to update word');
       }
     },
     onSuccess: (_, { wordId }) => {
@@ -198,49 +219,19 @@ export const useUpdateWord = () => {
   });
 };
 
-export const useDeleteWord = () => {
-  const client = useApiClient();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (wordId: string): Promise<void> => {
-      const { error } = await client.DELETE('/api/words/{wordId}', {
-        params: {
-          path: { wordId },
-        },
-      });
-
-      if (error) {
-        throw new Error(`API error: ${error}`);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['words'] });
-    },
-  });
-};
-
 export const useDeleteWords = () => {
   const client = useApiClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (wordIds: string[]): Promise<number> => {
-      let failedCount = 0;
+    mutationFn: async (wordIds: string[]): Promise<void> => {
+      const { error } = await client.DELETE('/api/words', {
+        body: { ids: wordIds },
+      });
 
-      for (const wordId of wordIds) {
-        const { error } = await client.DELETE('/api/words/{wordId}', {
-          params: {
-            path: { wordId },
-          },
-        });
-
-        if (error) {
-          failedCount++;
-        }
+      if (error) {
+        throwApiError(error, 'Failed to delete words');
       }
-
-      return failedCount;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['words'] });
@@ -262,7 +253,7 @@ export const useWordSets = (wordId: string, enabled = true) => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to fetch word sets');
       }
 
       return data!;
@@ -285,7 +276,7 @@ export const useUpdateSet = () => {
       });
 
       if (error) {
-        throw new Error(`API error: ${error}`);
+        throwApiError(error, 'Failed to update set');
       }
     },
     onSuccess: (_, { setId }) => {
@@ -295,49 +286,19 @@ export const useUpdateSet = () => {
   });
 };
 
-export const useDeleteSet = () => {
-  const client = useApiClient();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (setId: string): Promise<void> => {
-      const { error } = await client.DELETE('/api/sets/{setId}', {
-        params: {
-          path: { setId },
-        },
-      });
-
-      if (error) {
-        throw new Error(`API error: ${error}`);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sets'] });
-    },
-  });
-};
-
 export const useDeleteSets = () => {
   const client = useApiClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (setIds: string[]): Promise<number> => {
-      let failedCount = 0;
+    mutationFn: async (setIds: string[]): Promise<void> => {
+      const { error } = await client.DELETE('/api/sets', {
+        body: { ids: setIds },
+      });
 
-      for (const setId of setIds) {
-        const { error } = await client.DELETE('/api/sets/{setId}', {
-          params: {
-            path: { setId },
-          },
-        });
-
-        if (error) {
-          failedCount++;
-        }
+      if (error) {
+        throwApiError(error, 'Failed to delete sets');
       }
-
-      return failedCount;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sets'] });
@@ -361,7 +322,7 @@ export const useRecording = (word: string, wordType?: string, enabled = true) =>
       });
 
       if (error) {
-        throw new Error(`API error: ${JSON.stringify(error)}`);
+        throwApiError(error, 'Failed to fetch recording');
       }
 
       if (!response.ok) {
@@ -384,7 +345,7 @@ export const useGenerateTranslations = () => {
       });
 
       if (error) {
-        throw new Error(`API error: ${JSON.stringify(error)}`);
+        throwApiError(error, 'Failed to generate translations');
       }
 
       return data!;
@@ -402,7 +363,7 @@ export const useGenerateExampleSentences = () => {
       });
 
       if (error) {
-        throw new Error(`API error: ${JSON.stringify(error)}`);
+        throwApiError(error, 'Failed to generate example sentences');
       }
 
       return data!;

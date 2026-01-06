@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { IconVolume } from '@tabler/icons-react';
 import { ActionIcon, Badge, Card, Group, Stack, Text } from '@mantine/core';
 import { useRecording, type EntryDto } from '../../hooks/api';
+import { DictionaryLinks } from '../words/DictionaryLinks';
 import { ExampleSentences } from './ExampleSentences';
 
 export function WordCard({ entry, index }: { entry: EntryDto; index: number }) {
@@ -112,6 +113,8 @@ export function WordCard({ entry, index }: { entry: EntryDto; index: number }) {
         </div>
 
         <ExampleSentences sentences={entry.exampleSentences || []} />
+
+        <DictionaryLinks word={entry.word || ''} />
       </Stack>
     </Card>
   );
