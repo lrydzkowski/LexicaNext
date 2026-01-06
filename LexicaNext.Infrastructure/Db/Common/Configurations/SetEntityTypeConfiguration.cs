@@ -35,7 +35,8 @@ internal class SetEntityTypeConfiguration : IEntityTypeConfiguration<SetEntity>
             .HasMaxLength(200);
 
         builder.HasIndex(entity => entity.Name)
-            .IsUnique();
+            .IsUnique()
+            .AreNullsDistinct(true);
 
         builder.Property(entity => entity.CreatedAt)
             .HasColumnName("created_at")
