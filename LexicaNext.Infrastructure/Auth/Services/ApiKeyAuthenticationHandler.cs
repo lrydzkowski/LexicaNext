@@ -40,6 +40,7 @@ internal class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthent
         }
 
         ClaimsIdentity identity = new("ApiKey");
+        identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, "api"));
         ClaimsPrincipal principal = new(identity);
 
         ClaimsPrincipal? existingPrincipal = Context.User;
