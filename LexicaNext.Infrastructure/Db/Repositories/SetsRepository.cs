@@ -39,6 +39,7 @@ internal class SetsRepository
     }
 
     public async Task<bool> SetExistsAsync(
+        string userId,
         string setName,
         Guid? ignoreSetId,
         CancellationToken cancellationToken = default
@@ -48,6 +49,7 @@ internal class SetsRepository
             .Where(
                 entity => entity.Name.ToLower() == setName.ToLower()
                           && (ignoreSetId == null || entity.SetId != ignoreSetId)
+                          && entity.UserId == userId
             )
             .Select(entity => entity.Name)
             .AnyAsync(cancellationToken);
@@ -63,6 +65,7 @@ internal class SetsRepository
         SetEntity setEntity = new()
         {
             SetId = Guid.CreateVersion7(),
+            UserId = createSetCommand.UserId,
             Name = createSetCommand.SetName,
             CreatedAt = _dateTimeOffsetProvider.UtcNow
         };
@@ -82,12 +85,12 @@ internal class SetsRepository
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        await UpdateSequenceIfMatchesPatternAsync(createSetCommand.SetName, cancellationToken);
+        await UpdateSequenceIfMatchesPatternAsync(createSetCommand.SetName, createSetCommand.UserId, cancellationToken);
 
         return setEntity.SetId;
     }
 
-    public async Task DeleteSetsAsync(List<Guid> setIds, CancellationToken cancellationToken = default)
+    public async Task DeleteSetsAsync(string userId, List<Guid> setIds, CancellationToken cancellationToken = default)
     {
         if (setIds.Count == 0)
         {
@@ -95,27 +98,40 @@ internal class SetsRepository
         }
 
         await _dbContext.Sets
-            .Where(entity => setIds.Contains(entity.SetId))
+            .Where(entity => setIds.Contains(entity.SetId) && entity.UserId == userId)
             .ExecuteDeleteAsync(cancellationToken);
     }
 
-    public async Task<string> GetProposedSetNameAsync(CancellationToken cancellationToken = default)
+    public async Task<string> GetProposedSetNameAsync(string userId, CancellationToken cancellationToken = default)
     {
-        long nextValue = await _dbContext.Database
-            .SqlQuery<long>($"SELECT COALESCE(last_value, 0) AS \"Value\" FROM set_name_sequence")
-            .FirstAsync(cancellationToken);
+        UserSetSequenceEntity? sequence = await _dbContext.UserSetSequences
+            .FirstOrDefaultAsync(s => s.UserId == userId, cancellationToken);
 
-        return $"set_{nextValue:D4}";
+        if (sequence == null)
+        {
+            sequence = new UserSetSequenceEntity
+            {
+                UserSetSequenceId = Guid.CreateVersion7(),
+                UserId = userId,
+                NextValue = 1,
+                LastUpdated = _dateTimeOffsetProvider.UtcNow
+            };
+            await _dbContext.UserSetSequences.AddAsync(sequence, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        return $"set_{sequence.NextValue:D4}";
     }
 
-    public async Task<Set?> GetSetAsync(Guid setId, CancellationToken cancellationToken = default)
+    public async Task<Set?> GetSetAsync(string userId, Guid setId, CancellationToken cancellationToken = default)
     {
         Set? set = await _dbContext.Sets.AsNoTracking()
-            .Where(setEntity => setEntity.SetId == setId)
+            .Where(setEntity => setEntity.SetId == setId && setEntity.UserId == userId)
             .Select(
                 setEntity => new Set
                 {
                     SetId = setEntity.SetId,
+                    UserId = setEntity.UserId,
                     Name = setEntity.Name,
                     CreatedAt = setEntity.CreatedAt,
                     Entries = setEntity.SetWords.OrderBy(sw => sw.Order)
@@ -142,6 +158,7 @@ internal class SetsRepository
     }
 
     public async Task<ListInfo<SetRecord>> GetSetsAsync(
+        string userId,
         ListParameters listParameters,
         CancellationToken cancellationToken = default
     )
@@ -152,6 +169,7 @@ internal class SetsRepository
         List<string> fieldsAvailableToFilter = ["name", "createdAt"];
 
         IQueryable<SetEntity> query = _dbContext.Sets.AsNoTracking()
+            .Where(entity => entity.UserId == userId)
             .Sort(fieldsAvailableToSort, listParameters.Sorting, defaultSortingFieldName, defaultSortingOrder)
             .Filter(fieldsAvailableToFilter, listParameters.Search);
         List<SetRecord> sets = await query
@@ -182,7 +200,10 @@ internal class SetsRepository
     {
         SetEntity? setEntity = await _dbContext.Sets
             .Include(s => s.SetWords)
-            .FirstOrDefaultAsync(s => s.SetId == updateSetCommand.SetId, cancellationToken);
+            .FirstOrDefaultAsync(
+                s => s.SetId == updateSetCommand.SetId && s.UserId == updateSetCommand.UserId,
+                cancellationToken
+            );
         if (setEntity == null)
         {
             return;
@@ -207,28 +228,21 @@ internal class SetsRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> SetExistsAsync(Guid setId, CancellationToken cancellationToken = default)
+    public async Task<bool> SetExistsAsync(string userId, Guid setId, CancellationToken cancellationToken = default)
     {
         bool setExists = await _dbContext.Sets.AsNoTracking()
+            .Where(entity => entity.SetId == setId && entity.UserId == userId)
             .Select(entity => entity.SetId)
-            .AnyAsync(entrySetId => entrySetId == setId, cancellationToken);
+            .AnyAsync(cancellationToken);
 
         return setExists;
     }
 
-    public async Task DeleteSetAsync(Guid setId, CancellationToken cancellationToken = default)
-    {
-        if (!await SetExistsAsync(setId, cancellationToken))
-        {
-            return;
-        }
-
-        SetEntity setEntity = new() { SetId = setId };
-        _dbContext.Entry(setEntity).State = EntityState.Deleted;
-        await _dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    private async Task UpdateSequenceIfMatchesPatternAsync(string setName, CancellationToken cancellationToken)
+    private async Task UpdateSequenceIfMatchesPatternAsync(
+        string setName,
+        string userId,
+        CancellationToken cancellationToken
+    )
     {
         Match match = Regex.Match(setName, @"^set_(\d+)$", RegexOptions.IgnoreCase);
         if (!match.Success)
@@ -236,21 +250,33 @@ internal class SetsRepository
             return;
         }
 
-        if (!long.TryParse(match.Groups[1].Value, out long extractedNumber))
+        if (!int.TryParse(match.Groups[1].Value, out int extractedNumber))
         {
             return;
         }
 
-        long currentSequenceValue = await _dbContext.Database
-            .SqlQuery<long>($"SELECT last_value AS \"Value\" FROM set_name_sequence")
-            .FirstAsync(cancellationToken);
+        UserSetSequenceEntity? sequence = await _dbContext.UserSetSequences
+            .FirstOrDefaultAsync(s => s.UserId == userId, cancellationToken);
 
-        if (extractedNumber >= currentSequenceValue)
+        if (sequence == null)
         {
-            long newValue = extractedNumber + 1;
-            await _dbContext.Database
-                .ExecuteSqlAsync($"SELECT setval('set_name_sequence', {newValue})", cancellationToken);
+            sequence = new UserSetSequenceEntity
+            {
+                UserSetSequenceId = Guid.CreateVersion7(),
+                UserId = userId,
+                NextValue = 1,
+                LastUpdated = _dateTimeOffsetProvider.UtcNow
+            };
+            await _dbContext.UserSetSequences.AddAsync(sequence, cancellationToken);
         }
+
+        if (extractedNumber >= sequence.NextValue)
+        {
+            sequence.NextValue = extractedNumber + 1;
+            sequence.LastUpdated = _dateTimeOffsetProvider.UtcNow;
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     private static WordType MapWordType(string wordTypeName)

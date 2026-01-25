@@ -4,6 +4,8 @@ public class Word
 {
     public Guid WordId { get; init; }
 
+    public string UserId { get; init; } = "";
+
     public string Text { get; init; } = "";
 
     public WordType WordType { get; init; } = WordType.None;

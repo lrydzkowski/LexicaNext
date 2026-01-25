@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +27,8 @@ internal class AppDbContext : DbContext
     public DbSet<TestEntity> Tests => Set<TestEntity>();
 
     public DbSet<ExampleSentenceEntity> ExampleSentences => Set<ExampleSentenceEntity>();
+
+    public DbSet<UserSetSequenceEntity> UserSetSequences => Set<UserSetSequenceEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -5,6 +5,7 @@ using LexicaNext.Core.Commands.CreateSet.Models;
 using LexicaNext.Core.Commands.CreateSet.Services;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Queries.GetSet;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -34,6 +35,7 @@ public static class CreateSetEndpoint
         [FromServices] IValidator<CreateSetRequest> validator,
         [FromServices] ICreateSetCommandMapper createSetCommandMapper,
         [FromServices] ICreateSetRepository createSetRepository,
+        [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
@@ -43,7 +45,8 @@ public static class CreateSetEndpoint
             return TypedResults.Problem(validationResult.ToProblemDetails());
         }
 
-        CreateSetCommand command = createSetCommandMapper.Map(request);
+        string userId = userContextResolver.GetUserId();
+        CreateSetCommand command = createSetCommandMapper.Map(userId, request);
         Guid setId = await createSetRepository.CreateSetAsync(command, cancellationToken);
         CreateSetResponse response = new()
         {

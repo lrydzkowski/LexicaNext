@@ -1,4 +1,5 @@
 using LexicaNext.Core.Common.Infrastructure.Auth;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetWordSets.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +28,7 @@ public static class GetWordSetsEndpoint
     private static async Task<Results<NotFound, Ok<GetWordSetsResponse>>> HandleAsync(
         [AsParameters] GetWordSetsRequest request,
         [FromServices] IGetWordSetsRepository getWordSetsRepository,
+        [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
@@ -35,7 +37,8 @@ public static class GetWordSetsEndpoint
             return TypedResults.NotFound();
         }
 
-        List<SetRecord> sets = await getWordSetsRepository.GetWordSetsAsync(wordId, cancellationToken);
+        string userId = userContextResolver.GetUserId();
+        List<SetRecord> sets = await getWordSetsRepository.GetWordSetsAsync(userId, wordId, cancellationToken);
         GetWordSetsResponse response = new()
         {
             Sets = sets.Select(

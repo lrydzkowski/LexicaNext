@@ -4,5 +4,5 @@ namespace LexicaNext.Core.Queries.GetWordSets.Interfaces;
 
 public interface IGetWordSetsRepository
 {
-    Task<List<SetRecord>> GetWordSetsAsync(Guid wordId, CancellationToken cancellationToken = default);
+    Task<List<SetRecord>> GetWordSetsAsync(string userId, Guid wordId, CancellationToken cancellationToken = default);
 }

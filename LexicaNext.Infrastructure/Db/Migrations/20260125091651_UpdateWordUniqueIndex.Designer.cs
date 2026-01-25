@@ -3,6 +3,7 @@ using System;
 using LexicaNext.Infrastructure.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LexicaNext.Infrastructure.Db.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260125091651_UpdateWordUniqueIndex")]
+    partial class UpdateWordUniqueIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -215,37 +218,6 @@ namespace LexicaNext.Infrastructure.Db.Migrations
                     b.HasIndex("WordId");
 
                     b.ToTable("translation", (string)null);
-                });
-
-            modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.UserSetSequenceEntity", b =>
-                {
-                    b.Property<Guid>("UserSetSequenceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_set_sequence_id");
-
-                    b.Property<DateTimeOffset>("LastUpdated")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_updated");
-
-                    b.Property<int>("NextValue")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1)
-                        .HasColumnName("next_value");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("UserSetSequenceId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("user_set_sequence", (string)null);
                 });
 
             modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.WordEntity", b =>

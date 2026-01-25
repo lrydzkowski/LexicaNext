@@ -1,4 +1,5 @@
 using LexicaNext.Core.Common.Infrastructure.Auth;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Queries.GetProposedSetName.Interfaces;
 using LexicaNext.Core.Queries.GetProposedSetName.Models;
 using Microsoft.AspNetCore.Builder;
@@ -25,10 +26,12 @@ public static class GetProposedSetNameEndpoint
 
     private static async Task<Ok<GetProposedSetNameResponse>> HandleAsync(
         [FromServices] IGetProposedSetNameRepository repository,
+        [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
-        string proposedName = await repository.GetProposedSetNameAsync(cancellationToken);
+        string userId = userContextResolver.GetUserId();
+        string proposedName = await repository.GetProposedSetNameAsync(userId, cancellationToken);
 
         return TypedResults.Ok(new GetProposedSetNameResponse { ProposedName = proposedName });
     }

@@ -77,12 +77,18 @@ internal class WordsRepository
         }
     }
 
-    public async Task<bool> WordExistsAsync(string word, string wordType, CancellationToken cancellationToken = default)
+    public async Task<bool> WordExistsAsync(
+        string userId,
+        string word,
+        string wordType,
+        CancellationToken cancellationToken = default
+    )
     {
         bool wordExists = await _dbContext.Words.AsNoTracking()
             .Include(entity => entity.WordType)
             .AnyAsync(
-                entity => entity.Word.ToLower() == word.ToLower()
+                entity => entity.UserId == userId
+                          && entity.Word.ToLower() == word.ToLower()
                           && entity.WordType != null
                           && entity.WordType.Name.ToLower() == wordType.ToLower(),
                 cancellationToken
@@ -91,7 +97,7 @@ internal class WordsRepository
         return wordExists;
     }
 
-    public async Task DeleteWordsAsync(List<Guid> wordIds, CancellationToken cancellationToken = default)
+    public async Task DeleteWordsAsync(string userId, List<Guid> wordIds, CancellationToken cancellationToken = default)
     {
         if (wordIds.Count == 0)
         {
@@ -99,14 +105,14 @@ internal class WordsRepository
         }
 
         await _dbContext.Words
-            .Where(entity => wordIds.Contains(entity.WordId))
+            .Where(entity => wordIds.Contains(entity.WordId) && entity.UserId == userId)
             .ExecuteDeleteAsync(cancellationToken);
     }
 
-    public async Task<Word?> GetWordAsync(Guid wordId, CancellationToken cancellationToken = default)
+    public async Task<Word?> GetWordAsync(string userId, Guid wordId, CancellationToken cancellationToken = default)
     {
         Word? word = await _dbContext.Words.AsNoTracking()
-            .Where(entity => entity.WordId == wordId)
+            .Where(entity => entity.WordId == wordId && entity.UserId == userId)
             .Select(
                 entity => new Word
                 {
@@ -127,22 +133,27 @@ internal class WordsRepository
     }
 
     public async Task<List<Guid>> GetExistingWordIdsAsync(
+        string userId,
         List<Guid> wordIds,
         CancellationToken cancellationToken = default
     )
     {
         List<Guid> existingIds = await _dbContext.Words.AsNoTracking()
-            .Where(entity => wordIds.Contains(entity.WordId))
+            .Where(entity => wordIds.Contains(entity.WordId) && entity.UserId == userId)
             .Select(entity => entity.WordId)
             .ToListAsync(cancellationToken);
 
         return existingIds;
     }
 
-    public async Task<List<SetRecord>> GetWordSetsAsync(Guid wordId, CancellationToken cancellationToken = default)
+    public async Task<List<SetRecord>> GetWordSetsAsync(
+        string userId,
+        Guid wordId,
+        CancellationToken cancellationToken = default
+    )
     {
         List<SetRecord> sets = await _dbContext.SetWords.AsNoTracking()
-            .Where(entity => entity.WordId == wordId)
+            .Where(entity => entity.WordId == wordId && entity.Word!.UserId == userId)
             .Select(
                 entity => new SetRecord
                 {
@@ -157,6 +168,7 @@ internal class WordsRepository
     }
 
     public async Task<ListInfo<WordRecord>> GetWordsAsync(
+        string userId,
         ListParameters listParameters,
         CancellationToken cancellationToken = default
     )
@@ -167,6 +179,7 @@ internal class WordsRepository
         List<string> fieldsAvailableToFilter = ["word"];
 
         IQueryable<WordEntity> query = _dbContext.Words.AsNoTracking()
+            .Where(entity => entity.UserId == userId)
             .Include(entity => entity.WordType)
             .Sort(fieldsAvailableToSort, listParameters.Sorting, defaultSortingFieldName, defaultSortingOrder)
             .Filter(fieldsAvailableToFilter, listParameters.Search);
@@ -193,6 +206,7 @@ internal class WordsRepository
     }
 
     public async Task<bool> WordExistsAsync(
+        string userId,
         string word,
         string wordType,
         Guid ignoreWordId,
@@ -202,7 +216,8 @@ internal class WordsRepository
         bool wordExists = await _dbContext.Words.AsNoTracking()
             .Include(entity => entity.WordType)
             .AnyAsync(
-                entity => entity.WordId != ignoreWordId
+                entity => entity.UserId == userId
+                          && entity.WordId != ignoreWordId
                           && entity.Word.ToLower() == word.ToLower()
                           && entity.WordType != null
                           && entity.WordType.Name.ToLower() == wordType.ToLower(),
@@ -212,10 +227,10 @@ internal class WordsRepository
         return wordExists;
     }
 
-    public async Task<bool> WordExistsAsync(Guid wordId, CancellationToken cancellationToken = default)
+    public async Task<bool> WordExistsAsync(string userId, Guid wordId, CancellationToken cancellationToken = default)
     {
         bool wordExists = await _dbContext.Words.AsNoTracking()
-            .AnyAsync(entity => entity.WordId == wordId, cancellationToken);
+            .AnyAsync(entity => entity.WordId == wordId && entity.UserId == userId, cancellationToken);
 
         return wordExists;
     }
@@ -233,7 +248,10 @@ internal class WordsRepository
             WordEntity? wordEntity = await _dbContext.Words
                 .Include(entity => entity.Translations)
                 .Include(entity => entity.ExampleSentences)
-                .FirstOrDefaultAsync(entity => entity.WordId == updateWordCommand.WordId, cancellationToken);
+                .FirstOrDefaultAsync(
+                    entity => entity.WordId == updateWordCommand.WordId && entity.UserId == updateWordCommand.UserId,
+                    cancellationToken
+                );
             if (wordEntity == null)
             {
                 return;
@@ -291,6 +309,7 @@ internal class WordsRepository
         WordEntity wordEntity = new()
         {
             WordId = Guid.CreateVersion7(),
+            UserId = createWordCommand.UserId,
             Word = createWordCommand.Word,
             WordTypeId = wordTypeId,
             CreatedAt = _dateTimeOffsetProvider.UtcNow

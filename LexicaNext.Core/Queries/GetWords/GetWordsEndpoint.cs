@@ -2,6 +2,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Lists;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetWords.Interfaces;
@@ -37,6 +38,7 @@ public static class GetWordsEndpoint
         [FromServices] IListParametersMapper listParametersMapper,
         [FromServices] IGetWordsRepository getWordsRepository,
         [FromServices] IWordRecordMapper wordRecordMapper,
+        [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
@@ -47,8 +49,10 @@ public static class GetWordsEndpoint
             return TypedResults.Problem(validationResult.ToProblemDetails());
         }
 
+        string userId = userContextResolver.GetUserId();
         ListParameters listParameters = listParametersMapper.Map(getWordsRequest);
-        ListInfo<WordRecord> wordRecords = await getWordsRepository.GetWordsAsync(listParameters, cancellationToken);
+        ListInfo<WordRecord> wordRecords =
+            await getWordsRepository.GetWordsAsync(userId, listParameters, cancellationToken);
         ListInfo<WordRecordDto> wordRecordsDto = wordRecordMapper.Map(wordRecords);
         GetWordsResponse response = new()
         {

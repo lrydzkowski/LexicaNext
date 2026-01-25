@@ -6,6 +6,8 @@ public class UpdateWordCommand
 {
     public Guid WordId { get; set; }
 
+    public string UserId { get; set; } = "";
+
     public string Word { get; set; } = "";
 
     public WordType WordType { get; set; } = WordType.None;

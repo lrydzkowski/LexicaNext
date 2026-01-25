@@ -5,6 +5,7 @@ using LexicaNext.Core.Commands.CreateWord.Models;
 using LexicaNext.Core.Commands.CreateWord.Services;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -33,6 +34,7 @@ public static class CreateWordEndpoint
         [FromServices] IValidator<CreateWordRequest> validator,
         [FromServices] ICreateWordCommandMapper createWordCommandMapper,
         [FromServices] ICreateWordRepository createWordRepository,
+        [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
@@ -42,7 +44,8 @@ public static class CreateWordEndpoint
             return TypedResults.Problem(validationResult.ToProblemDetails());
         }
 
-        CreateWordCommand command = createWordCommandMapper.Map(request);
+        string userId = userContextResolver.GetUserId();
+        CreateWordCommand command = createWordCommandMapper.Map(userId, request);
         Guid wordId = await createWordRepository.CreateWordAsync(command, cancellationToken);
         CreateWordResponse response = new()
         {

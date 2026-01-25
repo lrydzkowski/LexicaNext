@@ -2,6 +2,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Lists;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetSets.Interfaces;
@@ -36,9 +37,11 @@ public static class GetSetsEndpoint
         [FromServices] IListParametersMapper listParametersMapper,
         [FromServices] IGetSetsRepository getSetsRepository,
         [FromServices] ISetRecordMapper setRecordMapper,
+        [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
+        string userId = userContextResolver.GetUserId();
         getSetsRequest = processor.Process(getSetsRequest);
         ValidationResult? validationResult = await validator.ValidateAsync(getSetsRequest, cancellationToken);
         if (!validationResult.IsValid)
@@ -47,7 +50,8 @@ public static class GetSetsEndpoint
         }
 
         ListParameters listParameters = listParametersMapper.Map(getSetsRequest);
-        ListInfo<SetRecord> setRecords = await getSetsRepository.GetSetsAsync(listParameters, cancellationToken);
+        ListInfo<SetRecord> setRecords =
+            await getSetsRepository.GetSetsAsync(userId, listParameters, cancellationToken);
         ListInfo<SetRecordDto> setRecordsDto = setRecordMapper.Map(setRecords);
         GetSetsResponse response = new()
         {
