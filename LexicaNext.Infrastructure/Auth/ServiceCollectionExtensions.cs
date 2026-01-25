@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using LexicaNext.Core;
 using LexicaNext.Core.Common.Infrastructure.Auth;
-using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Infrastructure.Auth.Options;
 using LexicaNext.Infrastructure.Auth.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +34,6 @@ internal static class ServiceCollectionExtensions
     {
         services.AddAuthentication(configuration);
         services.AddAuthorization();
-        services.AddScoped<IUserContextResolver, UserContextResolver>();
 
         return services;
     }
