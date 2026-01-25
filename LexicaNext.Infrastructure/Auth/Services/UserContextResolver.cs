@@ -16,14 +16,14 @@ internal class UserContextResolver : IUserContextResolver, IScopedService
     public string? GetUserId()
     {
         HttpContext? context = _httpContextAccessor.HttpContext;
-        if (context == null)
+        if (context is null)
         {
             return null;
         }
 
         Claim? userIdClaim =
             context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier || c.Type == "sub");
-        if (userIdClaim == null)
+        if (string.IsNullOrWhiteSpace(userIdClaim?.Value))
         {
             return null;
         }
