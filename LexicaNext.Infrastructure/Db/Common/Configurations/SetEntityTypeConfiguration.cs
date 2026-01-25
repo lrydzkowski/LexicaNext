@@ -42,7 +42,6 @@ internal class SetEntityTypeConfiguration : IEntityTypeConfiguration<SetEntity>
         builder.HasIndex(entity => entity.UserId);
 
         builder.HasIndex(entity => new { entity.UserId, entity.Name })
-            .IsUnique()
             .AreNullsDistinct();
 
         builder.Property(entity => entity.CreatedAt)

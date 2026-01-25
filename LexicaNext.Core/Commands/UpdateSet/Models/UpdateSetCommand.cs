@@ -6,7 +6,5 @@ public class UpdateSetCommand
 
     public string UserId { get; set; } = "";
 
-    public string SetName { get; set; } = "";
-
     public List<Guid> WordIds { get; set; } = [];
 }

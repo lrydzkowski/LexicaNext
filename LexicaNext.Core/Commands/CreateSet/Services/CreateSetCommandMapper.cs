@@ -16,7 +16,6 @@ internal class CreateSetCommandMapper
         return new CreateSetCommand
         {
             UserId = userId,
-            SetName = request.Payload?.SetName?.Trim() ?? "",
             WordIds = request.Payload?.WordIds
                           .Where(id => Guid.TryParse(id, out _))
                           .Select(Guid.Parse)

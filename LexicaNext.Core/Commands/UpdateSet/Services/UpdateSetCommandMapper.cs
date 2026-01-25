@@ -17,7 +17,6 @@ internal class UpdateSetCommandMapper
         {
             SetId = Guid.Parse(request.SetId),
             UserId = userId,
-            SetName = request.Payload?.SetName.Trim() ?? "",
             WordIds = request.Payload?.WordIds
                           .Where(id => Guid.TryParse(id, out _))
                           .Select(Guid.Parse)

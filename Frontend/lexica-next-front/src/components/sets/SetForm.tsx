@@ -183,7 +183,6 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
     if (mode === 'create') {
       createSetMutation.mutate(
         {
-          setName: values.setName,
           wordIds,
         },
         {
@@ -204,7 +203,6 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         {
           setId,
           data: {
-            setName: values.setName,
             wordIds,
           },
         },
@@ -237,6 +235,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
             label="Set Name"
             placeholder="Enter set name..."
             size="md"
+            disabled
             {...form.getInputProps('setName')}
             key={form.key('setName')}
           />

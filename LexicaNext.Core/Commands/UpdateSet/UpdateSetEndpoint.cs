@@ -74,7 +74,5 @@ public class UpdateSetRequest
 
 public class UpdateSetRequestPayload
 {
-    public string SetName { get; set; } = "";
-
     public List<string> WordIds { get; set; } = [];
 }

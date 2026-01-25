@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using LexicaNext.Core.Commands.CreateSet.Interfaces;
 using LexicaNext.Core.Commands.CreateSet.Models;
 using LexicaNext.Core.Commands.DeleteSets.Interfaces;
@@ -62,11 +61,13 @@ internal class SetsRepository
         CancellationToken cancellationToken = default
     )
     {
+        UserSetSequenceEntity sequenceEntity =
+            await GetOrCreateSequenceAsync(createSetCommand.UserId, cancellationToken);
         SetEntity setEntity = new()
         {
             SetId = Guid.CreateVersion7(),
             UserId = createSetCommand.UserId,
-            Name = createSetCommand.SetName,
+            Name = BuildSetName(sequenceEntity),
             CreatedAt = _dateTimeOffsetProvider.UtcNow
         };
         await _dbContext.Sets.AddAsync(setEntity, cancellationToken);
@@ -83,9 +84,15 @@ internal class SetsRepository
             .ToList();
         await _dbContext.SetWords.AddRangeAsync(setWordEntities, cancellationToken);
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        sequenceEntity.NextValue++;
+        if (sequenceEntity.NextValue > 999999)
+        {
+            sequenceEntity.NextValue = 1;
+        }
 
-        await UpdateSequenceIfMatchesPatternAsync(createSetCommand.SetName, createSetCommand.UserId, cancellationToken);
+        sequenceEntity.LastUpdated = _dateTimeOffsetProvider.UtcNow;
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
         return setEntity.SetId;
     }
@@ -105,7 +112,7 @@ internal class SetsRepository
     public async Task<string> GetProposedSetNameAsync(string userId, CancellationToken cancellationToken = default)
     {
         UserSetSequenceEntity sequenceEntity = await GetOrCreateSequenceAsync(userId, cancellationToken);
-        string sequence = $"set_{sequenceEntity.NextValue:D4}";
+        string sequence = BuildSetName(sequenceEntity);
 
         return sequence;
     }
@@ -196,8 +203,6 @@ internal class SetsRepository
             return;
         }
 
-        setEntity.Name = updateSetCommand.SetName;
-
         _dbContext.RemoveRange(setEntity.SetWords);
 
         List<SetWordEntity> setWordEntities = updateSetCommand.WordIds
@@ -223,33 +228,6 @@ internal class SetsRepository
             .AnyAsync(cancellationToken);
 
         return setExists;
-    }
-
-    private async Task UpdateSequenceIfMatchesPatternAsync(
-        string setName,
-        string userId,
-        CancellationToken cancellationToken
-    )
-    {
-        Match match = Regex.Match(setName, @"^set_(\d+)$", RegexOptions.IgnoreCase);
-        if (!match.Success)
-        {
-            return;
-        }
-
-        if (!int.TryParse(match.Groups[1].Value, out int extractedNumber))
-        {
-            return;
-        }
-
-        UserSetSequenceEntity sequence = await GetOrCreateSequenceAsync(userId, cancellationToken);
-        if (extractedNumber >= sequence.NextValue)
-        {
-            sequence.NextValue = extractedNumber + 1;
-            sequence.LastUpdated = _dateTimeOffsetProvider.UtcNow;
-        }
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     private static WordType MapWordType(string wordTypeName)
@@ -282,5 +260,10 @@ internal class SetsRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return sequence;
+    }
+
+    private string BuildSetName(UserSetSequenceEntity sequenceEntity)
+    {
+        return $"set_{sequenceEntity.NextValue:D6}";
     }
 }

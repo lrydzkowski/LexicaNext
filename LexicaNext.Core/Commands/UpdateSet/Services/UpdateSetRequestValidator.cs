@@ -65,39 +65,7 @@ internal class UpdateSetRequestPayloadValidator : AbstractValidator<UpdateSetReq
         _getWordRepository = getWordRepository;
         _userId = userId;
 
-        AddValidationForSetName();
         AddValidationForWordIds();
-    }
-
-    private void AddValidationForSetName()
-    {
-        RuleFor(request => request.SetName)
-            .NotEmpty()
-            .MaximumLength(200)
-            .DependentRules(AddValidationForSetNameUniqueness)
-            .WithName(nameof(UpdateSetRequestPayload.SetName));
-    }
-
-    private void AddValidationForSetNameUniqueness()
-    {
-        RuleFor(request => request)
-            .MustAsync(
-                async (updateSetRequest, cancellationToken) =>
-                {
-                    bool setWithNameExists =
-                        await _updateSetRepository.SetExistsAsync(
-                            _userId,
-                            updateSetRequest.SetName,
-                            _setId,
-                            cancellationToken
-                        );
-
-                    return !setWithNameExists;
-                }
-            )
-            .WithName(nameof(UpdateSetRequestPayload.SetName))
-            .WithMessage(x => $"'{{PropertyName}}' with the given name ('{x.SetName}') exists.")
-            .WithErrorCode(ValidationErrorCodes.UniquenessValidator);
     }
 
     private void AddValidationForWordIds()

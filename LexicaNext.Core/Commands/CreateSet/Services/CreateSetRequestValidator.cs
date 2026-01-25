@@ -56,34 +56,7 @@ internal class CreateSetRequestPayloadValidator : AbstractValidator<CreateSetReq
         _getWordRepository = getWordRepository;
         _userId = userId;
 
-        AddValidationForSetName();
         AddValidationForWordIds();
-    }
-
-    private void AddValidationForSetName()
-    {
-        RuleFor(request => request.SetName)
-            .NotEmpty()
-            .MaximumLength(200)
-            .DependentRules(AddValidationForSetNameUniqueness)
-            .WithName(nameof(CreateSetCommand.SetName));
-    }
-
-    private void AddValidationForSetNameUniqueness()
-    {
-        RuleFor(request => request.SetName)
-            .MustAsync(
-                async (setName, cancellationToken) =>
-                {
-                    bool setWithNameExists =
-                        await _createSetRepository.SetExistsAsync(_userId, setName, null, cancellationToken);
-
-                    return !setWithNameExists;
-                }
-            )
-            .WithName(nameof(CreateSetCommand.SetName))
-            .WithMessage("'{PropertyName}' with the given name ('{PropertyValue}') exists.")
-            .WithErrorCode(ValidationErrorCodes.UniquenessValidator);
     }
 
     private void AddValidationForWordIds()

@@ -202,7 +202,6 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         CreateSetRequestPayload: {
-            setName?: string;
             wordIds?: string[];
         };
         CreateSetResponse: {
@@ -317,7 +316,6 @@ export interface components {
             createdAt?: string;
         };
         UpdateSetRequestPayload: {
-            setName?: string;
             wordIds?: string[];
         };
         UpdateWordRequestPayload: {

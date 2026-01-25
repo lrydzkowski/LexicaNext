@@ -65,8 +65,6 @@ public class CreateSetRequest
 
 public class CreateSetRequestPayload
 {
-    public string SetName { get; init; } = "";
-
     public List<string> WordIds { get; set; } = [];
 }
 
