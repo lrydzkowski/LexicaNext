@@ -1,6 +1,4 @@
 using FluentValidation;
-using LexicaNext.Core.Commands.CreateSet.Interfaces;
-using LexicaNext.Core.Commands.CreateSet.Models;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Queries.GetWord.Interfaces;
@@ -9,17 +7,14 @@ namespace LexicaNext.Core.Commands.CreateSet.Services;
 
 public class CreateSetRequestValidator : AbstractValidator<CreateSetRequest>
 {
-    private readonly ICreateSetRepository _createSetRepository;
     private readonly IGetWordRepository _getWordRepository;
     private readonly IUserContextResolver _userContextResolver;
 
     public CreateSetRequestValidator(
-        ICreateSetRepository createSetRepository,
         IGetWordRepository getWordRepository,
         IUserContextResolver userContextResolver
     )
     {
-        _createSetRepository = createSetRepository;
         _getWordRepository = getWordRepository;
         _userContextResolver = userContextResolver;
 
@@ -33,8 +28,8 @@ public class CreateSetRequestValidator : AbstractValidator<CreateSetRequest>
             .SetValidator(
                 request =>
                 {
-                    string userId = _userContextResolver.GetUserId();
-                    return new CreateSetRequestPayloadValidator(userId, _createSetRepository, _getWordRepository);
+                    string? userId = _userContextResolver.GetUserId();
+                    return new CreateSetRequestPayloadValidator(userId, _getWordRepository);
                 }
             );
     }
@@ -42,17 +37,14 @@ public class CreateSetRequestValidator : AbstractValidator<CreateSetRequest>
 
 internal class CreateSetRequestPayloadValidator : AbstractValidator<CreateSetRequestPayload>
 {
-    private readonly ICreateSetRepository _createSetRepository;
     private readonly IGetWordRepository _getWordRepository;
-    private readonly string _userId;
+    private readonly string? _userId;
 
     public CreateSetRequestPayloadValidator(
-        string userId,
-        ICreateSetRepository createSetRepository,
+        string? userId,
         IGetWordRepository getWordRepository
     )
     {
-        _createSetRepository = createSetRepository;
         _getWordRepository = getWordRepository;
         _userId = userId;
 
@@ -82,14 +74,18 @@ internal class CreateSetRequestPayloadValidator : AbstractValidator<CreateSetReq
             .MustAsync(
                 async (wordIds, cancellationToken) =>
                 {
+                    if (_userId is null)
+                    {
+                        return false;
+                    }
+
                     List<Guid> parsedIds = wordIds
                         .Where(id => Guid.TryParse(id, out _))
                         .Select(Guid.Parse)
                         .ToList();
-
                     if (parsedIds.Count != wordIds.Count)
                     {
-                        return true;
+                        return false;
                     }
 
                     List<Guid> existingIds = await _getWordRepository.GetExistingWordIdsAsync(

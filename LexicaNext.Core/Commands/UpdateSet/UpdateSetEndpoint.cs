@@ -30,7 +30,7 @@ public static class UpdateSetEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<NotFound, ProblemHttpResult, NoContent>> HandleAsync(
+    private static async Task<Results<NotFound, ProblemHttpResult, NoContent, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] UpdateSetRequest request,
         [FromServices] IValidator<UpdateSetRequest> validator,
         [FromServices] IUpdateSetCommandMapper updateSetCommandMapper,
@@ -44,7 +44,12 @@ public static class UpdateSetEndpoint
             return TypedResults.NotFound();
         }
 
-        string userId = userContextResolver.GetUserId();
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
         bool exists = await updateSetRepository.SetExistsAsync(userId, setId, cancellationToken);
         if (!exists)
         {

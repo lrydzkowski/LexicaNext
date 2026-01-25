@@ -31,7 +31,7 @@ public static class GetWordsEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<ProblemHttpResult, Ok<GetWordsResponse>>> HandleAsync(
+    private static async Task<Results<ProblemHttpResult, Ok<GetWordsResponse>, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] GetWordsRequest getWordsRequest,
         [FromServices] IGetWordsRequestProcessor processor,
         [FromServices] IValidator<GetWordsRequest> validator,
@@ -49,7 +49,12 @@ public static class GetWordsEndpoint
             return TypedResults.Problem(validationResult.ToProblemDetails());
         }
 
-        string userId = userContextResolver.GetUserId();
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
         ListParameters listParameters = listParametersMapper.Map(getWordsRequest);
         ListInfo<WordRecord> wordRecords =
             await getWordsRepository.GetWordsAsync(userId, listParameters, cancellationToken);

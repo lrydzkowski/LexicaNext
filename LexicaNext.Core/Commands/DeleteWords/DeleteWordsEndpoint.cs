@@ -23,14 +23,19 @@ public static class DeleteWordsEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<NoContent> HandleAsync(
+    private static async Task<Results<NoContent, UnauthorizedHttpResult>> HandleAsync(
         [FromBody] DeleteWordsRequest request,
         [FromServices] IDeleteWordsRepository deleteWordsRepository,
         [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
-        string userId = userContextResolver.GetUserId();
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
         List<Guid> wordIds = request.Ids
             .Select(id => Guid.TryParse(id, out Guid guid) ? guid : (Guid?)null)
             .Where(guid => guid.HasValue)

@@ -24,13 +24,18 @@ public static class GetProposedSetNameEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Ok<GetProposedSetNameResponse>> HandleAsync(
+    private static async Task<Results<Ok<GetProposedSetNameResponse>, UnauthorizedHttpResult>> HandleAsync(
         [FromServices] IGetProposedSetNameRepository repository,
         [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
-        string userId = userContextResolver.GetUserId();
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
         string proposedName = await repository.GetProposedSetNameAsync(userId, cancellationToken);
 
         return TypedResults.Ok(new GetProposedSetNameResponse { ProposedName = proposedName });

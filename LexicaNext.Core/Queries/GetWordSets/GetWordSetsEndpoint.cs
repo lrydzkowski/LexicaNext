@@ -25,7 +25,7 @@ public static class GetWordSetsEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<NotFound, Ok<GetWordSetsResponse>>> HandleAsync(
+    private static async Task<Results<NotFound, Ok<GetWordSetsResponse>, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] GetWordSetsRequest request,
         [FromServices] IGetWordSetsRepository getWordSetsRepository,
         [FromServices] IUserContextResolver userContextResolver,
@@ -37,7 +37,12 @@ public static class GetWordSetsEndpoint
             return TypedResults.NotFound();
         }
 
-        string userId = userContextResolver.GetUserId();
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
         List<SetRecord> sets = await getWordSetsRepository.GetWordSetsAsync(userId, wordId, cancellationToken);
         GetWordSetsResponse response = new()
         {

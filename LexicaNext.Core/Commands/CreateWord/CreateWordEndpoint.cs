@@ -29,7 +29,7 @@ public static class CreateWordEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<ProblemHttpResult, Created<CreateWordResponse>>> HandleAsync(
+    private static async Task<Results<ProblemHttpResult, Created<CreateWordResponse>, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] CreateWordRequest request,
         [FromServices] IValidator<CreateWordRequest> validator,
         [FromServices] ICreateWordCommandMapper createWordCommandMapper,
@@ -38,13 +38,18 @@ public static class CreateWordEndpoint
         CancellationToken cancellationToken
     )
     {
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
         ValidationResult? validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {
             return TypedResults.Problem(validationResult.ToProblemDetails());
         }
 
-        string userId = userContextResolver.GetUserId();
         CreateWordCommand command = createWordCommandMapper.Map(userId, request);
         Guid wordId = await createWordRepository.CreateWordAsync(command, cancellationToken);
         CreateWordResponse response = new()

@@ -33,7 +33,7 @@ public class CreateWordRequestValidator : AbstractValidator<CreateWordRequest>
                         .SetValidator(
                             request =>
                             {
-                                string userId = _userContextResolver.GetUserId();
+                                string? userId = _userContextResolver.GetUserId();
                                 return new CreateWordRequestPayloadValidator(userId, _createWordRepository);
                             }
                         );
@@ -44,9 +44,9 @@ public class CreateWordRequestValidator : AbstractValidator<CreateWordRequest>
 
 internal class CreateWordRequestPayloadValidator : AbstractValidator<CreateWordRequestPayload>
 {
-    private readonly string _userId;
+    private readonly string? _userId;
 
-    public CreateWordRequestPayloadValidator(string userId, ICreateWordRepository createWordRepository)
+    public CreateWordRequestPayloadValidator(string? userId, ICreateWordRepository createWordRepository)
     {
         _userId = userId;
         AddValidationForWord(createWordRepository);
@@ -70,6 +70,11 @@ internal class CreateWordRequestPayloadValidator : AbstractValidator<CreateWordR
             .MustAsync(
                 async (request, cancellationToken) =>
                 {
+                    if (_userId is null)
+                    {
+                        return false;
+                    }
+
                     bool exists = await createWordRepository.WordExistsAsync(
                         _userId,
                         request.Word,

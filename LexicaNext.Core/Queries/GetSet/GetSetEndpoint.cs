@@ -26,7 +26,7 @@ public static class GetSetEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<NotFound, Ok<GetSetResponse>>> HandleAsync(
+    private static async Task<Results<NotFound, Ok<GetSetResponse>, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] GetSetRequest request,
         [FromServices] IGetSetRepository getSetRepository,
         [FromServices] ISetMapper setMapper,
@@ -39,7 +39,12 @@ public static class GetSetEndpoint
             return TypedResults.NotFound();
         }
 
-        string userId = userContextResolver.GetUserId();
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
         Set? set = await getSetRepository.GetSetAsync(userId, setId, cancellationToken);
         if (set is null)
         {

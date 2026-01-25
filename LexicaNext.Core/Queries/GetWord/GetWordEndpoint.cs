@@ -26,7 +26,7 @@ public static class GetWordEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<NotFound, Ok<GetWordResponse>>> HandleAsync(
+    private static async Task<Results<NotFound, Ok<GetWordResponse>, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] GetWordRequest request,
         [FromServices] IGetWordRepository getWordRepository,
         [FromServices] IWordMapper wordMapper,
@@ -39,7 +39,12 @@ public static class GetWordEndpoint
             return TypedResults.NotFound();
         }
 
-        string userId = userContextResolver.GetUserId();
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
         Word? word = await getWordRepository.GetWordAsync(userId, wordId, cancellationToken);
         if (word is null)
         {

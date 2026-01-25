@@ -13,19 +13,19 @@ internal class UserContextResolver : IUserContextResolver, IScopedService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public string GetUserId()
+    public string? GetUserId()
     {
         HttpContext? context = _httpContextAccessor.HttpContext;
         if (context == null)
         {
-            throw new InvalidOperationException("HttpContext is not available");
+            return null;
         }
 
         Claim? userIdClaim =
             context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier || c.Type == "sub");
         if (userIdClaim == null)
         {
-            throw new InvalidOperationException("User ID claim not found");
+            return null;
         }
 
         return userIdClaim.Value;

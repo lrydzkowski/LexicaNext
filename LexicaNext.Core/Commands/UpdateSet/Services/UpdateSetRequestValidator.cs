@@ -32,13 +32,10 @@ public class UpdateSetRequestValidator : AbstractValidator<UpdateSetRequest>
             .SetValidator(
                 x =>
                 {
-                    Guid.TryParse(x.SetId, out Guid parsedSetId);
-                    string userId = _userContextResolver.GetUserId();
+                    string? userId = _userContextResolver.GetUserId();
 
                     return new UpdateSetRequestPayloadValidator(
                         userId,
-                        parsedSetId,
-                        _updateSetRepository,
                         _getWordRepository
                     );
                 }
@@ -49,19 +46,13 @@ public class UpdateSetRequestValidator : AbstractValidator<UpdateSetRequest>
 internal class UpdateSetRequestPayloadValidator : AbstractValidator<UpdateSetRequestPayload>
 {
     private readonly IGetWordRepository _getWordRepository;
-    private readonly Guid _setId;
-    private readonly IUpdateSetRepository _updateSetRepository;
-    private readonly string _userId;
+    private readonly string? _userId;
 
     public UpdateSetRequestPayloadValidator(
-        string userId,
-        Guid setId,
-        IUpdateSetRepository updateSetRepository,
+        string? userId,
         IGetWordRepository getWordRepository
     )
     {
-        _setId = setId;
-        _updateSetRepository = updateSetRepository;
         _getWordRepository = getWordRepository;
         _userId = userId;
 
@@ -91,14 +82,18 @@ internal class UpdateSetRequestPayloadValidator : AbstractValidator<UpdateSetReq
             .MustAsync(
                 async (wordIds, cancellationToken) =>
                 {
+                    if (_userId is null)
+                    {
+                        return false;
+                    }
+
                     List<Guid> parsedIds = wordIds
                         .Where(id => Guid.TryParse(id, out _))
                         .Select(Guid.Parse)
                         .ToList();
-
                     if (parsedIds.Count != wordIds.Count)
                     {
-                        return true;
+                        return false;
                     }
 
                     List<Guid> existingIds = await _getWordRepository.GetExistingWordIdsAsync(

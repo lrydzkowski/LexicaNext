@@ -34,7 +34,7 @@ public class UpdateWordRequestValidator : AbstractValidator<UpdateWordRequest>
                     .SetValidator(
                         request =>
                         {
-                            string userId = _userContextResolver.GetUserId();
+                            string? userId = _userContextResolver.GetUserId();
                             return new UpdateWordRequestPayloadValidator(
                                 userId,
                                 Guid.Parse(request.WordId),
@@ -49,9 +49,9 @@ public class UpdateWordRequestValidator : AbstractValidator<UpdateWordRequest>
 
 internal class UpdateWordRequestPayloadValidator : AbstractValidator<UpdateWordRequestPayload>
 {
-    private readonly string _userId;
+    private readonly string? _userId;
 
-    public UpdateWordRequestPayloadValidator(string userId, Guid wordId, IUpdateWordRepository updateWordRepository)
+    public UpdateWordRequestPayloadValidator(string? userId, Guid wordId, IUpdateWordRepository updateWordRepository)
     {
         _userId = userId;
         AddValidationForWord(wordId, updateWordRepository);
@@ -75,6 +75,11 @@ internal class UpdateWordRequestPayloadValidator : AbstractValidator<UpdateWordR
             .MustAsync(
                 async (request, cancellationToken) =>
                 {
+                    if (_userId is null)
+                    {
+                        return false;
+                    }
+
                     bool exists = await updateWordRepository.WordExistsAsync(
                         _userId,
                         request.Word,

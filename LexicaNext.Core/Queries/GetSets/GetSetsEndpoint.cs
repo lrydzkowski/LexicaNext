@@ -30,7 +30,7 @@ public static class GetSetsEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<ProblemHttpResult, Ok<GetSetsResponse>>> HandleAsync(
+    private static async Task<Results<ProblemHttpResult, Ok<GetSetsResponse>, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] GetSetsRequest getSetsRequest,
         [FromServices] IGetSetsRequestProcessor processor,
         [FromServices] IValidator<GetSetsRequest> validator,
@@ -41,7 +41,12 @@ public static class GetSetsEndpoint
         CancellationToken cancellationToken
     )
     {
-        string userId = userContextResolver.GetUserId();
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
         getSetsRequest = processor.Process(getSetsRequest);
         ValidationResult? validationResult = await validator.ValidateAsync(getSetsRequest, cancellationToken);
         if (!validationResult.IsValid)

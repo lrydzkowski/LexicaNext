@@ -30,7 +30,7 @@ public static class UpdateWordEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<NotFound, ProblemHttpResult, NoContent>> HandleAsync(
+    private static async Task<Results<NotFound, ProblemHttpResult, NoContent, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] UpdateWordRequest request,
         [FromServices] IValidator<UpdateWordRequest> validator,
         [FromServices] IUpdateWordCommandMapper updateWordCommandMapper,
@@ -44,7 +44,12 @@ public static class UpdateWordEndpoint
             return TypedResults.NotFound();
         }
 
-        string userId = userContextResolver.GetUserId();
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
         bool exists = await updateWordRepository.WordExistsAsync(userId, wordId, cancellationToken);
         if (!exists)
         {
