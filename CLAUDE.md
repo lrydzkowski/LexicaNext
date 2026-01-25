@@ -52,6 +52,7 @@ This is a full-stack English vocabulary learning application with a React fronte
 
 **Study Modes:**
 
+- Content Mode - Review vocabulary sets with translations and examples
 - Spelling Mode - Practice spelling vocabulary words
 - Full Mode - Complete vocabulary practice
 - Open Questions Mode - Answer open-ended questions
@@ -80,6 +81,7 @@ This is a full-stack English vocabulary learning application with a React fronte
 - `Entry`: Individual word with translations
 - `WordType`: Enumeration for grammatical categories
 - `Recording`: Audio pronunciation files
+- `Answer`: Learning progress tracking
 
 ### Database Schema
 
@@ -93,14 +95,33 @@ PostgreSQL with Entity Framework Core:
 
 ### API Endpoints
 
-RESTful API at `/api/sets`:
+RESTful API organized by resource:
+
+**Sets (`/api/sets`)**
 
 - `GET /api/sets` - List sets (paginated, sortable, filterable)
 - `GET /api/sets/{id}` - Get specific set
+- `GET /api/sets/proposed-name` - Get next proposed set name
 - `POST /api/sets` - Create new set
 - `PUT /api/sets/{id}` - Update set
 - `DELETE /api/sets/{id}` - Delete set
+- `POST /api/sets/{setId}/translations/generate` - Generate AI translations
+- `POST /api/sets/{setId}/examples/generate` - Generate AI example sentences
+
+**Words (`/api/words`)**
+
+- `GET /api/words/{wordId}` - Get word by ID
+- `GET /api/words/{setId}` - List words in a set
+- `GET /api/words/{wordId}/sets` - Get sets containing a word
+- `POST /api/words` - Create word
+- `PUT /api/words/{id}` - Update word
+- `DELETE /api/words/{id}` - Delete words
+
+**Other**
+
 - `GET /api/recordings/{word}/{wordType}` - Get pronunciation
+- `POST /api/answers` - Register learning answer
+- `GET /api/status` - App status
 
 ### Authentication
 
@@ -122,6 +143,7 @@ Auth0 integration with JWT Bearer tokens and role-based authorization.
 - **Modern .NET**: Nullable reference types, treat warnings as errors
 - **Health Checks**: Database and external service monitoring
 - **Docker Support**: Multi-stage builds with Node.js frontend and .NET backend
+- **AI Integration**: Azure Foundry for translation and example sentence generation
 
 ## Project Structure
 
@@ -142,3 +164,8 @@ Auth0 integration with JWT Bearer tokens and role-based authorization.
 - `LexicaNext.Infrastructure/Db/` - Database context and repositories
 - `LexicaNext.Infrastructure/EnglishDictionary/` - External API integration
 - `LexicaNext.WebApp/` - API endpoints and configuration
+
+### Tools (`Tools/mcp-server/`)
+
+- MCP server for Claude Desktop integration
+- Provides vocabulary set management tools

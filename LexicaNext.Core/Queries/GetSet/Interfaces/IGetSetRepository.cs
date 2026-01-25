@@ -4,5 +4,5 @@ namespace LexicaNext.Core.Queries.GetSet.Interfaces;
 
 public interface IGetSetRepository
 {
-    Task<Set?> GetSetAsync(Guid setId, CancellationToken cancellationToken = default);
+    Task<Set?> GetSetAsync(string userId, Guid setId, CancellationToken cancellationToken = default);
 }

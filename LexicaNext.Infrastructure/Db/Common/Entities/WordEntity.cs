@@ -6,6 +6,8 @@ internal class WordEntity
 
     public Guid WordId { get; set; }
 
+    public string UserId { get; set; } = "";
+
     public string Word { get; set; } = "";
 
     public Guid WordTypeId { get; set; }

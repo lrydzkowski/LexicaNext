@@ -1,5 +1,6 @@
 using LexicaNext.Core.Commands.DeleteWords.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Auth;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -22,19 +23,26 @@ public static class DeleteWordsEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<NoContent> HandleAsync(
+    private static async Task<Results<NoContent, UnauthorizedHttpResult>> HandleAsync(
         [FromBody] DeleteWordsRequest request,
         [FromServices] IDeleteWordsRepository deleteWordsRepository,
+        [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
         List<Guid> wordIds = request.Ids
             .Select(id => Guid.TryParse(id, out Guid guid) ? guid : (Guid?)null)
             .Where(guid => guid.HasValue)
             .Cast<Guid>()
             .ToList();
 
-        await deleteWordsRepository.DeleteWordsAsync(wordIds, cancellationToken);
+        await deleteWordsRepository.DeleteWordsAsync(userId, wordIds, cancellationToken);
 
         return TypedResults.NoContent();
     }

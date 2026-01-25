@@ -1,4 +1,5 @@
 using LexicaNext.Core.Common.Infrastructure.Auth;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetWord.Interfaces;
 using LexicaNext.Core.Queries.GetWord.Services;
@@ -25,10 +26,11 @@ public static class GetWordEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<NotFound, Ok<GetWordResponse>>> HandleAsync(
+    private static async Task<Results<NotFound, Ok<GetWordResponse>, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] GetWordRequest request,
         [FromServices] IGetWordRepository getWordRepository,
         [FromServices] IWordMapper wordMapper,
+        [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
@@ -37,7 +39,13 @@ public static class GetWordEndpoint
             return TypedResults.NotFound();
         }
 
-        Word? word = await getWordRepository.GetWordAsync(wordId, cancellationToken);
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        Word? word = await getWordRepository.GetWordAsync(userId, wordId, cancellationToken);
         if (word is null)
         {
             return TypedResults.NotFound();

@@ -5,6 +5,7 @@ using LexicaNext.Core.Commands.UpdateWord.Models;
 using LexicaNext.Core.Commands.UpdateWord.Services;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -29,11 +30,12 @@ public static class UpdateWordEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<NotFound, ProblemHttpResult, NoContent>> HandleAsync(
+    private static async Task<Results<NotFound, ProblemHttpResult, NoContent, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] UpdateWordRequest request,
         [FromServices] IValidator<UpdateWordRequest> validator,
         [FromServices] IUpdateWordCommandMapper updateWordCommandMapper,
         [FromServices] IUpdateWordRepository updateWordRepository,
+        [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
@@ -42,7 +44,13 @@ public static class UpdateWordEndpoint
             return TypedResults.NotFound();
         }
 
-        bool exists = await updateWordRepository.WordExistsAsync(wordId, cancellationToken);
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        bool exists = await updateWordRepository.WordExistsAsync(userId, wordId, cancellationToken);
         if (!exists)
         {
             return TypedResults.NotFound();
@@ -54,7 +62,7 @@ public static class UpdateWordEndpoint
             return TypedResults.Problem(validationResult.ToProblemDetails());
         }
 
-        UpdateWordCommand command = updateWordCommandMapper.Map(request);
+        UpdateWordCommand command = updateWordCommandMapper.Map(userId, request);
         await updateWordRepository.UpdateWordAsync(command, cancellationToken);
 
         return TypedResults.NoContent();

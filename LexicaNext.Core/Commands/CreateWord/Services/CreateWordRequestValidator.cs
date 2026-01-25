@@ -1,5 +1,6 @@
 using FluentValidation;
 using LexicaNext.Core.Commands.CreateWord.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 
@@ -7,18 +8,47 @@ namespace LexicaNext.Core.Commands.CreateWord.Services;
 
 public class CreateWordRequestValidator : AbstractValidator<CreateWordRequest>
 {
-    public CreateWordRequestValidator(ICreateWordRepository createWordRepository)
+    private readonly ICreateWordRepository _createWordRepository;
+    private readonly IUserContextResolver _userContextResolver;
+
+    public CreateWordRequestValidator(
+        ICreateWordRepository createWordRepository,
+        IUserContextResolver userContextResolver
+    )
+    {
+        _createWordRepository = createWordRepository;
+        _userContextResolver = userContextResolver;
+
+        AddValidationForPayload();
+    }
+
+    private void AddValidationForPayload()
     {
         RuleFor(request => request.Payload!)
             .NotNull()
-            .SetValidator(new CreateWordRequestPayloadValidator(createWordRepository));
+            .DependentRules(
+                () =>
+                {
+                    RuleFor(request => request.Payload!)
+                        .SetValidator(
+                            request =>
+                            {
+                                string? userId = _userContextResolver.GetUserId();
+                                return new CreateWordRequestPayloadValidator(userId, _createWordRepository);
+                            }
+                        );
+                }
+            );
     }
 }
 
 internal class CreateWordRequestPayloadValidator : AbstractValidator<CreateWordRequestPayload>
 {
-    public CreateWordRequestPayloadValidator(ICreateWordRepository createWordRepository)
+    private readonly string? _userId;
+
+    public CreateWordRequestPayloadValidator(string? userId, ICreateWordRepository createWordRepository)
     {
+        _userId = userId;
         AddValidationForWord(createWordRepository);
         AddValidationForWordType();
         AddValidationForTranslations();
@@ -40,7 +70,13 @@ internal class CreateWordRequestPayloadValidator : AbstractValidator<CreateWordR
             .MustAsync(
                 async (request, cancellationToken) =>
                 {
+                    if (_userId is null)
+                    {
+                        return false;
+                    }
+
                     bool exists = await createWordRepository.WordExistsAsync(
+                        _userId,
                         request.Word,
                         request.WordType,
                         cancellationToken

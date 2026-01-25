@@ -1,5 +1,6 @@
 using FluentValidation;
 using LexicaNext.Core.Commands.UpdateSet.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Queries.GetWord.Interfaces;
 
@@ -7,16 +8,19 @@ namespace LexicaNext.Core.Commands.UpdateSet.Services;
 
 public class UpdateSetRequestValidator : AbstractValidator<UpdateSetRequest>
 {
-    private readonly IUpdateSetRepository _updateSetRepository;
     private readonly IGetWordRepository _getWordRepository;
+    private readonly IUpdateSetRepository _updateSetRepository;
+    private readonly IUserContextResolver _userContextResolver;
 
     public UpdateSetRequestValidator(
         IUpdateSetRepository updateSetRepository,
-        IGetWordRepository getWordRepository
+        IGetWordRepository getWordRepository,
+        IUserContextResolver userContextResolver
     )
     {
         _updateSetRepository = updateSetRepository;
         _getWordRepository = getWordRepository;
+        _userContextResolver = userContextResolver;
 
         AddValidationForPayload();
     }
@@ -28,9 +32,12 @@ public class UpdateSetRequestValidator : AbstractValidator<UpdateSetRequest>
             .SetValidator(
                 x =>
                 {
-                    Guid.TryParse(x.SetId, out Guid parsedSetId);
+                    string? userId = _userContextResolver.GetUserId();
 
-                    return new UpdateSetRequestPayloadValidator(parsedSetId, _updateSetRepository, _getWordRepository);
+                    return new UpdateSetRequestPayloadValidator(
+                        userId,
+                        _getWordRepository
+                    );
                 }
             );
     }
@@ -38,52 +45,18 @@ public class UpdateSetRequestValidator : AbstractValidator<UpdateSetRequest>
 
 internal class UpdateSetRequestPayloadValidator : AbstractValidator<UpdateSetRequestPayload>
 {
-    private readonly Guid _setId;
-    private readonly IUpdateSetRepository _updateSetRepository;
     private readonly IGetWordRepository _getWordRepository;
+    private readonly string? _userId;
 
     public UpdateSetRequestPayloadValidator(
-        Guid setId,
-        IUpdateSetRepository updateSetRepository,
+        string? userId,
         IGetWordRepository getWordRepository
     )
     {
-        _setId = setId;
-        _updateSetRepository = updateSetRepository;
         _getWordRepository = getWordRepository;
+        _userId = userId;
 
-        AddValidationForSetName();
         AddValidationForWordIds();
-    }
-
-    private void AddValidationForSetName()
-    {
-        RuleFor(request => request.SetName)
-            .NotEmpty()
-            .MaximumLength(200)
-            .DependentRules(AddValidationForSetNameUniqueness)
-            .WithName(nameof(UpdateSetRequestPayload.SetName));
-    }
-
-    private void AddValidationForSetNameUniqueness()
-    {
-        RuleFor(request => request)
-            .MustAsync(
-                async (updateSetRequest, cancellationToken) =>
-                {
-                    bool setWithNameExists =
-                        await _updateSetRepository.SetExistsAsync(
-                            updateSetRequest.SetName,
-                            _setId,
-                            cancellationToken
-                        );
-
-                    return !setWithNameExists;
-                }
-            )
-            .WithName(nameof(UpdateSetRequestPayload.SetName))
-            .WithMessage(x => $"'{{PropertyName}}' with the given name ('{x.SetName}') exists.")
-            .WithErrorCode(ValidationErrorCodes.UniquenessValidator);
     }
 
     private void AddValidationForWordIds()
@@ -109,17 +82,22 @@ internal class UpdateSetRequestPayloadValidator : AbstractValidator<UpdateSetReq
             .MustAsync(
                 async (wordIds, cancellationToken) =>
                 {
+                    if (_userId is null)
+                    {
+                        return false;
+                    }
+
                     List<Guid> parsedIds = wordIds
                         .Where(id => Guid.TryParse(id, out _))
                         .Select(Guid.Parse)
                         .ToList();
-
                     if (parsedIds.Count != wordIds.Count)
                     {
-                        return true;
+                        return false;
                     }
 
                     List<Guid> existingIds = await _getWordRepository.GetExistingWordIdsAsync(
+                        _userId,
                         parsedIds,
                         cancellationToken
                     );

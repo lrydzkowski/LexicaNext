@@ -1,4 +1,4 @@
-﻿using LexicaNext.Infrastructure.Db.Common.Entities;
+using LexicaNext.Infrastructure.Db.Common.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -29,14 +29,20 @@ internal class SetEntityTypeConfiguration : IEntityTypeConfiguration<SetEntity>
             .HasColumnName("set_id")
             .IsRequired();
 
+        builder.Property(entity => entity.UserId)
+            .HasColumnName("user_id")
+            .IsRequired()
+            .HasMaxLength(200);
+
         builder.Property(entity => entity.Name)
             .HasColumnName("name")
             .IsRequired()
             .HasMaxLength(200);
 
-        builder.HasIndex(entity => entity.Name)
-            .IsUnique()
-            .AreNullsDistinct(true);
+        builder.HasIndex(entity => entity.UserId);
+
+        builder.HasIndex(entity => new { entity.UserId, entity.Name })
+            .AreNullsDistinct();
 
         builder.Property(entity => entity.CreatedAt)
             .HasColumnName("created_at")

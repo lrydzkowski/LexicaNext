@@ -11,8 +11,6 @@ internal static class EndpointHelpers
 
     public static IReadOnlyList<EndpointInfo> GetEndpointsWithAuth(
         EndpointDataSource endpointDataSource,
-        string? authenticationScheme = null,
-        string? policyName = null,
         IReadOnlyList<EndpointInfo>? ignoredEndpoints = null
     )
     {
@@ -21,8 +19,7 @@ internal static class EndpointHelpers
             .Where(endpoint => endpoint is RouteEndpoint)
             .Cast<RouteEndpoint>()
             .Where(endpoint => !IsFallbackEndpoint(endpoint))
-            .Where(endpoint => HasAuthenticationScheme(endpoint, authenticationScheme))
-            .Where(endpoint => HasAuthPolicy(endpoint, policyName))
+            .Where(endpoint => !AllowAnonymous(endpoint))
             .SelectMany(MapToEndpointsInfo)
             .Where(endpoint => FilterIgnoredEndpoints(ignoredEndpoints, endpoint))
             .OrderBy(endpoint => endpoint.Path)
@@ -32,40 +29,9 @@ internal static class EndpointHelpers
         return endpoints;
     }
 
-    private static bool HasAuthenticationScheme(RouteEndpoint endpoint, string? scheme)
+    private static bool AllowAnonymous(RouteEndpoint endpoint)
     {
-        if (endpoint.Metadata.OfType<AllowAnonymousAttribute>().Any())
-        {
-            return false;
-        }
-
-        List<AuthorizeAttribute> authorizeAttributes = endpoint.Metadata.OfType<AuthorizeAttribute>().ToList();
-        if (scheme is null)
-        {
-            return authorizeAttributes.Count == 0
-                   || authorizeAttributes.All(authorizeAttribute => authorizeAttribute.AuthenticationSchemes is null);
-        }
-
-        return authorizeAttributes.Any(
-            authorizeAttribute =>
-                authorizeAttribute.AuthenticationSchemes.EqualsIgnoreCase(scheme)
-        );
-    }
-
-    private static bool HasAuthPolicy(RouteEndpoint endpoint, string? policyName)
-    {
-        if (endpoint.Metadata.OfType<AllowAnonymousAttribute>().Any())
-        {
-            return false;
-        }
-
-        if (policyName is null)
-        {
-            return true;
-        }
-
-        return endpoint.Metadata.OfType<AuthorizeAttribute>()
-            .Any(x => x.Policy?.EqualsIgnoreCase(policyName) == true);
+        return endpoint.Metadata.OfType<AllowAnonymousAttribute>().Any();
     }
 
     private static bool IsFallbackEndpoint(RouteEndpoint endpoint)

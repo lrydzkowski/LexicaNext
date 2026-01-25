@@ -1,6 +1,5 @@
 using FluentValidation;
-using LexicaNext.Core.Commands.CreateSet.Interfaces;
-using LexicaNext.Core.Commands.CreateSet.Models;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Queries.GetWord.Interfaces;
 
@@ -8,16 +7,16 @@ namespace LexicaNext.Core.Commands.CreateSet.Services;
 
 public class CreateSetRequestValidator : AbstractValidator<CreateSetRequest>
 {
-    private readonly ICreateSetRepository _createSetRepository;
     private readonly IGetWordRepository _getWordRepository;
+    private readonly IUserContextResolver _userContextResolver;
 
     public CreateSetRequestValidator(
-        ICreateSetRepository createSetRepository,
-        IGetWordRepository getWordRepository
+        IGetWordRepository getWordRepository,
+        IUserContextResolver userContextResolver
     )
     {
-        _createSetRepository = createSetRepository;
         _getWordRepository = getWordRepository;
+        _userContextResolver = userContextResolver;
 
         AddValidationForPayload();
     }
@@ -26,51 +25,30 @@ public class CreateSetRequestValidator : AbstractValidator<CreateSetRequest>
     {
         RuleFor(request => request.Payload!)
             .NotNull()
-            .SetValidator(new CreateSetRequestPayloadValidator(_createSetRepository, _getWordRepository));
+            .SetValidator(
+                request =>
+                {
+                    string? userId = _userContextResolver.GetUserId();
+                    return new CreateSetRequestPayloadValidator(userId, _getWordRepository);
+                }
+            );
     }
 }
 
 internal class CreateSetRequestPayloadValidator : AbstractValidator<CreateSetRequestPayload>
 {
-    private readonly ICreateSetRepository _createSetRepository;
     private readonly IGetWordRepository _getWordRepository;
+    private readonly string? _userId;
 
     public CreateSetRequestPayloadValidator(
-        ICreateSetRepository createSetRepository,
+        string? userId,
         IGetWordRepository getWordRepository
     )
     {
-        _createSetRepository = createSetRepository;
         _getWordRepository = getWordRepository;
+        _userId = userId;
 
-        AddValidationForSetName();
         AddValidationForWordIds();
-    }
-
-    private void AddValidationForSetName()
-    {
-        RuleFor(request => request.SetName)
-            .NotEmpty()
-            .MaximumLength(200)
-            .DependentRules(AddValidationForSetNameUniqueness)
-            .WithName(nameof(CreateSetCommand.SetName));
-    }
-
-    private void AddValidationForSetNameUniqueness()
-    {
-        RuleFor(request => request.SetName)
-            .MustAsync(
-                async (setName, cancellationToken) =>
-                {
-                    bool setWithNameExists =
-                        await _createSetRepository.SetExistsAsync(setName, null, cancellationToken);
-
-                    return !setWithNameExists;
-                }
-            )
-            .WithName(nameof(CreateSetCommand.SetName))
-            .WithMessage("'{PropertyName}' with the given name ('{PropertyValue}') exists.")
-            .WithErrorCode(ValidationErrorCodes.UniquenessValidator);
     }
 
     private void AddValidationForWordIds()
@@ -96,17 +74,22 @@ internal class CreateSetRequestPayloadValidator : AbstractValidator<CreateSetReq
             .MustAsync(
                 async (wordIds, cancellationToken) =>
                 {
+                    if (_userId is null)
+                    {
+                        return false;
+                    }
+
                     List<Guid> parsedIds = wordIds
                         .Where(id => Guid.TryParse(id, out _))
                         .Select(Guid.Parse)
                         .ToList();
-
                     if (parsedIds.Count != wordIds.Count)
                     {
-                        return true;
+                        return false;
                     }
 
                     List<Guid> existingIds = await _getWordRepository.GetExistingWordIdsAsync(
+                        _userId,
                         parsedIds,
                         cancellationToken
                     );

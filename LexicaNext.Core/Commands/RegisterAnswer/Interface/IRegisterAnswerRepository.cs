@@ -4,5 +4,5 @@ namespace LexicaNext.Core.Commands.RegisterAnswer.Interface;
 
 public interface IRegisterAnswerRepository
 {
-    public Task RegisterAnswerAsync(RegisterAnswerCommand registerAnswerCommand);
+    Task RegisterAnswerAsync(RegisterAnswerCommand registerAnswerCommand);
 }

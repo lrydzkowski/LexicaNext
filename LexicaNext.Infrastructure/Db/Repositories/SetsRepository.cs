@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using LexicaNext.Core.Commands.CreateSet.Interfaces;
 using LexicaNext.Core.Commands.CreateSet.Models;
 using LexicaNext.Core.Commands.DeleteSets.Interfaces;
@@ -39,6 +38,7 @@ internal class SetsRepository
     }
 
     public async Task<bool> SetExistsAsync(
+        string userId,
         string setName,
         Guid? ignoreSetId,
         CancellationToken cancellationToken = default
@@ -48,6 +48,7 @@ internal class SetsRepository
             .Where(
                 entity => entity.Name.ToLower() == setName.ToLower()
                           && (ignoreSetId == null || entity.SetId != ignoreSetId)
+                          && entity.UserId == userId
             )
             .Select(entity => entity.Name)
             .AnyAsync(cancellationToken);
@@ -60,10 +61,13 @@ internal class SetsRepository
         CancellationToken cancellationToken = default
     )
     {
+        UserSetSequenceEntity sequenceEntity =
+            await GetOrCreateSequenceAsync(createSetCommand.UserId, cancellationToken);
         SetEntity setEntity = new()
         {
             SetId = Guid.CreateVersion7(),
-            Name = createSetCommand.SetName,
+            UserId = createSetCommand.UserId,
+            Name = BuildSetName(sequenceEntity),
             CreatedAt = _dateTimeOffsetProvider.UtcNow
         };
         await _dbContext.Sets.AddAsync(setEntity, cancellationToken);
@@ -80,14 +84,20 @@ internal class SetsRepository
             .ToList();
         await _dbContext.SetWords.AddRangeAsync(setWordEntities, cancellationToken);
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        sequenceEntity.NextValue++;
+        if (sequenceEntity.NextValue > 999999)
+        {
+            sequenceEntity.NextValue = 1;
+        }
 
-        await UpdateSequenceIfMatchesPatternAsync(createSetCommand.SetName, cancellationToken);
+        sequenceEntity.LastUpdated = _dateTimeOffsetProvider.UtcNow;
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
         return setEntity.SetId;
     }
 
-    public async Task DeleteSetsAsync(List<Guid> setIds, CancellationToken cancellationToken = default)
+    public async Task DeleteSetsAsync(string userId, List<Guid> setIds, CancellationToken cancellationToken = default)
     {
         if (setIds.Count == 0)
         {
@@ -95,27 +105,27 @@ internal class SetsRepository
         }
 
         await _dbContext.Sets
-            .Where(entity => setIds.Contains(entity.SetId))
+            .Where(entity => setIds.Contains(entity.SetId) && entity.UserId == userId)
             .ExecuteDeleteAsync(cancellationToken);
     }
 
-    public async Task<string> GetProposedSetNameAsync(CancellationToken cancellationToken = default)
+    public async Task<string> GetProposedSetNameAsync(string userId, CancellationToken cancellationToken = default)
     {
-        long nextValue = await _dbContext.Database
-            .SqlQuery<long>($"SELECT COALESCE(last_value, 0) AS \"Value\" FROM set_name_sequence")
-            .FirstAsync(cancellationToken);
+        UserSetSequenceEntity sequenceEntity = await GetOrCreateSequenceAsync(userId, cancellationToken);
+        string sequence = BuildSetName(sequenceEntity);
 
-        return $"set_{nextValue:D4}";
+        return sequence;
     }
 
-    public async Task<Set?> GetSetAsync(Guid setId, CancellationToken cancellationToken = default)
+    public async Task<Set?> GetSetAsync(string userId, Guid setId, CancellationToken cancellationToken = default)
     {
         Set? set = await _dbContext.Sets.AsNoTracking()
-            .Where(setEntity => setEntity.SetId == setId)
+            .Where(setEntity => setEntity.SetId == setId && setEntity.UserId == userId)
             .Select(
                 setEntity => new Set
                 {
                     SetId = setEntity.SetId,
+                    UserId = setEntity.UserId,
                     Name = setEntity.Name,
                     CreatedAt = setEntity.CreatedAt,
                     Entries = setEntity.SetWords.OrderBy(sw => sw.Order)
@@ -142,6 +152,7 @@ internal class SetsRepository
     }
 
     public async Task<ListInfo<SetRecord>> GetSetsAsync(
+        string userId,
         ListParameters listParameters,
         CancellationToken cancellationToken = default
     )
@@ -152,6 +163,7 @@ internal class SetsRepository
         List<string> fieldsAvailableToFilter = ["name", "createdAt"];
 
         IQueryable<SetEntity> query = _dbContext.Sets.AsNoTracking()
+            .Where(entity => entity.UserId == userId)
             .Sort(fieldsAvailableToSort, listParameters.Sorting, defaultSortingFieldName, defaultSortingOrder)
             .Filter(fieldsAvailableToFilter, listParameters.Search);
         List<SetRecord> sets = await query
@@ -182,13 +194,14 @@ internal class SetsRepository
     {
         SetEntity? setEntity = await _dbContext.Sets
             .Include(s => s.SetWords)
-            .FirstOrDefaultAsync(s => s.SetId == updateSetCommand.SetId, cancellationToken);
+            .FirstOrDefaultAsync(
+                s => s.SetId == updateSetCommand.SetId && s.UserId == updateSetCommand.UserId,
+                cancellationToken
+            );
         if (setEntity == null)
         {
             return;
         }
-
-        setEntity.Name = updateSetCommand.SetName;
 
         _dbContext.RemoveRange(setEntity.SetWords);
 
@@ -207,50 +220,14 @@ internal class SetsRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> SetExistsAsync(Guid setId, CancellationToken cancellationToken = default)
+    public async Task<bool> SetExistsAsync(string userId, Guid setId, CancellationToken cancellationToken = default)
     {
         bool setExists = await _dbContext.Sets.AsNoTracking()
+            .Where(entity => entity.SetId == setId && entity.UserId == userId)
             .Select(entity => entity.SetId)
-            .AnyAsync(entrySetId => entrySetId == setId, cancellationToken);
+            .AnyAsync(cancellationToken);
 
         return setExists;
-    }
-
-    public async Task DeleteSetAsync(Guid setId, CancellationToken cancellationToken = default)
-    {
-        if (!await SetExistsAsync(setId, cancellationToken))
-        {
-            return;
-        }
-
-        SetEntity setEntity = new() { SetId = setId };
-        _dbContext.Entry(setEntity).State = EntityState.Deleted;
-        await _dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    private async Task UpdateSequenceIfMatchesPatternAsync(string setName, CancellationToken cancellationToken)
-    {
-        Match match = Regex.Match(setName, @"^set_(\d+)$", RegexOptions.IgnoreCase);
-        if (!match.Success)
-        {
-            return;
-        }
-
-        if (!long.TryParse(match.Groups[1].Value, out long extractedNumber))
-        {
-            return;
-        }
-
-        long currentSequenceValue = await _dbContext.Database
-            .SqlQuery<long>($"SELECT last_value AS \"Value\" FROM set_name_sequence")
-            .FirstAsync(cancellationToken);
-
-        if (extractedNumber >= currentSequenceValue)
-        {
-            long newValue = extractedNumber + 1;
-            await _dbContext.Database
-                .ExecuteSqlAsync($"SELECT setval('set_name_sequence', {newValue})", cancellationToken);
-        }
     }
 
     private static WordType MapWordType(string wordTypeName)
@@ -258,5 +235,35 @@ internal class SetsRepository
         bool parsingResult = Enum.TryParse(wordTypeName, out WordType wordType);
 
         return !parsingResult ? WordType.None : wordType;
+    }
+
+    private async Task<UserSetSequenceEntity> GetOrCreateSequenceAsync(
+        string userId,
+        CancellationToken cancellationToken
+    )
+    {
+        UserSetSequenceEntity? sequence = await _dbContext.UserSetSequences
+            .FirstOrDefaultAsync(entity => entity.UserId == userId, cancellationToken);
+        if (sequence != null)
+        {
+            return sequence;
+        }
+
+        sequence = new UserSetSequenceEntity
+        {
+            UserSetSequenceId = Guid.CreateVersion7(),
+            UserId = userId,
+            NextValue = 1,
+            LastUpdated = _dateTimeOffsetProvider.UtcNow
+        };
+        await _dbContext.UserSetSequences.AddAsync(sequence, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return sequence;
+    }
+
+    private string BuildSetName(UserSetSequenceEntity sequenceEntity)
+    {
+        return $"set_{sequenceEntity.NextValue:D6}";
     }
 }

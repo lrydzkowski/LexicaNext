@@ -44,6 +44,11 @@ internal class WordEntityTypeConfiguration : IEntityTypeConfiguration<WordEntity
             .HasColumnName("word_id")
             .IsRequired();
 
+        builder.Property(entity => entity.UserId)
+            .HasColumnName("user_id")
+            .IsRequired()
+            .HasMaxLength(200);
+
         builder.Property(entity => entity.Word)
             .HasColumnName("word")
             .IsRequired()
@@ -63,7 +68,9 @@ internal class WordEntityTypeConfiguration : IEntityTypeConfiguration<WordEntity
 
     private void ConfigureIndexes(EntityTypeBuilder<WordEntity> builder)
     {
-        builder.HasIndex(entity => new { entity.Word, entity.WordTypeId })
+        builder.HasIndex(entity => entity.UserId);
+
+        builder.HasIndex(entity => new { entity.UserId, entity.Word, entity.WordTypeId })
             .IsUnique();
 
         builder.HasIndex(entity => entity.Word);
