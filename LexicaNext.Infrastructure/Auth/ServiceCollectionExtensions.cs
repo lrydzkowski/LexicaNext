@@ -38,7 +38,6 @@ internal static class ServiceCollectionExtensions
         return services;
     }
 
-
     private static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication(
