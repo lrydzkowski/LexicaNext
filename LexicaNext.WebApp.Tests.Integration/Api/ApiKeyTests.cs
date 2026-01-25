@@ -1,5 +1,4 @@
 using System.Net;
-using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.WebApp.Tests.Integration.Common;
 using LexicaNext.WebApp.Tests.Integration.Common.Data;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
@@ -20,7 +19,8 @@ public class ApiKeyTests
 
     private readonly IReadOnlyList<EndpointInfo> _endpointsToIgnore =
     [
-        new() { HttpMethod = HttpMethod.Get, Path = "/openapi/test.json" }
+        new() { HttpMethod = HttpMethod.Get, Path = "/openapi/test.json" },
+        new() { HttpMethod = HttpMethod.Get, Path = "/api/recordings/test" }
     ];
 
     private readonly LogMessages _logMessages;
@@ -42,8 +42,7 @@ public class ApiKeyTests
     {
         IReadOnlyList<EndpointInfo> endpointsInfo = EndpointHelpers.GetEndpointsWithAuth(
             _endpointDataSource,
-            policyName: AuthorizationPolicies.Auth0OrApiKey,
-            ignoredEndpoints: _endpointsToIgnore
+            _endpointsToIgnore
         );
         List<ApiAuth0TestsResult> results = await RunAsync(endpointsInfo, "invalid-test-key");
 

@@ -45,7 +45,7 @@ public class ApiAuth0Tests
     {
         IReadOnlyList<EndpointInfo> endpointsInfo = EndpointHelpers.GetEndpointsWithAuth(
             _endpointDataSource,
-            ignoredEndpoints: _endpointsToIgnore
+            _endpointsToIgnore
         );
         List<ApiAuth0TestsResult> results = await RunAsync(endpointsInfo);
 
@@ -57,7 +57,7 @@ public class ApiAuth0Tests
     {
         IReadOnlyList<EndpointInfo> endpointsInfo = EndpointHelpers.GetEndpointsWithAuth(
             _endpointDataSource,
-            ignoredEndpoints: _endpointsToIgnore
+            _endpointsToIgnore
         );
         string accessToken = EmbeddedFile.GetContent(
             "Api/Assets/old_access_token.txt",
@@ -75,7 +75,7 @@ public class ApiAuth0Tests
     {
         IReadOnlyList<EndpointInfo> endpointsInfo = EndpointHelpers.GetEndpointsWithAuth(
             _endpointDataSource,
-            ignoredEndpoints: _endpointsToIgnore
+            _endpointsToIgnore
         );
         string accessToken = EmbeddedFile.GetContent(
             "Api/Assets/wrong_signature_access_token.txt",
