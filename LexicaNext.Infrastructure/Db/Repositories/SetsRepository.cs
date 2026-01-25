@@ -104,23 +104,10 @@ internal class SetsRepository
 
     public async Task<string> GetProposedSetNameAsync(string userId, CancellationToken cancellationToken = default)
     {
-        UserSetSequenceEntity? sequence = await _dbContext.UserSetSequences
-            .FirstOrDefaultAsync(s => s.UserId == userId, cancellationToken);
+        UserSetSequenceEntity sequenceEntity = await GetOrCreateSequenceAsync(userId, cancellationToken);
+        string sequence = $"set_{sequenceEntity.NextValue:D4}";
 
-        if (sequence == null)
-        {
-            sequence = new UserSetSequenceEntity
-            {
-                UserSetSequenceId = Guid.CreateVersion7(),
-                UserId = userId,
-                NextValue = 1,
-                LastUpdated = _dateTimeOffsetProvider.UtcNow
-            };
-            await _dbContext.UserSetSequences.AddAsync(sequence, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-        }
-
-        return $"set_{sequence.NextValue:D4}";
+        return sequence;
     }
 
     public async Task<Set?> GetSetAsync(string userId, Guid setId, CancellationToken cancellationToken = default)
@@ -255,21 +242,7 @@ internal class SetsRepository
             return;
         }
 
-        UserSetSequenceEntity? sequence = await _dbContext.UserSetSequences
-            .FirstOrDefaultAsync(s => s.UserId == userId, cancellationToken);
-
-        if (sequence == null)
-        {
-            sequence = new UserSetSequenceEntity
-            {
-                UserSetSequenceId = Guid.CreateVersion7(),
-                UserId = userId,
-                NextValue = 1,
-                LastUpdated = _dateTimeOffsetProvider.UtcNow
-            };
-            await _dbContext.UserSetSequences.AddAsync(sequence, cancellationToken);
-        }
-
+        UserSetSequenceEntity sequence = await GetOrCreateSequenceAsync(userId, cancellationToken);
         if (extractedNumber >= sequence.NextValue)
         {
             sequence.NextValue = extractedNumber + 1;
@@ -284,5 +257,30 @@ internal class SetsRepository
         bool parsingResult = Enum.TryParse(wordTypeName, out WordType wordType);
 
         return !parsingResult ? WordType.None : wordType;
+    }
+
+    private async Task<UserSetSequenceEntity> GetOrCreateSequenceAsync(
+        string userId,
+        CancellationToken cancellationToken
+    )
+    {
+        UserSetSequenceEntity? sequence = await _dbContext.UserSetSequences
+            .FirstOrDefaultAsync(entity => entity.UserId == userId, cancellationToken);
+        if (sequence != null)
+        {
+            return sequence;
+        }
+
+        sequence = new UserSetSequenceEntity
+        {
+            UserSetSequenceId = Guid.CreateVersion7(),
+            UserId = userId,
+            NextValue = 1,
+            LastUpdated = _dateTimeOffsetProvider.UtcNow
+        };
+        await _dbContext.UserSetSequences.AddAsync(sequence, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return sequence;
     }
 }
