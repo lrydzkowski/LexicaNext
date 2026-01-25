@@ -7,7 +7,7 @@ namespace LexicaNext.Core.Commands.CreateWord.Services;
 
 public interface ICreateWordCommandMapper
 {
-    CreateWordCommand Map(CreateWordRequest request);
+    CreateWordCommand Map(string userId, CreateWordRequest request);
 }
 
 internal class CreateWordCommandMapper
@@ -20,10 +20,11 @@ internal class CreateWordCommandMapper
         _wordTypeMapper = wordTypeMapper;
     }
 
-    public CreateWordCommand Map(CreateWordRequest request)
+    public CreateWordCommand Map(string userId, CreateWordRequest request)
     {
         return new CreateWordCommand
         {
+            UserId = userId,
             Word = request.Payload?.Word?.Trim() ?? "",
             WordType = _wordTypeMapper.Map(request.Payload?.WordType),
             Translations = request.Payload?.Translations?.Select(t => t.Trim()).ToList() ?? [],

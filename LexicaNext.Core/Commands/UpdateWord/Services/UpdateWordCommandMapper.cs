@@ -7,7 +7,7 @@ namespace LexicaNext.Core.Commands.UpdateWord.Services;
 
 public interface IUpdateWordCommandMapper
 {
-    UpdateWordCommand Map(UpdateWordRequest request);
+    UpdateWordCommand Map(string userId, UpdateWordRequest request);
 }
 
 internal class UpdateWordCommandMapper
@@ -20,11 +20,12 @@ internal class UpdateWordCommandMapper
         _wordTypeMapper = wordTypeMapper;
     }
 
-    public UpdateWordCommand Map(UpdateWordRequest request)
+    public UpdateWordCommand Map(string userId, UpdateWordRequest request)
     {
         return new UpdateWordCommand
         {
             WordId = Guid.Parse(request.WordId),
+            UserId = userId,
             Word = request.Payload?.Word?.Trim() ?? "",
             WordType = _wordTypeMapper.Map(request.Payload?.WordType),
             Translations = request.Payload?.Translations?.Select(t => t.Trim()).ToList() ?? [],

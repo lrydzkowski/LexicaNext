@@ -1,4 +1,5 @@
 using LexicaNext.Core.Common.Infrastructure.Auth;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetSet.Interfaces;
 using LexicaNext.Core.Queries.GetSet.Services;
@@ -29,6 +30,7 @@ public static class GetSetEndpoint
         [AsParameters] GetSetRequest request,
         [FromServices] IGetSetRepository getSetRepository,
         [FromServices] ISetMapper setMapper,
+        [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
@@ -37,7 +39,8 @@ public static class GetSetEndpoint
             return TypedResults.NotFound();
         }
 
-        Set? set = await getSetRepository.GetSetAsync(setId, cancellationToken);
+        string userId = userContextResolver.GetUserId();
+        Set? set = await getSetRepository.GetSetAsync(userId, setId, cancellationToken);
         if (set is null)
         {
             return TypedResults.NotFound();

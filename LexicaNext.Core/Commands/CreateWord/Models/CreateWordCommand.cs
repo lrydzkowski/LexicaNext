@@ -4,6 +4,8 @@ namespace LexicaNext.Core.Commands.CreateWord.Models;
 
 public class CreateWordCommand
 {
+    public string UserId { get; set; } = "";
+
     public string Word { get; set; } = "";
 
     public WordType WordType { get; set; } = WordType.None;

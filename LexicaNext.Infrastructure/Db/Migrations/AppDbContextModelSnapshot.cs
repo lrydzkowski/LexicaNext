@@ -130,12 +130,20 @@ namespace LexicaNext.Infrastructure.Db.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("name");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("user_id");
+
                     b.HasKey("SetId");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId", "Name")
                         .IsUnique();
 
-                    NpgsqlIndexBuilderExtensions.AreNullsDistinct(b.HasIndex("Name"), true);
+                    NpgsqlIndexBuilderExtensions.AreNullsDistinct(b.HasIndex("UserId", "Name"), true);
 
                     b.ToTable("set", (string)null);
                 });
@@ -209,6 +217,37 @@ namespace LexicaNext.Infrastructure.Db.Migrations
                     b.ToTable("translation", (string)null);
                 });
 
+            modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.UserSetSequenceEntity", b =>
+                {
+                    b.Property<Guid>("UserSetSequenceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_set_sequence_id");
+
+                    b.Property<DateTimeOffset>("LastUpdated")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_updated");
+
+                    b.Property<int>("NextValue")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("next_value");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("UserSetSequenceId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("user_set_sequence", (string)null);
+                });
+
             modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.WordEntity", b =>
                 {
                     b.Property<Guid>("WordId")
@@ -223,6 +262,12 @@ namespace LexicaNext.Infrastructure.Db.Migrations
                     b.Property<DateTimeOffset?>("EditedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("edited_at");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("user_id");
 
                     b.Property<string>("Word")
                         .IsRequired()
@@ -240,11 +285,13 @@ namespace LexicaNext.Infrastructure.Db.Migrations
 
                     b.HasIndex("EditedAt");
 
+                    b.HasIndex("UserId");
+
                     b.HasIndex("Word");
 
                     b.HasIndex("WordTypeId");
 
-                    b.HasIndex("Word", "WordTypeId")
+                    b.HasIndex("UserId", "Word", "WordTypeId")
                         .IsUnique();
 
                     b.ToTable("word", (string)null);

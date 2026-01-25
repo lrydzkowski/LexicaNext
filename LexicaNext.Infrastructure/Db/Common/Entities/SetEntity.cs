@@ -6,6 +6,8 @@ internal class SetEntity
 
     public Guid SetId { get; set; }
 
+    public string UserId { get; set; } = "";
+
     public string Name { get; set; } = "";
 
     public DateTimeOffset CreatedAt { get; set; }

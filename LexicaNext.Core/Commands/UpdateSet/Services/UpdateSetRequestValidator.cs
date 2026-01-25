@@ -1,5 +1,6 @@
 using FluentValidation;
 using LexicaNext.Core.Commands.UpdateSet.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Queries.GetWord.Interfaces;
 
@@ -7,16 +8,19 @@ namespace LexicaNext.Core.Commands.UpdateSet.Services;
 
 public class UpdateSetRequestValidator : AbstractValidator<UpdateSetRequest>
 {
-    private readonly IUpdateSetRepository _updateSetRepository;
     private readonly IGetWordRepository _getWordRepository;
+    private readonly IUpdateSetRepository _updateSetRepository;
+    private readonly IUserContextResolver _userContextResolver;
 
     public UpdateSetRequestValidator(
         IUpdateSetRepository updateSetRepository,
-        IGetWordRepository getWordRepository
+        IGetWordRepository getWordRepository,
+        IUserContextResolver userContextResolver
     )
     {
         _updateSetRepository = updateSetRepository;
         _getWordRepository = getWordRepository;
+        _userContextResolver = userContextResolver;
 
         AddValidationForPayload();
     }
@@ -29,8 +33,14 @@ public class UpdateSetRequestValidator : AbstractValidator<UpdateSetRequest>
                 x =>
                 {
                     Guid.TryParse(x.SetId, out Guid parsedSetId);
+                    string userId = _userContextResolver.GetUserId();
 
-                    return new UpdateSetRequestPayloadValidator(parsedSetId, _updateSetRepository, _getWordRepository);
+                    return new UpdateSetRequestPayloadValidator(
+                        userId,
+                        parsedSetId,
+                        _updateSetRepository,
+                        _getWordRepository
+                    );
                 }
             );
     }
@@ -38,11 +48,13 @@ public class UpdateSetRequestValidator : AbstractValidator<UpdateSetRequest>
 
 internal class UpdateSetRequestPayloadValidator : AbstractValidator<UpdateSetRequestPayload>
 {
+    private readonly IGetWordRepository _getWordRepository;
     private readonly Guid _setId;
     private readonly IUpdateSetRepository _updateSetRepository;
-    private readonly IGetWordRepository _getWordRepository;
+    private readonly string _userId;
 
     public UpdateSetRequestPayloadValidator(
+        string userId,
         Guid setId,
         IUpdateSetRepository updateSetRepository,
         IGetWordRepository getWordRepository
@@ -51,6 +63,7 @@ internal class UpdateSetRequestPayloadValidator : AbstractValidator<UpdateSetReq
         _setId = setId;
         _updateSetRepository = updateSetRepository;
         _getWordRepository = getWordRepository;
+        _userId = userId;
 
         AddValidationForSetName();
         AddValidationForWordIds();
@@ -73,6 +86,7 @@ internal class UpdateSetRequestPayloadValidator : AbstractValidator<UpdateSetReq
                 {
                     bool setWithNameExists =
                         await _updateSetRepository.SetExistsAsync(
+                            _userId,
                             updateSetRequest.SetName,
                             _setId,
                             cancellationToken
@@ -120,6 +134,7 @@ internal class UpdateSetRequestPayloadValidator : AbstractValidator<UpdateSetReq
                     }
 
                     List<Guid> existingIds = await _getWordRepository.GetExistingWordIdsAsync(
+                        _userId,
                         parsedIds,
                         cancellationToken
                     );

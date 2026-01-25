@@ -5,6 +5,7 @@ using LexicaNext.Core.Commands.UpdateSet.Models;
 using LexicaNext.Core.Commands.UpdateSet.Services;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -34,6 +35,7 @@ public static class UpdateSetEndpoint
         [FromServices] IValidator<UpdateSetRequest> validator,
         [FromServices] IUpdateSetCommandMapper updateSetCommandMapper,
         [FromServices] IUpdateSetRepository updateSetRepository,
+        [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
@@ -42,7 +44,8 @@ public static class UpdateSetEndpoint
             return TypedResults.NotFound();
         }
 
-        bool exists = await updateSetRepository.SetExistsAsync(setId, cancellationToken);
+        string userId = userContextResolver.GetUserId();
+        bool exists = await updateSetRepository.SetExistsAsync(userId, setId, cancellationToken);
         if (!exists)
         {
             return TypedResults.NotFound();
@@ -54,7 +57,7 @@ public static class UpdateSetEndpoint
             return TypedResults.Problem(validationResult.ToProblemDetails());
         }
 
-        UpdateSetCommand command = updateSetCommandMapper.Map(request);
+        UpdateSetCommand command = updateSetCommandMapper.Map(userId, request);
         await updateSetRepository.UpdateSetAsync(command, cancellationToken);
 
         return TypedResults.NoContent();

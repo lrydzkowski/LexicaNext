@@ -1,6 +1,7 @@
 using FluentValidation;
 using LexicaNext.Core.Commands.UpdateWord.Interfaces;
 using LexicaNext.Core.Commands.UpdateWord.Models;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 
@@ -8,7 +9,21 @@ namespace LexicaNext.Core.Commands.UpdateWord.Services;
 
 public class UpdateWordRequestValidator : AbstractValidator<UpdateWordRequest>
 {
-    public UpdateWordRequestValidator(IUpdateWordRepository updateWordRepository)
+    private readonly IUpdateWordRepository _updateWordRepository;
+    private readonly IUserContextResolver _userContextResolver;
+
+    public UpdateWordRequestValidator(
+        IUpdateWordRepository updateWordRepository,
+        IUserContextResolver userContextResolver
+    )
+    {
+        _updateWordRepository = updateWordRepository;
+        _userContextResolver = userContextResolver;
+
+        AddPayloadValidation();
+    }
+
+    private void AddPayloadValidation()
     {
         RuleFor(request => request.WordId)
             .NotEmpty()
@@ -17,10 +32,15 @@ public class UpdateWordRequestValidator : AbstractValidator<UpdateWordRequest>
                 () => RuleFor(request => request.Payload!)
                     .NotNull()
                     .SetValidator(
-                        request => new UpdateWordRequestPayloadValidator(
-                            Guid.Parse(request.WordId),
-                            updateWordRepository
-                        )
+                        request =>
+                        {
+                            string userId = _userContextResolver.GetUserId();
+                            return new UpdateWordRequestPayloadValidator(
+                                userId,
+                                Guid.Parse(request.WordId),
+                                _updateWordRepository
+                            );
+                        }
                     )
             )
             .WithMessage("'{PropertyName}' must be a valid GUID.");
@@ -29,8 +49,11 @@ public class UpdateWordRequestValidator : AbstractValidator<UpdateWordRequest>
 
 internal class UpdateWordRequestPayloadValidator : AbstractValidator<UpdateWordRequestPayload>
 {
-    public UpdateWordRequestPayloadValidator(Guid wordId, IUpdateWordRepository updateWordRepository)
+    private readonly string _userId;
+
+    public UpdateWordRequestPayloadValidator(string userId, Guid wordId, IUpdateWordRepository updateWordRepository)
     {
+        _userId = userId;
         AddValidationForWord(wordId, updateWordRepository);
         AddValidationForWordType();
         AddValidationForTranslations();
@@ -53,6 +76,7 @@ internal class UpdateWordRequestPayloadValidator : AbstractValidator<UpdateWordR
                 async (request, cancellationToken) =>
                 {
                     bool exists = await updateWordRepository.WordExistsAsync(
+                        _userId,
                         request.Word,
                         request.WordType,
                         wordId,
