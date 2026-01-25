@@ -8,7 +8,8 @@ RUN dotnet restore "LexicaNext.WebApp/LexicaNext.WebApp.csproj"
 COPY . .
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="${PATH}:/root/.dotnet/tools"
-RUN dotnet ef migrations script --project ./LexicaNext.Infrastructure/LexicaNext.Infrastructure.csproj --idempotent --output /scripts/migration.sql
+RUN dotnet build ./LexicaNext.Infrastructure/LexicaNext.Infrastructure.csproj --configuration Release
+RUN dotnet ef migrations script --project ./LexicaNext.Infrastructure/LexicaNext.Infrastructure.csproj --configuration Release --idempotent --output /scripts/migration.sql
 
 FROM alpine:3.19 AS final
 RUN apk add --no-cache postgresql-client bash
