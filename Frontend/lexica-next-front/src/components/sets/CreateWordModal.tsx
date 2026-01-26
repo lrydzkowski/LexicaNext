@@ -1,5 +1,6 @@
+import { useRef } from 'react';
 import { Container, Group, Modal, Title } from '@mantine/core';
-import { WordForm } from '../words/WordForm';
+import { WordForm, WordFormRef } from '../words/WordForm';
 import { WordFormSuccessData } from '../words/WordFormTypes';
 
 interface CreateWordModalProps {
@@ -9,8 +10,14 @@ interface CreateWordModalProps {
 }
 
 export function CreateWordModal({ opened, onClose, onSuccess }: CreateWordModalProps) {
+  const formRef = useRef<WordFormRef>(null);
+
+  const handleModalEntered = () => {
+    formRef.current?.focus();
+  };
+
   return (
-    <Modal.Root opened={opened} onClose={onClose} size="lg" fullScreen>
+    <Modal.Root opened={opened} onClose={onClose} size="lg" fullScreen transitionProps={{ onEntered: handleModalEntered }}>
       <Modal.Overlay />
       <Modal.Content>
         <Modal.Header>
@@ -26,6 +33,7 @@ export function CreateWordModal({ opened, onClose, onSuccess }: CreateWordModalP
         <Modal.Body>
           <Container size="md" p={5}>
             <WordForm
+              ref={formRef}
               mode="create"
               onSuccess={(data) => {
                 onSuccess(data);

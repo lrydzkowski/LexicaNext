@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IconSearch, IconX } from '@tabler/icons-react';
 import {
   ActionIcon,
@@ -34,6 +34,11 @@ export function SelectWordsModal({ opened, onClose, selectedWordIds, onSelectWor
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 150);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const handleModalEntered = () => {
+    searchInputRef.current?.focus();
+  };
 
   const { data: wordsData, isFetching } = useWords({
     page: currentPage,
@@ -52,7 +57,7 @@ export function SelectWordsModal({ opened, onClose, selectedWordIds, onSelectWor
   }, [debouncedSearchQuery]);
 
   return (
-    <Modal.Root opened={opened} onClose={onClose} size="lg" fullScreen>
+    <Modal.Root opened={opened} onClose={onClose} size="lg" fullScreen transitionProps={{ onEntered: handleModalEntered }}>
       <Modal.Overlay />
       <Modal.Content>
         <Modal.Header>
@@ -69,6 +74,7 @@ export function SelectWordsModal({ opened, onClose, selectedWordIds, onSelectWor
           <Container size="md" p={0}>
             <Stack gap="md">
               <TextInput
+                ref={searchInputRef}
                 placeholder="Search words..."
                 leftSection={<IconSearch size={16} />}
                 value={searchQuery}

@@ -54,7 +54,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   const proposedSetNameQuery = useProposedSetName();
   const [searchParams] = useSearchParams();
   const returnPage = searchParams.get('returnPage') || '1';
-  const setNameInputRef = useRef<HTMLInputElement | null>(null);
+  const addWordsButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([]);
   const [selectModalOpened, { open: openSelectModal, close: closeSelectModal }] = useDisclosure(false);
@@ -99,7 +99,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         })),
       );
       setTimeout(() => {
-        setNameInputRef.current?.focus();
+        addWordsButtonRef.current?.focus();
       }, 0);
     }
   }, [set, mode]);
@@ -113,10 +113,12 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   }, [mode, proposedSetNameQuery.data]);
 
   useEffect(() => {
-    if (mode === 'create') {
-      setNameInputRef.current?.focus();
+    if (mode === 'create' && !proposedSetNameQuery.isLoading) {
+      setTimeout(() => {
+        addWordsButtonRef.current?.focus();
+      }, 0);
     }
-  }, [mode]);
+  }, [mode, proposedSetNameQuery.isLoading]);
 
   const handleSelectWord = (word: WordRecordDto) => {
     if (!word.wordId) {
@@ -231,7 +233,6 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="lg">
           <TextInput
-            ref={setNameInputRef}
             label="Set Name"
             placeholder="Enter set name..."
             size="md"
@@ -248,7 +249,12 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                 Selected Words ({selectedWords.length})
               </Text>
               <Group gap="xs">
-                <Button variant="light" size="xs" leftSection={<IconPlus size={14} />} onClick={openSelectModal}>
+                <Button
+                  variant="light"
+                  size="xs"
+                  leftSection={<IconPlus size={14} />}
+                  onClick={openSelectModal}
+                  ref={addWordsButtonRef}>
                   Add Words
                 </Button>
                 <Button variant="subtle" size="xs" leftSection={<IconPlus size={14} />} onClick={openCreateModal}>

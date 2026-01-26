@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { ActionIcon, Box, Button, Divider, Group, LoadingOverlay, Select, Stack, TextInput } from '@mantine/core';
@@ -12,6 +12,10 @@ import { GenerateSentencesButton } from './GenerateSentencesButton';
 import { GenerateTranslationsButton } from './GenerateTranslationsButton';
 import { WordFormSuccessData, WordFormValues } from './WordFormTypes';
 
+export interface WordFormRef {
+  focus: () => void;
+}
+
 interface WordFormProps {
   mode: 'create' | 'edit';
   wordId?: string;
@@ -21,11 +25,19 @@ interface WordFormProps {
   onCancel?: () => void;
 }
 
-export function WordForm({ mode, wordId, word, isLoading, onSuccess, onCancel }: WordFormProps) {
+export const WordForm = forwardRef<WordFormRef, WordFormProps>(function WordForm(
+  { mode, wordId, word, isLoading, onSuccess, onCancel },
+  ref,
+) {
   const navigate = useNavigate();
   const createWordMutation = useCreateWord();
   const updateWordMutation = useUpdateWord();
   const wordInputRef = useRef<HTMLInputElement | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => wordInputRef.current?.focus(),
+  }));
+
   const translationRefs = useRef<(HTMLInputElement | null)[]>([]);
   const sentenceRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [focusTranslation, setFocusTranslation] = useState<number | null>(null);
@@ -361,4 +373,4 @@ export function WordForm({ mode, wordId, word, isLoading, onSuccess, onCancel }:
       </form>
     </Box>
   );
-}
+});
