@@ -258,14 +258,22 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
     const openCambridgeDictionary = () => {
       const wordValue = form.getValues().word?.trim();
       if (wordValue) {
-        window.open(`https://dictionary.cambridge.org/dictionary/english/${encodeURIComponent(wordValue)}`, '_blank');
+        window.open(
+          `https://dictionary.cambridge.org/dictionary/english/${encodeURIComponent(wordValue)}`,
+          '_blank',
+          'noopener,noreferrer',
+        );
       }
     };
 
     const openLingPl = () => {
       const wordValue = form.getValues().word?.trim();
       if (wordValue) {
-        window.open(`https://ling.pl/slownik/angielsko-polski/${encodeURIComponent(wordValue)}`, '_blank');
+        window.open(
+          `https://ling.pl/slownik/angielsko-polski/${encodeURIComponent(wordValue)}`,
+          '_blank',
+          'noopener,noreferrer',
+        );
       }
     };
 
