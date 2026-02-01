@@ -16,7 +16,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { links } from '@/config/links';
 import { SHORTCUT_KEYS } from '@/config/shortcuts';
 import { generateRowHandlers, useShortcuts } from '@/hooks/useShortcuts';
@@ -62,7 +62,9 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   const [selectModalOpened, { open: openSelectModal, close: closeSelectModal }] = useDisclosure(false);
   const [createModalOpened, { open: openCreateModal, close: closeCreateModal }] = useDisclosure(false);
   const formRef = useRef<HTMLFormElement | null>(null);
-  const deleteButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const mobileDeleteButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const desktopDeleteButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const selectedWordIds = useMemo(() => new Set(selectedWords.map((w) => w.wordId)), [selectedWords]);
 
@@ -247,10 +249,11 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         handler: openCreateModal,
       },
       ...generateRowHandlers((index) => {
-        deleteButtonRefs.current[index]?.focus();
+        const refs = isDesktop ? desktopDeleteButtonRefs : mobileDeleteButtonRefs;
+        refs.current[index]?.focus();
       }),
     ],
-    [navigate, returnPage, openSelectModal, openCreateModal],
+    [navigate, returnPage, openSelectModal, openCreateModal, isDesktop],
   );
 
   useShortcuts('set-form', shortcutHandlers);
@@ -341,6 +344,9 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                             <IconChevronDown size={14} />
                           </ActionIcon>
                           <ActionIcon
+                            ref={(el) => {
+                              mobileDeleteButtonRefs.current[index] = el;
+                            }}
                             variant="subtle"
                             color="red"
                             size="sm"
@@ -398,7 +404,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                             </ActionIcon>
                             <ActionIcon
                               ref={(el) => {
-                                deleteButtonRefs.current[index] = el;
+                                desktopDeleteButtonRefs.current[index] = el;
                               }}
                               variant="subtle"
                               color="red"
