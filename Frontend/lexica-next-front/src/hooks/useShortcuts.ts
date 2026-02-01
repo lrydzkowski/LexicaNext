@@ -28,7 +28,9 @@ export function useShortcuts(scope: ShortcutScope, handlers: ShortcutHandler[]):
     });
 
     return () => {
-      handlers.forEach((h) => unregisterShortcut(h.key, scope));
+      handlers.forEach((h) => {
+        unregisterShortcut(h.key, scope);
+      });
     };
   }, [handlers, scope, registerShortcut, unregisterShortcut]);
 }
