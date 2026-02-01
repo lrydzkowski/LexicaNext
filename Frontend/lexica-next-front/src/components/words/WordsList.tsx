@@ -17,7 +17,7 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
+import { useDebouncedValue, useMediaQuery } from '@mantine/hooks';
 import { links } from '../../config/links';
 import { SHORTCUT_KEYS } from '../../config/shortcuts';
 import { useDeleteWords, useWords, type WordRecordDto } from '../../hooks/api';
@@ -34,12 +34,14 @@ export function WordsList() {
   const [selectedWordIds, setSelectedWordIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
-  const actionButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const mobileActionButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const desktopActionButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [deleteModalState, setDeleteModalState] = useState<{
     opened: boolean;
     words: { wordId: string; wordName: string }[];
   }>({ opened: false, words: [] });
 
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const pageSize = 10;
   const sortingFieldName = 'createdAt';
@@ -64,7 +66,8 @@ export function WordsList() {
   const totalCount = wordsData?.count || 0;
 
   useEffect(() => {
-    actionButtonRefs.current = [];
+    mobileActionButtonRefs.current = [];
+    desktopActionButtonRefs.current = [];
   }, [words]);
 
   useEffect(() => {
@@ -157,19 +160,30 @@ export function WordsList() {
         key: SHORTCUT_KEYS.FOCUS_SEARCH,
         handler: () => searchInputRef.current?.focus(),
       },
-      ...generateRowHandlers((index) => actionButtonRefs.current[index]?.focus()),
+      ...generateRowHandlers((index) => {
+        const refs = isDesktop ? desktopActionButtonRefs : mobileActionButtonRefs;
+        refs.current[index]?.focus();
+      }),
     ],
-    [navigate, currentPage],
+    [navigate, currentPage, isDesktop],
   );
 
   useShortcuts('words-list', shortcutHandlers);
 
-  const WordActionMenu = ({ word, index }: { word: WordRecordDto; index: number }) => (
+  const WordActionMenu = ({
+    word,
+    index,
+    refsArray,
+  }: {
+    word: WordRecordDto;
+    index: number;
+    refsArray: React.RefObject<(HTMLButtonElement | null)[]>;
+  }) => (
     <Menu shadow="md" width={180} position="bottom-end">
       <Menu.Target>
         <ActionIcon
           ref={(el) => {
-            actionButtonRefs.current[index] = el;
+            refsArray.current[index] = el;
           }}
           variant="light"
           color="blue"
@@ -295,7 +309,7 @@ export function WordsList() {
                         </Text>
                       </div>
                       <Box>
-                        <WordActionMenu word={word} index={index} />
+                        <WordActionMenu word={word} index={index} refsArray={mobileActionButtonRefs} />
                       </Box>
                     </Group>
                   </Stack>
@@ -309,6 +323,7 @@ export function WordsList() {
               </Text>
             )}
           </Box>
+
           <Table striped highlightOnHover style={{ tableLayout: 'fixed' }} visibleFrom="md">
             <Table.Thead>
               <Table.Tr>
@@ -359,7 +374,7 @@ export function WordsList() {
                     </Table.Td>
                     <Table.Td w={80}>
                       <Group justify="center">
-                        <WordActionMenu word={word} index={index} />
+                        <WordActionMenu word={word} index={index} refsArray={desktopActionButtonRefs} />
                       </Group>
                     </Table.Td>
                   </Table.Tr>
