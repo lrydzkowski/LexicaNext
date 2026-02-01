@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   IconBrain,
   IconDots,
@@ -11,7 +11,7 @@ import {
   IconTarget,
   IconTrash,
 } from '@tabler/icons-react';
-import { Link, useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import {
   ActionIcon,
   Box,
@@ -29,17 +29,22 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { links } from '../../config/links';
+import { SHORTCUT_KEYS } from '../../config/shortcuts';
 import { useDeleteSets, useSets, type SetRecordDto } from '../../hooks/api';
+import { generateRowHandlers, useShortcuts } from '../../hooks/useShortcuts';
 import { showErrorNotification } from '../../services/error-notifications';
 import { formatDateTime } from '../../utils/date';
 import { DeleteSetModal } from './DeleteSetModal';
 
 export function SetsList() {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 150);
   const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const actionButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [deleteModalState, setDeleteModalState] = useState<{
     opened: boolean;
     sets: { setId: string; setName: string }[];
@@ -67,6 +72,10 @@ export function SetsList() {
 
   const sets = setsData?.data || [];
   const totalCount = setsData?.count || 0;
+
+  useEffect(() => {
+    actionButtonRefs.current = [];
+  }, [sets]);
 
   useEffect(() => {
     if (createButtonRef.current) {
@@ -152,10 +161,30 @@ export function SetsList() {
 
   const totalPages = Math.ceil((totalCount as number) / pageSize);
 
-  const SetActionMenu = ({ set }: { set: SetRecordDto }) => (
+  const shortcutHandlers = useMemo(
+    () => [
+      {
+        key: SHORTCUT_KEYS.CREATE_NEW,
+        handler: () => navigate(links.newSet.getUrl({}, { returnPage: currentPage.toString() })),
+      },
+      {
+        key: SHORTCUT_KEYS.FOCUS_SEARCH,
+        handler: () => searchInputRef.current?.focus(),
+      },
+      ...generateRowHandlers((index) => actionButtonRefs.current[index]?.focus()),
+    ],
+    [navigate, currentPage],
+  );
+
+  useShortcuts('sets-list', shortcutHandlers);
+
+  const SetActionMenu = ({ set, index }: { set: SetRecordDto; index: number }) => (
     <Menu shadow="md" width={220} position="bottom-end">
       <Menu.Target>
         <ActionIcon
+          ref={(el) => {
+            actionButtonRefs.current[index] = el;
+          }}
           variant="light"
           color="blue"
           size="lg"
@@ -257,6 +286,7 @@ export function SetsList() {
             <IconRefresh size={22} />
           </ActionIcon>
           <TextInput
+            ref={searchInputRef}
             placeholder="Search sets..."
             leftSection={<IconSearch size={16} />}
             value={searchQuery}
@@ -271,7 +301,7 @@ export function SetsList() {
 
           <Box hiddenFrom="md">
             {sets.length > 0 ? (
-              sets.map((set) => (
+              sets.map((set, index) => (
                 <Paper
                   key={set.setId}
                   p="md"
@@ -296,7 +326,7 @@ export function SetsList() {
                         </Text>
                       </div>
                       <Box>
-                        <SetActionMenu set={set} />
+                        <SetActionMenu set={set} index={index} />
                       </Box>
                     </Group>
                   </Stack>
@@ -331,7 +361,7 @@ export function SetsList() {
             </Table.Thead>
             <Table.Tbody>
               {sets.length > 0 ? (
-                sets.map((set) => (
+                sets.map((set, index) => (
                   <Table.Tr
                     key={set.setId}
                     onClick={() => toggleSetSelection(set.setId || '')}
@@ -351,7 +381,7 @@ export function SetsList() {
                     </Table.Td>
                     <Table.Td w={80}>
                       <Group justify="center">
-                        <SetActionMenu set={set} />
+                        <SetActionMenu set={set} index={index} />
                       </Group>
                     </Table.Td>
                   </Table.Tr>

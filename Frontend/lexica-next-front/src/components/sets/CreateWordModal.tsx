@@ -17,7 +17,13 @@ export function CreateWordModal({ opened, onClose, onSuccess }: CreateWordModalP
   };
 
   return (
-    <Modal.Root opened={opened} onClose={onClose} size="lg" fullScreen transitionProps={{ onEntered: handleModalEntered }}>
+    <Modal.Root
+      opened={opened}
+      onClose={onClose}
+      size="lg"
+      fullScreen
+      returnFocus
+      transitionProps={{ onEntered: handleModalEntered }}>
       <Modal.Overlay />
       <Modal.Content>
         <Modal.Header>

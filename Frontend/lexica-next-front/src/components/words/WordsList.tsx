@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { IconDots, IconEdit, IconPlus, IconRefresh, IconSearch, IconTrash } from '@tabler/icons-react';
-import { Link, useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import {
   ActionIcon,
   Badge,
@@ -19,17 +19,22 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { links } from '../../config/links';
+import { SHORTCUT_KEYS } from '../../config/shortcuts';
 import { useDeleteWords, useWords, type WordRecordDto } from '../../hooks/api';
+import { generateRowHandlers, useShortcuts } from '../../hooks/useShortcuts';
 import { showErrorNotification } from '../../services/error-notifications';
 import { formatDateTime } from '../../utils/date';
 import { DeleteWordModal } from './DeleteWordModal';
 
 export function WordsList() {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 150);
   const [selectedWordIds, setSelectedWordIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const actionButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [deleteModalState, setDeleteModalState] = useState<{
     opened: boolean;
     words: { wordId: string; wordName: string }[];
@@ -57,6 +62,10 @@ export function WordsList() {
 
   const words = wordsData?.data || [];
   const totalCount = wordsData?.count || 0;
+
+  useEffect(() => {
+    actionButtonRefs.current = [];
+  }, [words]);
 
   useEffect(() => {
     if (createButtonRef.current) {
@@ -138,10 +147,30 @@ export function WordsList() {
 
   const totalPages = Math.ceil((totalCount as number) / pageSize);
 
-  const WordActionMenu = ({ word }: { word: WordRecordDto }) => (
+  const shortcutHandlers = useMemo(
+    () => [
+      {
+        key: SHORTCUT_KEYS.CREATE_NEW,
+        handler: () => navigate(links.newWord.getUrl({}, { returnPage: currentPage.toString() })),
+      },
+      {
+        key: SHORTCUT_KEYS.FOCUS_SEARCH,
+        handler: () => searchInputRef.current?.focus(),
+      },
+      ...generateRowHandlers((index) => actionButtonRefs.current[index]?.focus()),
+    ],
+    [navigate, currentPage],
+  );
+
+  useShortcuts('words-list', shortcutHandlers);
+
+  const WordActionMenu = ({ word, index }: { word: WordRecordDto; index: number }) => (
     <Menu shadow="md" width={180} position="bottom-end">
       <Menu.Target>
         <ActionIcon
+          ref={(el) => {
+            actionButtonRefs.current[index] = el;
+          }}
           variant="light"
           color="blue"
           size="lg"
@@ -219,6 +248,7 @@ export function WordsList() {
             <IconRefresh size={22} />
           </ActionIcon>
           <TextInput
+            ref={searchInputRef}
             placeholder="Search words..."
             leftSection={<IconSearch size={16} />}
             value={searchQuery}
@@ -232,7 +262,7 @@ export function WordsList() {
           <LoadingOverlay visible={isFetching} />
           <Box hiddenFrom="md">
             {words.length > 0 ? (
-              words.map((word) => (
+              words.map((word, index) => (
                 <Paper
                   p="md"
                   withBorder
@@ -265,7 +295,7 @@ export function WordsList() {
                         </Text>
                       </div>
                       <Box>
-                        <WordActionMenu word={word} />
+                        <WordActionMenu word={word} index={index} />
                       </Box>
                     </Group>
                   </Stack>
@@ -301,7 +331,7 @@ export function WordsList() {
             </Table.Thead>
             <Table.Tbody>
               {words.length > 0 ? (
-                words.map((word) => (
+                words.map((word, index) => (
                   <Table.Tr
                     key={word.wordId}
                     onClick={() => toggleWordSelection(word.wordId || '')}
@@ -329,7 +359,7 @@ export function WordsList() {
                     </Table.Td>
                     <Table.Td w={80}>
                       <Group justify="center">
-                        <WordActionMenu word={word} />
+                        <WordActionMenu word={word} index={index} />
                       </Group>
                     </Table.Td>
                   </Table.Tr>

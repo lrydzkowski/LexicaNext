@@ -8,6 +8,7 @@ import { Notifications } from '@mantine/notifications';
 import { AppRouter } from './AppRouter';
 import { AuthLoading } from './components/auth/AuthLoading';
 import appConfig from './config/app-config';
+import { ShortcutProvider } from './contexts/ShortcutContext';
 
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
@@ -39,7 +40,9 @@ createRoot(document.getElementById('root')!).render(
               redirect_uri: window.location.origin,
             }}>
             <AuthLoading>
-              <AppRouter />
+              <ShortcutProvider>
+                <AppRouter />
+              </ShortcutProvider>
             </AuthLoading>
           </Auth0Provider>
         </ModalsProvider>

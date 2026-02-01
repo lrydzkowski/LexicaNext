@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { IconSparkles } from '@tabler/icons-react';
 import { Button } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
@@ -11,50 +12,49 @@ interface GenerateTranslationsButtonProps {
   disabled?: boolean;
 }
 
-export function GenerateTranslationsButton({
-  form,
-  onTranslationsGenerated,
-  disabled,
-}: GenerateTranslationsButtonProps) {
-  const generateTranslationsMutation = useGenerateTranslations();
+export const GenerateTranslationsButton = forwardRef<HTMLButtonElement, GenerateTranslationsButtonProps>(
+  ({ form, onTranslationsGenerated, disabled }, ref) => {
+    const generateTranslationsMutation = useGenerateTranslations();
 
-  const handleClick = () => {
-    const word = form.getValues().word || '';
-    const wordType = form.getValues().wordType || '';
+    const handleClick = () => {
+      const word = form.getValues().word || '';
+      const wordType = form.getValues().wordType || '';
 
-    if (!word.trim()) {
-      showErrorTextNotification('Error', 'Please enter a word first');
-      return;
-    }
+      if (!word.trim()) {
+        showErrorTextNotification('Error', 'Please enter a word first');
+        return;
+      }
 
-    if (!wordType || wordType === 'none') {
-      showErrorTextNotification('Error', 'Please select a word type first');
-      return;
-    }
+      if (!wordType || wordType === 'none') {
+        showErrorTextNotification('Error', 'Please select a word type first');
+        return;
+      }
 
-    generateTranslationsMutation.mutate(
-      { word: word.trim(), wordType, count: 3 },
-      {
-        onSuccess: (response) => {
-          onTranslationsGenerated(response.translations);
+      generateTranslationsMutation.mutate(
+        { word: word.trim(), wordType, count: 3 },
+        {
+          onSuccess: (response) => {
+            onTranslationsGenerated(response.translations);
+          },
+          onError: (error) => {
+            showErrorNotification('Error', error);
+          },
         },
-        onError: (error) => {
-          showErrorNotification('Error', error);
-        },
-      },
+      );
+    };
+
+    return (
+      <Button
+        ref={ref}
+        variant="light"
+        size="xs"
+        leftSection={<IconSparkles size={14} />}
+        onClick={handleClick}
+        loading={generateTranslationsMutation.isPending}
+        disabled={disabled}
+        w={180}>
+        Generate Translations
+      </Button>
     );
-  };
-
-  return (
-    <Button
-      variant="light"
-      size="xs"
-      leftSection={<IconSparkles size={14} />}
-      onClick={handleClick}
-      loading={generateTranslationsMutation.isPending}
-      disabled={disabled}
-      w={180}>
-      Generate Translations
-    </Button>
-  );
-}
+  },
+);
