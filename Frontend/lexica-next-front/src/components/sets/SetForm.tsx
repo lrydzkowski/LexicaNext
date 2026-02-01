@@ -16,8 +16,10 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { links } from '@/config/links';
+import { SHORTCUT_KEYS } from '@/config/shortcuts';
+import { generateRowHandlers, useShortcuts } from '@/hooks/useShortcuts';
 import { showErrorNotification, showErrorTextNotification } from '@/services/error-notifications';
 import {
   useCreateSet,
@@ -59,6 +61,10 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([]);
   const [selectModalOpened, { open: openSelectModal, close: closeSelectModal }] = useDisclosure(false);
   const [createModalOpened, { open: openCreateModal, close: closeCreateModal }] = useDisclosure(false);
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const mobileDeleteButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const desktopDeleteButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const selectedWordIds = useMemo(() => new Set(selectedWords.map((w) => w.wordId)), [selectedWords]);
 
@@ -174,7 +180,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
     ]);
   };
 
-  const handleSubmit = (values: FormValues) => {
+  const handleSubmit = (_: FormValues) => {
     if (selectedWords.length === 0) {
       showErrorTextNotification('Validation Error', 'Please select at least one word for the set');
       return;
@@ -220,6 +226,38 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
     }
   };
 
+  const handleCancel = () => {
+    navigate(links.sets.getUrl({}, { returnPage }));
+  };
+
+  const shortcutHandlers = useMemo(
+    () => [
+      {
+        key: SHORTCUT_KEYS.SAVE,
+        handler: () => formRef.current?.requestSubmit(),
+      },
+      {
+        key: SHORTCUT_KEYS.CANCEL,
+        handler: handleCancel,
+      },
+      {
+        key: SHORTCUT_KEYS.ADD_WORDS,
+        handler: openSelectModal,
+      },
+      {
+        key: SHORTCUT_KEYS.CREATE_NEW_WORD,
+        handler: openCreateModal,
+      },
+      ...generateRowHandlers((index) => {
+        const refs = isDesktop ? desktopDeleteButtonRefs : mobileDeleteButtonRefs;
+        refs.current[index]?.focus();
+      }),
+    ],
+    [navigate, returnPage, openSelectModal, openCreateModal, isDesktop],
+  );
+
+  useShortcuts('set-form', shortcutHandlers);
+
   if (isLoading || (mode === 'create' && proposedSetNameQuery.isLoading)) {
     return (
       <Stack pos="relative" mih="12rem">
@@ -230,7 +268,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
 
   return (
     <>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
+      <form ref={formRef} onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="lg">
           <TextInput
             label="Set Name"
@@ -306,6 +344,9 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                             <IconChevronDown size={14} />
                           </ActionIcon>
                           <ActionIcon
+                            ref={(el) => {
+                              mobileDeleteButtonRefs.current[index] = el;
+                            }}
                             variant="subtle"
                             color="red"
                             size="sm"
@@ -362,6 +403,9 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                               <IconChevronDown size={14} />
                             </ActionIcon>
                             <ActionIcon
+                              ref={(el) => {
+                                desktopDeleteButtonRefs.current[index] = el;
+                              }}
                               variant="subtle"
                               color="red"
                               size="sm"
@@ -380,7 +424,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
           </Stack>
 
           <Group justify="space-between" mt="xl" wrap="wrap">
-            <Button variant="light" onClick={() => navigate(links.sets.getUrl({}, { returnPage }))} size="md" w={120}>
+            <Button variant="light" onClick={handleCancel} size="md" w={120}>
               Cancel
             </Button>
             <Button

@@ -33,7 +33,7 @@ export function DeleteSetModal({ opened, onClose, onConfirm, isDeleting, sets }:
           ))}
         </List>
         <Group justify="flex-end" mt="md">
-          <Button variant="light" onClick={onClose} disabled={isDeleting}>
+          <Button variant="light" onClick={onClose} disabled={isDeleting} data-autofocus>
             Cancel
           </Button>
           <Button color="red" onClick={onConfirm} loading={isDeleting}>

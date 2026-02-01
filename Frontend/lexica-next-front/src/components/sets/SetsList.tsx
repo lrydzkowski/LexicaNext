@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   IconBrain,
   IconDots,
@@ -11,7 +11,7 @@ import {
   IconTarget,
   IconTrash,
 } from '@tabler/icons-react';
-import { Link, useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import {
   ActionIcon,
   Box,
@@ -27,24 +27,31 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
+import { useDebouncedValue, useMediaQuery } from '@mantine/hooks';
 import { links } from '../../config/links';
+import { SHORTCUT_KEYS } from '../../config/shortcuts';
 import { useDeleteSets, useSets, type SetRecordDto } from '../../hooks/api';
+import { generateRowHandlers, useShortcuts } from '../../hooks/useShortcuts';
 import { showErrorNotification } from '../../services/error-notifications';
 import { formatDateTime } from '../../utils/date';
 import { DeleteSetModal } from './DeleteSetModal';
 
 export function SetsList() {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 150);
   const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const mobileActionButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const desktopActionButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [deleteModalState, setDeleteModalState] = useState<{
     opened: boolean;
     sets: { setId: string; setName: string }[];
   }>({ opened: false, sets: [] });
 
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const pageSize = 10;
   const sortingFieldName = 'createdAt';
@@ -67,6 +74,11 @@ export function SetsList() {
 
   const sets = setsData?.data || [];
   const totalCount = setsData?.count || 0;
+
+  useEffect(() => {
+    mobileActionButtonRefs.current = [];
+    desktopActionButtonRefs.current = [];
+  }, [sets]);
 
   useEffect(() => {
     if (createButtonRef.current) {
@@ -152,10 +164,41 @@ export function SetsList() {
 
   const totalPages = Math.ceil((totalCount as number) / pageSize);
 
-  const SetActionMenu = ({ set }: { set: SetRecordDto }) => (
+  const shortcutHandlers = useMemo(
+    () => [
+      {
+        key: SHORTCUT_KEYS.CREATE_NEW,
+        handler: () => navigate(links.newSet.getUrl({}, { returnPage: currentPage.toString() })),
+      },
+      {
+        key: SHORTCUT_KEYS.FOCUS_SEARCH,
+        handler: () => searchInputRef.current?.focus(),
+      },
+      ...generateRowHandlers((index) => {
+        const refs = isDesktop ? desktopActionButtonRefs : mobileActionButtonRefs;
+        refs.current[index]?.focus();
+      }),
+    ],
+    [navigate, currentPage, isDesktop],
+  );
+
+  useShortcuts('sets-list', shortcutHandlers);
+
+  const SetActionMenu = ({
+    set,
+    index,
+    refsArray,
+  }: {
+    set: SetRecordDto;
+    index: number;
+    refsArray: React.RefObject<(HTMLButtonElement | null)[]>;
+  }) => (
     <Menu shadow="md" width={220} position="bottom-end">
       <Menu.Target>
         <ActionIcon
+          ref={(el) => {
+            refsArray.current[index] = el;
+          }}
           variant="light"
           color="blue"
           size="lg"
@@ -257,6 +300,7 @@ export function SetsList() {
             <IconRefresh size={22} />
           </ActionIcon>
           <TextInput
+            ref={searchInputRef}
             placeholder="Search sets..."
             leftSection={<IconSearch size={16} />}
             value={searchQuery}
@@ -271,7 +315,7 @@ export function SetsList() {
 
           <Box hiddenFrom="md">
             {sets.length > 0 ? (
-              sets.map((set) => (
+              sets.map((set, index) => (
                 <Paper
                   key={set.setId}
                   p="md"
@@ -296,7 +340,7 @@ export function SetsList() {
                         </Text>
                       </div>
                       <Box>
-                        <SetActionMenu set={set} />
+                        <SetActionMenu set={set} index={index} refsArray={mobileActionButtonRefs} />
                       </Box>
                     </Group>
                   </Stack>
@@ -331,7 +375,7 @@ export function SetsList() {
             </Table.Thead>
             <Table.Tbody>
               {sets.length > 0 ? (
-                sets.map((set) => (
+                sets.map((set, index) => (
                   <Table.Tr
                     key={set.setId}
                     onClick={() => toggleSetSelection(set.setId || '')}
@@ -351,7 +395,7 @@ export function SetsList() {
                     </Table.Td>
                     <Table.Td w={80}>
                       <Group justify="center">
-                        <SetActionMenu set={set} />
+                        <SetActionMenu set={set} index={index} refsArray={desktopActionButtonRefs} />
                       </Group>
                     </Table.Td>
                   </Table.Tr>

@@ -1,5 +1,47 @@
-import { IconBooks, IconBrain, IconHeadphones, IconTarget } from '@tabler/icons-react';
-import { Container, Group, Paper, Stack, Text, ThemeIcon, Title } from '@mantine/core';
+import { IconBooks, IconBrain, IconHeadphones, IconKeyboard, IconTarget } from '@tabler/icons-react';
+import { Box, Container, Group, Kbd, Paper, Stack, Text, ThemeIcon, Title } from '@mantine/core';
+import {
+  formatShortcutKey,
+  getShortcutsByScope,
+  type ShortcutDefinition,
+  type ShortcutScope,
+} from '../config/shortcuts';
+
+const SCOPE_LABELS: Record<ShortcutScope, string> = {
+  global: 'Global',
+  'sets-list': 'Sets List',
+  'words-list': 'Words List',
+  'word-form': 'Word Form',
+  'set-form': 'Set Form',
+  'select-words': 'Select Words',
+};
+
+function ShortcutItem({ shortcut }: { shortcut: ShortcutDefinition }) {
+  return (
+    <Group justify="space-between" wrap="nowrap">
+      <Text fz="sm">{shortcut.description}</Text>
+      <Kbd size="sm">{formatShortcutKey(shortcut.key)}</Kbd>
+    </Group>
+  );
+}
+
+function ShortcutSection({ scope }: { scope: ShortcutScope }) {
+  const shortcuts = getShortcutsByScope(scope);
+  if (shortcuts.length === 0) {
+    return null;
+  }
+
+  return (
+    <Stack gap="xs">
+      <Text fw={600} fz="md">
+        {SCOPE_LABELS[scope]}
+      </Text>
+      {shortcuts.map((shortcut, index) => (
+        <ShortcutItem key={`${shortcut.key}-${index}`} shortcut={shortcut} />
+      ))}
+    </Stack>
+  );
+}
 
 export function AboutPage() {
   return (
@@ -113,6 +155,27 @@ export function AboutPage() {
                 Repeat and reinforce in open questions mode.
               </Text>
             </Stack>
+          </Paper>
+
+          <Paper radius="md">
+            <Group mb="lg">
+              <ThemeIcon size="lg" color="indigo" style={{ flexShrink: 0 }}>
+                <IconKeyboard size={20} />
+              </ThemeIcon>
+              <Title order={2} fz={{ base: 'h3', md: 'h2' }}>
+                Keyboard Shortcuts
+              </Title>
+            </Group>
+            <Box maw={450}>
+              <Stack gap="lg">
+                <ShortcutSection scope="global" />
+                <ShortcutSection scope="sets-list" />
+                <ShortcutSection scope="words-list" />
+                <ShortcutSection scope="set-form" />
+                <ShortcutSection scope="select-words" />
+                <ShortcutSection scope="word-form" />
+              </Stack>
+            </Box>
           </Paper>
         </Stack>
       </Container>
