@@ -18,7 +18,8 @@ internal class GetWordsRequestProcessor
             PageSize = request.PageSize ?? 25,
             SortingFieldName = request.SortingFieldName?.Trim(),
             SortingOrder = request.SortingOrder?.Trim() ?? "desc",
-            SearchQuery = request.SearchQuery?.Trim()
+            SearchQuery = request.SearchQuery?.Trim(),
+            TimezoneOffsetMinutes = request.TimezoneOffsetMinutes
         };
     }
 }

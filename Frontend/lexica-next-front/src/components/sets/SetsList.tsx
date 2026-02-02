@@ -57,6 +57,8 @@ export function SetsList() {
   const sortingFieldName = 'createdAt';
   const sortingOrder = 'desc';
 
+  const timezoneOffsetMinutes = -new Date().getTimezoneOffset();
+
   const {
     data: setsData,
     isFetching,
@@ -68,6 +70,7 @@ export function SetsList() {
     sortingFieldName,
     sortingOrder,
     searchQuery: debouncedSearchQuery || undefined,
+    timezoneOffsetMinutes,
   });
 
   const deleteSetsMutation = useDeleteSets();

@@ -27,7 +27,8 @@ internal class ListParametersMapper
             },
             Search = new Search
             {
-                Query = request.SearchQuery?.Trim()
+                Query = request.SearchQuery?.Trim(),
+                TimezoneOffsetMinutes = request.TimezoneOffsetMinutes
             }
         };
     }

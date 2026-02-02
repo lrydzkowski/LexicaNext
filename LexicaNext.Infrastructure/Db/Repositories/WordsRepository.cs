@@ -120,7 +120,7 @@ internal class WordsRepository
                     Text = entity.Word,
                     WordType = MapWordType(entity.WordType!.Name),
                     CreatedAt = entity.CreatedAt,
-                    EditedAt = entity.UpdatedAt,
+                    UpdatedAt = entity.UpdatedAt,
                     Translations = entity.Translations.OrderBy(t => t.Order).Select(t => t.Translation).ToList(),
                     ExampleSentences = entity.ExampleSentences.OrderBy(s => s.Order)
                         .Select(s => new ExampleSentence { Sentence = s.Sentence, Order = s.Order })
@@ -175,8 +175,8 @@ internal class WordsRepository
     {
         string defaultSortingFieldName = "createdAt";
         SortingOrder defaultSortingOrder = SortingOrder.Descending;
-        List<string> fieldsAvailableToSort = ["wordId", "word", "createdAt", "editedAt"];
-        List<string> fieldsAvailableToFilter = ["word"];
+        List<string> fieldsAvailableToSort = ["wordId", "word", "createdAt", "updatedAt"];
+        List<string> fieldsAvailableToFilter = ["word", "createdAt", "updatedAt"];
 
         IQueryable<WordEntity> query = _dbContext.Words.AsNoTracking()
             .Where(entity => entity.UserId == userId)
@@ -192,7 +192,7 @@ internal class WordsRepository
                     Text = entity.Word,
                     WordType = MapWordType(entity.WordType!.Name),
                     CreatedAt = entity.CreatedAt,
-                    EditedAt = entity.UpdatedAt
+                    UpdatedAt = entity.UpdatedAt
                 }
             )
             .ToListAsync(cancellationToken);

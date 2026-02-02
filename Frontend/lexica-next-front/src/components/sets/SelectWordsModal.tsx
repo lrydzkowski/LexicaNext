@@ -143,7 +143,7 @@ function SelectWordsModalContent({
                             Created: {formatDateTime(word.createdAt)}
                           </Text>
                           <Text fz="xs" c="dimmed">
-                            Edited: {word.editedAt ? formatDateTime(word.editedAt) : '-'}
+                            Edited: {word.updatedAt ? formatDateTime(word.updatedAt) : '-'}
                           </Text>
                         </div>
                       </Group>
@@ -195,7 +195,7 @@ function SelectWordsModalContent({
                         </Table.Td>
                         <Table.Td w={150}>
                           <Text size="sm" c="dimmed">
-                            {word.editedAt ? formatDateTime(word.editedAt) : '-'}
+                            {word.updatedAt ? formatDateTime(word.updatedAt) : '-'}
                           </Text>
                         </Table.Td>
                       </Table.Tr>

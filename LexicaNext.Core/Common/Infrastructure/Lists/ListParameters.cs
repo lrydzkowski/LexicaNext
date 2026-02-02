@@ -53,4 +53,6 @@ public static class SortingOrderConstants
 public class Search
 {
     public string? Query { get; init; }
+
+    public int? TimezoneOffsetMinutes { get; init; }
 }

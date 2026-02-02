@@ -10,5 +10,5 @@ public class WordRecord
 
     public DateTimeOffset CreatedAt { get; init; }
 
-    public DateTimeOffset? EditedAt { get; init; }
+    public DateTimeOffset? UpdatedAt { get; init; }
 }

@@ -45,7 +45,7 @@ public static class FilterExtensions
             }
             else if (property.PropertyType == typeof(DateTimeOffset))
             {
-                whereQueryPart = GetDateTimeWhereQuery(mappedFieldName, index);
+                whereQueryPart = GetDateTimeWhereQuery(mappedFieldName, index, search.TimezoneOffsetMinutes);
             }
 
             if (whereQueryPart == null)
@@ -92,8 +92,13 @@ public static class FilterExtensions
         return $"{fieldName}.ToLower().Contains(@{index})";
     }
 
-    private static string GetDateTimeWhereQuery(string fieldName, int index)
+    private static string GetDateTimeWhereQuery(string fieldName, int index, int? timezoneOffsetMinutes)
     {
-        return $"{fieldName}.ToString().Contains(@{index})";
+        if (timezoneOffsetMinutes is null or 0)
+        {
+            return $"{fieldName}.UtcDateTime.ToString().Contains(@{index})";
+        }
+
+        return $"{fieldName}.UtcDateTime.AddMinutes({timezoneOffsetMinutes}).ToString().Contains(@{index})";
     }
 }
