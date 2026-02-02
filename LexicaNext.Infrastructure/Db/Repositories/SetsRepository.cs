@@ -217,6 +217,8 @@ internal class SetsRepository
             .ToList();
         await _dbContext.SetWords.AddRangeAsync(setWordEntities, cancellationToken);
 
+        setEntity.UpdatedAt = _dateTimeOffsetProvider.UtcNow;
+
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 

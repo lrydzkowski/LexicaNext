@@ -16,7 +16,7 @@ internal class WordEntity
 
     public DateTimeOffset CreatedAt { get; set; }
 
-    public DateTimeOffset? EditedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
 
     public ICollection<TranslationEntity> Translations { get; set; } = [];
 

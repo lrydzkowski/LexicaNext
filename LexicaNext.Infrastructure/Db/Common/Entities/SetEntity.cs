@@ -12,5 +12,7 @@ internal class SetEntity
 
     public DateTimeOffset CreatedAt { get; set; }
 
+    public DateTimeOffset? UpdatedAt { get; set; }
+
     public ICollection<SetWordEntity> SetWords { get; set; } = [];
 }

@@ -120,7 +120,7 @@ internal class WordsRepository
                     Text = entity.Word,
                     WordType = MapWordType(entity.WordType!.Name),
                     CreatedAt = entity.CreatedAt,
-                    EditedAt = entity.EditedAt,
+                    EditedAt = entity.UpdatedAt,
                     Translations = entity.Translations.OrderBy(t => t.Order).Select(t => t.Translation).ToList(),
                     ExampleSentences = entity.ExampleSentences.OrderBy(s => s.Order)
                         .Select(s => new ExampleSentence { Sentence = s.Sentence, Order = s.Order })
@@ -192,7 +192,7 @@ internal class WordsRepository
                     Text = entity.Word,
                     WordType = MapWordType(entity.WordType!.Name),
                     CreatedAt = entity.CreatedAt,
-                    EditedAt = entity.EditedAt
+                    EditedAt = entity.UpdatedAt
                 }
             )
             .ToListAsync(cancellationToken);
@@ -261,7 +261,7 @@ internal class WordsRepository
 
             wordEntity.Word = updateWordCommand.Word;
             wordEntity.WordTypeId = wordTypeId;
-            wordEntity.EditedAt = _dateTimeOffsetProvider.UtcNow;
+            wordEntity.UpdatedAt = _dateTimeOffsetProvider.UtcNow;
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             _dbContext.RemoveRange(wordEntity.Translations);
