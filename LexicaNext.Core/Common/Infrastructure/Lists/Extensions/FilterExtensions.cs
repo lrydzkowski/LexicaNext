@@ -46,7 +46,8 @@ public static class FilterExtensions
                 whereQueryPart = GetStringWhereQuery(mappedFieldName, queryParameters.Count);
                 queryParameters.Add(value);
             }
-            else if (property.PropertyType == typeof(DateTimeOffset))
+            else if (property.PropertyType == typeof(DateTimeOffset)
+                     || property.PropertyType == typeof(DateTimeOffset?))
             {
                 int clampedOffset = ClampTimezoneOffset(search.TimezoneOffsetMinutes);
                 int? offsetParamIndex = null;
@@ -56,7 +57,8 @@ public static class FilterExtensions
                     queryParameters.Add((double)clampedOffset);
                 }
 
-                whereQueryPart = GetDateTimeWhereQuery(mappedFieldName, queryParameters.Count, offsetParamIndex);
+                bool isNullable = property.PropertyType == typeof(DateTimeOffset?);
+                whereQueryPart = GetDateTimeWhereQuery(mappedFieldName, queryParameters.Count, offsetParamIndex, isNullable);
                 queryParameters.Add(value);
             }
 
@@ -111,13 +113,21 @@ public static class FilterExtensions
         return Math.Clamp(timezoneOffsetMinutes.Value, -720, 840);
     }
 
-    private static string GetDateTimeWhereQuery(string fieldName, int searchValueIndex, int? offsetIndex)
+    private static string GetDateTimeWhereQuery(string fieldName, int searchValueIndex, int? offsetIndex, bool isNullable)
     {
-        if (offsetIndex is null)
+        string accessor = isNullable ? $"{fieldName}.Value" : fieldName;
+
+        string dateExpression = offsetIndex is null
+            ? $"{accessor}.UtcDateTime.ToString()"
+            : $"{accessor}.UtcDateTime.AddMinutes(@{offsetIndex}).ToString()";
+
+        string query = $"{dateExpression}.Contains(@{searchValueIndex})";
+
+        if (isNullable)
         {
-            return $"{fieldName}.UtcDateTime.ToString().Contains(@{searchValueIndex})";
+            return $"{fieldName}.HasValue AND {query}";
         }
 
-        return $"{fieldName}.UtcDateTime.AddMinutes(@{offsetIndex}).ToString().Contains(@{searchValueIndex})";
+        return query;
     }
 }
