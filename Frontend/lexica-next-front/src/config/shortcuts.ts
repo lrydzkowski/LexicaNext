@@ -28,12 +28,14 @@ export const SHORTCUT_KEYS = {
   ROW_7: 'alt+7',
   ROW_8: 'alt+8',
   ROW_9: 'alt+9',
+  DISMISS_NOTIFICATIONS: 'Escape',
 } as const;
 
 export const SHORTCUT_DEFINITIONS: ShortcutDefinition[] = [
   { key: SHORTCUT_KEYS.NAVIGATE_SETS, description: 'Go to Sets page', scope: 'global' },
   { key: SHORTCUT_KEYS.NAVIGATE_WORDS, description: 'Go to Words page', scope: 'global' },
   { key: SHORTCUT_KEYS.NAVIGATE_ABOUT, description: 'Go to About page', scope: 'global' },
+  { key: SHORTCUT_KEYS.DISMISS_NOTIFICATIONS, description: 'Dismiss notifications', scope: 'global' },
   { key: SHORTCUT_KEYS.CREATE_NEW, description: 'Create new item', scope: 'sets-list' },
   { key: SHORTCUT_KEYS.FOCUS_SEARCH, description: 'Focus search', scope: 'sets-list' },
   { key: SHORTCUT_KEYS.ROW_1, description: 'Focus row 1', scope: 'sets-list' },
