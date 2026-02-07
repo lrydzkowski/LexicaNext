@@ -46,7 +46,7 @@ internal class WordRecordMapper
             Word = record.Text,
             WordType = _wordTypeMapper.Map(record.WordType),
             CreatedAt = record.CreatedAt,
-            EditedAt = record.EditedAt
+            UpdatedAt = record.UpdatedAt
         };
     }
 }

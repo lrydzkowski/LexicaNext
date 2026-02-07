@@ -1,9 +1,17 @@
-import { Outlet } from 'react-router';
+import { useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router';
 import { AppShell, Container } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { GlobalShortcuts } from '../shortcuts/GlobalShortcuts';
 import { Header } from './Header';
 
 export function Layout() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    notifications.clean();
+  }, [pathname]);
+
   return (
     <>
       <GlobalShortcuts />

@@ -29,7 +29,7 @@ internal class WordMapper
             Translations = word.Translations,
             ExampleSentences = word.ExampleSentences.Select(s => s.Sentence).ToList(),
             CreatedAt = word.CreatedAt,
-            EditedAt = word.EditedAt
+            UpdatedAt = word.UpdatedAt
         };
     }
 }

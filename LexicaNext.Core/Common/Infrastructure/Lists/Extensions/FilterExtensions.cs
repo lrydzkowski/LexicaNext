@@ -24,8 +24,11 @@ public static class FilterExtensions
             return query;
         }
 
+        string value = search.Query.ToLower();
         PropertyInfo[] properties = GetEntityProperties<T>();
         List<string> whereQueryParts = [];
+        List<object> queryParameters = [];
+
         foreach (string fieldName in fieldsAvailableToFilter)
         {
             string mappedFieldName = MapFieldName(fieldName, fieldNamesMapping);
@@ -38,14 +41,25 @@ public static class FilterExtensions
             }
 
             string? whereQueryPart = null;
-            int index = whereQueryParts.Count;
             if (property.PropertyType == typeof(string))
             {
-                whereQueryPart = GetStringWhereQuery(mappedFieldName, index);
+                whereQueryPart = GetStringWhereQuery(mappedFieldName, queryParameters.Count);
+                queryParameters.Add(value);
             }
-            else if (property.PropertyType == typeof(DateTimeOffset))
+            else if (property.PropertyType == typeof(DateTimeOffset)
+                     || property.PropertyType == typeof(DateTimeOffset?))
             {
-                whereQueryPart = GetDateTimeWhereQuery(mappedFieldName, index);
+                int clampedOffset = ClampTimezoneOffset(search.TimezoneOffsetMinutes);
+                int? offsetParamIndex = null;
+                if (clampedOffset != 0)
+                {
+                    offsetParamIndex = queryParameters.Count;
+                    queryParameters.Add((double)clampedOffset);
+                }
+
+                bool isNullable = property.PropertyType == typeof(DateTimeOffset?);
+                whereQueryPart = GetDateTimeWhereQuery(mappedFieldName, queryParameters.Count, offsetParamIndex, isNullable);
+                queryParameters.Add(value);
             }
 
             if (whereQueryPart == null)
@@ -61,11 +75,8 @@ public static class FilterExtensions
             return query;
         }
 
-        string value = search.Query.ToLower();
         string whereQuery = "(" + string.Join(") OR (", whereQueryParts) + ")";
-        List<object> valuesToSubstitute =
-            Enumerable.Range(1, whereQueryParts.Count).Select(_ => value).ToList<object>();
-        query = query.Where(DynamicLinqParsingConfig, whereQuery, valuesToSubstitute.ToArray());
+        query = query.Where(DynamicLinqParsingConfig, whereQuery, queryParameters.ToArray());
 
         return query;
     }
@@ -92,8 +103,31 @@ public static class FilterExtensions
         return $"{fieldName}.ToLower().Contains(@{index})";
     }
 
-    private static string GetDateTimeWhereQuery(string fieldName, int index)
+    private static int ClampTimezoneOffset(int? timezoneOffsetMinutes)
     {
-        return $"{fieldName}.ToString().Contains(@{index})";
+        if (timezoneOffsetMinutes is null)
+        {
+            return 0;
+        }
+
+        return Math.Clamp(timezoneOffsetMinutes.Value, -720, 840);
+    }
+
+    private static string GetDateTimeWhereQuery(string fieldName, int searchValueIndex, int? offsetIndex, bool isNullable)
+    {
+        string accessor = isNullable ? $"{fieldName}.Value" : fieldName;
+
+        string dateExpression = offsetIndex is null
+            ? $"{accessor}.UtcDateTime.ToString()"
+            : $"{accessor}.UtcDateTime.AddMinutes(@{offsetIndex}).ToString()";
+
+        string query = $"{dateExpression}.Contains(@{searchValueIndex})";
+
+        if (isNullable)
+        {
+            return $"{fieldName}.HasValue AND {query}";
+        }
+
+        return query;
     }
 }

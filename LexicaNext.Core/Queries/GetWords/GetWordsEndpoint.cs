@@ -85,6 +85,9 @@ public class GetWordsRequest
 
     [FromQuery(Name = "searchQuery")]
     public string? SearchQuery { get; init; }
+
+    [FromQuery(Name = "timezoneOffsetMinutes")]
+    public int? TimezoneOffsetMinutes { get; init; }
 }
 
 public class GetWordsResponse
@@ -104,5 +107,5 @@ public class WordRecordDto
 
     public DateTimeOffset CreatedAt { get; init; }
 
-    public DateTimeOffset? EditedAt { get; init; }
+    public DateTimeOffset? UpdatedAt { get; init; }
 }

@@ -1,3 +1,4 @@
+import { notifications } from '@mantine/notifications';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { links } from '../../config/links';
@@ -20,6 +21,10 @@ export function GlobalShortcuts() {
       {
         key: SHORTCUT_KEYS.NAVIGATE_ABOUT,
         handler: () => navigate(links.about.getUrl()),
+      },
+      {
+        key: SHORTCUT_KEYS.DISMISS_NOTIFICATIONS,
+        handler: () => notifications.clean(),
       },
     ],
     [navigate],

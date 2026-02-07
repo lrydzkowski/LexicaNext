@@ -47,5 +47,8 @@ internal class SetEntityTypeConfiguration : IEntityTypeConfiguration<SetEntity>
         builder.Property(entity => entity.CreatedAt)
             .HasColumnName("created_at")
             .IsRequired();
+
+        builder.Property(entity => entity.UpdatedAt)
+            .HasColumnName("updated_at");
     }
 }

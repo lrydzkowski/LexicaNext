@@ -62,8 +62,8 @@ internal class WordEntityTypeConfiguration : IEntityTypeConfiguration<WordEntity
             .HasColumnName("created_at")
             .IsRequired();
 
-        builder.Property(entity => entity.EditedAt)
-            .HasColumnName("edited_at");
+        builder.Property(entity => entity.UpdatedAt)
+            .HasColumnName("updated_at");
     }
 
     private void ConfigureIndexes(EntityTypeBuilder<WordEntity> builder)
@@ -77,6 +77,6 @@ internal class WordEntityTypeConfiguration : IEntityTypeConfiguration<WordEntity
 
         builder.HasIndex(entity => entity.CreatedAt);
 
-        builder.HasIndex(entity => entity.EditedAt);
+        builder.HasIndex(entity => entity.UpdatedAt);
     }
 }

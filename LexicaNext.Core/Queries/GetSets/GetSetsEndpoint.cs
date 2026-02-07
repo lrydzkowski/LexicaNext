@@ -84,6 +84,9 @@ public class GetSetsRequest
 
     [FromQuery(Name = "searchQuery")]
     public string? SearchQuery { get; init; }
+
+    [FromQuery(Name = "timezoneOffsetMinutes")]
+    public int? TimezoneOffsetMinutes { get; init; }
 }
 
 public class GetSetsResponse

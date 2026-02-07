@@ -47,6 +47,8 @@ export function WordsList() {
   const sortingFieldName = 'createdAt';
   const sortingOrder = 'desc';
 
+  const timezoneOffsetMinutes = -new Date().getTimezoneOffset();
+
   const {
     data: wordsData,
     isFetching,
@@ -58,6 +60,7 @@ export function WordsList() {
     sortingFieldName,
     sortingOrder,
     searchQuery: debouncedSearchQuery || undefined,
+    timezoneOffsetMinutes,
   });
 
   const deleteWordsMutation = useDeleteWords();
@@ -305,7 +308,7 @@ export function WordsList() {
                           Created: {formatDateTime(word.createdAt)}
                         </Text>
                         <Text fz="xs" c="dimmed">
-                          Edited: {word.editedAt ? formatDateTime(word.editedAt) : '-'}
+                          Edited: {word.updatedAt ? formatDateTime(word.updatedAt) : '-'}
                         </Text>
                       </div>
                       <Box>
@@ -370,7 +373,7 @@ export function WordsList() {
                       <Text>{formatDateTime(word.createdAt)}</Text>
                     </Table.Td>
                     <Table.Td w={180}>
-                      <Text>{word.editedAt ? formatDateTime(word.editedAt) : '-'}</Text>
+                      <Text>{word.updatedAt ? formatDateTime(word.updatedAt) : '-'}</Text>
                     </Table.Td>
                     <Table.Td w={80}>
                       <Group justify="center">

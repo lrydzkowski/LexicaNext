@@ -35,6 +35,7 @@ export const useSets = (params?: {
   sortingFieldName?: string;
   sortingOrder?: string;
   searchQuery?: string;
+  timezoneOffsetMinutes?: number;
 }) => {
   const client = useApiClient();
 
@@ -64,6 +65,7 @@ export const useWords = (params?: {
   sortingFieldName?: string;
   sortingOrder?: string;
   searchQuery?: string;
+  timezoneOffsetMinutes?: number;
 }) => {
   const client = useApiClient();
 
