@@ -34,6 +34,30 @@ internal class AzureFoundryAiService : IAiGenerationService, IScopedService
         _responsesClient = projectClient.OpenAI.GetProjectResponsesClientForModel(foundryOptions.ModelDeploymentName);
     }
 
+    public async Task<IReadOnlyList<GeneratedWord>> GenerateWordsAsync(
+        int count,
+        CancellationToken cancellationToken = default
+    )
+    {
+        string prompt = $$"""
+                          Generate {{count}} unique English vocabulary words suitable for language learning.
+
+                          Requirements:
+                          - Words should be at B1-C2 English level
+                          - Each word must have a word type: Noun, Verb, Adjective, or Adverb
+                          - Mix different word types roughly evenly
+                          - No duplicate words
+                          - Use common, practical vocabulary
+
+                          Respond with valid JSON only. No markdown, no explanation, no code blocks.
+                          Format: [{"word": "example", "wordType": "Noun"}, ...]
+                          """;
+
+        string response = await CallAiAsync(prompt, cancellationToken);
+
+        return _serializer.Deserialize<List<GeneratedWord>>(response) ?? [];
+    }
+
     public async Task<IReadOnlyList<string>> GenerateTranslationsAsync(
         string word,
         string wordType,

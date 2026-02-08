@@ -2,6 +2,11 @@ namespace LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
 
 public interface IAiGenerationService
 {
+    Task<IReadOnlyList<GeneratedWord>> GenerateWordsAsync(
+        int count,
+        CancellationToken cancellationToken = default
+    );
+
     Task<IReadOnlyList<string>> GenerateTranslationsAsync(
         string word,
         string wordType,

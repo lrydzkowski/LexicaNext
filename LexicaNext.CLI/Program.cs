@@ -2,6 +2,7 @@ using CommandDotNet;
 using CommandDotNet.IoC.MicrosoftDependencyInjection;
 using LexicaNext.CLI.Commands;
 using LexicaNext.CLI.Services;
+using LexicaNext.Core.Common.Infrastructure.Services;
 using LexicaNext.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +36,7 @@ internal class Program
                 {
                     services.AddSingleton(configuration);
                     services.AddInfrastructureServices(configuration);
+                    services.AddSingleton<ISerializer, Serializer>();
                     services.AddScoped<IDataSeedService, DataSeedService>();
                     services.AddScoped<DataSeedCommands>();
                 }
