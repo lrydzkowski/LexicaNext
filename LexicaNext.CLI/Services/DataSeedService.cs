@@ -28,6 +28,12 @@ internal class DataSeedService : IDataSeedService
     {
         UserSetSequenceEntity sequenceEntity = await GetOrCreateSequenceAsync(userId);
 
+        Faker faker = new();
+        List<DateTimeOffset> dates = Enumerable.Range(0, count)
+            .Select(_ => faker.Date.PastOffset(365).ToUniversalTime())
+            .OrderBy(d => d)
+            .ToList();
+
         List<SetEntity> sets = [];
         for (int i = 0; i < count; i++)
         {
@@ -38,7 +44,7 @@ internal class DataSeedService : IDataSeedService
                     SetId = Guid.CreateVersion7(),
                     UserId = userId,
                     Name = name,
-                    CreatedAt = new Faker().Date.PastOffset(365).ToUniversalTime()
+                    CreatedAt = dates[i]
                 }
             );
 
