@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { IconChevronDown, IconChevronUp, IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
 import {
   ActionIcon,
@@ -147,26 +147,6 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
 
   const handleRemoveWord = (wordId: string) => {
     setSelectedWords(selectedWords.filter((w) => w.wordId !== wordId));
-  };
-
-  const handleMoveUp = (index: number) => {
-    if (index === 0) {
-      return;
-    }
-
-    const newWords = [...selectedWords];
-    [newWords[index - 1], newWords[index]] = [newWords[index], newWords[index - 1]];
-    setSelectedWords(newWords);
-  };
-
-  const handleMoveDown = (index: number) => {
-    if (index === selectedWords.length - 1) {
-      return;
-    }
-
-    const newWords = [...selectedWords];
-    [newWords[index], newWords[index + 1]] = [newWords[index + 1], newWords[index]];
-    setSelectedWords(newWords);
   };
 
   const handleWordCreated = (data: WordFormSuccessData) => {
@@ -328,22 +308,6 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                         </div>
                         <Group gap={4}>
                           <ActionIcon
-                            variant="subtle"
-                            size="sm"
-                            onClick={() => handleMoveUp(index)}
-                            disabled={index === 0}
-                            aria-label="Move up">
-                            <IconChevronUp size={14} />
-                          </ActionIcon>
-                          <ActionIcon
-                            variant="subtle"
-                            size="sm"
-                            onClick={() => handleMoveDown(index)}
-                            disabled={index === selectedWords.length - 1}
-                            aria-label="Move down">
-                            <IconChevronDown size={14} />
-                          </ActionIcon>
-                          <ActionIcon
                             ref={(el) => {
                               mobileDeleteButtonRefs.current[index] = el;
                             }}
@@ -365,7 +329,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                       <Table.Th w={60}>#</Table.Th>
                       <Table.Th>Word</Table.Th>
                       <Table.Th w={120}>Type</Table.Th>
-                      <Table.Th w={100} style={{ textAlign: 'center' }}>
+                      <Table.Th w={50} style={{ textAlign: 'center' }}>
                         Actions
                       </Table.Th>
                     </Table.Tr>
@@ -384,24 +348,8 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                             {word.wordType}
                           </Badge>
                         </Table.Td>
-                        <Table.Td w={100}>
+                        <Table.Td w={50}>
                           <Group gap={4} justify="center">
-                            <ActionIcon
-                              variant="subtle"
-                              size="sm"
-                              onClick={() => handleMoveUp(index)}
-                              disabled={index === 0}
-                              aria-label="Move up">
-                              <IconChevronUp size={14} />
-                            </ActionIcon>
-                            <ActionIcon
-                              variant="subtle"
-                              size="sm"
-                              onClick={() => handleMoveDown(index)}
-                              disabled={index === selectedWords.length - 1}
-                              aria-label="Move down">
-                              <IconChevronDown size={14} />
-                            </ActionIcon>
                             <ActionIcon
                               ref={(el) => {
                                 desktopDeleteButtonRefs.current[index] = el;
