@@ -24,8 +24,6 @@ internal class AppDbContext : DbContext
 
     public DbSet<AnswerEntity> Answers => Set<AnswerEntity>();
 
-    public DbSet<TestEntity> Tests => Set<TestEntity>();
-
     public DbSet<ExampleSentenceEntity> ExampleSentences => Set<ExampleSentenceEntity>();
 
     public DbSet<UserSetSequenceEntity> UserSetSequences => Set<UserSetSequenceEntity>();
