@@ -29,9 +29,9 @@ Create and organize your vocabulary sets with:
 
 Manage words independently of sets. Browse, create, and edit words from a dedicated word list, and associate each word with multiple sets.
 
-![My Vocabulary Sets](docs/screenshots/words.png)
+![My Words](docs/screenshots/words.png)
 
-![Edit Set](docs/screenshots/edit-word.png)
+![Edit Word](docs/screenshots/edit-word.png)
 
 ### Learning Modes
 
