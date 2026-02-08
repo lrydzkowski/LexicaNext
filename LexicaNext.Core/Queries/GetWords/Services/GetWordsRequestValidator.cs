@@ -11,7 +11,6 @@ public class GetWordsRequestValidator : AbstractValidator<GetWordsRequest>
         AddValidationForPage();
         AddValidationForPageSize();
         AddValidationForSortingOrder();
-        AddValidationForTimezoneOffsetMinutes();
     }
 
     private void AddValidationForPage()
@@ -34,12 +33,5 @@ public class GetWordsRequestValidator : AbstractValidator<GetWordsRequest>
             .WithName(nameof(GetWordsRequest.SortingOrder))
             .WithMessage($"'{{PropertyName}}' must be one of the following: {SortingOrderConstants.Serialize()}.")
             .WithErrorCode(ValidationErrorCodes.ValueInSetValidator);
-    }
-
-    private void AddValidationForTimezoneOffsetMinutes()
-    {
-        RuleFor(request => request.TimezoneOffsetMinutes)
-            .InclusiveBetween(-720, 840)
-            .When(request => request.TimezoneOffsetMinutes.HasValue);
     }
 }

@@ -1,5 +1,6 @@
 using System.Reflection;
 using LexicaNext.Infrastructure.Db.Common.Entities;
+using LexicaNext.Infrastructure.Db.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace LexicaNext.Infrastructure.Db;
@@ -31,5 +32,9 @@ internal class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        modelBuilder.HasDbFunction(
+            typeof(PostgresFunctions).GetMethod(nameof(PostgresFunctions.Timezone))!)
+            .HasName("timezone");
     }
 }

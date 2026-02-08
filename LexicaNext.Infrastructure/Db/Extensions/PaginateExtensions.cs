@@ -1,4 +1,6 @@
-﻿namespace LexicaNext.Core.Common.Infrastructure.Lists.Extensions;
+using LexicaNext.Core.Common.Infrastructure.Lists;
+
+namespace LexicaNext.Infrastructure.Db.Extensions;
 
 public static class PaginateExtensions
 {

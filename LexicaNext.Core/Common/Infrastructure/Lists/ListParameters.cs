@@ -54,5 +54,5 @@ public class Search
 {
     public string? Query { get; init; }
 
-    public int? TimezoneOffsetMinutes { get; init; }
+    public string? TimeZoneId { get; init; }
 }

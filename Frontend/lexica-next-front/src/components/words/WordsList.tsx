@@ -47,7 +47,7 @@ export function WordsList() {
   const sortingFieldName = 'createdAt';
   const sortingOrder = 'desc';
 
-  const timezoneOffsetMinutes = -new Date().getTimezoneOffset();
+  const timeZoneId = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const {
     data: wordsData,
@@ -60,7 +60,7 @@ export function WordsList() {
     sortingFieldName,
     sortingOrder,
     searchQuery: debouncedSearchQuery || undefined,
-    timezoneOffsetMinutes,
+    timeZoneId,
   });
 
   const deleteWordsMutation = useDeleteWords();

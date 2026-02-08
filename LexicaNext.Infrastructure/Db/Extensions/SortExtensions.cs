@@ -1,7 +1,8 @@
-﻿using System.Linq.Dynamic.Core;
+using System.Linq.Dynamic.Core;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Core.Common.Infrastructure.Lists;
 
-namespace LexicaNext.Core.Common.Infrastructure.Lists.Extensions;
+namespace LexicaNext.Infrastructure.Db.Extensions;
 
 public static class SortExtensions
 {
