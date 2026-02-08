@@ -108,7 +108,7 @@ function SelectWordsModalContent({
           }
         />
         <Box pos="relative" mb={20}>
-          <LoadingOverlay visible={isFetching} transitionProps={{ enterDelay: 200 }} />
+          <LoadingOverlay visible={isFetching} />
           {words.length > 0 ? (
             <>
               <Box hiddenFrom="md">
