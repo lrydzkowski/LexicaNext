@@ -11,6 +11,7 @@ public class GetSetsRequestValidator : AbstractValidator<GetSetsRequest>
         AddValidationForPage();
         AddValidationForPageSize();
         AddValidationForSortingOrder();
+        AddValidationForTimeZoneId();
     }
 
     private void AddValidationForPage()
@@ -33,5 +34,14 @@ public class GetSetsRequestValidator : AbstractValidator<GetSetsRequest>
             .WithName(nameof(GetSetsRequest.SortingOrder))
             .WithMessage($"'{{PropertyName}}' must be one of the following: {SortingOrderConstants.Serialize()}.")
             .WithErrorCode(ValidationErrorCodes.ValueInSetValidator);
+    }
+
+    private void AddValidationForTimeZoneId()
+    {
+        RuleFor(request => request.TimeZoneId)
+            .MaximumLength(100)
+            .Must(id => TimeZoneInfo.TryFindSystemTimeZoneById(id!, out _))
+            .WithMessage("'{PropertyName}' must be a valid IANA timezone identifier.")
+            .When(request => request.TimeZoneId is not null);
     }
 }
