@@ -378,7 +378,7 @@ export interface operations {
                 sortingFieldName?: string;
                 sortingOrder?: string;
                 searchQuery?: string;
-                timezoneOffsetMinutes?: number | string;
+                timeZoneId?: string;
             };
             header?: never;
             path?: never;
@@ -651,7 +651,7 @@ export interface operations {
                 sortingFieldName?: string;
                 sortingOrder?: string;
                 searchQuery?: string;
-                timezoneOffsetMinutes?: number | string;
+                timeZoneId?: string;
             };
             header?: never;
             path?: never;

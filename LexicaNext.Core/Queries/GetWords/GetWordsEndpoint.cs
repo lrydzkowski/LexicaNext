@@ -86,8 +86,8 @@ public class GetWordsRequest
     [FromQuery(Name = "searchQuery")]
     public string? SearchQuery { get; init; }
 
-    [FromQuery(Name = "timezoneOffsetMinutes")]
-    public int? TimezoneOffsetMinutes { get; init; }
+    [FromQuery(Name = "timeZoneId")]
+    public string? TimeZoneId { get; init; }
 }
 
 public class GetWordsResponse

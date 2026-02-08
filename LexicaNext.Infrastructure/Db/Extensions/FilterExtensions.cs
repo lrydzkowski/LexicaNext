@@ -1,16 +1,34 @@
-﻿using System.Linq.Dynamic.Core;
+using System.Linq.Dynamic.Core;
+using System.Linq.Dynamic.Core.CustomTypeProviders;
 using System.Reflection;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Core.Common.Infrastructure.Lists;
 
-namespace LexicaNext.Core.Common.Infrastructure.Lists.Extensions;
+namespace LexicaNext.Infrastructure.Db.Extensions;
 
 public static class FilterExtensions
 {
     private static ParsingConfig DynamicLinqParsingConfig { get; } = new()
     {
         ResolveTypesBySimpleName = true,
-        AllowEqualsAndToStringMethodsOnObject = true
+        AllowEqualsAndToStringMethodsOnObject = true,
+        CustomTypeProvider = new DynamicLinqTypeProvider()
     };
+
+    private class DynamicLinqTypeProvider : IDynamicLinqCustomTypeProvider
+    {
+        private static readonly HashSet<Type> CustomTypes = [typeof(PostgresFunctions)];
+
+        public HashSet<Type> GetCustomTypes() => CustomTypes;
+
+        public Dictionary<Type, List<MethodInfo>> GetExtensionMethods() => new();
+
+        public Type? ResolveType(string typeName) =>
+            CustomTypes.FirstOrDefault(t => t.FullName == typeName);
+
+        public Type? ResolveTypeBySimpleName(string simpleTypeName) =>
+            CustomTypes.FirstOrDefault(t => t.Name == simpleTypeName);
+    }
 
     public static IQueryable<T> Filter<T>(
         this IQueryable<T> query,
@@ -49,17 +67,22 @@ public static class FilterExtensions
             else if (property.PropertyType == typeof(DateTimeOffset)
                      || property.PropertyType == typeof(DateTimeOffset?))
             {
-                int clampedOffset = ClampTimezoneOffset(search.TimezoneOffsetMinutes);
-                int? offsetParamIndex = null;
-                if (clampedOffset != 0)
-                {
-                    offsetParamIndex = queryParameters.Count;
-                    queryParameters.Add((double)clampedOffset);
-                }
-
                 bool isNullable = property.PropertyType == typeof(DateTimeOffset?);
-                whereQueryPart = GetDateTimeWhereQuery(mappedFieldName, queryParameters.Count, offsetParamIndex, isNullable);
-                queryParameters.Add(value);
+                string? timeZoneId = GetValidTimeZoneId(search.TimeZoneId);
+
+                if (timeZoneId is not null)
+                {
+                    int tzParamIndex = queryParameters.Count;
+                    queryParameters.Add(timeZoneId);
+                    whereQueryPart = GetDateTimeWithTimezoneWhereQuery(
+                        mappedFieldName, queryParameters.Count, tzParamIndex, isNullable);
+                    queryParameters.Add(value);
+                }
+                else
+                {
+                    whereQueryPart = GetDateTimeUtcWhereQuery(mappedFieldName, queryParameters.Count, isNullable);
+                    queryParameters.Add(value);
+                }
             }
 
             if (whereQueryPart == null)
@@ -103,24 +126,41 @@ public static class FilterExtensions
         return $"{fieldName}.ToLower().Contains(@{index})";
     }
 
-    private static int ClampTimezoneOffset(int? timezoneOffsetMinutes)
+    private static string? GetValidTimeZoneId(string? timeZoneId)
     {
-        if (timezoneOffsetMinutes is null)
+        if (timeZoneId is null)
         {
-            return 0;
+            return null;
         }
 
-        return Math.Clamp(timezoneOffsetMinutes.Value, -720, 840);
+        if (TimeZoneInfo.TryFindSystemTimeZoneById(timeZoneId, out _))
+        {
+            return timeZoneId;
+        }
+
+        return null;
     }
 
-    private static string GetDateTimeWhereQuery(string fieldName, int searchValueIndex, int? offsetIndex, bool isNullable)
+    private static string GetDateTimeWithTimezoneWhereQuery(
+        string fieldName, int searchValueIndex, int tzParamIndex, bool isNullable)
     {
         string accessor = isNullable ? $"{fieldName}.Value" : fieldName;
+        string dateExpression =
+            $"PostgresFunctions.Timezone(@{tzParamIndex}, {accessor}).ToString().Substring(0, 19)";
+        string query = $"{dateExpression}.Contains(@{searchValueIndex})";
 
-        string dateExpression = offsetIndex is null
-            ? $"{accessor}.UtcDateTime.ToString()"
-            : $"{accessor}.UtcDateTime.AddMinutes(@{offsetIndex}).ToString()";
+        if (isNullable)
+        {
+            return $"{fieldName}.HasValue AND {query}";
+        }
 
+        return query;
+    }
+
+    private static string GetDateTimeUtcWhereQuery(string fieldName, int searchValueIndex, bool isNullable)
+    {
+        string accessor = isNullable ? $"{fieldName}.Value" : fieldName;
+        string dateExpression = $"{accessor}.UtcDateTime.ToString().Substring(0, 19)";
         string query = $"{dateExpression}.Contains(@{searchValueIndex})";
 
         if (isNullable)

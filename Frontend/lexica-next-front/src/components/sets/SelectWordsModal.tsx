@@ -45,7 +45,7 @@ function SelectWordsModalContent({
   searchInputRef,
 }: SelectWordsModalContentProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 150);
+  const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 

@@ -5,7 +5,7 @@ using LexicaNext.Core.Commands.UpdateSet.Interfaces;
 using LexicaNext.Core.Commands.UpdateSet.Models;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Lists;
-using LexicaNext.Core.Common.Infrastructure.Lists.Extensions;
+using LexicaNext.Infrastructure.Db.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Services;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetProposedSetName.Interfaces;

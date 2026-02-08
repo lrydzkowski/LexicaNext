@@ -19,7 +19,7 @@ internal class GetWordsRequestProcessor
             SortingFieldName = request.SortingFieldName?.Trim(),
             SortingOrder = request.SortingOrder?.Trim() ?? "desc",
             SearchQuery = request.SearchQuery?.Trim(),
-            TimezoneOffsetMinutes = request.TimezoneOffsetMinutes
+            TimeZoneId = request.TimeZoneId
         };
     }
 }

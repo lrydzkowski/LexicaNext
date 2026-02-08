@@ -19,7 +19,7 @@ internal class GetSetsRequestProcessor
             SortingFieldName = request.SortingFieldName?.Trim(),
             SortingOrder = request.SortingOrder?.Trim() ?? "asc",
             SearchQuery = request.SearchQuery?.Trim(),
-            TimezoneOffsetMinutes = request.TimezoneOffsetMinutes
+            TimeZoneId = request.TimeZoneId
         };
     }
 }

@@ -11,7 +11,7 @@ public class GetSetsRequestValidator : AbstractValidator<GetSetsRequest>
         AddValidationForPage();
         AddValidationForPageSize();
         AddValidationForSortingOrder();
-        AddValidationForTimezoneOffsetMinutes();
+        AddValidationForTimeZoneId();
     }
 
     private void AddValidationForPage()
@@ -36,10 +36,12 @@ public class GetSetsRequestValidator : AbstractValidator<GetSetsRequest>
             .WithErrorCode(ValidationErrorCodes.ValueInSetValidator);
     }
 
-    private void AddValidationForTimezoneOffsetMinutes()
+    private void AddValidationForTimeZoneId()
     {
-        RuleFor(request => request.TimezoneOffsetMinutes)
-            .InclusiveBetween(-720, 840)
-            .When(request => request.TimezoneOffsetMinutes.HasValue);
+        RuleFor(request => request.TimeZoneId)
+            .MaximumLength(100)
+            .Must(id => TimeZoneInfo.TryFindSystemTimeZoneById(id!, out _))
+            .WithMessage("'{PropertyName}' must be a valid IANA timezone identifier.")
+            .When(request => request.TimeZoneId is not null);
     }
 }

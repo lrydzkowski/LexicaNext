@@ -40,7 +40,7 @@ export function SetsList() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 150);
+  const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300);
   const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -57,7 +57,7 @@ export function SetsList() {
   const sortingFieldName = 'createdAt';
   const sortingOrder = 'desc';
 
-  const timezoneOffsetMinutes = -new Date().getTimezoneOffset();
+  const timeZoneId = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const {
     data: setsData,
@@ -70,7 +70,7 @@ export function SetsList() {
     sortingFieldName,
     sortingOrder,
     searchQuery: debouncedSearchQuery || undefined,
-    timezoneOffsetMinutes,
+    timeZoneId,
   });
 
   const deleteSetsMutation = useDeleteSets();
