@@ -276,7 +276,7 @@ export function WordsList() {
         </Group>
 
         <Box pos="relative">
-          <LoadingOverlay visible={isFetching} />
+          <LoadingOverlay visible={isFetching} transitionProps={{ enterDelay: 200 }} />
           <Box hiddenFrom="md">
             {words.length > 0 ? (
               words.map((word, index) => (

@@ -314,7 +314,7 @@ export function SetsList() {
         </Group>
 
         <Box pos="relative">
-          <LoadingOverlay visible={isFetching} />
+          <LoadingOverlay visible={isFetching} transitionProps={{ enterDelay: 200 }} />
 
           <Box hiddenFrom="md">
             {sets.length > 0 ? (
