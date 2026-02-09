@@ -44,7 +44,6 @@ export const logger = winston.createLogger({
   transports: [fileRotateTransport, errorFileRotateTransport],
 });
 
-
 fileRotateTransport.on('rotate', (oldFilename, newFilename) => {
   logger.info('Log file rotated', { oldFilename, newFilename });
 });

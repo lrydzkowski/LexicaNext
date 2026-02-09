@@ -1,17 +1,30 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema, Tool } from '@modelcontextprotocol/sdk/types.js';
-import { components } from '../api-types/api-types.js';
-import { createSet, getSet, getSets, getStatus, updateSet } from './api-client.js';
+import {
+  createSet,
+  createWord,
+  deleteSets,
+  deleteWords,
+  generateSentences,
+  generateTranslations,
+  getSet,
+  getSets,
+  getStatus,
+  getWord,
+  getWords,
+  getWordSets,
+  updateSet,
+  updateWord,
+  type CreateWordRequestPayload,
+  type UpdateWordRequestPayload,
+} from './api-client.js';
 import { logger } from './logger.js';
-
-type CreateSetRequestPayload = components['schemas']['CreateSetRequestPayload'];
-type UpdateSetRequestPayload = components['schemas']['UpdateSetRequestPayload'];
 
 const server = new Server(
   {
     name: 'lexica-next',
-    version: '1.0.0',
+    version: '2.0.0',
   },
   {
     capabilities: {
@@ -22,7 +35,7 @@ const server = new Server(
 
 logger.info('MCP server initialized', {
   serverName: 'lexica-next',
-  version: '1.0.0',
+  version: '2.0.0',
   capabilities: ['tools'],
 });
 
@@ -67,6 +80,10 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             type: 'string',
             description: 'Search query to filter sets',
           },
+          timeZoneId: {
+            type: 'string',
+            description: 'Time zone ID for date formatting (e.g. Europe/Warsaw)',
+          },
         },
       },
       annotations: {
@@ -76,7 +93,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     },
     {
       name: 'get_lexica_set',
-      description: 'Get a specific vocabulary set by ID',
+      description: 'Get a specific vocabulary set by ID, including its words',
       inputSchema: {
         type: 'object',
         properties: {
@@ -94,43 +111,17 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     },
     {
       name: 'create_lexica_set',
-      description: 'Create a new vocabulary set',
+      description: 'Create a new vocabulary set from existing word IDs. The set name is auto-generated.',
       inputSchema: {
         type: 'object',
         properties: {
-          setName: {
-            type: 'string',
-            description: 'Name of the vocabulary set',
-          },
-          entries: {
+          wordIds: {
             type: 'array',
-            description: 'Array of vocabulary entries (EntryDto)',
-            items: {
-              type: 'object',
-              properties: {
-                word: {
-                  type: 'string',
-                  description: 'The vocabulary word',
-                },
-                wordType: {
-                  type: 'string',
-                  description: 'The grammatical type of the word (e.g., noun, verb, adjective)',
-                },
-                translations: {
-                  type: 'array',
-                  items: {
-                    type: 'string',
-                  },
-                  description: 'Array of translations for the word',
-                },
-              },
-              additionalProperties: false,
-              required: ['word', 'wordType', 'translations'],
-            },
+            items: { type: 'string' },
+            description: 'Array of word IDs to include in the set',
           },
         },
-        additionalProperties: false,
-        required: ['setName', 'entries'],
+        required: ['wordIds'],
       },
       annotations: {
         title: 'Create Lexica Set',
@@ -141,7 +132,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     },
     {
       name: 'update_lexica_set',
-      description: 'Update an existing vocabulary set',
+      description: 'Update an existing vocabulary set by replacing its word IDs',
       inputSchema: {
         type: 'object',
         properties: {
@@ -149,45 +140,262 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             type: 'string',
             description: 'The ID of the vocabulary set to update',
           },
-          setName: {
-            type: 'string',
-            description: 'Updated name of the vocabulary set',
-          },
-          entries: {
+          wordIds: {
             type: 'array',
-            description: 'Updated array of vocabulary entries',
-            items: {
-              type: 'object',
-              properties: {
-                word: {
-                  type: 'string',
-                  description: 'The vocabulary word',
-                },
-                wordType: {
-                  type: 'string',
-                  description: 'The grammatical type of the word',
-                },
-                translations: {
-                  type: 'array',
-                  items: {
-                    type: 'string',
-                  },
-                  description: 'Array of translations for the word',
-                },
-              },
-              additionalProperties: false,
-              required: ['word', 'wordType', 'translations'],
-            },
+            items: { type: 'string' },
+            description: 'New array of word IDs for the set',
           },
         },
-        additionalProperties: false,
-        required: ['setId', 'setName', 'entries'],
+        required: ['setId', 'wordIds'],
       },
       annotations: {
         title: 'Update Lexica Set',
         readOnlyHint: false,
         destructiveHint: true,
         idempotentHint: true,
+      },
+    },
+    {
+      name: 'delete_lexica_sets',
+      description: 'Delete multiple vocabulary sets by their IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Array of set IDs to delete',
+          },
+        },
+        required: ['ids'],
+      },
+      annotations: {
+        title: 'Delete Lexica Sets',
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: true,
+      },
+    },
+    {
+      name: 'get_lexica_words',
+      description: 'Get words with optional filtering and pagination',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          page: {
+            type: 'number',
+            description: 'Page number for pagination',
+          },
+          pageSize: {
+            type: 'number',
+            description: 'Number of items per page',
+          },
+          sortingFieldName: {
+            type: 'string',
+            description: 'Field name to sort by',
+          },
+          sortingOrder: {
+            type: 'string',
+            description: 'Sorting order (asc/desc)',
+          },
+          searchQuery: {
+            type: 'string',
+            description: 'Search query to filter words',
+          },
+          timeZoneId: {
+            type: 'string',
+            description: 'Time zone ID for date formatting (e.g. Europe/Warsaw)',
+          },
+        },
+      },
+      annotations: {
+        title: 'Get Lexica Words',
+        readOnlyHint: true,
+      },
+    },
+    {
+      name: 'get_lexica_word',
+      description: 'Get a specific word by ID, including translations and example sentences',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          wordId: {
+            type: 'string',
+            description: 'The ID of the word',
+          },
+        },
+        required: ['wordId'],
+      },
+      annotations: {
+        title: 'Get Lexica Word',
+        readOnlyHint: true,
+      },
+    },
+    {
+      name: 'create_lexica_word',
+      description: 'Create a new word with translations and example sentences',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          word: {
+            type: 'string',
+            description: 'The English word',
+          },
+          wordType: {
+            type: 'string',
+            description: 'Grammatical type: Noun, Verb, Adjective, or Adverb',
+            enum: ['Noun', 'Verb', 'Adjective', 'Adverb'],
+          },
+          translations: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Array of Polish translations',
+          },
+          exampleSentences: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Array of example sentences',
+          },
+        },
+        required: ['word', 'wordType', 'translations'],
+      },
+      annotations: {
+        title: 'Create Lexica Word',
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+      },
+    },
+    {
+      name: 'update_lexica_word',
+      description: 'Update an existing word by ID',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          wordId: {
+            type: 'string',
+            description: 'The ID of the word to update',
+          },
+          word: {
+            type: 'string',
+            description: 'The English word',
+          },
+          wordType: {
+            type: 'string',
+            description: 'Grammatical type: Noun, Verb, Adjective, or Adverb',
+            enum: ['Noun', 'Verb', 'Adjective', 'Adverb'],
+          },
+          translations: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Array of Polish translations',
+          },
+          exampleSentences: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Array of example sentences',
+          },
+        },
+        required: ['wordId'],
+      },
+      annotations: {
+        title: 'Update Lexica Word',
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: true,
+      },
+    },
+    {
+      name: 'delete_lexica_words',
+      description: 'Delete multiple words by their IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Array of word IDs to delete',
+          },
+        },
+        required: ['ids'],
+      },
+      annotations: {
+        title: 'Delete Lexica Words',
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: true,
+      },
+    },
+    {
+      name: 'get_lexica_word_sets',
+      description: 'Get all vocabulary sets that contain a specific word',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          wordId: {
+            type: 'string',
+            description: 'The ID of the word',
+          },
+        },
+        required: ['wordId'],
+      },
+      annotations: {
+        title: 'Get Lexica Word Sets',
+        readOnlyHint: true,
+      },
+    },
+    {
+      name: 'generate_lexica_translations',
+      description: 'Generate Polish translations for an English word using AI',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          word: {
+            type: 'string',
+            description: 'The English word to translate',
+          },
+          wordType: {
+            type: 'string',
+            description: 'Grammatical type: Noun, Verb, Adjective, or Adverb',
+            enum: ['Noun', 'Verb', 'Adjective', 'Adverb'],
+          },
+          count: {
+            type: 'number',
+            description: 'Number of translations to generate (default: 3)',
+          },
+        },
+        required: ['word', 'wordType'],
+      },
+      annotations: {
+        title: 'Generate Lexica Translations',
+        readOnlyHint: true,
+      },
+    },
+    {
+      name: 'generate_lexica_sentences',
+      description: 'Generate example sentences for an English word using AI',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          word: {
+            type: 'string',
+            description: 'The English word to generate sentences for',
+          },
+          wordType: {
+            type: 'string',
+            description: 'Grammatical type: Noun, Verb, Adjective, or Adverb',
+            enum: ['Noun', 'Verb', 'Adjective', 'Adverb'],
+          },
+          count: {
+            type: 'number',
+            description: 'Number of sentences to generate (default: 3)',
+          },
+        },
+        required: ['word', 'wordType'],
+      },
+      annotations: {
+        title: 'Generate Lexica Sentences',
+        readOnlyHint: true,
       },
     },
   ];
@@ -209,12 +417,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         logger.debug('get_lexica_status completed', { success: !result.error });
 
         return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(result, null, 2),
-            },
-          ],
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
         };
       }
 
@@ -225,12 +428,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         logger.debug('get_lexica_sets completed', { success: !result.error, resultCount: result.data?.data?.length });
 
         return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(result, null, 2),
-            },
-          ],
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
         };
       }
 
@@ -246,60 +444,229 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         logger.debug('get_lexica_set completed', { setId, success: !result.error });
 
         return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(result, null, 2),
-            },
-          ],
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
         };
       }
 
       case 'create_lexica_set': {
-        const payload = args as CreateSetRequestPayload;
-        logger.debug('Executing create_lexica_set tool', {
-          setName: payload?.setName,
-          entriesCount: payload?.entries?.length,
-        });
-        const result = await createSet(payload);
-        logger.info('create_lexica_set completed', {
-          setName: payload?.setName,
-          success: !result.error,
-          setId: result.data?.setId,
-        });
+        const wordIds = args?.wordIds as string[];
+        if (!wordIds || !Array.isArray(wordIds)) {
+          logger.warn('create_lexica_set called without wordIds');
+          throw new Error('wordIds is required and must be an array');
+        }
+
+        logger.debug('Executing create_lexica_set tool', { wordIdsCount: wordIds.length });
+        const result = await createSet(wordIds);
+        logger.info('create_lexica_set completed', { success: !result.error, setId: result.data?.setId });
+
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      case 'update_lexica_set': {
+        const setId = args?.setId as string;
+        const wordIds = args?.wordIds as string[];
+        if (!setId) {
+          logger.warn('update_lexica_set called without setId');
+          throw new Error('setId is required');
+        }
+        if (!wordIds || !Array.isArray(wordIds)) {
+          logger.warn('update_lexica_set called without wordIds');
+          throw new Error('wordIds is required and must be an array');
+        }
+
+        logger.debug('Executing update_lexica_set tool', { setId, wordIdsCount: wordIds.length });
+        const result = await updateSet(setId, wordIds);
+        logger.info('update_lexica_set completed', { setId, success: !result.error });
 
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(result, null, 2),
+              text: result.error ? JSON.stringify(result, null, 2) : JSON.stringify({ success: true }, null, 2),
             },
           ],
         };
       }
 
-      case 'update_lexica_set': {
-        const { setId, ...updateData } = args as { setId: string } & UpdateSetRequestPayload;
-        if (!setId) {
-          logger.warn('update_lexica_set called without setId');
-          throw new Error('setId is required');
+      case 'delete_lexica_sets': {
+        const ids = args?.ids as string[];
+        if (!ids || !Array.isArray(ids)) {
+          logger.warn('delete_lexica_sets called without ids');
+          throw new Error('ids is required and must be an array');
         }
 
-        logger.debug('Executing update_lexica_set tool', {
-          setId,
-          setName: updateData?.setName,
-          entriesCount: updateData?.entries?.length,
-        });
-        const result = await updateSet(setId, updateData);
-        logger.info('update_lexica_set completed', { setId, setName: updateData?.setName, success: !result.error });
+        logger.debug('Executing delete_lexica_sets tool', { ids });
+        const result = await deleteSets(ids);
+        logger.info('delete_lexica_sets completed', { ids, success: !result.error });
 
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(result, null, 2),
+              text: result.error ? JSON.stringify(result, null, 2) : JSON.stringify({ success: true }, null, 2),
             },
           ],
+        };
+      }
+
+      case 'get_lexica_words': {
+        const params = args || {};
+        logger.debug('Executing get_lexica_words tool', { params });
+        const result = await getWords(params);
+        logger.debug('get_lexica_words completed', {
+          success: !result.error,
+          resultCount: result.data?.data?.length,
+        });
+
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      case 'get_lexica_word': {
+        const wordId = args?.wordId as string;
+        if (!wordId) {
+          logger.warn('get_lexica_word called without wordId');
+          throw new Error('wordId is required');
+        }
+
+        logger.debug('Executing get_lexica_word tool', { wordId });
+        const result = await getWord(wordId);
+        logger.debug('get_lexica_word completed', { wordId, success: !result.error });
+
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      case 'create_lexica_word': {
+        const payload = {
+          word: args?.word,
+          wordType: args?.wordType,
+          translations: args?.translations,
+          exampleSentences: args?.exampleSentences,
+        } as CreateWordRequestPayload;
+
+        if (!payload.word || !payload.wordType || !payload.translations) {
+          logger.warn('create_lexica_word called with missing required fields');
+          throw new Error('word, wordType, and translations are required');
+        }
+
+        logger.debug('Executing create_lexica_word tool', { word: payload.word, wordType: payload.wordType });
+        const result = await createWord(payload);
+        logger.info('create_lexica_word completed', {
+          word: payload.word,
+          success: !result.error,
+          wordId: result.data?.wordId,
+        });
+
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      case 'update_lexica_word': {
+        const wordId = args?.wordId as string;
+        if (!wordId) {
+          logger.warn('update_lexica_word called without wordId');
+          throw new Error('wordId is required');
+        }
+
+        const payload = {
+          word: args?.word,
+          wordType: args?.wordType,
+          translations: args?.translations,
+          exampleSentences: args?.exampleSentences,
+        } as UpdateWordRequestPayload;
+
+        logger.debug('Executing update_lexica_word tool', { wordId, word: payload.word });
+        const result = await updateWord(wordId, payload);
+        logger.info('update_lexica_word completed', { wordId, success: !result.error });
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: result.error ? JSON.stringify(result, null, 2) : JSON.stringify({ success: true }, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'delete_lexica_words': {
+        const ids = args?.ids as string[];
+        if (!ids || !Array.isArray(ids)) {
+          logger.warn('delete_lexica_words called without ids');
+          throw new Error('ids is required and must be an array');
+        }
+
+        logger.debug('Executing delete_lexica_words tool', { ids });
+        const result = await deleteWords(ids);
+        logger.info('delete_lexica_words completed', { ids, success: !result.error });
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: result.error ? JSON.stringify(result, null, 2) : JSON.stringify({ success: true }, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'get_lexica_word_sets': {
+        const wordId = args?.wordId as string;
+        if (!wordId) {
+          logger.warn('get_lexica_word_sets called without wordId');
+          throw new Error('wordId is required');
+        }
+
+        logger.debug('Executing get_lexica_word_sets tool', { wordId });
+        const result = await getWordSets(wordId);
+        logger.debug('get_lexica_word_sets completed', { wordId, success: !result.error });
+
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      case 'generate_lexica_translations': {
+        const word = args?.word as string;
+        const wordType = args?.wordType as string;
+        const count = args?.count as number | undefined;
+
+        if (!word || !wordType) {
+          logger.warn('generate_lexica_translations called with missing required fields');
+          throw new Error('word and wordType are required');
+        }
+
+        logger.debug('Executing generate_lexica_translations tool', { word, wordType, count });
+        const result = await generateTranslations(word, wordType, count);
+        logger.debug('generate_lexica_translations completed', { word, success: !result.error });
+
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      case 'generate_lexica_sentences': {
+        const word = args?.word as string;
+        const wordType = args?.wordType as string;
+        const count = args?.count as number | undefined;
+
+        if (!word || !wordType) {
+          logger.warn('generate_lexica_sentences called with missing required fields');
+          throw new Error('word and wordType are required');
+        }
+
+        logger.debug('Executing generate_lexica_sentences tool', { word, wordType, count });
+        const result = await generateSentences(word, wordType, count);
+        logger.debug('generate_lexica_sentences completed', { word, success: !result.error });
+
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
         };
       }
 

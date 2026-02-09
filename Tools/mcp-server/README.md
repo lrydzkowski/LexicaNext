@@ -5,16 +5,36 @@ learning application API.
 
 ## Overview
 
-This MCP server enables Claude to perform vocabulary set management operations through a standardized interface. It
-provides tools for reading, creating, and updating vocabulary sets in the LexicaNext application.
+This MCP server enables Claude to perform vocabulary management operations through a standardized interface. It provides
+tools for managing vocabulary sets, words, and AI-powered translation/sentence generation.
 
 ## Available Tools
 
+### Status
+
 - `get_lexica_status` - Check the API status of the LexicaNext service.
-- `get_lexica_sets` - Retrieve vocabulary sets with optional filtering and pagination.
-- `get_lexica_set` - Get a specific vocabulary set by ID.
-- `create_lexica_set` - Create a new vocabulary set.
-- `update_lexica_set` - Update an existing vocabulary set.
+
+### Sets
+
+- `get_lexica_sets` - Retrieve vocabulary sets with optional filtering, sorting, and pagination.
+- `get_lexica_set` - Get a specific vocabulary set by ID, including its words.
+- `create_lexica_set` - Create a new vocabulary set from existing word IDs (name is auto-generated).
+- `update_lexica_set` - Update an existing vocabulary set by replacing its word IDs.
+- `delete_lexica_sets` - Delete multiple vocabulary sets by their IDs.
+
+### Words
+
+- `get_lexica_words` - Retrieve words with optional filtering, sorting, and pagination.
+- `get_lexica_word` - Get a specific word by ID, including translations and example sentences.
+- `create_lexica_word` - Create a new word with translations and example sentences.
+- `update_lexica_word` - Update an existing word by ID.
+- `delete_lexica_words` - Delete multiple words by their IDs.
+- `get_lexica_word_sets` - Get all vocabulary sets that contain a specific word.
+
+### AI Generation
+
+- `generate_lexica_translations` - Generate Polish translations for an English word using AI.
+- `generate_lexica_sentences` - Generate example sentences for an English word using AI.
 
 ## Installation
 
