@@ -1,37 +1,20 @@
 #pragma warning disable CA2252, OPENAI001
 
-using System.ClientModel;
-using Azure.AI.Projects;
-using Azure.AI.Projects.OpenAI;
-using Azure.Identity;
 using LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Services;
-using Microsoft.Extensions.Options;
-using OpenAI.Responses;
 
 namespace LexicaNext.Infrastructure.Foundry;
 
 internal class AzureFoundryAiService : IAiGenerationService, IScopedService
 {
-    private readonly ProjectResponsesClient _responsesClient;
+    private readonly IAzureFoundryAiClient _azureFoundryAiClient;
     private readonly ISerializer _serializer;
 
-    public AzureFoundryAiService(IOptions<FoundryOptions> options, ISerializer serializer)
+    public AzureFoundryAiService(IAzureFoundryAiClient azureFoundryAiClient, ISerializer serializer)
     {
+        _azureFoundryAiClient = azureFoundryAiClient;
         _serializer = serializer;
-        FoundryOptions foundryOptions = options.Value;
-
-        ClientSecretCredential credential = new(
-            foundryOptions.TenantId,
-            foundryOptions.ClientId,
-            foundryOptions.ClientSecret
-        );
-        AIProjectClient projectClient = new(
-            new Uri(foundryOptions.ProjectEndpoint),
-            credential
-        );
-        _responsesClient = projectClient.OpenAI.GetProjectResponsesClientForModel(foundryOptions.ModelDeploymentName);
     }
 
     public async Task<IReadOnlyList<GeneratedWord>> GenerateWordsAsync(
@@ -53,7 +36,7 @@ internal class AzureFoundryAiService : IAiGenerationService, IScopedService
                           Format: [{"word": "example", "wordType": "Noun"}, ...]
                           """;
 
-        string response = await CallAiAsync(prompt, cancellationToken);
+        string response = await _azureFoundryAiClient.CallAsync(prompt, cancellationToken);
 
         return _serializer.Deserialize<List<GeneratedWord>>(response) ?? [];
     }
@@ -75,7 +58,7 @@ internal class AzureFoundryAiService : IAiGenerationService, IScopedService
                          Format: ["translation1", "translation2", "translation3"]
                          """;
 
-        string response = await CallAiAsync(prompt, cancellationToken);
+        string response = await _azureFoundryAiClient.CallAsync(prompt, cancellationToken);
 
         return _serializer.Deserialize<List<string>>(response) ?? [];
     }
@@ -100,15 +83,8 @@ internal class AzureFoundryAiService : IAiGenerationService, IScopedService
                          Format: ["Sentence one.", "Sentence two.", "Sentence three."]
                          """;
 
-        string response = await CallAiAsync(prompt, cancellationToken);
+        string response = await _azureFoundryAiClient.CallAsync(prompt, cancellationToken);
 
         return _serializer.Deserialize<List<string>>(response) ?? [];
-    }
-
-    private async Task<string> CallAiAsync(string prompt, CancellationToken cancellationToken)
-    {
-        ClientResult<ResponseResult>? response =
-            await _responsesClient.CreateResponseAsync(prompt, cancellationToken: cancellationToken);
-        return response.Value.GetOutputText();
     }
 }
