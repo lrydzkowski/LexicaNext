@@ -30,14 +30,15 @@ public static class CreateSetEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<ProblemHttpResult, CreatedAtRoute<CreateSetResponse>, UnauthorizedHttpResult>> HandleAsync(
-        [AsParameters] CreateSetRequest request,
-        [FromServices] IValidator<CreateSetRequest> validator,
-        [FromServices] ICreateSetCommandMapper createSetCommandMapper,
-        [FromServices] ICreateSetRepository createSetRepository,
-        [FromServices] IUserContextResolver userContextResolver,
-        CancellationToken cancellationToken
-    )
+    private static async Task<Results<ProblemHttpResult, CreatedAtRoute<CreateSetResponse>, UnauthorizedHttpResult>>
+        HandleAsync(
+            [AsParameters] CreateSetRequest request,
+            [FromServices] IValidator<CreateSetRequest> validator,
+            [FromServices] ICreateSetCommandMapper createSetCommandMapper,
+            [FromServices] ICreateSetRepository createSetRepository,
+            [FromServices] IUserContextResolver userContextResolver,
+            CancellationToken cancellationToken
+        )
     {
         string? userId = userContextResolver.GetUserId();
         if (userId == null)

@@ -34,7 +34,8 @@ internal class AppDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
         modelBuilder.HasDbFunction(
-            typeof(PostgresFunctions).GetMethod(nameof(PostgresFunctions.Timezone))!)
+                typeof(PostgresFunctions).GetMethod(nameof(PostgresFunctions.Timezone))!
+            )
             .HasName("timezone");
     }
 }

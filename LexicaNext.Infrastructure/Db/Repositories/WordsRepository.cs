@@ -5,13 +5,13 @@ using LexicaNext.Core.Commands.UpdateWord.Interfaces;
 using LexicaNext.Core.Commands.UpdateWord.Models;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Lists;
-using LexicaNext.Infrastructure.Db.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Services;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetWord.Interfaces;
 using LexicaNext.Core.Queries.GetWords.Interfaces;
 using LexicaNext.Core.Queries.GetWordSets.Interfaces;
 using LexicaNext.Infrastructure.Db.Common.Entities;
+using LexicaNext.Infrastructure.Db.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
