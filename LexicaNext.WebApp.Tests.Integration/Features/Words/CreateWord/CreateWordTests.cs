@@ -1,5 +1,5 @@
 using System.Net;
-using System.Net.Http.Json;
+using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common;
 using LexicaNext.WebApp.Tests.Integration.Common.Data;
@@ -63,10 +63,13 @@ public class CreateWordTests
         await contextScope.SeedDataAsync(testCase);
 
         HttpClient client = webApiFactory.CreateClient();
+        using HttpRequestMessage request = new(HttpMethod.Post, "/api/words");
+        if (testCase.RequestBody is not null)
+        {
+            request.CreateContent(testCase.RequestBody);
+        }
 
-        using HttpResponseMessage response = testCase.RequestBody is not null
-            ? await client.PostAsJsonAsync("/api/words", testCase.RequestBody)
-            : await client.PostAsync("/api/words", null);
+        using HttpResponseMessage response = await client.SendAsync(request);
 
         string responseBody = await response.Content.ReadAsStringAsync();
 

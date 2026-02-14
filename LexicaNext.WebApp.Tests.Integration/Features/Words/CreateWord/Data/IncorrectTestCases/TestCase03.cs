@@ -1,3 +1,5 @@
+using LexicaNext.Core.Commands.CreateWord;
+
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.CreateWord.Data.IncorrectTestCases;
 
 internal static class TestCase03
@@ -7,12 +9,12 @@ internal static class TestCase03
         return new TestCaseData
         {
             TestCaseId = 3,
-            RequestBody = new
+            RequestBody = new CreateWordRequestPayload
             {
                 Word = new string('a', 201),
                 WordType = "noun",
-                Translations = new[] { "test" },
-                ExampleSentences = Array.Empty<string>()
+                Translations = ["test"],
+                ExampleSentences = []
             }
         };
     }

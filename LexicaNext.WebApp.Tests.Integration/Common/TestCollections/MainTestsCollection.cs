@@ -5,5 +5,5 @@ namespace LexicaNext.WebApp.Tests.Integration.Common.TestCollections;
 [CollectionDefinition(CollectionName)]
 public class MainTestsCollection : ICollectionFixture<WebApiFactory>
 {
-    public const string CollectionName = "E2E.Main";
+    public const string CollectionName = "Integration.Main";
 }

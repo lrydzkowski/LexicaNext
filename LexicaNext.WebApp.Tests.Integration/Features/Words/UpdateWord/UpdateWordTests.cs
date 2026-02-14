@@ -1,5 +1,5 @@
 using System.Net;
-using System.Net.Http.Json;
+using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.WebApp.Tests.Integration.Common;
 using LexicaNext.WebApp.Tests.Integration.Common.Data;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
@@ -61,10 +61,13 @@ public class UpdateWordTests
 
         HttpClient client = webApiFactory.CreateClient();
         string url = $"/api/words/{testCase.WordId}";
+        using HttpRequestMessage request = new(HttpMethod.Put, url);
+        if (testCase.RequestBody is not null)
+        {
+            request.CreateContent(testCase.RequestBody);
+        }
 
-        using HttpResponseMessage response = testCase.RequestBody is not null
-            ? await client.PutAsJsonAsync(url, testCase.RequestBody)
-            : await client.SendAsync(new HttpRequestMessage(HttpMethod.Put, url));
+        using HttpResponseMessage response = await client.SendAsync(request);
 
         string responseBody = await response.Content.ReadAsStringAsync();
 

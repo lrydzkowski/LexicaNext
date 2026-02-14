@@ -1,6 +1,6 @@
 using System.Net;
-using System.Net.Http.Json;
 using LexicaNext.Core.Commands.DeleteWords;
+using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common;
 using LexicaNext.WebApp.Tests.Integration.Common.Data;
@@ -64,10 +64,8 @@ public class DeleteWordsTests
 
         HttpClient client = webApiFactory.CreateClient();
         DeleteWordsRequest requestBody = new() { Ids = testCase.Ids };
-        using HttpRequestMessage request = new(HttpMethod.Delete, "/api/words")
-        {
-            Content = JsonContent.Create(requestBody)
-        };
+        using HttpRequestMessage request = new(HttpMethod.Delete, "/api/words");
+        request.CreateContent(requestBody);
         using HttpResponseMessage response = await client.SendAsync(request);
 
         List<WordEntity> remainingWords =

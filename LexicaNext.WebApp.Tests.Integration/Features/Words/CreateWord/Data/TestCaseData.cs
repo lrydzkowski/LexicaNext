@@ -1,10 +1,11 @@
+using LexicaNext.Core.Commands.CreateWord;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.CreateWord.Data;
 
 internal class TestCaseData : ITestCaseData
 {
-    public object? RequestBody { get; init; }
+    public CreateWordRequestPayload? RequestBody { get; init; }
 
     public int TestCaseId { get; init; }
 

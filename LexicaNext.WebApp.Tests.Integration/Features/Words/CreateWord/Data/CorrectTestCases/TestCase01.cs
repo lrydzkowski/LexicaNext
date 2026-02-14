@@ -1,3 +1,5 @@
+using LexicaNext.Core.Commands.CreateWord;
+
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.CreateWord.Data.CorrectTestCases;
 
 internal static class TestCase01
@@ -7,12 +9,12 @@ internal static class TestCase01
         return new TestCaseData
         {
             TestCaseId = 1,
-            RequestBody = new
+            RequestBody = new CreateWordRequestPayload
             {
                 Word = "bright",
                 WordType = "adjective",
-                Translations = new[] { "jasny", "świetlany" },
-                ExampleSentences = new[] { "The bright sun warmed the garden." }
+                Translations = ["jasny", "świetlany"],
+                ExampleSentences = ["The bright sun warmed the garden."]
             }
         };
     }

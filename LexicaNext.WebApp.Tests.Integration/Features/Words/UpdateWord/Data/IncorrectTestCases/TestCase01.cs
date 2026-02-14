@@ -1,3 +1,5 @@
+using LexicaNext.Core.Commands.UpdateWord;
+
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.UpdateWord.Data.IncorrectTestCases;
 
 internal static class TestCase01
@@ -8,12 +10,12 @@ internal static class TestCase01
         {
             TestCaseId = 1,
             WordId = Guid.NewGuid().ToString(),
-            RequestBody = new
+            RequestBody = new UpdateWordRequestPayload
             {
                 Word = "test",
                 WordType = "noun",
-                Translations = new[] { "test" },
-                ExampleSentences = Array.Empty<string>()
+                Translations = ["test"],
+                ExampleSentences = []
             }
         };
     }

@@ -1,3 +1,4 @@
+using LexicaNext.Core.Commands.UpdateWord;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
@@ -14,12 +15,12 @@ internal static class TestCase09
         {
             TestCaseId = 9,
             WordId = WordId.ToString(),
-            RequestBody = new
+            RequestBody = new UpdateWordRequestPayload
             {
                 Word = "test",
                 WordType = "noun",
-                Translations = new[] { "test" },
-                ExampleSentences = new[] { new string('a', 501) }
+                Translations = ["test"],
+                ExampleSentences = [new string('a', 501)]
             },
             Data = new BaseTestCaseData
             {

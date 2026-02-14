@@ -1,3 +1,4 @@
+using LexicaNext.Core.Commands.CreateWord;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
@@ -12,12 +13,12 @@ internal static class TestCase08
         return new TestCaseData
         {
             TestCaseId = 8,
-            RequestBody = new
+            RequestBody = new CreateWordRequestPayload
             {
                 Word = "run",
                 WordType = "verb",
-                Translations = new[] { "biegać" },
-                ExampleSentences = Array.Empty<string>()
+                Translations = ["biegać"],
+                ExampleSentences = []
             },
             Data = new BaseTestCaseData
             {
