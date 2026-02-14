@@ -2,6 +2,7 @@ using LexicaNext.Core.Commands.CreateWord;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.CreateWord.Data.IncorrectTestCases;
 
+// Invalid word type. Expected: 400 Bad Request.
 internal static class TestCase04
 {
     public static TestCaseData Get()

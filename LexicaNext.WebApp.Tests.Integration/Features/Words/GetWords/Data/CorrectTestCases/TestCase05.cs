@@ -3,6 +3,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.GetWords.Data.CorrectTestCases;
 
+// Pagination with page 2 and page size 2. Expected: 200 OK with second page of results.
 internal static class TestCase05
 {
     private static readonly Guid NounTypeId = Guid.Parse("0196294e-9a78-73b5-947e-fb739d73808c");

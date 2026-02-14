@@ -3,6 +3,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.GetWords.Data.CorrectTestCases;
 
+// Search by query "apple" matches "apple" and "pineapple". Expected: 200 OK with filtered results.
 internal static class TestCase02
 {
     private static readonly Guid NounTypeId = Guid.Parse("0196294e-9a78-73b5-947e-fb739d73808c");

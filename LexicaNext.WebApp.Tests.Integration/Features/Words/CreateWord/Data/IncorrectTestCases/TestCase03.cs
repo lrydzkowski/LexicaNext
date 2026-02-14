@@ -2,6 +2,7 @@ using LexicaNext.Core.Commands.CreateWord;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.CreateWord.Data.IncorrectTestCases;
 
+// Word exceeds max length (201 chars). Expected: 400 Bad Request.
 internal static class TestCase03
 {
     public static TestCaseData Get()

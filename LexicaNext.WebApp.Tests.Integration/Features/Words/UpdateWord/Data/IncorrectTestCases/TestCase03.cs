@@ -3,6 +3,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.UpdateWord.Data.IncorrectTestCases;
 
+// Null request body. Expected: 400 Bad Request.
 internal static class TestCase03
 {
     private static readonly Guid WordId = Guid.NewGuid();

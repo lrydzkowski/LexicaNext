@@ -3,6 +3,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.GetWordSets.Data.CorrectTestCases;
 
+// Word in sets of current user and another user. Expected: 200 OK with only current user's sets.
 internal static class TestCase03
 {
     private static readonly Guid WordId = Guid.NewGuid();

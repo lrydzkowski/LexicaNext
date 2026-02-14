@@ -3,6 +3,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.GetWordSets.Data.IncorrectTestCases;
 
+// Word belongs to another user. Expected: 404 Not Found.
 internal static class TestCase03
 {
     private static readonly Guid WordId = Guid.NewGuid();

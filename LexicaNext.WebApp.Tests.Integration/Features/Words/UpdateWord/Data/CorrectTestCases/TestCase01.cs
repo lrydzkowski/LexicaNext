@@ -4,6 +4,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.UpdateWord.Data.CorrectTestCases;
 
+// Update word, translations, and example sentences. Expected: 204 No Content.
 internal static class TestCase01
 {
     private static readonly Guid WordId = Guid.NewGuid();

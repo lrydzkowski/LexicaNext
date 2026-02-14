@@ -3,6 +3,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.GetWord.Data.CorrectTestCases;
 
+// Existing word with translations and example sentences. Expected: 200 OK.
 internal static class TestCase01
 {
     private static readonly Guid WordId = Guid.NewGuid();

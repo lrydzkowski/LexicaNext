@@ -4,6 +4,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.UpdateWord.Data.IncorrectTestCases;
 
+// Update would create duplicate word and word type combination. Expected: 400 Bad Request.
 internal static class TestCase10
 {
     private static readonly Guid WordId1 = Guid.NewGuid();

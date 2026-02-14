@@ -3,6 +3,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.GetWordSets.Data.CorrectTestCases;
 
+// Word belongs to multiple sets. Expected: 200 OK with both sets.
 internal static class TestCase01
 {
     private static readonly Guid WordId = Guid.NewGuid();

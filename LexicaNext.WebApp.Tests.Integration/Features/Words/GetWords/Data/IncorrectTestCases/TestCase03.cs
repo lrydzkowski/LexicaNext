@@ -1,5 +1,6 @@
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.GetWords.Data.IncorrectTestCases;
 
+// Page size exceeds maximum (201). Expected: 400 Bad Request.
 internal static class TestCase03
 {
     public static TestCaseData Get()

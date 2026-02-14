@@ -4,6 +4,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.UpdateWord.Data.IncorrectTestCases;
 
+// Example sentence exceeds max length (501 chars). Expected: 400 Bad Request.
 internal static class TestCase09
 {
     private static readonly Guid WordId = Guid.NewGuid();

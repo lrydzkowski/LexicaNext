@@ -3,6 +3,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.GetWordSets.Data.CorrectTestCases;
 
+// Word not assigned to any sets. Expected: 200 OK with empty list.
 internal static class TestCase02
 {
     private static readonly Guid WordId = Guid.NewGuid();

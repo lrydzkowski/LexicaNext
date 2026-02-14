@@ -3,6 +3,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.DeleteWords.Data.CorrectTestCases;
 
+// Delete words belonging to another user. Expected: 204 No Content, words remain.
 internal static class TestCase03
 {
     private static readonly Guid OtherWordId1 = Guid.NewGuid();

@@ -4,6 +4,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.UpdateWord.Data.IncorrectTestCases;
 
+// Invalid word type. Expected: 400 Bad Request.
 internal static class TestCase06
 {
     private static readonly Guid WordId = Guid.NewGuid();
