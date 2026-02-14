@@ -9,23 +9,22 @@ namespace LexicaNext.WebApp.Tests.Integration.Common.Data;
 
 internal class TestContextScope : IAsyncDisposable
 {
-    private ContextScope? _db;
-
     public TestContextScope(WebApplicationFactory<Program> webApiFactory, LogMessages logMessages)
     {
         ServiceScope = webApiFactory.Services.CreateScope();
         LogMessages = logMessages;
+        Db = new ContextScope(GetRequiredService<AppDbContext>());
     }
 
     private IServiceScope ServiceScope { get; }
 
     public LogMessages LogMessages { get; }
 
-    public ContextScope Db => _db ??= new ContextScope(GetRequiredService<AppDbContext>());
+    public ContextScope Db { get; }
 
     public ValueTask DisposeAsync()
     {
-        _db?.Dispose();
+        Db.Dispose();
         LogMessages.Clear();
         ServiceScope.Dispose();
 

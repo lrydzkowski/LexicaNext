@@ -1,0 +1,46 @@
+using LexicaNext.Infrastructure.Db.Common.Entities;
+using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
+
+namespace LexicaNext.WebApp.Tests.Integration.Features.Words.GetWords.Data.CorrectTestCases;
+
+internal static class TestCase14
+{
+    private static readonly Guid NounTypeId = Guid.Parse("0196294e-9a78-73b5-947e-fb739d73808c");
+
+    public static TestCaseData Get()
+    {
+        return new TestCaseData
+        {
+            TestCaseId = 14,
+            SortingFieldName = "updatedAt",
+            SortingOrder = "asc",
+            Data = new BaseTestCaseData
+            {
+                Db = new DbTestCaseData
+                {
+                    Words =
+                    [
+                        new WordEntity
+                        {
+                            WordId = Guid.NewGuid(), UserId = "test-user-id", Word = "cherry", WordTypeId = NounTypeId,
+                            CreatedAt = new DateTimeOffset(2025, 1, 1, 10, 0, 0, TimeSpan.Zero),
+                            UpdatedAt = new DateTimeOffset(2025, 3, 15, 10, 0, 0, TimeSpan.Zero)
+                        },
+                        new WordEntity
+                        {
+                            WordId = Guid.NewGuid(), UserId = "test-user-id", Word = "apple", WordTypeId = NounTypeId,
+                            CreatedAt = new DateTimeOffset(2025, 1, 2, 10, 0, 0, TimeSpan.Zero),
+                            UpdatedAt = new DateTimeOffset(2025, 1, 10, 10, 0, 0, TimeSpan.Zero)
+                        },
+                        new WordEntity
+                        {
+                            WordId = Guid.NewGuid(), UserId = "test-user-id", Word = "banana", WordTypeId = NounTypeId,
+                            CreatedAt = new DateTimeOffset(2025, 1, 3, 10, 0, 0, TimeSpan.Zero),
+                            UpdatedAt = new DateTimeOffset(2025, 2, 20, 10, 0, 0, TimeSpan.Zero)
+                        }
+                    ]
+                }
+            }
+        };
+    }
+}

@@ -27,10 +27,14 @@ internal static class AiServiceBuilder
             List<string> responses = [];
 
             if (data.Translations is not null)
+            {
                 responses.Add(JsonSerializer.Serialize(data.Translations));
+            }
 
             if (data.Sentences is not null)
+            {
                 responses.Add(JsonSerializer.Serialize(data.Sentences));
+            }
 
             if (responses.Count > 0)
             {
