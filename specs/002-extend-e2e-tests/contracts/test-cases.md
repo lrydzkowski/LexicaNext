@@ -29,6 +29,15 @@ No incorrect test cases (no auth, no validation, no parameters).
 | ShouldBeSuccessful | 04 | Sort descending by word | 3 words | 200, sorted Z-A |
 | ShouldBeSuccessful | 05 | Custom page and pageSize | 5 words, page=2, pageSize=2 | 200, 2 items |
 | ShouldBeSuccessful | 06 | Empty result | No words | 200, empty list |
+| ShouldBeSuccessful | 07 | Only returns words created by current user | 3 words (current user) + 2 words (other user) | 200, only current user's 3 words |
+| ShouldBeSuccessful | 08 | Filter by created at with CET timezone | 3 words with different created dates | 200, filtered by CET date range |
+| ShouldBeSuccessful | 09 | Filter by created at with PST timezone | 3 words with different created dates | 200, filtered by PST date range |
+| ShouldBeSuccessful | 10 | Filter by updated at with CET timezone | 3 words with different updated dates | 200, filtered by CET date range |
+| ShouldBeSuccessful | 11 | Filter by updated at with PST timezone | 3 words with different updated dates | 200, filtered by PST date range |
+| ShouldBeSuccessful | 12 | Sort ascending by created at | 3 words with different created dates | 200, sorted oldest first |
+| ShouldBeSuccessful | 13 | Sort descending by created at | 3 words with different created dates | 200, sorted newest first |
+| ShouldBeSuccessful | 14 | Sort ascending by updated at | 3 words with different updated dates | 200, sorted oldest first |
+| ShouldBeSuccessful | 15 | Sort descending by updated at | 3 words with different updated dates | 200, sorted newest first |
 | ShouldBeUnsuccessful | 01 | Page = 0 | None | 400 |
 | ShouldBeUnsuccessful | 02 | PageSize = 0 | None | 400 |
 | ShouldBeUnsuccessful | 03 | PageSize = 201 | None | 400 |
@@ -44,6 +53,7 @@ No incorrect test cases (no auth, no validation, no parameters).
 | ShouldBeSuccessful | 01 | Existing word | 1 word with translations + examples | 200, full details |
 | ShouldBeUnsuccessful | 01 | Non-existent GUID | None | 404 |
 | ShouldBeUnsuccessful | 02 | Malformed UUID | None | 404 |
+| ShouldBeUnsuccessful | 03 | GUID of word created by another user | 1 word (other user) | 404 |
 
 ### 4. GetWordSets (GET /api/words/{wordId}/sets)
 
@@ -53,8 +63,10 @@ No incorrect test cases (no auth, no validation, no parameters).
 |--------|----|-------------|-----------|----------|
 | ShouldBeSuccessful | 01 | Word in 2 sets | 1 word, 2 sets with set_words | 200, 2 sets |
 | ShouldBeSuccessful | 02 | Word in no sets | 1 word, no set_words | 200, empty list |
+| ShouldBeSuccessful | 03 | Only returns sets created by current user | 1 word in 2 sets (current user) + 1 set (other user) | 200, only current user's 2 sets |
 | ShouldBeUnsuccessful | 01 | Non-existent word | None | 404 |
 | ShouldBeUnsuccessful | 02 | Malformed UUID | None | 404 |
+| ShouldBeUnsuccessful | 03 | GUID of word created by another user | 1 word (other user) | 404 |
 
 ### 5. CreateWord (POST /api/words)
 
@@ -99,6 +111,7 @@ No incorrect test cases (no auth, no validation, no parameters).
 |--------|----|-------------|-----------|----------|
 | ShouldBeSuccessful | 01 | Delete existing words | 2 words | 204, words removed |
 | ShouldBeSuccessful | 02 | Delete non-existent IDs | None | 204 (idempotent) |
+| ShouldBeSuccessful | 03 | Delete words assigned to another user | 2 words (other user) | 204, other user's words unchanged |
 | ShouldBeUnsuccessful | 01 | Empty IDs list | None | 204 or 400 (verify actual behavior) |
 
 ### 8. GetSets (GET /api/sets)
@@ -112,6 +125,10 @@ No incorrect test cases (no auth, no validation, no parameters).
 | ShouldBeSuccessful | 03 | Sort ascending | 3 sets | 200, sorted |
 | ShouldBeSuccessful | 04 | Sort descending | 3 sets | 200, sorted |
 | ShouldBeSuccessful | 05 | Empty result | No sets | 200, empty list |
+| ShouldBeSuccessful | 06 | Filter by created at with CET timezone | 3 sets with different created dates | 200, filtered by CET date range |
+| ShouldBeSuccessful | 07 | Filter by created at with PST timezone | 3 sets with different created dates | 200, filtered by PST date range |
+| ShouldBeSuccessful | 08 | Sort ascending by created at | 3 sets with different created dates | 200, sorted oldest first |
+| ShouldBeSuccessful | 09 | Sort descending by created at | 3 sets with different created dates | 200, sorted newest first |
 | ShouldBeUnsuccessful | 01 | Page = 0 | None | 400 |
 | ShouldBeUnsuccessful | 02 | PageSize = 0 | None | 400 |
 | ShouldBeUnsuccessful | 03 | PageSize = 201 | None | 400 |
@@ -127,6 +144,7 @@ No incorrect test cases (no auth, no validation, no parameters).
 | ShouldBeSuccessful | 01 | Existing set with entries | 1 set with 2 words | 200, full details |
 | ShouldBeUnsuccessful | 01 | Non-existent GUID | None | 404 |
 | ShouldBeUnsuccessful | 02 | Malformed UUID | None | 404 |
+| ShouldBeUnsuccessful | 03 | GUID of set created by another user | 1 set (other user) | 404 |
 
 ### 10. GetProposedSetName (GET /api/sets/proposed-name)
 
@@ -151,6 +169,7 @@ No incorrect test cases (no validation, no parameters).
 | ShouldBeUnsuccessful | 03 | Non-existent word ID | None | 400 |
 | ShouldBeUnsuccessful | 04 | Duplicate word IDs | 1 existing word | 400 |
 | ShouldBeUnsuccessful | 05 | Malformed UUID in word IDs | None | 400 |
+| ShouldBeUnsuccessful | 06 | Word IDs assigned to other users | 2 words (other user) | 400 |
 
 ### 12. UpdateSet (PUT /api/sets/{setId})
 
@@ -165,6 +184,8 @@ No incorrect test cases (no validation, no parameters).
 | ShouldBeUnsuccessful | 04 | Empty word IDs | 1 set | 400 |
 | ShouldBeUnsuccessful | 05 | Non-existent word ID | 1 set | 400 |
 | ShouldBeUnsuccessful | 06 | Duplicate word IDs | 1 set, 1 word | 400 |
+| ShouldBeUnsuccessful | 07 | Word IDs assigned to other users | 1 set, 2 words (other user) | 400 |
+| ShouldBeUnsuccessful | 08 | Set assigned to another user | 1 set (other user), 2 words | 404 |
 
 ### 13. DeleteSets (DELETE /api/sets)
 
@@ -175,6 +196,7 @@ No incorrect test cases (no validation, no parameters).
 | ShouldBeSuccessful | 01 | Delete existing sets | 2 sets with words | 204, sets removed |
 | ShouldBeSuccessful | 02 | Delete non-existent IDs | None | 204 (idempotent) |
 | ShouldBeUnsuccessful | 01 | Empty IDs list | None | 204 or 400 (verify actual behavior) |
+| ShouldBeUnsuccessful | 02 | Set IDs assigned to other users | 2 sets (other user) | 204, other user's sets unchanged |
 
 ### 14. RegisterAnswer (POST /api/answer)
 
@@ -237,10 +259,10 @@ No incorrect test cases (no validation, no parameters).
 | Category | Test Classes | Correct TCs | Incorrect TCs | Total TCs |
 |----------|-------------|-------------|---------------|-----------|
 | App | 1 | 1 | 0 | 1 |
-| Words | 6 | 13 | 28 | 41 |
-| Sets | 6 | 11 | 21 | 32 |
+| Words | 6 | 25 | 30 | 55 |
+| Sets | 6 | 16 | 24 | 40 |
 | Answer | 1 | 2 | 6 | 8 |
 | Translations | 1 | 1 | 6 | 7 |
 | Sentences | 1 | 1 | 6 | 7 |
 | Recordings | 1 | 2 | 4 | 6 |
-| **Total** | **17** | **31** | **71** | **102** |
+| **Total** | **17** | **48** | **76** | **124** |
