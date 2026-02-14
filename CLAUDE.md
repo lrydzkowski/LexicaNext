@@ -120,7 +120,7 @@ RESTful API organized by resource:
 **Other**
 
 - `GET /api/recordings/{word}/{wordType}` - Get pronunciation
-- `POST /api/answers` - Register learning answer
+- `POST /api/answer` - Register learning answer
 - `GET /api/status` - App status
 
 ### Authentication

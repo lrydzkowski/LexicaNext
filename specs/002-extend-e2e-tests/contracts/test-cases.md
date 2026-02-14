@@ -112,7 +112,7 @@ No incorrect test cases (no auth, no validation, no parameters).
 | ShouldBeSuccessful | 01 | Delete existing words | 2 words | 204, words removed |
 | ShouldBeSuccessful | 02 | Delete non-existent IDs | None | 204 (idempotent) |
 | ShouldBeSuccessful | 03 | Delete words assigned to another user | 2 words (other user) | 204, other user's words unchanged |
-| ShouldBeUnsuccessful | 01 | Empty IDs list | None | 204 or 400 (verify actual behavior) |
+| ShouldBeUnsuccessful | 01 | Empty IDs list | None | 204 |
 
 ### 8. GetSets (GET /api/sets)
 
@@ -195,8 +195,8 @@ No incorrect test cases (no validation, no parameters).
 |--------|----|-------------|-----------|----------|
 | ShouldBeSuccessful | 01 | Delete existing sets | 2 sets with words | 204, sets removed |
 | ShouldBeSuccessful | 02 | Delete non-existent IDs | None | 204 (idempotent) |
-| ShouldBeUnsuccessful | 01 | Empty IDs list | None | 204 or 400 (verify actual behavior) |
-| ShouldBeUnsuccessful | 02 | Set IDs assigned to other users | 2 sets (other user) | 204, other user's sets unchanged |
+| ShouldBeSuccessful | 03 | Delete set IDs assigned to other users | 2 sets (other user) | 204, other user's sets unchanged |
+| ShouldBeUnsuccessful | 01 | Empty IDs list | None | 204 |
 
 ### 14. RegisterAnswer (POST /api/answer)
 
@@ -260,9 +260,9 @@ No incorrect test cases (no validation, no parameters).
 |----------|-------------|-------------|---------------|-----------|
 | App | 1 | 1 | 0 | 1 |
 | Words | 6 | 25 | 30 | 55 |
-| Sets | 6 | 16 | 24 | 40 |
+| Sets | 6 | 17 | 23 | 40 |
 | Answer | 1 | 2 | 6 | 8 |
 | Translations | 1 | 1 | 6 | 7 |
 | Sentences | 1 | 1 | 6 | 7 |
 | Recordings | 1 | 2 | 4 | 6 |
-| **Total** | **17** | **48** | **76** | **124** |
+| **Total** | **17** | **49** | **75** | **124** |

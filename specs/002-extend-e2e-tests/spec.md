@@ -29,6 +29,8 @@ A developer runs the integration test suite and gets full confidence that all wo
 10. **Given** an authenticated user, **When** they create a word with values exceeding maximum length, **Then** the system returns 400 Bad Request with validation errors.
 11. **Given** an authenticated user, **When** they list words with invalid pagination parameters (page=0, pageSize=201), **Then** the system returns 400 Bad Request.
 12. **Given** an authenticated user, **When** they list words with an invalid timezone identifier, **Then** the system returns 400 Bad Request.
+13. **Given** an authenticated user with words, and another user with their own words, **When** the first user lists or retrieves words, **Then** the system only returns the first user's words and returns 404 for the other user's word IDs.
+14. **Given** an authenticated user with words created at different times, **When** they list words with a timezone filter (e.g., CET or PST), **Then** the system returns words filtered and sorted according to the specified timezone.
 
 ---
 
@@ -53,6 +55,7 @@ A developer runs the integration test suite and gets full confidence that all vo
 9. **Given** an authenticated user, **When** they create a set with an empty word list, **Then** the system returns 400 Bad Request.
 10. **Given** an authenticated user, **When** they request a set that does not exist, **Then** the system returns 404 Not Found.
 11. **Given** an authenticated user, **When** they list sets with invalid pagination parameters, **Then** the system returns 400 Bad Request.
+12. **Given** an authenticated user with sets, and another user with their own sets, **When** the first user lists, retrieves, creates, updates, or deletes sets, **Then** the system only operates on the first user's data and returns 404 for the other user's set IDs.
 
 ---
 
@@ -140,7 +143,7 @@ A developer runs the integration test suite and confirms the status endpoint is 
 
 ### Functional Requirements
 
-- **FR-001**: Test suite MUST cover all 16 endpoints exposed by the back-end API.
+- **FR-001**: Test suite MUST cover all 17 endpoints exposed by the back-end API.
 - **FR-002**: Each endpoint MUST have "correct" test cases covering happy path scenarios that verify successful operations and response structure.
 - **FR-003**: Each endpoint MUST have "incorrect" test cases covering all validation failures that verify proper error responses and error details.
 - **FR-004**: Endpoints with external dependencies (AI service, dictionary API) MUST have test cases covering dependency failure scenarios.
@@ -162,7 +165,7 @@ A developer runs the integration test suite and confirms the status endpoint is 
 
 ### Measurable Outcomes
 
-- **SC-001**: All 16 back-end endpoints have all possible happy paths test cases that pass.
+- **SC-001**: All 17 back-end endpoints have all possible happy paths test cases that pass.
 - **SC-002**: All endpoints with input validation have all validation failures test cases that pass.
 - **SC-003**: All endpoints with external dependencies have all dependency failures test cases that pass.
 - **SC-004**: The full test suite passes consistently when run repeatedly without manual intervention.

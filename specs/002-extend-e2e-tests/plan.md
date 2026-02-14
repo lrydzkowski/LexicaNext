@@ -17,7 +17,7 @@ Extend the existing integration test suite in `LexicaNext.WebApp.Tests.Integrati
 **Project Type**: Integration test project extending existing web application
 **Performance Goals**: Test suite completes within reasonable CI feedback loop
 **Constraints**: Tests share a single PostgreSQL container per collection to minimize startup overhead
-**Scale/Scope**: 17 endpoints, ~90 individual test cases across 17 test classes
+**Scale/Scope**: 17 endpoints, 124 individual test cases across 17 test classes
 
 ## Constitution Check
 
