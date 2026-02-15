@@ -1,0 +1,76 @@
+﻿[
+  {
+    DbWordsBefore: [],
+    DbWordsAfter: [
+      {
+        WordId: Guid_1,
+        UserId: test-user-id,
+        Word: bright,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_1,
+        Translations: [
+          {
+            TranslationId: Guid_3,
+            Translation: jasny,
+            WordId: Guid_1
+          },
+          {
+            TranslationId: Guid_4,
+            Translation: świetlany,
+            Order: 1,
+            WordId: Guid_1
+          }
+        ],
+        ExampleSentences: [
+          {
+            ExampleSentenceId: Guid_5,
+            Sentence: The bright sun warmed the garden.,
+            WordId: Guid_1
+          }
+        ],
+        SetWords: []
+      }
+    ],
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: Created,
+    Response:
+    {
+      "wordId": "Guid_1"
+    }
+  },
+  {
+    DbWordsBefore: [],
+    DbWordsAfter: [
+      {
+        WordId: Guid_6,
+        UserId: test-user-id,
+        Word: quickly,
+        WordTypeId: Guid_7,
+        CreatedAt: DateTimeOffset_2,
+        Translations: [
+          {
+            TranslationId: Guid_8,
+            Translation: szybko,
+            WordId: Guid_6
+          },
+          {
+            TranslationId: Guid_9,
+            Translation: prędko,
+            Order: 1,
+            WordId: Guid_6
+          }
+        ],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: Created,
+    Response:
+    {
+      "wordId": "Guid_6"
+    }
+  }
+]

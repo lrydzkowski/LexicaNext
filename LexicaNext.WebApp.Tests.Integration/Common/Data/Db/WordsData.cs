@@ -42,9 +42,10 @@ internal static class WordsData
     public static async Task<List<WordEntity>> GetWordsAsync(this AppDbContext context)
     {
         return await context.Words
-            .Include(w => w.Translations)
-            .Include(w => w.ExampleSentences)
+            .Include(w => w.Translations.OrderBy(y => y.Order))
+            .Include(w => w.ExampleSentences.OrderBy(y => y.Order))
             .AsNoTracking()
+            .OrderBy(x => x.CreatedAt)
             .ToListAsync();
     }
 }

@@ -62,20 +62,27 @@ public class DeleteWordsTests
         await using TestContextScope contextScope = new(webApiFactory, _logMessages);
         await contextScope.SeedDataAsync(testCase);
 
+        List<WordEntity> wordsBefore = await contextScope.Db.Context.GetWordsAsync();
+
         HttpClient client = webApiFactory.CreateClient();
         DeleteWordsRequest requestBody = new() { Ids = testCase.Ids };
         using HttpRequestMessage request = new(HttpMethod.Delete, "/api/words");
         request.CreateContent(requestBody);
         using HttpResponseMessage response = await client.SendAsync(request);
 
-        List<WordEntity> remainingWords =
-            await contextScope.Db.Context.GetWordsAsync();
+        string responseBody = await response.Content.ReadAsStringAsync();
+
+        List<WordEntity> wordsAfter = await contextScope.Db.Context.GetWordsAsync();
 
         return new DeleteWordsTestResult
         {
             TestCaseId = testCase.TestCaseId,
             StatusCode = response.StatusCode,
-            RemainingWordsCount = remainingWords.Count
+            DbWordsBefore = wordsBefore,
+            DbWordsAfter = wordsAfter,
+            Request = requestBody,
+            Response = responseBody,
+            LogMessages = contextScope.LogMessages.GetSerialized(6)
         };
     }
 
@@ -83,7 +90,13 @@ public class DeleteWordsTests
     {
         public HttpStatusCode StatusCode { get; init; }
 
-        public int RemainingWordsCount { get; init; }
+        public List<WordEntity> DbWordsBefore { get; init; } = [];
+
+        public List<WordEntity> DbWordsAfter { get; init; } = [];
+
+        public DeleteWordsRequest? Request { get; init; }
+
+        public string? Response { get; init; }
 
         public int TestCaseId { get; init; }
 

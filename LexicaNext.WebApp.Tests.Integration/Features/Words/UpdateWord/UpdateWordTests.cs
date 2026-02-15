@@ -1,7 +1,9 @@
 using System.Net;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common;
 using LexicaNext.WebApp.Tests.Integration.Common.Data;
+using LexicaNext.WebApp.Tests.Integration.Common.Data.Db;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using LexicaNext.WebApp.Tests.Integration.Common.Models;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;
@@ -59,6 +61,8 @@ public class UpdateWordTests
         await using TestContextScope contextScope = new(webApiFactory, _logMessages);
         await contextScope.SeedDataAsync(testCase);
 
+        List<WordEntity> wordsBefore = await contextScope.Db.Context.GetWordsAsync();
+
         HttpClient client = webApiFactory.CreateClient();
         string url = $"/api/words/{testCase.WordId}";
         using HttpRequestMessage request = new(HttpMethod.Put, url);
@@ -71,20 +75,28 @@ public class UpdateWordTests
 
         string responseBody = await response.Content.ReadAsStringAsync();
 
+        List<WordEntity> wordsAfter = await contextScope.Db.Context.GetWordsAsync();
+
         return new UpdateWordTestResult
         {
             TestCaseId = testCase.TestCaseId,
+            WordId = testCase.WordId,
             StatusCode = response.StatusCode,
-            Response = response.IsSuccessStatusCode
-                ? responseBody
-                : responseBody.Length > 0
-                    ? responseBody
-                    : null
+            Response = responseBody.PrettifyJson(4),
+            DbWordsBefore = wordsBefore,
+            DbWordsAfter = wordsAfter,
+            LogMessages = contextScope.LogMessages.GetSerialized(6)
         };
     }
 
     private class UpdateWordTestResult : IHttpTestResult
     {
+        public List<WordEntity> DbWordsBefore { get; init; } = [];
+
+        public List<WordEntity> DbWordsAfter { get; init; } = [];
+
+        public string? WordId { get; init; }
+
         public int TestCaseId { get; init; }
 
         public string? LogMessages { get; init; }

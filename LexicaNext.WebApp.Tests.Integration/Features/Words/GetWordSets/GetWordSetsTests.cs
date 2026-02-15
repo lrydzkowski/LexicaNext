@@ -1,7 +1,9 @@
 using System.Net;
+using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common;
 using LexicaNext.WebApp.Tests.Integration.Common.Data;
-using LexicaNext.WebApp.Tests.Integration.Common.Extensions;
+using LexicaNext.WebApp.Tests.Integration.Common.Data.Db;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using LexicaNext.WebApp.Tests.Integration.Common.Models;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;
@@ -59,6 +61,9 @@ public class GetWordSetsTests
         await using TestContextScope contextScope = new(webApiFactory, _logMessages);
         await contextScope.SeedDataAsync(testCase);
 
+        List<WordEntity> dbWords = await contextScope.Db.Context.GetWordsAsync();
+        List<SetEntity> dbSets = await contextScope.Db.Context.GetSetsAsync();
+
         HttpClient client = webApiFactory.CreateClient();
         using HttpResponseMessage response = await client.GetAsync($"/api/words/{testCase.WordId}/sets");
 
@@ -67,13 +72,23 @@ public class GetWordSetsTests
         return new GetWordSetsTestResult
         {
             TestCaseId = testCase.TestCaseId,
+            WordId = testCase.WordId,
             StatusCode = response.StatusCode,
-            Response = response.IsSuccessStatusCode ? responseBody.PrettifyJson() : responseBody
+            Response = responseBody.PrettifyJson(4),
+            DbWords = dbWords,
+            DbSets = dbSets,
+            LogMessages = contextScope.LogMessages.GetSerialized(6)
         };
     }
 
     private class GetWordSetsTestResult : IHttpTestResult
     {
+        public List<WordEntity> DbWords { get; init; } = [];
+
+        public List<SetEntity> DbSets { get; init; } = [];
+
+        public string? WordId { get; init; }
+
         public int TestCaseId { get; init; }
 
         public string? LogMessages { get; init; }

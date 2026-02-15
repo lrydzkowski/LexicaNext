@@ -34,7 +34,7 @@ public static class GetWordSetsEndpoint
     {
         if (!Guid.TryParse(request.WordId, out Guid wordId))
         {
-            return TypedResults.NotFound();
+            return TypedResults.Ok(new GetWordSetsResponse());
         }
 
         string? userId = userContextResolver.GetUserId();

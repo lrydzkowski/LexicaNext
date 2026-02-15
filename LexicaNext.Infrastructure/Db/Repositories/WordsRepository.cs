@@ -153,7 +153,12 @@ internal class WordsRepository
     )
     {
         List<SetRecord> sets = await _dbContext.SetWords.AsNoTracking()
-            .Where(entity => entity.WordId == wordId && entity.Word!.UserId == userId)
+            .Where(
+                entity => entity.WordId == wordId
+                          && entity.Word!.UserId == userId
+                          && entity.Set != null
+                          && entity.Set.UserId == userId
+            )
             .Select(
                 entity => new SetRecord
                 {

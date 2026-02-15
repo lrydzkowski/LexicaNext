@@ -14,6 +14,7 @@ internal static class VerifySettingsBuilder
         settings.ScrubInlineDateTimes("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
         settings.ScrubNewLineCharacters();
         settings.ScrubCustomBlankCharacters();
+        settings.ScrubTraceId();
         settings.ScrubPostgresConnectionString();
         settings.DontIgnoreEmptyCollections();
         settings.AddExtraSettings(

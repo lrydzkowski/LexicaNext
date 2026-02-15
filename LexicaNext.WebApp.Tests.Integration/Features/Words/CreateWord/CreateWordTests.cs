@@ -4,7 +4,6 @@ using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common;
 using LexicaNext.WebApp.Tests.Integration.Common.Data;
 using LexicaNext.WebApp.Tests.Integration.Common.Data.Db;
-using LexicaNext.WebApp.Tests.Integration.Common.Extensions;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using LexicaNext.WebApp.Tests.Integration.Common.Models;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;
@@ -62,6 +61,8 @@ public class CreateWordTests
         await using TestContextScope contextScope = new(webApiFactory, _logMessages);
         await contextScope.SeedDataAsync(testCase);
 
+        List<WordEntity> wordsBefore = await contextScope.Db.Context.GetWordsAsync();
+
         HttpClient client = webApiFactory.CreateClient();
         using HttpRequestMessage request = new(HttpMethod.Post, "/api/words");
         if (testCase.RequestBody is not null)
@@ -73,21 +74,24 @@ public class CreateWordTests
 
         string responseBody = await response.Content.ReadAsStringAsync();
 
-        List<WordEntity> words =
-            await contextScope.Db.Context.GetWordsAsync();
+        List<WordEntity> wordsAfter = await contextScope.Db.Context.GetWordsAsync();
 
         return new CreateWordTestResult
         {
             TestCaseId = testCase.TestCaseId,
             StatusCode = response.StatusCode,
-            Response = response.IsSuccessStatusCode ? responseBody.PrettifyJson() : responseBody,
-            DbWordsCount = words.Count
+            Response = responseBody.PrettifyJson(4),
+            DbWordsBefore = wordsBefore,
+            DbWordsAfter = wordsAfter,
+            LogMessages = contextScope.LogMessages.GetSerialized(6)
         };
     }
 
     private class CreateWordTestResult : IHttpTestResult
     {
-        public int DbWordsCount { get; init; }
+        public List<WordEntity> DbWordsBefore { get; init; } = [];
+
+        public List<WordEntity> DbWordsAfter { get; init; } = [];
 
         public int TestCaseId { get; init; }
 

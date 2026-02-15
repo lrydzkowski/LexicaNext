@@ -3,7 +3,7 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.GetWords.Data.CorrectTestCases;
 
-// Sort by updatedAt ascending with PST timezone. Expected: 200 OK with timezone-converted dates.
+// Sort by updatedAt descending. Expected: 200 OK with UTC dates.
 internal static class TestCase11
 {
     private static readonly Guid NounTypeId = Guid.Parse("0196294e-9a78-73b5-947e-fb739d73808c");
@@ -14,8 +14,7 @@ internal static class TestCase11
         {
             TestCaseId = 11,
             SortingFieldName = "updatedAt",
-            SortingOrder = "asc",
-            TimeZoneId = "Pacific Standard Time",
+            SortingOrder = "desc",
             Data = new BaseTestCaseData
             {
                 Db = new DbTestCaseData
@@ -24,21 +23,21 @@ internal static class TestCase11
                     [
                         new WordEntity
                         {
-                            WordId = Guid.NewGuid(), UserId = "test-user-id", Word = "first", WordTypeId = NounTypeId,
+                            WordId = Guid.NewGuid(), UserId = "test-user-id", Word = "cherry", WordTypeId = NounTypeId,
                             CreatedAt = new DateTimeOffset(2025, 1, 1, 10, 0, 0, TimeSpan.Zero),
-                            UpdatedAt = new DateTimeOffset(2025, 3, 10, 6, 0, 0, TimeSpan.Zero)
+                            UpdatedAt = new DateTimeOffset(2025, 3, 15, 10, 0, 0, TimeSpan.Zero)
                         },
                         new WordEntity
                         {
-                            WordId = Guid.NewGuid(), UserId = "test-user-id", Word = "second", WordTypeId = NounTypeId,
+                            WordId = Guid.NewGuid(), UserId = "test-user-id", Word = "apple", WordTypeId = NounTypeId,
                             CreatedAt = new DateTimeOffset(2025, 1, 2, 10, 0, 0, TimeSpan.Zero),
-                            UpdatedAt = new DateTimeOffset(2025, 3, 11, 10, 0, 0, TimeSpan.Zero)
+                            UpdatedAt = new DateTimeOffset(2025, 1, 10, 10, 0, 0, TimeSpan.Zero)
                         },
                         new WordEntity
                         {
-                            WordId = Guid.NewGuid(), UserId = "test-user-id", Word = "third", WordTypeId = NounTypeId,
+                            WordId = Guid.NewGuid(), UserId = "test-user-id", Word = "banana", WordTypeId = NounTypeId,
                             CreatedAt = new DateTimeOffset(2025, 1, 3, 10, 0, 0, TimeSpan.Zero),
-                            UpdatedAt = new DateTimeOffset(2025, 3, 12, 10, 0, 0, TimeSpan.Zero)
+                            UpdatedAt = new DateTimeOffset(2025, 2, 20, 10, 0, 0, TimeSpan.Zero)
                         }
                     ]
                 }

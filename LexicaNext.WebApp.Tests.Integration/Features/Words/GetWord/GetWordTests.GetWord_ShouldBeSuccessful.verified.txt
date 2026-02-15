@@ -1,0 +1,109 @@
+﻿[
+  {
+    DbWords: [
+      {
+        WordId: Guid_1,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_1,
+        Translations: [
+          {
+            TranslationId: Guid_3,
+            Translation: jabłko,
+            Order: 1,
+            WordId: Guid_1
+          },
+          {
+            TranslationId: Guid_4,
+            Translation: jabłoń,
+            Order: 2,
+            WordId: Guid_1
+          }
+        ],
+        ExampleSentences: [
+          {
+            ExampleSentenceId: Guid_5,
+            Sentence: I ate a red apple for breakfast.,
+            Order: 1,
+            WordId: Guid_1
+          }
+        ],
+        SetWords: []
+      }
+    ],
+    WordId: Guid_1,
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "wordId": "Guid_1",
+      "word": "apple",
+      "wordType": "noun",
+      "translations": [
+        "jab\u0142ko",
+        "jab\u0142o\u0144"
+      ],
+      "exampleSentences": [
+        "I ate a red apple for breakfast."
+      ],
+      "createdAt": "2025-01-15T10:00:00\u002B00:00",
+      "updatedAt": null
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_6,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: DateTimeOffset_2,
+        Translations: [
+          {
+            TranslationId: Guid_7,
+            Translation: jabłko,
+            Order: 1,
+            WordId: Guid_6
+          },
+          {
+            TranslationId: Guid_8,
+            Translation: jabłoń,
+            Order: 2,
+            WordId: Guid_6
+          }
+        ],
+        ExampleSentences: [
+          {
+            ExampleSentenceId: Guid_9,
+            Sentence: I ate a red apple for breakfast.,
+            Order: 1,
+            WordId: Guid_6
+          }
+        ],
+        SetWords: []
+      }
+    ],
+    WordId: Guid_6,
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "wordId": "Guid_6",
+      "word": "apple",
+      "wordType": "noun",
+      "translations": [
+        "jab\u0142ko",
+        "jab\u0142o\u0144"
+      ],
+      "exampleSentences": [
+        "I ate a red apple for breakfast."
+      ],
+      "createdAt": "2025-01-15T10:00:00\u002B00:00",
+      "updatedAt": "2025-02-05T08:10:00\u002B00:00"
+    }
+  }
+]

@@ -1,0 +1,107 @@
+﻿[
+  {
+    StatusCode: NoContent,
+    DbWordsBefore: [
+      {
+        WordId: Guid_1,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_1,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_3,
+        UserId: test-user-id,
+        Word: banana,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_2,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbWordsAfter: [],
+    Request: {
+      Ids: [
+        Guid_1,
+        Guid_3
+      ]
+    },
+    Response: ,
+    TestCaseId: 1,
+    LogMessages: 
+  },
+  {
+    StatusCode: NoContent,
+    DbWordsBefore: [],
+    DbWordsAfter: [],
+    Request: {
+      Ids: [
+        Guid_4,
+        Guid_5
+      ]
+    },
+    Response: ,
+    TestCaseId: 2,
+    LogMessages: 
+  },
+  {
+    StatusCode: NoContent,
+    DbWordsBefore: [
+      {
+        WordId: Guid_6,
+        UserId: other-user-id,
+        Word: cherry,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_1,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_7,
+        UserId: other-user-id,
+        Word: grape,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_2,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbWordsAfter: [
+      {
+        WordId: Guid_6,
+        UserId: other-user-id,
+        Word: cherry,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_1,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_7,
+        UserId: other-user-id,
+        Word: grape,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_2,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Request: {
+      Ids: [
+        Guid_6,
+        Guid_7
+      ]
+    },
+    Response: ,
+    TestCaseId: 3,
+    LogMessages: 
+  }
+]

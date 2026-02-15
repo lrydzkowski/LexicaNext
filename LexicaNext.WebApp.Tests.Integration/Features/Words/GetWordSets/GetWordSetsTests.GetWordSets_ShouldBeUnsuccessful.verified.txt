@@ -1,0 +1,49 @@
+﻿[
+  {
+    DbWords: [],
+    DbSets: [],
+    WordId: Guid_1,
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "sets": []
+    }
+  },
+  {
+    DbWords: [],
+    DbSets: [],
+    WordId: not-a-valid-uuid,
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "sets": []
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_2,
+        UserId: other-user-id,
+        Word: table,
+        WordTypeId: Guid_3,
+        CreatedAt: DateTimeOffset_1,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbSets: [],
+    WordId: Guid_2,
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "sets": []
+    }
+  }
+]

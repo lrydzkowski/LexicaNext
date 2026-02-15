@@ -34,6 +34,7 @@ internal static class SetsData
     {
         return await context.Sets
             .Include(s => s.SetWords)
+            .OrderBy(s => s.CreatedAt)
             .AsNoTracking()
             .ToListAsync();
     }

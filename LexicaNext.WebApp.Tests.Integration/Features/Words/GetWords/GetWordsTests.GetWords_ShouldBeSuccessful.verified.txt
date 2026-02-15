@@ -1,0 +1,997 @@
+﻿[
+  {
+    DbWords: [
+      {
+        WordId: Guid_1,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_1,
+        Translations: [
+          {
+            TranslationId: Guid_3,
+            Translation: jabłko,
+            Order: 1,
+            WordId: Guid_1
+          }
+        ],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_4,
+        UserId: test-user-id,
+        Word: run,
+        WordTypeId: Guid_5,
+        CreatedAt: DateTimeOffset_2,
+        Translations: [
+          {
+            TranslationId: Guid_6,
+            Translation: biegać,
+            Order: 1,
+            WordId: Guid_4
+          }
+        ],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_7,
+        UserId: test-user-id,
+        Word: bright,
+        WordTypeId: Guid_8,
+        CreatedAt: DateTimeOffset_3,
+        Translations: [
+          {
+            TranslationId: Guid_9,
+            Translation: jasny,
+            Order: 1,
+            WordId: Guid_7
+          }
+        ],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words,
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_7",
+          "word": "bright",
+          "wordType": "adjective",
+          "createdAt": "2025-01-17T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_4",
+          "word": "run",
+          "wordType": "verb",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_1",
+          "word": "apple",
+          "wordType": "noun",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00",
+          "updatedAt": null
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_10,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_1,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_11,
+        UserId: test-user-id,
+        Word: run,
+        WordTypeId: Guid_5,
+        CreatedAt: DateTimeOffset_2,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_12,
+        UserId: test-user-id,
+        Word: pineapple,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_3,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words?searchQuery=apple,
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 2,
+      "data": [
+        {
+          "wordId": "Guid_12",
+          "word": "pineapple",
+          "wordType": "noun",
+          "createdAt": "2025-01-17T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_10",
+          "word": "apple",
+          "wordType": "noun",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00",
+          "updatedAt": null
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_13,
+        UserId: test-user-id,
+        Word: cherry,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_1,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_14,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_2,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_15,
+        UserId: test-user-id,
+        Word: banana,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_3,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words?sortingFieldName=word&sortingOrder=asc,
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_14",
+          "word": "apple",
+          "wordType": "noun",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_15",
+          "word": "banana",
+          "wordType": "noun",
+          "createdAt": "2025-01-17T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_13",
+          "word": "cherry",
+          "wordType": "noun",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00",
+          "updatedAt": null
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_16,
+        UserId: test-user-id,
+        Word: cherry,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_1,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_17,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_2,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_18,
+        UserId: test-user-id,
+        Word: banana,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_3,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words?sortingFieldName=word&sortingOrder=desc,
+    TestCaseId: 4,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_16",
+          "word": "cherry",
+          "wordType": "noun",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_18",
+          "word": "banana",
+          "wordType": "noun",
+          "createdAt": "2025-01-17T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_17",
+          "word": "apple",
+          "wordType": "noun",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00",
+          "updatedAt": null
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_19,
+        UserId: test-user-id,
+        Word: a_word,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_4,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_20,
+        UserId: test-user-id,
+        Word: b_word,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_5,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_21,
+        UserId: test-user-id,
+        Word: c_word,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_6,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_22,
+        UserId: test-user-id,
+        Word: d_word,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_7,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_23,
+        UserId: test-user-id,
+        Word: e_word,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_8,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words?page=2&pageSize=2,
+    TestCaseId: 5,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 5,
+      "data": [
+        {
+          "wordId": "Guid_21",
+          "word": "c_word",
+          "wordType": "noun",
+          "createdAt": "2025-01-03T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_20",
+          "word": "b_word",
+          "wordType": "noun",
+          "createdAt": "2025-01-02T10:00:00\u002B00:00",
+          "updatedAt": null
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [],
+    Url: /api/words,
+    TestCaseId: 6,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 0,
+      "data": []
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_24,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_1,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_25,
+        UserId: test-user-id,
+        Word: run,
+        WordTypeId: Guid_5,
+        CreatedAt: DateTimeOffset_2,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_26,
+        UserId: test-user-id,
+        Word: bright,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_3,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_27,
+        UserId: other-user-id,
+        Word: house,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_9,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_28,
+        UserId: other-user-id,
+        Word: walk,
+        WordTypeId: Guid_5,
+        CreatedAt: DateTimeOffset_10,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words,
+    TestCaseId: 7,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_26",
+          "word": "bright",
+          "wordType": "noun",
+          "createdAt": "2025-01-17T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_25",
+          "word": "run",
+          "wordType": "verb",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_24",
+          "word": "apple",
+          "wordType": "noun",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00",
+          "updatedAt": null
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_29,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_11,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_30,
+        UserId: test-user-id,
+        Word: banana,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_12,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_31,
+        UserId: test-user-id,
+        Word: cherry,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_13,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words?sortingFieldName=createdAt&sortingOrder=asc,
+    TestCaseId: 8,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_29",
+          "word": "apple",
+          "wordType": "noun",
+          "createdAt": "2025-01-10T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_30",
+          "word": "banana",
+          "wordType": "noun",
+          "createdAt": "2025-02-20T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_31",
+          "word": "cherry",
+          "wordType": "noun",
+          "createdAt": "2025-03-15T10:00:00\u002B00:00",
+          "updatedAt": null
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_32,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_11,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_33,
+        UserId: test-user-id,
+        Word: banana,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_12,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_34,
+        UserId: test-user-id,
+        Word: cherry,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_13,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words?sortingFieldName=createdAt&sortingOrder=desc,
+    TestCaseId: 9,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_34",
+          "word": "cherry",
+          "wordType": "noun",
+          "createdAt": "2025-03-15T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_33",
+          "word": "banana",
+          "wordType": "noun",
+          "createdAt": "2025-02-20T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_32",
+          "word": "apple",
+          "wordType": "noun",
+          "createdAt": "2025-01-10T10:00:00\u002B00:00",
+          "updatedAt": null
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_35,
+        UserId: test-user-id,
+        Word: cherry,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_4,
+        UpdatedAt: DateTimeOffset_13,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_36,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_5,
+        UpdatedAt: DateTimeOffset_11,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_37,
+        UserId: test-user-id,
+        Word: banana,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_6,
+        UpdatedAt: DateTimeOffset_12,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words?sortingFieldName=updatedAt&sortingOrder=asc,
+    TestCaseId: 10,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_36",
+          "word": "apple",
+          "wordType": "noun",
+          "createdAt": "2025-01-02T10:00:00\u002B00:00",
+          "updatedAt": "2025-01-10T10:00:00\u002B00:00"
+        },
+        {
+          "wordId": "Guid_37",
+          "word": "banana",
+          "wordType": "noun",
+          "createdAt": "2025-01-03T10:00:00\u002B00:00",
+          "updatedAt": "2025-02-20T10:00:00\u002B00:00"
+        },
+        {
+          "wordId": "Guid_35",
+          "word": "cherry",
+          "wordType": "noun",
+          "createdAt": "2025-01-01T10:00:00\u002B00:00",
+          "updatedAt": "2025-03-15T10:00:00\u002B00:00"
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_38,
+        UserId: test-user-id,
+        Word: cherry,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_4,
+        UpdatedAt: DateTimeOffset_13,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_39,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_5,
+        UpdatedAt: DateTimeOffset_11,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_40,
+        UserId: test-user-id,
+        Word: banana,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_6,
+        UpdatedAt: DateTimeOffset_12,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words?sortingFieldName=updatedAt&sortingOrder=desc,
+    TestCaseId: 11,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_38",
+          "word": "cherry",
+          "wordType": "noun",
+          "createdAt": "2025-01-01T10:00:00\u002B00:00",
+          "updatedAt": "2025-03-15T10:00:00\u002B00:00"
+        },
+        {
+          "wordId": "Guid_40",
+          "word": "banana",
+          "wordType": "noun",
+          "createdAt": "2025-01-03T10:00:00\u002B00:00",
+          "updatedAt": "2025-02-20T10:00:00\u002B00:00"
+        },
+        {
+          "wordId": "Guid_39",
+          "word": "apple",
+          "wordType": "noun",
+          "createdAt": "2025-01-02T10:00:00\u002B00:00",
+          "updatedAt": "2025-01-10T10:00:00\u002B00:00"
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_41,
+        UserId: test-user-id,
+        Word: alpha,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_14,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_42,
+        UserId: test-user-id,
+        Word: bravo,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_15,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_43,
+        UserId: test-user-id,
+        Word: charlie,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_1,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_44,
+        UserId: test-user-id,
+        Word: delta,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_16,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words?searchQuery=2025-01-15&timeZoneId=Europe%2fWarsaw,
+    TestCaseId: 12,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 2,
+      "data": [
+        {
+          "wordId": "Guid_43",
+          "word": "charlie",
+          "wordType": "noun",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_42",
+          "word": "bravo",
+          "wordType": "noun",
+          "createdAt": "2025-01-14T23:30:00\u002B00:00",
+          "updatedAt": null
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_45,
+        UserId: test-user-id,
+        Word: alpha,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_17,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_46,
+        UserId: test-user-id,
+        Word: bravo,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_18,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_47,
+        UserId: test-user-id,
+        Word: charlie,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_19,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_48,
+        UserId: test-user-id,
+        Word: delta,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_2,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words?searchQuery=2025-01-15&timeZoneId=America%2fLos_Angeles,
+    TestCaseId: 13,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 2,
+      "data": [
+        {
+          "wordId": "Guid_47",
+          "word": "charlie",
+          "wordType": "noun",
+          "createdAt": "2025-01-15T20:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_46",
+          "word": "bravo",
+          "wordType": "noun",
+          "createdAt": "2025-01-15T08:30:00\u002B00:00",
+          "updatedAt": null
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_49,
+        UserId: test-user-id,
+        Word: alpha,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_20,
+        UpdatedAt: DateTimeOffset_14,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_50,
+        UserId: test-user-id,
+        Word: bravo,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_21,
+        UpdatedAt: DateTimeOffset_15,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_51,
+        UserId: test-user-id,
+        Word: charlie,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_22,
+        UpdatedAt: DateTimeOffset_1,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_52,
+        UserId: test-user-id,
+        Word: delta,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_23,
+        UpdatedAt: DateTimeOffset_16,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words?searchQuery=2025-01-15&timeZoneId=Europe%2fWarsaw,
+    TestCaseId: 14,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 2,
+      "data": [
+        {
+          "wordId": "Guid_51",
+          "word": "charlie",
+          "wordType": "noun",
+          "createdAt": "2025-06-03T10:00:00\u002B00:00",
+          "updatedAt": "2025-01-15T10:00:00\u002B00:00"
+        },
+        {
+          "wordId": "Guid_50",
+          "word": "bravo",
+          "wordType": "noun",
+          "createdAt": "2025-06-02T10:00:00\u002B00:00",
+          "updatedAt": "2025-01-14T23:30:00\u002B00:00"
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_53,
+        UserId: test-user-id,
+        Word: alpha,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_20,
+        UpdatedAt: DateTimeOffset_17,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_54,
+        UserId: test-user-id,
+        Word: bravo,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_21,
+        UpdatedAt: DateTimeOffset_18,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_55,
+        UserId: test-user-id,
+        Word: charlie,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_22,
+        UpdatedAt: DateTimeOffset_19,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_56,
+        UserId: test-user-id,
+        Word: delta,
+        WordTypeId: Guid_2,
+        CreatedAt: DateTimeOffset_23,
+        UpdatedAt: DateTimeOffset_2,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    Url: /api/words?searchQuery=2025-01-15&timeZoneId=America%2fLos_Angeles,
+    TestCaseId: 15,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 2,
+      "data": [
+        {
+          "wordId": "Guid_55",
+          "word": "charlie",
+          "wordType": "noun",
+          "createdAt": "2025-06-03T10:00:00\u002B00:00",
+          "updatedAt": "2025-01-15T20:00:00\u002B00:00"
+        },
+        {
+          "wordId": "Guid_54",
+          "word": "bravo",
+          "wordType": "noun",
+          "createdAt": "2025-06-02T10:00:00\u002B00:00",
+          "updatedAt": "2025-01-15T08:30:00\u002B00:00"
+        }
+      ]
+    }
+  }
+]
