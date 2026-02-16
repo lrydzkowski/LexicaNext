@@ -1,0 +1,191 @@
+﻿[
+  {
+    DbSetsBefore: [],
+    DbSetsAfter: [],
+    Request: null,
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload",
+          "errorMessage": "\u0027Payload\u0027 must not be empty.",
+          "attemptedValue": null,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSetsBefore: [],
+    DbSetsAfter: [],
+    Request: {
+      WordIds: []
+    },
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "\u0027Word Ids\u0027 must not be empty.",
+          "attemptedValue": [],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSetsBefore: [],
+    DbSetsAfter: [],
+    Request: {
+      WordIds: [
+        Guid_1
+      ]
+    },
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "One or more word IDs do not exist.",
+          "attemptedValue": [
+            "Guid_1"
+          ],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSetsBefore: [],
+    DbSetsAfter: [],
+    Request: {
+      WordIds: [
+        Guid_2,
+        Guid_2
+      ]
+    },
+    TestCaseId: 4,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "\u0027Word Ids\u0027 cannot contain duplicate word IDs.",
+          "attemptedValue": [
+            "Guid_2",
+            "Guid_2"
+          ],
+          "severity": 0
+        },
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "One or more word IDs do not exist.",
+          "attemptedValue": [
+            "Guid_2",
+            "Guid_2"
+          ],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSetsBefore: [],
+    DbSetsAfter: [],
+    Request: {
+      WordIds: [
+        not-a-valid-uuid
+      ]
+    },
+    TestCaseId: 5,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordIds[0]",
+          "errorMessage": "\u0027not-a-valid-uuid\u0027 is not a valid word ID format.",
+          "attemptedValue": "not-a-valid-uuid",
+          "severity": 0
+        },
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "One or more word IDs do not exist.",
+          "attemptedValue": [
+            "not-a-valid-uuid"
+          ],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSetsBefore: [],
+    DbSetsAfter: [],
+    Request: {
+      WordIds: [
+        Guid_3,
+        Guid_4
+      ]
+    },
+    TestCaseId: 6,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "One or more word IDs do not exist.",
+          "attemptedValue": [
+            "Guid_3",
+            "Guid_4"
+          ],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  }
+]

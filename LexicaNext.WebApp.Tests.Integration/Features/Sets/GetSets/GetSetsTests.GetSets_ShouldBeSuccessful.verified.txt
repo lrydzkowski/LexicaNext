@@ -1,0 +1,455 @@
+﻿[
+  {
+    DbSets: [
+      {
+        SetId: Guid_1,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: [
+          {
+            SetId: Guid_1,
+            WordId: Guid_2,
+            Word: null,
+            Order: 1
+          }
+        ]
+      },
+      {
+        SetId: Guid_3,
+        UserId: test-user-id,
+        Name: set_0002,
+        CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
+        SetWords: [
+          {
+            SetId: Guid_3,
+            WordId: Guid_4,
+            Word: null,
+            Order: 1
+          }
+        ]
+      },
+      {
+        SetId: Guid_5,
+        UserId: test-user-id,
+        Name: set_0003,
+        CreatedAt: DateTimeOffset_3,
+        UpdatedAt: null,
+        SetWords: [
+          {
+            SetId: Guid_5,
+            WordId: Guid_2,
+            Word: null,
+            Order: 1
+          }
+        ]
+      }
+    ],
+    Url: /api/sets?sortingFieldName=createdAt&sortingOrder=asc,
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "setId": "Guid_1",
+          "name": "set_0001",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_3",
+          "name": "set_0002",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_5",
+          "name": "set_0003",
+          "createdAt": "2025-01-17T10:00:00\u002B00:00"
+        }
+      ]
+    }
+  },
+  {
+    DbSets: [
+      {
+        SetId: Guid_6,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_7,
+        UserId: test-user-id,
+        Name: set_0002,
+        CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_8,
+        UserId: test-user-id,
+        Name: set_0003,
+        CreatedAt: DateTimeOffset_3,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    Url: /api/sets?searchQuery=0002,
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 1,
+      "data": [
+        {
+          "setId": "Guid_7",
+          "name": "set_0002",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00"
+        }
+      ]
+    }
+  },
+  {
+    DbSets: [
+      {
+        SetId: Guid_9,
+        UserId: test-user-id,
+        Name: charlie_set,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_10,
+        UserId: test-user-id,
+        Name: alpha_set,
+        CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_11,
+        UserId: test-user-id,
+        Name: bravo_set,
+        CreatedAt: DateTimeOffset_3,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    Url: /api/sets?sortingFieldName=name&sortingOrder=asc,
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "setId": "Guid_10",
+          "name": "alpha_set",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_11",
+          "name": "bravo_set",
+          "createdAt": "2025-01-17T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_9",
+          "name": "charlie_set",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00"
+        }
+      ]
+    }
+  },
+  {
+    DbSets: [
+      {
+        SetId: Guid_12,
+        UserId: test-user-id,
+        Name: charlie_set,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_13,
+        UserId: test-user-id,
+        Name: alpha_set,
+        CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_14,
+        UserId: test-user-id,
+        Name: bravo_set,
+        CreatedAt: DateTimeOffset_3,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    Url: /api/sets?sortingFieldName=name&sortingOrder=desc,
+    TestCaseId: 4,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "setId": "Guid_12",
+          "name": "charlie_set",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_14",
+          "name": "bravo_set",
+          "createdAt": "2025-01-17T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_13",
+          "name": "alpha_set",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00"
+        }
+      ]
+    }
+  },
+  {
+    DbSets: [],
+    Url: /api/sets,
+    TestCaseId: 5,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 0,
+      "data": []
+    }
+  },
+  {
+    DbSets: [
+      {
+        SetId: Guid_15,
+        UserId: test-user-id,
+        Name: set_alpha,
+        CreatedAt: DateTimeOffset_4,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_16,
+        UserId: test-user-id,
+        Name: set_bravo,
+        CreatedAt: DateTimeOffset_5,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_17,
+        UserId: test-user-id,
+        Name: set_charlie,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_18,
+        UserId: test-user-id,
+        Name: set_delta,
+        CreatedAt: DateTimeOffset_6,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    Url: /api/sets?sortingFieldName=createdAt&sortingOrder=asc&searchQuery=2025-01-15&timeZoneId=Europe%2fWarsaw,
+    TestCaseId: 6,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 2,
+      "data": [
+        {
+          "setId": "Guid_16",
+          "name": "set_bravo",
+          "createdAt": "2025-01-14T23:30:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_17",
+          "name": "set_charlie",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00"
+        }
+      ]
+    }
+  },
+  {
+    DbSets: [
+      {
+        SetId: Guid_19,
+        UserId: test-user-id,
+        Name: set_alpha,
+        CreatedAt: DateTimeOffset_7,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_20,
+        UserId: test-user-id,
+        Name: set_bravo,
+        CreatedAt: DateTimeOffset_8,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_21,
+        UserId: test-user-id,
+        Name: set_charlie,
+        CreatedAt: DateTimeOffset_9,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_22,
+        UserId: test-user-id,
+        Name: set_delta,
+        CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    Url: /api/sets?sortingFieldName=createdAt&sortingOrder=asc&searchQuery=2025-01-15&timeZoneId=America%2fLos_Angeles,
+    TestCaseId: 7,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 2,
+      "data": [
+        {
+          "setId": "Guid_20",
+          "name": "set_bravo",
+          "createdAt": "2025-01-15T08:30:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_21",
+          "name": "set_charlie",
+          "createdAt": "2025-01-15T20:00:00\u002B00:00"
+        }
+      ]
+    }
+  },
+  {
+    DbSets: [
+      {
+        SetId: Guid_23,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_24,
+        UserId: test-user-id,
+        Name: set_0002,
+        CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_25,
+        UserId: test-user-id,
+        Name: set_0003,
+        CreatedAt: DateTimeOffset_3,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    Url: /api/sets?sortingFieldName=createdAt&sortingOrder=asc,
+    TestCaseId: 8,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "setId": "Guid_23",
+          "name": "set_0001",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_24",
+          "name": "set_0002",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_25",
+          "name": "set_0003",
+          "createdAt": "2025-01-17T10:00:00\u002B00:00"
+        }
+      ]
+    }
+  },
+  {
+    DbSets: [
+      {
+        SetId: Guid_26,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_27,
+        UserId: test-user-id,
+        Name: set_0002,
+        CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
+        SetWords: []
+      },
+      {
+        SetId: Guid_28,
+        UserId: test-user-id,
+        Name: set_0003,
+        CreatedAt: DateTimeOffset_3,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    Url: /api/sets?sortingFieldName=createdAt&sortingOrder=desc,
+    TestCaseId: 9,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "setId": "Guid_28",
+          "name": "set_0003",
+          "createdAt": "2025-01-17T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_27",
+          "name": "set_0002",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_26",
+          "name": "set_0001",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00"
+        }
+      ]
+    }
+  }
+]

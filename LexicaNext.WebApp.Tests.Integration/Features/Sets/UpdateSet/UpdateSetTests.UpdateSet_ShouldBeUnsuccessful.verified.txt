@@ -1,0 +1,330 @@
+﻿[
+  {
+    DbSetsBefore: [],
+    DbSetsAfter: [],
+    SetId: Guid_1,
+    Request: {
+      WordIds: [
+        Guid_2,
+        Guid_3
+      ]
+    },
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: NotFound,
+    Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSetsBefore: [],
+    DbSetsAfter: [],
+    SetId: not-a-valid-uuid,
+    Request: {
+      WordIds: [
+        Guid_4
+      ]
+    },
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: NotFound,
+    Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSetsBefore: [
+      {
+        SetId: Guid_5,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    DbSetsAfter: [
+      {
+        SetId: Guid_5,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    SetId: Guid_5,
+    Request: null,
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload",
+          "errorMessage": "\u0027Payload\u0027 must not be empty.",
+          "attemptedValue": null,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSetsBefore: [
+      {
+        SetId: Guid_6,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    DbSetsAfter: [
+      {
+        SetId: Guid_6,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    SetId: Guid_6,
+    Request: {
+      WordIds: []
+    },
+    TestCaseId: 4,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "\u0027Word Ids\u0027 must not be empty.",
+          "attemptedValue": [],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSetsBefore: [
+      {
+        SetId: Guid_7,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    DbSetsAfter: [
+      {
+        SetId: Guid_7,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    SetId: Guid_7,
+    Request: {
+      WordIds: [
+        Guid_8
+      ]
+    },
+    TestCaseId: 5,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "One or more word IDs do not exist.",
+          "attemptedValue": [
+            "Guid_8"
+          ],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSetsBefore: [
+      {
+        SetId: Guid_9,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    DbSetsAfter: [
+      {
+        SetId: Guid_9,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    SetId: Guid_9,
+    Request: {
+      WordIds: [
+        Guid_10,
+        Guid_10
+      ]
+    },
+    TestCaseId: 6,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "\u0027Word Ids\u0027 cannot contain duplicate word IDs.",
+          "attemptedValue": [
+            "Guid_10",
+            "Guid_10"
+          ],
+          "severity": 0
+        },
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "One or more word IDs do not exist.",
+          "attemptedValue": [
+            "Guid_10",
+            "Guid_10"
+          ],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSetsBefore: [
+      {
+        SetId: Guid_11,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    DbSetsAfter: [
+      {
+        SetId: Guid_11,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    SetId: Guid_11,
+    Request: {
+      WordIds: [
+        Guid_12,
+        Guid_13
+      ]
+    },
+    TestCaseId: 7,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "One or more word IDs do not exist.",
+          "attemptedValue": [
+            "Guid_12",
+            "Guid_13"
+          ],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSetsBefore: [
+      {
+        SetId: Guid_14,
+        UserId: other-user-id,
+        Name: other_set,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    DbSetsAfter: [
+      {
+        SetId: Guid_14,
+        UserId: other-user-id,
+        Name: other_set,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    SetId: Guid_14,
+    Request: {
+      WordIds: [
+        Guid_15,
+        Guid_16
+      ]
+    },
+    TestCaseId: 8,
+    LogMessages: ,
+    StatusCode: NotFound,
+    Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    }
+  }
+]
