@@ -139,8 +139,8 @@
 
 **Purpose**: Final validation and cleanup
 
-- [ ] T031 Run full integration test suite via `dotnet test LexicaNext.WebApp.Tests.Integration` and verify all 124 test cases pass - generate initial Verify snapshots with `-- Verify.AutoVerify=true` on first run
-- [ ] T032 Verify endpoint coverage completeness - confirm all 17 endpoints discovered by existing EndpointHelpers in LexicaNext.WebApp.Tests.Integration/Api/EndpointHelpers.cs have corresponding test classes in Features/
+- [X] T031 Run full integration test suite via `dotnet test LexicaNext.WebApp.Tests.Integration` and verify all 124 test cases pass - generate initial Verify snapshots with `-- Verify.AutoVerify=true` on first run
+- [X] T032 Verify endpoint coverage completeness - confirm all 17 endpoints discovered by existing EndpointHelpers in LexicaNext.WebApp.Tests.Integration/Api/EndpointHelpers.cs have corresponding test classes in Features/
 
 ---
 
