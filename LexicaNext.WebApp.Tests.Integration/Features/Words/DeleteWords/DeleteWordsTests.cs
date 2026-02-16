@@ -60,7 +60,7 @@ public class DeleteWordsTests
     {
         WebApplicationFactory<Program> webApiFactory = _webApiFactory.WithDependencies(testCase);
         await using TestContextScope contextScope = new(webApiFactory, _logMessages);
-        await contextScope.SeedDataAsync(testCase);
+        await contextScope.InitializeAppAsync(testCase);
 
         List<WordEntity> wordsBefore = await contextScope.Db.Context.GetWordsAsync();
 

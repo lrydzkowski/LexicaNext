@@ -44,7 +44,7 @@ public class GetProposedSetNameTests
     {
         WebApplicationFactory<Program> webApiFactory = _webApiFactory.WithDependencies(testCase);
         await using TestContextScope contextScope = new(webApiFactory, _logMessages);
-        await contextScope.SeedDataAsync(testCase);
+        await contextScope.InitializeAppAsync(testCase);
 
         HttpClient client = webApiFactory.CreateClient();
         using HttpResponseMessage response = await client.GetAsync("/api/sets/proposed-name");

@@ -59,7 +59,7 @@ public class GetWordSetsTests
     {
         WebApplicationFactory<Program> webApiFactory = _webApiFactory.WithDependencies(testCase);
         await using TestContextScope contextScope = new(webApiFactory, _logMessages);
-        await contextScope.SeedDataAsync(testCase);
+        await contextScope.InitializeAppAsync(testCase);
 
         List<WordEntity> dbWords = await contextScope.Db.Context.GetWordsAsync();
         List<SetEntity> dbSets = await contextScope.Db.Context.GetSetsAsync();

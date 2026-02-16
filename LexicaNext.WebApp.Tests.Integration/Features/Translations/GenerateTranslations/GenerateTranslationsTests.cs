@@ -58,7 +58,7 @@ public class GenerateTranslationsTests
     {
         WebApplicationFactory<Program> webApiFactory = _webApiFactory.WithDependencies(testCase);
         await using TestContextScope contextScope = new(webApiFactory, _logMessages);
-        await contextScope.SeedDataAsync(testCase);
+        await contextScope.InitializeAppAsync(testCase);
 
         HttpClient client = webApiFactory.CreateClient();
         using HttpRequestMessage request = new(HttpMethod.Post, "/api/translations/generate");

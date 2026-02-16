@@ -82,7 +82,7 @@ public class GetRecordingTests
             .ReplaceService(recordingStorageMock, ServiceLifetime.Scoped);
 
         await using TestContextScope contextScope = new(webApiFactory, _logMessages);
-        await contextScope.SeedDataAsync(testCase);
+        await contextScope.InitializeAppAsync(testCase);
 
         HttpClient client = webApiFactory.CreateClient();
         string url = $"/api/recordings/{testCase.Word}";
