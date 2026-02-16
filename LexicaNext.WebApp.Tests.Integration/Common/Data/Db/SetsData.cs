@@ -32,10 +32,12 @@ internal static class SetsData
 
     public static async Task<List<SetEntity>> GetSetsAsync(this AppDbContext context)
     {
-        return await context.Sets
-            .Include(s => s.SetWords)
+        List<SetEntity> sets = await context.Sets
+            .Include(s => s.SetWords.OrderBy(sw => sw.Order))
             .OrderBy(s => s.CreatedAt)
             .AsNoTracking()
             .ToListAsync();
+
+        return sets;
     }
 }

@@ -7,7 +7,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_2,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -17,7 +19,9 @@
         UserId: test-user-id,
         Word: banana,
         WordTypeId: Guid_2,
+        WordType: null,
         CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -56,7 +60,9 @@
         UserId: other-user-id,
         Word: cherry,
         WordTypeId: Guid_2,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -66,7 +72,9 @@
         UserId: other-user-id,
         Word: grape,
         WordTypeId: Guid_2,
+        WordType: null,
         CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -78,7 +86,9 @@
         UserId: other-user-id,
         Word: cherry,
         WordTypeId: Guid_2,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -88,7 +98,9 @@
         UserId: other-user-id,
         Word: grape,
         WordTypeId: Guid_2,
+        WordType: null,
         CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []

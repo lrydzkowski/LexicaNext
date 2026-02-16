@@ -7,11 +7,14 @@
         UserId: test-user-id,
         Word: bright,
         WordTypeId: Guid_2,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [
           {
             TranslationId: Guid_3,
             Translation: jasny,
+            Order: 0,
             WordId: Guid_1
           },
           {
@@ -25,6 +28,7 @@
           {
             ExampleSentenceId: Guid_5,
             Sentence: The bright sun warmed the garden.,
+            Order: 0,
             WordId: Guid_1
           }
         ],
@@ -47,11 +51,14 @@
         UserId: test-user-id,
         Word: quickly,
         WordTypeId: Guid_7,
+        WordType: null,
         CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
         Translations: [
           {
             TranslationId: Guid_8,
             Translation: szybko,
+            Order: 0,
             WordId: Guid_6
           },
           {

@@ -48,4 +48,12 @@ internal static class WordsData
             .OrderBy(x => x.CreatedAt)
             .ToListAsync();
     }
+
+    public static async Task<List<RecordingEntity>> GetRecordingsAsync(this AppDbContext context)
+    {
+        return await context.Recordings
+            .AsNoTracking()
+            .OrderBy(x => x.Word)
+            .ToListAsync();
+    }
 }

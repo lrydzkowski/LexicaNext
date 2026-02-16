@@ -36,7 +36,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -48,7 +50,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -82,7 +86,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -94,7 +100,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -128,7 +136,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -140,7 +150,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -174,7 +186,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -186,7 +200,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -220,7 +236,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -232,7 +250,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -266,7 +286,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -278,7 +300,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -312,7 +336,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -324,7 +350,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -358,7 +386,9 @@
         UserId: test-user-id,
         Word: run,
         WordTypeId: Guid_11,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -368,7 +398,9 @@
         UserId: test-user-id,
         Word: walk,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -380,7 +412,9 @@
         UserId: test-user-id,
         Word: run,
         WordTypeId: Guid_11,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -390,7 +424,9 @@
         UserId: test-user-id,
         Word: walk,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []

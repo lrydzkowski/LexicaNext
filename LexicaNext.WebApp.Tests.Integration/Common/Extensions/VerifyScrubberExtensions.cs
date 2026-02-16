@@ -20,6 +20,7 @@ internal static partial class VerifyScrubberExtensions
 
     [GeneratedRegex("\"traceId\":\\s*\"[^\"]+\"")]
     private static partial Regex TraceIdRegex();
+
     public static void ScrubNewLineCharacters(this VerifySettings settings)
     {
         settings.AddScrubber(

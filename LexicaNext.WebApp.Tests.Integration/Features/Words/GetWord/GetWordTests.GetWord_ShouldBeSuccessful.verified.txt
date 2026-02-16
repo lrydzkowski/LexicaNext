@@ -6,7 +6,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_2,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [
           {
             TranslationId: Guid_3,
@@ -59,6 +61,7 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_2,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
         UpdatedAt: DateTimeOffset_2,
         Translations: [

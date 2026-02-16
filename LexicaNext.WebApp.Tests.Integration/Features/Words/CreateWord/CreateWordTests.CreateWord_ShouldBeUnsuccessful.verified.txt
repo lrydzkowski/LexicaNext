@@ -167,7 +167,9 @@
         UserId: test-user-id,
         Word: run,
         WordTypeId: Guid_2,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []
@@ -179,7 +181,9 @@
         UserId: test-user-id,
         Word: run,
         WordTypeId: Guid_2,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []

@@ -6,7 +6,9 @@
         UserId: test-user-id,
         Word: apple,
         WordTypeId: Guid_2,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [
           {
             TranslationId: Guid_3,
@@ -32,12 +34,14 @@
         UserId: test-user-id,
         Word: pear,
         WordTypeId: Guid_2,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
         UpdatedAt: DateTimeOffset_2,
         Translations: [
           {
             TranslationId: Guid_5,
             Translation: gruszka,
+            Order: 0,
             WordId: Guid_1
           }
         ],
@@ -45,6 +49,7 @@
           {
             ExampleSentenceId: Guid_6,
             Sentence: I like to eat a pear.,
+            Order: 0,
             WordId: Guid_1
           }
         ],

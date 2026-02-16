@@ -76,7 +76,7 @@ internal class TestContextScope : IAsyncDisposable
         }
     }
 
-    public TService GetRequiredService<TService>() where TService : notnull
+    private TService GetRequiredService<TService>() where TService : notnull
     {
         return ServiceScope.ServiceProvider.GetRequiredService<TService>();
     }

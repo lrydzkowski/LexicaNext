@@ -34,7 +34,9 @@
         UserId: other-user-id,
         Word: banana,
         WordTypeId: Guid_3,
+        WordType: null,
         CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
         Translations: [],
         ExampleSentences: [],
         SetWords: []

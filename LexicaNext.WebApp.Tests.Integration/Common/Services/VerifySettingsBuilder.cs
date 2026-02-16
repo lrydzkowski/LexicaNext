@@ -18,7 +18,11 @@ internal static class VerifySettingsBuilder
         settings.ScrubPostgresConnectionString();
         settings.DontIgnoreEmptyCollections();
         settings.AddExtraSettings(
-            jsonSerializerSettings => jsonSerializerSettings.NullValueHandling = NullValueHandling.Include
+            jsonSerializerSettings =>
+            {
+                jsonSerializerSettings.NullValueHandling = NullValueHandling.Include;
+                jsonSerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
+            }
         );
 
         return settings;
