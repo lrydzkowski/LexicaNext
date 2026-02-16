@@ -11,7 +11,7 @@ internal static class TestCase03
         return new TestCaseData
         {
             TestCaseId = 3,
-            RequestBody = new GenerateTranslationsRequest("bright", "invalid", 3),
+            RequestBody = new GenerateTranslationsRequest("bright", "invalid"),
             Data = new BaseTestCaseData
             {
                 AiService = new AiServiceTestCaseData { Translations = [] }

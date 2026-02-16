@@ -34,10 +34,10 @@ internal static class TestCase02
     private static string BuildHtml()
     {
         return
-            "<div>" +
-            "<div><span class=\"headword\"><span>banana</span></span></div>" +
-            "<div><span>noun</span></div>" +
-            "<span class=\"us\"><source type=\"audio/mpeg\" src=\"/media/audio/banana.mp3\"></span>" +
-            "</div>";
+            "<div>"
+            + "<div><span class=\"headword\"><span>banana</span></span></div>"
+            + "<div><span>noun</span></div>"
+            + "<span class=\"us\"><source type=\"audio/mpeg\" src=\"/media/audio/banana.mp3\"></span>"
+            + "</div>";
     }
 }
