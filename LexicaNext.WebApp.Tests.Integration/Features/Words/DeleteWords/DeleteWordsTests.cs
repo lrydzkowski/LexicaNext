@@ -3,13 +3,12 @@ using LexicaNext.Core.Commands.DeleteWords;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common;
-using LexicaNext.WebApp.Tests.Integration.Common.Data;
-using LexicaNext.WebApp.Tests.Integration.Common.Data.Db;
+using LexicaNext.WebApp.Tests.Integration.Common.Context;
+using LexicaNext.WebApp.Tests.Integration.Common.Context.Db;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using LexicaNext.WebApp.Tests.Integration.Common.Models;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;
 using LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
-using LexicaNext.WebApp.Tests.Integration.Common.WebApplication.Infrastructure;
 using LexicaNext.WebApp.Tests.Integration.Features.Words.DeleteWords.Data;
 using LexicaNext.WebApp.Tests.Integration.Features.Words.DeleteWords.Data.CorrectTestCases;
 using LexicaNext.WebApp.Tests.Integration.Features.Words.DeleteWords.Data.IncorrectTestCases;
@@ -58,13 +57,12 @@ public class DeleteWordsTests
 
     private async Task<DeleteWordsTestResult> RunAsync(TestCaseData testCase)
     {
-        WebApplicationFactory<Program> webApiFactory = _webApiFactory.WithDependencies(testCase);
-        await using TestContextScope contextScope = new(webApiFactory, _logMessages);
-        await contextScope.InitializeAppAsync(testCase);
+        await using TestContextScope contextScope = new(_webApiFactory, _logMessages);
+        await contextScope.InitializeAsync(testCase);
 
-        List<WordEntity> wordsBefore = await contextScope.Db.Context.GetWordsAsync();
+        List<WordEntity> wordsBefore = await contextScope.Db!.Context.GetWordsAsync();
 
-        HttpClient client = webApiFactory.CreateClient();
+        HttpClient client = contextScope.Factory.CreateClient();
         DeleteWordsRequest requestBody = new() { Ids = testCase.Ids };
         using HttpRequestMessage request = new(HttpMethod.Delete, "/api/words");
         request.CreateContent(requestBody);
@@ -72,7 +70,7 @@ public class DeleteWordsTests
 
         string responseBody = await response.Content.ReadAsStringAsync();
 
-        List<WordEntity> wordsAfter = await contextScope.Db.Context.GetWordsAsync();
+        List<WordEntity> wordsAfter = await contextScope.Db!.Context.GetWordsAsync();
 
         return new DeleteWordsTestResult
         {

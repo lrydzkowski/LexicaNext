@@ -2,13 +2,12 @@ using System.Net;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common;
-using LexicaNext.WebApp.Tests.Integration.Common.Data;
-using LexicaNext.WebApp.Tests.Integration.Common.Data.Db;
+using LexicaNext.WebApp.Tests.Integration.Common.Context;
+using LexicaNext.WebApp.Tests.Integration.Common.Context.Db;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using LexicaNext.WebApp.Tests.Integration.Common.Models;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;
 using LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
-using LexicaNext.WebApp.Tests.Integration.Common.WebApplication.Infrastructure;
 using LexicaNext.WebApp.Tests.Integration.Features.Sets.GetSet.Data;
 using LexicaNext.WebApp.Tests.Integration.Features.Sets.GetSet.Data.CorrectTestCases;
 using LexicaNext.WebApp.Tests.Integration.Features.Sets.GetSet.Data.IncorrectTestCases;
@@ -57,13 +56,12 @@ public class GetSetTests
 
     private async Task<GetSetTestResult> RunAsync(TestCaseData testCase)
     {
-        WebApplicationFactory<Program> webApiFactory = _webApiFactory.WithDependencies(testCase);
-        await using TestContextScope contextScope = new(webApiFactory, _logMessages);
-        await contextScope.InitializeAppAsync(testCase);
+        await using TestContextScope contextScope = new(_webApiFactory, _logMessages);
+        await contextScope.InitializeAsync(testCase);
 
-        List<SetEntity> dbSets = await contextScope.Db.Context.GetSetsAsync();
+        List<SetEntity> dbSets = await contextScope.Db!.Context.GetSetsAsync();
 
-        HttpClient client = webApiFactory.CreateClient();
+        HttpClient client = contextScope.Factory.CreateClient();
         using HttpResponseMessage response = await client.GetAsync($"/api/sets/{testCase.SetId}");
 
         string responseBody = await response.Content.ReadAsStringAsync();

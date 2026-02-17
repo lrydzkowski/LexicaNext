@@ -2,7 +2,7 @@ using LexicaNext.Infrastructure.Db;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 using Microsoft.EntityFrameworkCore;
 
-namespace LexicaNext.WebApp.Tests.Integration.Common.Data.Db;
+namespace LexicaNext.WebApp.Tests.Integration.Common.Context.Db;
 
 internal class ContextScope : IDisposable
 {

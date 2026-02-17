@@ -1,19 +1,33 @@
 using System.Net.Mime;
 using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
+using LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Net.Http.Headers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 
-namespace LexicaNext.WebApp.Tests.Integration.Common.WebApplication.Infrastructure;
+namespace LexicaNext.WebApp.Tests.Integration.Common.Context.Services;
 
-internal static class EnglishDictionaryApiBuilder
+internal class EnglishDictionaryApiContextScope
 {
-    public static void Configure(WireMockServer server, EnglishDictionaryApiTestCaseData data)
+    private readonly WireMockServer _server;
+
+    public EnglishDictionaryApiContextScope(WebApplicationFactory<Program> factory, WireMockServer server)
     {
-        server.Reset();
+        Factory = factory;
+        _server = server;
+    }
+
+    public WebApplicationFactory<Program> Factory { get; private set; }
+
+    public Task InitializeAsync(ITestCaseData testCase)
+    {
+        EnglishDictionaryApiTestCaseData data = testCase.Data.EnglishDictionaryApi;
+
+        _server.Reset();
 
         foreach ((string word, string? html) in data.WordPages)
         {
@@ -24,12 +38,12 @@ internal static class EnglishDictionaryApiBuilder
                 int statusCode = data.ShouldFail
                     ? StatusCodes.Status500InternalServerError
                     : StatusCodes.Status404NotFound;
-                server.Given(request).RespondWith(Response.Create().WithStatusCode(statusCode));
+                _server.Given(request).RespondWith(Response.Create().WithStatusCode(statusCode));
 
                 continue;
             }
 
-            server
+            _server
                 .Given(request)
                 .RespondWith(
                     Response.Create()
@@ -48,12 +62,12 @@ internal static class EnglishDictionaryApiBuilder
                 int statusCode = data.ShouldFail
                     ? StatusCodes.Status500InternalServerError
                     : StatusCodes.Status404NotFound;
-                server.Given(request).RespondWith(Response.Create().WithStatusCode(statusCode));
+                _server.Given(request).RespondWith(Response.Create().WithStatusCode(statusCode));
 
                 continue;
             }
 
-            server
+            _server
                 .Given(request)
                 .RespondWith(
                     Response.Create()
@@ -62,5 +76,15 @@ internal static class EnglishDictionaryApiBuilder
                         .WithHeader(HeaderNames.ContentType, CustomMediaTypes.Audio.Mpeg)
                 );
         }
+
+        Factory = Factory.WithCustomOptions(
+            new Dictionary<string, string?>
+            {
+                ["EnglishDictionary:BaseUrl"] = _server.Url,
+                ["EnglishDictionary:Path"] = "/{word}"
+            }
+        );
+
+        return Task.CompletedTask;
     }
 }

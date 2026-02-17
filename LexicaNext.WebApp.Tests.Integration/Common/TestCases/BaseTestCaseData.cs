@@ -7,4 +7,6 @@ internal class BaseTestCaseData
     public EnglishDictionaryApiTestCaseData EnglishDictionaryApi { get; init; } = new();
 
     public AiServiceTestCaseData AiService { get; init; } = new();
+
+    public RecordingStorageTestCaseData RecordingStorage { get; init; } = new();
 }

@@ -8,8 +8,6 @@ internal class TestCaseData : ITestCaseData
 
     public string? WordType { get; init; }
 
-    public Dictionary<string, byte[]?> RecordingStorageFiles { get; init; } = new();
-
     public int TestCaseId { get; init; }
 
     public string UserId { get; init; } = "test-user-id";

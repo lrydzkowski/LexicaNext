@@ -1,12 +1,11 @@
 using System.Net;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.WebApp.Tests.Integration.Common;
-using LexicaNext.WebApp.Tests.Integration.Common.Data;
+using LexicaNext.WebApp.Tests.Integration.Common.Context;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using LexicaNext.WebApp.Tests.Integration.Common.Models;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;
 using LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
-using LexicaNext.WebApp.Tests.Integration.Common.WebApplication.Infrastructure;
 using LexicaNext.WebApp.Tests.Integration.Features.Sets.GetProposedSetName.Data;
 using LexicaNext.WebApp.Tests.Integration.Features.Sets.GetProposedSetName.Data.CorrectTestCases;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -42,11 +41,10 @@ public class GetProposedSetNameTests
 
     private async Task<GetProposedSetNameTestResult> RunAsync(TestCaseData testCase)
     {
-        WebApplicationFactory<Program> webApiFactory = _webApiFactory.WithDependencies(testCase);
-        await using TestContextScope contextScope = new(webApiFactory, _logMessages);
-        await contextScope.InitializeAppAsync(testCase);
+        await using TestContextScope contextScope = new(_webApiFactory, _logMessages);
+        await contextScope.InitializeAsync(testCase);
 
-        HttpClient client = webApiFactory.CreateClient();
+        HttpClient client = contextScope.Factory.CreateClient();
         using HttpResponseMessage response = await client.GetAsync("/api/sets/proposed-name");
 
         string responseBody = await response.Content.ReadAsStringAsync();

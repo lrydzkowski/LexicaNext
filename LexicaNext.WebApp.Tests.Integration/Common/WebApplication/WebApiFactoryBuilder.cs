@@ -1,5 +1,4 @@
-﻿using LexicaNext.Core.Common.Infrastructure.Interfaces;
-using LexicaNext.Core.Common.Infrastructure.Services;
+﻿using LexicaNext.Core.Common.Infrastructure.Services;
 using LexicaNext.WebApp.Tests.Integration.Common.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -115,17 +114,6 @@ internal static class WebApiFactoryBuilder
             default:
                 throw new ArgumentOutOfRangeException(nameof(serviceLifetime), serviceLifetime, null);
         }
-    }
-
-    public static WebApplicationFactory<Program> WithMockedUserContext(
-        this WebApplicationFactory<Program> webApiFactory,
-        string userId
-    )
-    {
-        IUserContextResolver userContextResolver = Substitute.For<IUserContextResolver>();
-        userContextResolver.GetUserId().Returns(userId);
-
-        return webApiFactory.ReplaceService(userContextResolver, ServiceLifetime.Scoped);
     }
 
     public static WebApplicationFactory<Program> MockUtcNow(

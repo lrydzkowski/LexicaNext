@@ -2,13 +2,12 @@ using System.Net;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common;
-using LexicaNext.WebApp.Tests.Integration.Common.Data;
-using LexicaNext.WebApp.Tests.Integration.Common.Data.Db;
+using LexicaNext.WebApp.Tests.Integration.Common.Context;
+using LexicaNext.WebApp.Tests.Integration.Common.Context.Db;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using LexicaNext.WebApp.Tests.Integration.Common.Models;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;
 using LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
-using LexicaNext.WebApp.Tests.Integration.Common.WebApplication.Infrastructure;
 using LexicaNext.WebApp.Tests.Integration.Features.Words.CreateWord.Data;
 using LexicaNext.WebApp.Tests.Integration.Features.Words.CreateWord.Data.CorrectTestCases;
 using LexicaNext.WebApp.Tests.Integration.Features.Words.CreateWord.Data.IncorrectTestCases;
@@ -57,13 +56,12 @@ public class CreateWordTests
 
     private async Task<CreateWordTestResult> RunAsync(TestCaseData testCase)
     {
-        WebApplicationFactory<Program> webApiFactory = _webApiFactory.WithDependencies(testCase);
-        await using TestContextScope contextScope = new(webApiFactory, _logMessages);
-        await contextScope.InitializeAppAsync(testCase);
+        await using TestContextScope contextScope = new(_webApiFactory, _logMessages);
+        await contextScope.InitializeAsync(testCase);
 
-        List<WordEntity> wordsBefore = await contextScope.Db.Context.GetWordsAsync();
+        List<WordEntity> wordsBefore = await contextScope.Db!.Context.GetWordsAsync();
 
-        HttpClient client = webApiFactory.CreateClient();
+        HttpClient client = contextScope.Factory.CreateClient();
         using HttpRequestMessage request = new(HttpMethod.Post, "/api/words");
         if (testCase.RequestBody is not null)
         {
@@ -74,7 +72,7 @@ public class CreateWordTests
 
         string responseBody = await response.Content.ReadAsStringAsync();
 
-        List<WordEntity> wordsAfter = await contextScope.Db.Context.GetWordsAsync();
+        List<WordEntity> wordsAfter = await contextScope.Db!.Context.GetWordsAsync();
 
         return new CreateWordTestResult
         {

@@ -1,7 +1,7 @@
 using System.Net;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.WebApp.Tests.Integration.Common;
-using LexicaNext.WebApp.Tests.Integration.Common.Data;
+using LexicaNext.WebApp.Tests.Integration.Common.Context;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using LexicaNext.WebApp.Tests.Integration.Common.Models;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;

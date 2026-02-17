@@ -2,12 +2,11 @@ using System.Net;
 using LexicaNext.Core.Commands.GenerateExampleSentences;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.WebApp.Tests.Integration.Common;
-using LexicaNext.WebApp.Tests.Integration.Common.Data;
+using LexicaNext.WebApp.Tests.Integration.Common.Context;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using LexicaNext.WebApp.Tests.Integration.Common.Models;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;
 using LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
-using LexicaNext.WebApp.Tests.Integration.Common.WebApplication.Infrastructure;
 using LexicaNext.WebApp.Tests.Integration.Features.Sentences.GenerateExampleSentences.Data;
 using LexicaNext.WebApp.Tests.Integration.Features.Sentences.GenerateExampleSentences.Data.CorrectTestCases;
 using LexicaNext.WebApp.Tests.Integration.Features.Sentences.GenerateExampleSentences.Data.IncorrectTestCases;
@@ -56,11 +55,10 @@ public class GenerateExampleSentencesTests
 
     private async Task<GenerateExampleSentencesTestResult> RunAsync(TestCaseData testCase)
     {
-        WebApplicationFactory<Program> webApiFactory = _webApiFactory.WithDependencies(testCase);
-        await using TestContextScope contextScope = new(webApiFactory, _logMessages);
-        await contextScope.InitializeAppAsync(testCase);
+        await using TestContextScope contextScope = new(_webApiFactory, _logMessages);
+        await contextScope.InitializeAsync(testCase);
 
-        HttpClient client = webApiFactory.CreateClient();
+        HttpClient client = contextScope.Factory.CreateClient();
         using HttpRequestMessage request = new(HttpMethod.Post, "/api/sentences/generate");
         if (testCase.RequestBody is not null)
         {

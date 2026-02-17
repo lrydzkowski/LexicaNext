@@ -2,7 +2,7 @@ using LexicaNext.Infrastructure.Db;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace LexicaNext.WebApp.Tests.Integration.Common.Data.Db;
+namespace LexicaNext.WebApp.Tests.Integration.Common.Context.Db;
 
 internal static class SetsData
 {

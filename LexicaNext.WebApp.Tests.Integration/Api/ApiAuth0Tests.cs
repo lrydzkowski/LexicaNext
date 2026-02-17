@@ -2,7 +2,7 @@
 using System.Reflection;
 using LexicaNext.Infrastructure.Auth;
 using LexicaNext.WebApp.Tests.Integration.Common;
-using LexicaNext.WebApp.Tests.Integration.Common.Data;
+using LexicaNext.WebApp.Tests.Integration.Common.Context;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using LexicaNext.WebApp.Tests.Integration.Common.Services;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;

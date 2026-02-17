@@ -18,12 +18,15 @@ internal static class TestCase01
             TestCaseId = 1,
             Word = "apple",
             WordType = "noun",
-            RecordingStorageFiles = new Dictionary<string, byte[]?>
-            {
-                [FileName] = AudioBytes
-            },
             Data = new BaseTestCaseData
             {
+                RecordingStorage = new RecordingStorageTestCaseData
+                {
+                    Files = new Dictionary<string, byte[]?>
+                    {
+                        [FileName] = AudioBytes
+                    }
+                },
                 Db = new DbTestCaseData
                 {
                     Recordings =

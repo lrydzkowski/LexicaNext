@@ -1,20 +1,32 @@
 using System.Text.Json;
 using LexicaNext.Infrastructure.Foundry;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
+using LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
-namespace LexicaNext.WebApp.Tests.Integration.Common.WebApplication.Infrastructure;
+namespace LexicaNext.WebApp.Tests.Integration.Common.Context.Services;
 
-internal static class AiServiceBuilder
+internal class AiServiceContextScope
 {
-    public static WebApplicationFactory<Program> Configure(
-        WebApplicationFactory<Program> webApiFactory,
-        AiServiceTestCaseData data
-    )
+    public AiServiceContextScope(WebApplicationFactory<Program> factory)
     {
+        Factory = factory;
+    }
+
+    public WebApplicationFactory<Program> Factory { get; private set; }
+
+    public Task InitializeAsync(ITestCaseData testCase)
+    {
+        AiServiceTestCaseData data = testCase.Data.AiService;
+
+        if (data.Translations is null && data.Sentences is null && !data.ShouldThrowException)
+        {
+            return Task.CompletedTask;
+        }
+
         IAzureFoundryAiClient mock = Substitute.For<IAzureFoundryAiClient>();
 
         if (data.ShouldThrowException)
@@ -43,6 +55,8 @@ internal static class AiServiceBuilder
             }
         }
 
-        return webApiFactory.ReplaceService(mock, ServiceLifetime.Scoped);
+        Factory = Factory.ReplaceService(mock, ServiceLifetime.Scoped);
+
+        return Task.CompletedTask;
     }
 }
