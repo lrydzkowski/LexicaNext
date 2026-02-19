@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LexicaNext.WebApp.Tests.Integration.Common.Context.Db;
 
-internal class ContextScope : IDisposable
+internal class DbContextScope : IDisposable
 {
-    public ContextScope(AppDbContext context)
+    public DbContextScope(AppDbContext context)
     {
         Context = context;
     }

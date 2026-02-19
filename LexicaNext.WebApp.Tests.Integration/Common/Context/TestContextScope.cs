@@ -30,7 +30,7 @@ internal class TestContextScope : IAsyncDisposable
 
     public LogMessages LogMessages { get; }
 
-    public ContextScope? Db { get; private set; }
+    public DbContextScope? Db { get; private set; }
 
     public RecordingStorageContextScope? RecordingStorage { get; private set; }
 
@@ -65,7 +65,7 @@ internal class TestContextScope : IAsyncDisposable
         Factory = RecordingStorage.Factory;
 
         ServiceScope = Factory.Services.CreateScope();
-        Db = new ContextScope(GetRequiredService<AppDbContext>());
+        Db = new DbContextScope(GetRequiredService<AppDbContext>());
 
         await Db.SeedDataAsync(testCaseData);
     }
