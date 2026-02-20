@@ -1,0 +1,55 @@
+﻿[
+  {
+    DbSetsBefore: [
+      {
+        SetId: Guid_1,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: [
+          {
+            SetId: Guid_1,
+            WordId: Guid_2,
+            Word: null,
+            Order: 1
+          }
+        ]
+      }
+    ],
+    DbSetsAfter: [
+      {
+        SetId: Guid_1,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: DateTimeOffset_2,
+        SetWords: [
+          {
+            SetId: Guid_1,
+            WordId: Guid_3,
+            Word: null,
+            Order: 0
+          },
+          {
+            SetId: Guid_1,
+            WordId: Guid_4,
+            Word: null,
+            Order: 1
+          }
+        ]
+      }
+    ],
+    SetId: Guid_1,
+    Request: {
+      WordIds: [
+        Guid_3,
+        Guid_4
+      ]
+    },
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: NoContent,
+    Response: 
+  }
+]

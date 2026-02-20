@@ -29,14 +29,15 @@ public static class CreateWordEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<ProblemHttpResult, Created<CreateWordResponse>, UnauthorizedHttpResult>> HandleAsync(
-        [AsParameters] CreateWordRequest request,
-        [FromServices] IValidator<CreateWordRequest> validator,
-        [FromServices] ICreateWordCommandMapper createWordCommandMapper,
-        [FromServices] ICreateWordRepository createWordRepository,
-        [FromServices] IUserContextResolver userContextResolver,
-        CancellationToken cancellationToken
-    )
+    private static async Task<Results<ProblemHttpResult, Created<CreateWordResponse>, UnauthorizedHttpResult>>
+        HandleAsync(
+            [AsParameters] CreateWordRequest request,
+            [FromServices] IValidator<CreateWordRequest> validator,
+            [FromServices] ICreateWordCommandMapper createWordCommandMapper,
+            [FromServices] ICreateWordRepository createWordRepository,
+            [FromServices] IUserContextResolver userContextResolver,
+            CancellationToken cancellationToken
+        )
     {
         string? userId = userContextResolver.GetUserId();
         if (userId == null)

@@ -1,0 +1,463 @@
+﻿[
+  {
+    DbWordsBefore: [],
+    DbWordsAfter: [],
+    WordId: Guid_1,
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: NotFound,
+    Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [],
+    DbWordsAfter: [],
+    WordId: not-a-guid,
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: NotFound,
+    Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [
+      {
+        WordId: Guid_2,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbWordsAfter: [
+      {
+        WordId: Guid_2,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    WordId: Guid_2,
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload",
+          "errorMessage": "\u0027Payload\u0027 must not be empty.",
+          "attemptedValue": null,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [
+      {
+        WordId: Guid_4,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbWordsAfter: [
+      {
+        WordId: Guid_4,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    WordId: Guid_4,
+    TestCaseId: 4,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.Word",
+          "errorMessage": "\u0027Word\u0027 must not be empty.",
+          "attemptedValue": "",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [
+      {
+        WordId: Guid_5,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbWordsAfter: [
+      {
+        WordId: Guid_5,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    WordId: Guid_5,
+    TestCaseId: 5,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.Word",
+          "errorMessage": "The length of \u0027Word\u0027 must be 200 characters or fewer. You entered 201 characters.",
+          "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [
+      {
+        WordId: Guid_6,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbWordsAfter: [
+      {
+        WordId: Guid_6,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    WordId: Guid_6,
+    TestCaseId: 6,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordType",
+          "errorMessage": "\u0027WordType\u0027 must be one of the following: \u0027none\u0027, \u0027noun\u0027, \u0027verb\u0027, \u0027adjective\u0027, \u0027adverb\u0027, \u0027other\u0027.",
+          "attemptedValue": "invalid-type",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [
+      {
+        WordId: Guid_7,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbWordsAfter: [
+      {
+        WordId: Guid_7,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    WordId: Guid_7,
+    TestCaseId: 7,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.Translations",
+          "errorMessage": "\u0027Translations\u0027 must not be empty.",
+          "attemptedValue": [],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [
+      {
+        WordId: Guid_8,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbWordsAfter: [
+      {
+        WordId: Guid_8,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    WordId: Guid_8,
+    TestCaseId: 8,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.Translations[0]",
+          "errorMessage": "The length of \u0027Translations\u0027 must be 200 characters or fewer. You entered 201 characters.",
+          "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [
+      {
+        WordId: Guid_9,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbWordsAfter: [
+      {
+        WordId: Guid_9,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    WordId: Guid_9,
+    TestCaseId: 9,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.ExampleSentences[0]",
+          "errorMessage": "The length of \u0027Example Sentences\u0027 must be 500 characters or fewer. You entered 501 characters.",
+          "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [
+      {
+        WordId: Guid_10,
+        UserId: test-user-id,
+        Word: run,
+        WordTypeId: Guid_11,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_12,
+        UserId: test-user-id,
+        Word: walk,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbWordsAfter: [
+      {
+        WordId: Guid_10,
+        UserId: test-user-id,
+        Word: run,
+        WordTypeId: Guid_11,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      },
+      {
+        WordId: Guid_12,
+        UserId: test-user-id,
+        Word: walk,
+        WordTypeId: Guid_3,
+        WordType: null,
+        CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    WordId: Guid_12,
+    TestCaseId: 10,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload",
+          "errorMessage": "The word \u0027run\u0027 with the type = \u0027verb\u0027 already exists.",
+          "attemptedValue": {
+            "word": "run",
+            "wordType": "verb",
+            "translations": [
+              "biega\u0107"
+            ],
+            "exampleSentences": []
+          },
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  }
+]

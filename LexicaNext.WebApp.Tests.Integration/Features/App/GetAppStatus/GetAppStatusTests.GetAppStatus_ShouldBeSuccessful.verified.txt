@@ -1,0 +1,9 @@
+﻿{
+  TestCaseId: 1,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "status": "OK"
+    }
+}

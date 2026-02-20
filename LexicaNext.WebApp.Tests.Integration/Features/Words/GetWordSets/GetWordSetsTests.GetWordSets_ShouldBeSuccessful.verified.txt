@@ -1,0 +1,176 @@
+﻿[
+  {
+    DbWords: [
+      {
+        WordId: Guid_1,
+        UserId: test-user-id,
+        Word: apple,
+        WordTypeId: Guid_2,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbSets: [
+      {
+        SetId: Guid_3,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: [
+          {
+            SetId: Guid_3,
+            WordId: Guid_1,
+            Word: null,
+            Order: 1
+          }
+        ]
+      },
+      {
+        SetId: Guid_4,
+        UserId: test-user-id,
+        Name: set_0002,
+        CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
+        SetWords: [
+          {
+            SetId: Guid_4,
+            WordId: Guid_1,
+            Word: null,
+            Order: 1
+          }
+        ]
+      }
+    ],
+    WordId: Guid_1,
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "sets": [
+        {
+          "setId": "Guid_3",
+          "name": "set_0001",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_4",
+          "name": "set_0002",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00"
+        }
+      ]
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_5,
+        UserId: test-user-id,
+        Word: book,
+        WordTypeId: Guid_2,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbSets: [],
+    WordId: Guid_5,
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "sets": []
+    }
+  },
+  {
+    DbWords: [
+      {
+        WordId: Guid_6,
+        UserId: test-user-id,
+        Word: chair,
+        WordTypeId: Guid_2,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbSets: [
+      {
+        SetId: Guid_7,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: [
+          {
+            SetId: Guid_7,
+            WordId: Guid_6,
+            Word: null,
+            Order: 1
+          }
+        ]
+      },
+      {
+        SetId: Guid_8,
+        UserId: test-user-id,
+        Name: set_0002,
+        CreatedAt: DateTimeOffset_2,
+        UpdatedAt: null,
+        SetWords: [
+          {
+            SetId: Guid_8,
+            WordId: Guid_6,
+            Word: null,
+            Order: 1
+          }
+        ]
+      },
+      {
+        SetId: Guid_9,
+        UserId: other-user-id,
+        Name: other_set,
+        CreatedAt: DateTimeOffset_3,
+        UpdatedAt: null,
+        SetWords: [
+          {
+            SetId: Guid_9,
+            WordId: Guid_6,
+            Word: null,
+            Order: 1
+          }
+        ]
+      }
+    ],
+    WordId: Guid_6,
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "sets": [
+        {
+          "setId": "Guid_7",
+          "name": "set_0001",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_8",
+          "name": "set_0002",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00"
+        }
+      ]
+    }
+  }
+]

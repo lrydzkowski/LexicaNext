@@ -1,0 +1,149 @@
+﻿[
+  {
+    Request: {
+      Word: ,
+      WordType: noun,
+      Count: 3
+    },
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Word",
+          "errorMessage": "\u0027Word\u0027 must not be empty.",
+          "attemptedValue": "",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    Request: {
+      Word: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+      WordType: noun,
+      Count: 3
+    },
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Word",
+          "errorMessage": "The length of \u0027Word\u0027 must be 200 characters or fewer. You entered 201 characters.",
+          "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    Request: {
+      Word: bright,
+      WordType: invalid,
+      Count: 3
+    },
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "WordType",
+          "errorMessage": "\u0027WordType\u0027 must be one of the following: \u0027none\u0027, \u0027noun\u0027, \u0027verb\u0027, \u0027adjective\u0027, \u0027adverb\u0027, \u0027other\u0027.",
+          "attemptedValue": "invalid",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    Request: {
+      Word: bright,
+      WordType: noun,
+      Count: 0
+    },
+    TestCaseId: 4,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Count",
+          "errorMessage": "\u0027Count\u0027 must be between 1 and 10. You entered 0.",
+          "attemptedValue": 0,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    Request: {
+      Word: bright,
+      WordType: noun,
+      Count: 11
+    },
+    TestCaseId: 5,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Count",
+          "errorMessage": "\u0027Count\u0027 must be between 1 and 10. You entered 11.",
+          "attemptedValue": 11,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    Request: {
+      Word: bright,
+      WordType: adjective,
+      Count: 3
+    },
+    TestCaseId: 6,
+    LogMessages: ,
+    StatusCode: InternalServerError,
+    Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+      "title": "An error occurred while processing your request.",
+      "status": 500,
+      "traceId": "Scrubbed"
+    }
+  }
+]

@@ -1,0 +1,136 @@
+using System.Collections.Specialized;
+using System.Net;
+using System.Web;
+using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Infrastructure.Db.Common.Entities;
+using LexicaNext.WebApp.Tests.Integration.Common;
+using LexicaNext.WebApp.Tests.Integration.Common.Context;
+using LexicaNext.WebApp.Tests.Integration.Common.Context.Db;
+using LexicaNext.WebApp.Tests.Integration.Common.Logging;
+using LexicaNext.WebApp.Tests.Integration.Common.Models;
+using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;
+using LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
+using LexicaNext.WebApp.Tests.Integration.Features.Sets.GetSets.Data;
+using LexicaNext.WebApp.Tests.Integration.Features.Sets.GetSets.Data.CorrectTestCases;
+using LexicaNext.WebApp.Tests.Integration.Features.Sets.GetSets.Data.IncorrectTestCases;
+using Microsoft.AspNetCore.Mvc.Testing;
+
+namespace LexicaNext.WebApp.Tests.Integration.Features.Sets.GetSets;
+
+[Collection(MainTestsCollection.CollectionName)]
+[Trait(TestConstants.Category, MainTestsCollection.CollectionName)]
+public class GetSetsTests
+{
+    private readonly LogMessages _logMessages;
+    private readonly VerifySettings _verifySettings;
+    private readonly WebApplicationFactory<Program> _webApiFactory;
+
+    public GetSetsTests(WebApiFactory webApiFactory)
+    {
+        _webApiFactory = webApiFactory.DisableAuth();
+        _logMessages = webApiFactory.LogMessages;
+        _verifySettings = webApiFactory.VerifySettings;
+    }
+
+    [Fact]
+    public async Task GetSets_ShouldBeSuccessful()
+    {
+        List<GetSetsTestResult> results = [];
+        foreach (TestCaseData testCase in CorrectTestCasesGenerator.Generate())
+        {
+            results.Add(await RunAsync(testCase));
+        }
+
+        await Verify(results, _verifySettings);
+    }
+
+    [Fact]
+    public async Task GetSets_ShouldBeUnsuccessful()
+    {
+        List<GetSetsTestResult> results = [];
+        foreach (TestCaseData testCase in IncorrectTestCasesGenerator.Generate())
+        {
+            results.Add(await RunAsync(testCase));
+        }
+
+        await Verify(results, _verifySettings);
+    }
+
+    private async Task<GetSetsTestResult> RunAsync(TestCaseData testCase)
+    {
+        await using TestContextScope contextScope = new(_webApiFactory, _logMessages);
+        await contextScope.InitializeAsync(testCase);
+
+        List<SetEntity> dbSets = await contextScope.Db!.Context.GetSetsAsync();
+
+        HttpClient client = contextScope.Factory.CreateClient();
+        string url = BuildUrl(testCase);
+        using HttpResponseMessage response = await client.GetAsync(url);
+
+        string responseBody = await response.Content.ReadAsStringAsync();
+
+        return new GetSetsTestResult
+        {
+            TestCaseId = testCase.TestCaseId,
+            Url = url,
+            StatusCode = response.StatusCode,
+            Response = responseBody.PrettifyJson(4),
+            DbSets = dbSets,
+            LogMessages = contextScope.LogMessages.GetSerialized(6)
+        };
+    }
+
+    private static string BuildUrl(TestCaseData testCase)
+    {
+        NameValueCollection queryParams = HttpUtility.ParseQueryString(string.Empty);
+
+        if (testCase.Page.HasValue)
+        {
+            queryParams["page"] = testCase.Page.Value.ToString();
+        }
+
+        if (testCase.PageSize.HasValue)
+        {
+            queryParams["pageSize"] = testCase.PageSize.Value.ToString();
+        }
+
+        if (testCase.SortingFieldName is not null)
+        {
+            queryParams["sortingFieldName"] = testCase.SortingFieldName;
+        }
+
+        if (testCase.SortingOrder is not null)
+        {
+            queryParams["sortingOrder"] = testCase.SortingOrder;
+        }
+
+        if (testCase.SearchQuery is not null)
+        {
+            queryParams["searchQuery"] = testCase.SearchQuery;
+        }
+
+        if (testCase.TimeZoneId is not null)
+        {
+            queryParams["timeZoneId"] = testCase.TimeZoneId;
+        }
+
+        string query = queryParams.ToString()!;
+
+        return string.IsNullOrEmpty(query) ? "/api/sets" : $"/api/sets?{query}";
+    }
+
+    private class GetSetsTestResult : IHttpTestResult
+    {
+        public List<SetEntity> DbSets { get; init; } = [];
+
+        public string? Url { get; init; }
+
+        public int TestCaseId { get; init; }
+
+        public string? LogMessages { get; init; }
+
+        public HttpStatusCode StatusCode { get; init; }
+
+        public string? Response { get; init; }
+    }
+}

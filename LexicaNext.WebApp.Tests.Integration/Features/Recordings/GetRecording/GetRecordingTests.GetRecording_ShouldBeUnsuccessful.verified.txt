@@ -1,0 +1,92 @@
+﻿[
+  {
+    Word: $$$,
+    WordType: noun,
+    StatusCode: BadRequest,
+    ContentType: application/problem+json,
+    ResponseSize: null,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Word",
+          "errorMessage": "\u0027Word\u0027 must not be empty.",
+          "attemptedValue": "",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    },
+    DbRecordings: [],
+    RecordingStorageCalls: [],
+    TestCaseId: 1,
+    LogMessages: 
+  },
+  {
+    Word: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+    WordType: noun,
+    StatusCode: BadRequest,
+    ContentType: application/problem+json,
+    ResponseSize: null,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Word",
+          "errorMessage": "The length of \u0027Word\u0027 must be 100 characters or fewer. You entered 101 characters.",
+          "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    },
+    DbRecordings: [],
+    RecordingStorageCalls: [],
+    TestCaseId: 2,
+    LogMessages: 
+  },
+  {
+    Word: xyznotfound,
+    WordType: noun,
+    StatusCode: NotFound,
+    ContentType: application/problem+json,
+    ResponseSize: null,
+    Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    },
+    DbRecordings: [],
+    RecordingStorageCalls: [],
+    TestCaseId: 3,
+    LogMessages: 
+  },
+  {
+    Word: servererror,
+    WordType: noun,
+    StatusCode: InternalServerError,
+    ContentType: application/problem+json,
+    ResponseSize: null,
+    Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+      "title": "An error occurred while processing your request.",
+      "status": 500,
+      "traceId": "Scrubbed"
+    },
+    DbRecordings: [],
+    RecordingStorageCalls: [],
+    TestCaseId: 4,
+    LogMessages: 
+  }
+]

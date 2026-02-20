@@ -1,0 +1,59 @@
+﻿[
+  {
+    DbSets: [
+      {
+        SetId: Guid_1,
+        UserId: test-user-id,
+        Name: set_0001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: [
+          {
+            SetId: Guid_1,
+            WordId: Guid_2,
+            Word: null,
+            Order: 1
+          },
+          {
+            SetId: Guid_1,
+            WordId: Guid_3,
+            Word: null,
+            Order: 2
+          }
+        ]
+      }
+    ],
+    SetId: Guid_1,
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "setId": "Guid_1",
+      "name": "set_0001",
+      "entries": [
+        {
+          "wordId": "Guid_2",
+          "word": "apple",
+          "wordType": "noun",
+          "translations": [
+            "jab\u0142ko"
+          ],
+          "exampleSentences": [
+            "I ate an apple."
+          ]
+        },
+        {
+          "wordId": "Guid_3",
+          "word": "run",
+          "wordType": "verb",
+          "translations": [
+            "biega\u0107"
+          ],
+          "exampleSentences": []
+        }
+      ],
+      "createdAt": "2025-01-15T10:00:00\u002B00:00"
+    }
+  }
+]

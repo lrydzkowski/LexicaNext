@@ -1,0 +1,53 @@
+﻿[
+  {
+    DbSets: [],
+    SetId: Guid_1,
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: NotFound,
+    Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSets: [],
+    SetId: not-a-valid-uuid,
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: NotFound,
+    Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbSets: [
+      {
+        SetId: Guid_2,
+        UserId: other-user-id,
+        Name: other_set,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: []
+      }
+    ],
+    SetId: Guid_2,
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: NotFound,
+    Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    }
+  }
+]

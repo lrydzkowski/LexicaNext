@@ -1,10 +1,9 @@
 using System.Net;
 using LexicaNext.WebApp.Tests.Integration.Common;
-using LexicaNext.WebApp.Tests.Integration.Common.Data;
+using LexicaNext.WebApp.Tests.Integration.Common.Context;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;
 using LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
-using LexicaNext.WebApp.Tests.Integration.Common.WebApplication.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

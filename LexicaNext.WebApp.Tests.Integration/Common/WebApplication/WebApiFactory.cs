@@ -17,7 +17,7 @@ namespace LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
 
 public class WebApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    public PostgreSqlContainer DbContainer { get; } = new PostgreSqlBuilder().WithImage("postgres:16").Build();
+    public PostgreSqlContainer DbContainer { get; } = new PostgreSqlBuilder().WithImage("postgres:15").Build();
 
     public WireMockServer WireMockServer { get; } = WireMockServer.Start();
 

@@ -15,21 +15,6 @@ public static class FilterExtensions
         CustomTypeProvider = new DynamicLinqTypeProvider()
     };
 
-    private class DynamicLinqTypeProvider : IDynamicLinqCustomTypeProvider
-    {
-        private static readonly HashSet<Type> CustomTypes = [typeof(PostgresFunctions)];
-
-        public HashSet<Type> GetCustomTypes() => CustomTypes;
-
-        public Dictionary<Type, List<MethodInfo>> GetExtensionMethods() => new();
-
-        public Type? ResolveType(string typeName) =>
-            CustomTypes.FirstOrDefault(t => t.FullName == typeName);
-
-        public Type? ResolveTypeBySimpleName(string simpleTypeName) =>
-            CustomTypes.FirstOrDefault(t => t.Name == simpleTypeName);
-    }
-
     public static IQueryable<T> Filter<T>(
         this IQueryable<T> query,
         List<string> fieldsAvailableToFilter,
@@ -75,7 +60,11 @@ public static class FilterExtensions
                     int tzParamIndex = queryParameters.Count;
                     queryParameters.Add(timeZoneId);
                     whereQueryPart = GetDateTimeWithTimezoneWhereQuery(
-                        mappedFieldName, queryParameters.Count, tzParamIndex, isNullable);
+                        mappedFieldName,
+                        queryParameters.Count,
+                        tzParamIndex,
+                        isNullable
+                    );
                     queryParameters.Add(value);
                 }
                 else
@@ -142,7 +131,11 @@ public static class FilterExtensions
     }
 
     private static string GetDateTimeWithTimezoneWhereQuery(
-        string fieldName, int searchValueIndex, int tzParamIndex, bool isNullable)
+        string fieldName,
+        int searchValueIndex,
+        int tzParamIndex,
+        bool isNullable
+    )
     {
         string accessor = isNullable ? $"{fieldName}.Value" : fieldName;
         string dateExpression =
@@ -169,5 +162,30 @@ public static class FilterExtensions
         }
 
         return query;
+    }
+
+    private class DynamicLinqTypeProvider : IDynamicLinqCustomTypeProvider
+    {
+        private static readonly HashSet<Type> CustomTypes = [typeof(PostgresFunctions)];
+
+        public HashSet<Type> GetCustomTypes()
+        {
+            return CustomTypes;
+        }
+
+        public Dictionary<Type, List<MethodInfo>> GetExtensionMethods()
+        {
+            return new Dictionary<Type, List<MethodInfo>>();
+        }
+
+        public Type? ResolveType(string typeName)
+        {
+            return CustomTypes.FirstOrDefault(t => t.FullName == typeName);
+        }
+
+        public Type? ResolveTypeBySimpleName(string simpleTypeName)
+        {
+            return CustomTypes.FirstOrDefault(t => t.Name == simpleTypeName);
+        }
     }
 }
