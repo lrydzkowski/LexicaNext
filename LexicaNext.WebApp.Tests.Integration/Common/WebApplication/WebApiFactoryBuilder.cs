@@ -1,9 +1,11 @@
 ﻿using LexicaNext.Core.Common.Infrastructure.Services;
 using LexicaNext.WebApp.Tests.Integration.Common.Authentication;
+using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
@@ -125,5 +127,22 @@ internal static class WebApiFactoryBuilder
         dateTimeOffsetProvider.UtcNow.Returns(utcNow);
 
         return webApiFactory.ReplaceService(dateTimeOffsetProvider, ServiceLifetime.Singleton);
+    }
+
+    public static WebApplicationFactory<Program> WithLogging(
+        this WebApplicationFactory<Program> webApplicationFactory,
+        LogMessages logMessage,
+        string category,
+        LogLevel level = LogLevel.Debug
+    )
+    {
+        logMessage.AllowedCategories.Add(category);
+
+        return webApplicationFactory.WithCustomOptions(
+            new Dictionary<string, string?>
+            {
+                [$"Logging:LogLevel:{category}"] = level.ToString()
+            }
+        );
     }
 }

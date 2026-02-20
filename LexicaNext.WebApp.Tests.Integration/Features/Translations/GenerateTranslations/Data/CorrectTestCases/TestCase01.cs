@@ -1,3 +1,4 @@
+using System.Text.Json;
 using LexicaNext.Core.Commands.GenerateTranslations;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
@@ -16,7 +17,15 @@ internal static class TestCase01
             {
                 AiService = new AiServiceTestCaseData
                 {
-                    Translations = ["jasny", "świetlany", "bystry"]
+                    Responses =
+                    [
+                        JsonSerializer.Serialize(
+                            new List<string>
+                            {
+                                "jasny", "świetlany", "bystry"
+                            }
+                        )
+                    ]
                 }
             }
         };

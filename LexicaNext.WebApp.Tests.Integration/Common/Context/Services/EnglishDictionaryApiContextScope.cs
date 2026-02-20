@@ -13,22 +13,24 @@ namespace LexicaNext.WebApp.Tests.Integration.Common.Context.Services;
 
 internal class EnglishDictionaryApiContextScope
 {
-    private readonly WireMockServer _server;
+    private readonly WireMockServer? _server;
 
-    public EnglishDictionaryApiContextScope(WebApplicationFactory<Program> factory, WireMockServer server)
+    public EnglishDictionaryApiContextScope(WireMockServer? server)
     {
-        Factory = factory;
         _server = server;
     }
 
-    public WebApplicationFactory<Program> Factory { get; private set; }
-
-    public Task InitializeAsync(ITestCaseData testCase)
+    public Task<WebApplicationFactory<Program>> InitializeAsync(
+        WebApplicationFactory<Program> factory,
+        ITestCaseData testCase
+    )
     {
+        if (_server is null)
+        {
+            return Task.FromResult(factory);
+        }
+
         EnglishDictionaryApiTestCaseData data = testCase.Data.EnglishDictionaryApi;
-
-        _server.Reset();
-
         foreach ((string word, string? html) in data.WordPages)
         {
             IRequestBuilder request = Request.Create().WithPath($"/{word}").UsingGet();
@@ -77,7 +79,7 @@ internal class EnglishDictionaryApiContextScope
                 );
         }
 
-        Factory = Factory.WithCustomOptions(
+        factory = factory.WithCustomOptions(
             new Dictionary<string, string?>
             {
                 ["EnglishDictionary:BaseUrl"] = _server.Url,
@@ -85,6 +87,6 @@ internal class EnglishDictionaryApiContextScope
             }
         );
 
-        return Task.CompletedTask;
+        return Task.FromResult(factory);
     }
 }

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using LexicaNext.Core.Commands.GenerateExampleSentences;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
@@ -16,11 +17,16 @@ internal static class TestCase01
             {
                 AiService = new AiServiceTestCaseData
                 {
-                    Sentences =
+                    Responses =
                     [
-                        "The bright sun warmed the garden.",
-                        "She is a bright student who learns quickly.",
-                        "The room was bright and cheerful."
+                        JsonSerializer.Serialize(
+                            new List<string>
+                            {
+                                "The bright sun warmed the garden.",
+                                "She is a bright student who learns quickly.",
+                                "The room was bright and cheerful."
+                            }
+                        )
                     ]
                 }
             }

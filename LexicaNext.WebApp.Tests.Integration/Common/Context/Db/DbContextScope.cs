@@ -25,7 +25,7 @@ internal class DbContextScope : IDisposable
         RemoveData("user_set_sequence");
     }
 
-    public async Task SeedDataAsync(ITestCaseData testCase)
+    public async Task InitializeAsync(ITestCaseData testCase)
     {
         if (testCase.Data.Db.Words.Count > 0)
         {

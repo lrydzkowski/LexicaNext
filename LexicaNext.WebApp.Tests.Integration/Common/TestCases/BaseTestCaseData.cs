@@ -9,4 +9,6 @@ internal class BaseTestCaseData
     public AiServiceTestCaseData AiService { get; init; } = new();
 
     public RecordingStorageTestCaseData RecordingStorage { get; init; } = new();
+
+    public LoggingTestCaseData Logging { get; init; } = new();
 }

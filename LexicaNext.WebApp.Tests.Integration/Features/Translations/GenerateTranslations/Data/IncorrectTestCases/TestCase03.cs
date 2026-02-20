@@ -14,7 +14,7 @@ internal static class TestCase03
             RequestBody = new GenerateTranslationsRequest("bright", "invalid"),
             Data = new BaseTestCaseData
             {
-                AiService = new AiServiceTestCaseData { Translations = [] }
+                AiService = new AiServiceTestCaseData { Responses = [] }
             }
         };
     }

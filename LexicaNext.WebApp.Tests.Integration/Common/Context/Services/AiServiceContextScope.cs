@@ -11,52 +11,36 @@ namespace LexicaNext.WebApp.Tests.Integration.Common.Context.Services;
 
 internal class AiServiceContextScope
 {
-    public AiServiceContextScope(WebApplicationFactory<Program> factory)
+    public static readonly JsonSerializerOptions Options = new()
     {
-        Factory = factory;
-    }
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
 
-    public WebApplicationFactory<Program> Factory { get; private set; }
+    public IAzureFoundryAiClient? Mock { get; private set; }
 
-    public Task InitializeAsync(ITestCaseData testCase)
+    public Task<WebApplicationFactory<Program>> InitializeAsync(
+        WebApplicationFactory<Program> factory,
+        ITestCaseData testCase
+    )
     {
         AiServiceTestCaseData data = testCase.Data.AiService;
 
-        if (data.Translations is null && data.Sentences is null && !data.ShouldThrowException)
-        {
-            return Task.CompletedTask;
-        }
-
-        IAzureFoundryAiClient mock = Substitute.For<IAzureFoundryAiClient>();
-
+        Mock = Substitute.For<IAzureFoundryAiClient>();
         if (data.ShouldThrowException)
         {
-            mock.CallAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            Mock.CallAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .ThrowsAsync(new InvalidOperationException("AI service unavailable"));
         }
-        else
+
+        if (data.Responses?.Count > 0)
         {
-            List<string> responses = [];
-
-            if (data.Translations is not null)
-            {
-                responses.Add(JsonSerializer.Serialize(data.Translations));
-            }
-
-            if (data.Sentences is not null)
-            {
-                responses.Add(JsonSerializer.Serialize(data.Sentences));
-            }
-
-            if (responses.Count > 0)
-            {
-                mock.CallAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
-                    .Returns(responses[0], responses.Skip(1).ToArray());
-            }
+            Mock.CallAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(data.Responses[0], data.Responses.Skip(1).ToArray());
         }
 
-        Factory = Factory.ReplaceService(mock, ServiceLifetime.Scoped);
 
-        return Task.CompletedTask;
+        factory = factory.ReplaceService(Mock, ServiceLifetime.Scoped);
+
+        return Task.FromResult(factory);
     }
 }

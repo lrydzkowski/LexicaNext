@@ -14,7 +14,7 @@ internal static class TestCase03
             RequestBody = new GenerateExampleSentencesRequest("bright", "invalid"),
             Data = new BaseTestCaseData
             {
-                AiService = new AiServiceTestCaseData { Sentences = [] }
+                AiService = new AiServiceTestCaseData()
             }
         };
     }
