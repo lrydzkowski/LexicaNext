@@ -1,0 +1,11 @@
+namespace LexicaNext.WebApp.Tests.Integration.Features.Words.GetWord.Data.IncorrectTestCases;
+
+internal static class IncorrectTestCasesGenerator
+{
+    public static IEnumerable<TestCaseData> Generate()
+    {
+        yield return TestCase01.Get();
+        yield return TestCase02.Get();
+        yield return TestCase03.Get();
+    }
+}

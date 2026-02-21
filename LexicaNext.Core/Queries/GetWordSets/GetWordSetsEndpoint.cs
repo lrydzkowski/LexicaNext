@@ -1,4 +1,7 @@
+using FluentValidation;
+using FluentValidation.Results;
 using LexicaNext.Core.Common.Infrastructure.Auth;
+using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetWordSets.Interfaces;
@@ -19,22 +22,24 @@ public static class GetWordSetsEndpoint
             .WithName(Name)
             .WithSummary("Return the sets that contain a specific word")
             .Produces<GetWordSetsResponse>()
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
-            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError)
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<NotFound, Ok<GetWordSetsResponse>, UnauthorizedHttpResult>> HandleAsync(
+    private static async Task<Results<ProblemHttpResult, NotFound, Ok<GetWordSetsResponse>, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] GetWordSetsRequest request,
+        [FromServices] IValidator<GetWordSetsRequest> validator,
         [FromServices] IGetWordSetsRepository getWordSetsRepository,
         [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
-        if (!Guid.TryParse(request.WordId, out Guid wordId))
+        ValidationResult validationResult = await validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
         {
-            return TypedResults.NotFound();
+            return TypedResults.Problem(validationResult.ToProblemDetails());
         }
 
         string? userId = userContextResolver.GetUserId();
@@ -43,6 +48,7 @@ public static class GetWordSetsEndpoint
             return TypedResults.Unauthorized();
         }
 
+        Guid wordId = Guid.Parse(request.WordId);
         List<SetRecord> sets = await getWordSetsRepository.GetWordSetsAsync(userId, wordId, cancellationToken);
         GetWordSetsResponse response = new()
         {

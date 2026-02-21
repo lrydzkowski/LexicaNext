@@ -410,3 +410,5 @@ LexicaNext.WebApp/wwwroot/*
 compose.yaml
 
 .claude/*
+.specify/*
+CLAUDE.md

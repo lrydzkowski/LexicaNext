@@ -1,0 +1,67 @@
+﻿[
+  {
+    Word: apple,
+    WordType: noun,
+    StatusCode: OK,
+    ContentType: audio/mpeg,
+    ResponseSize: 8,
+    Response: null,
+    DbRecordings: [
+      {
+        RecordingId: Guid_1,
+        Word: apple,
+        WordTypeId: Guid_2,
+        WordType: null,
+        FileName: cached-recording-file
+      }
+    ],
+    RecordingStorageCalls: [
+      {
+        MethodName: GetFileAsync,
+        Arguments: [
+          cached-recording-file,
+          {
+            IsCancellationRequested: false,
+            CanBeCanceled: true,
+            WaitHandle: {
+              SafeWaitHandle: {
+                IsInvalid: false,
+                IsClosed: false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    TestCaseId: 1,
+    LogMessages: 
+  },
+  {
+    Word: banana,
+    WordType: noun,
+    StatusCode: OK,
+    ContentType: audio/mpeg,
+    ResponseSize: 8,
+    Response: null,
+    DbRecordings: [
+      {
+        RecordingId: Guid_3,
+        Word: banana,
+        WordTypeId: Guid_2,
+        WordType: null,
+        FileName: Guid_4
+      }
+    ],
+    RecordingStorageCalls: [
+      {
+        MethodName: SaveFileAsync,
+        Arguments: [
+          Guid_4,
+          //uQBAUGBwg=
+        ]
+      }
+    ],
+    TestCaseId: 2,
+    LogMessages: 
+  }
+]

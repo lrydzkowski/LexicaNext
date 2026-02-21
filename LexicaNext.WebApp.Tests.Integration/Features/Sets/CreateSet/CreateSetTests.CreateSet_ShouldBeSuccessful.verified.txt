@@ -1,0 +1,41 @@
+﻿[
+  {
+    DbSetsBefore: [],
+    DbSetsAfter: [
+      {
+        SetId: Guid_1,
+        UserId: test-user-id,
+        Name: set_000001,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        SetWords: [
+          {
+            SetId: Guid_1,
+            WordId: Guid_2,
+            Word: null,
+            Order: 0
+          },
+          {
+            SetId: Guid_1,
+            WordId: Guid_3,
+            Word: null,
+            Order: 1
+          }
+        ]
+      }
+    ],
+    Request: {
+      WordIds: [
+        Guid_2,
+        Guid_3
+      ]
+    },
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: Created,
+    Response:
+    {
+      "setId": "Guid_1"
+    }
+  }
+]

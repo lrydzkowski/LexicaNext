@@ -1,0 +1,44 @@
+﻿[
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [
+      {
+        AnswerId: Guid_1,
+        Question: What is the meaning of 'bright'?,
+        GivenAnswer: jasny,
+        ExpectedAnswer: jasny, świetlany,
+        AnsweredAt: DateTimeOffset_1
+      }
+    ],
+    Request: {
+      Question: What is the meaning of 'bright'?,
+      GivenAnswer: jasny,
+      ExpectedAnswer: jasny, świetlany
+    },
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: NoContent,
+    Response: 
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [
+      {
+        AnswerId: Guid_2,
+        Question: Translate 'apple' to Polish,
+        GivenAnswer: ,
+        ExpectedAnswer: jabłko,
+        AnsweredAt: DateTimeOffset_2
+      }
+    ],
+    Request: {
+      Question: Translate 'apple' to Polish,
+      GivenAnswer: null,
+      ExpectedAnswer: jabłko
+    },
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: NoContent,
+    Response: 
+  }
+]

@@ -1,0 +1,20 @@
+﻿[
+  {
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "proposedName": "set_000001"
+    }
+  },
+  {
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "proposedName": "set_000005"
+    }
+  }
+]

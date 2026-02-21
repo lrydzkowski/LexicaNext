@@ -1,0 +1,219 @@
+﻿[
+  {
+    DbWordsBefore: [],
+    DbWordsAfter: [],
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload",
+          "errorMessage": "\u0027Payload\u0027 must not be empty.",
+          "attemptedValue": null,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [],
+    DbWordsAfter: [],
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.Word",
+          "errorMessage": "\u0027Word\u0027 must not be empty.",
+          "attemptedValue": "",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [],
+    DbWordsAfter: [],
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.Word",
+          "errorMessage": "The length of \u0027Word\u0027 must be 200 characters or fewer. You entered 201 characters.",
+          "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [],
+    DbWordsAfter: [],
+    TestCaseId: 4,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordType",
+          "errorMessage": "\u0027WordType\u0027 must be one of the following: \u0027none\u0027, \u0027noun\u0027, \u0027verb\u0027, \u0027adjective\u0027, \u0027adverb\u0027, \u0027other\u0027.",
+          "attemptedValue": "invalid-type",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [],
+    DbWordsAfter: [],
+    TestCaseId: 5,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.Translations",
+          "errorMessage": "\u0027Translations\u0027 must not be empty.",
+          "attemptedValue": [],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [],
+    DbWordsAfter: [],
+    TestCaseId: 6,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.Translations[0]",
+          "errorMessage": "The length of \u0027Translations\u0027 must be 200 characters or fewer. You entered 201 characters.",
+          "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [],
+    DbWordsAfter: [],
+    TestCaseId: 7,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.ExampleSentences[0]",
+          "errorMessage": "The length of \u0027ExampleSentences\u0027 must be 500 characters or fewer. You entered 501 characters.",
+          "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbWordsBefore: [
+      {
+        WordId: Guid_1,
+        UserId: test-user-id,
+        Word: run,
+        WordTypeId: Guid_2,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    DbWordsAfter: [
+      {
+        WordId: Guid_1,
+        UserId: test-user-id,
+        Word: run,
+        WordTypeId: Guid_2,
+        WordType: null,
+        CreatedAt: DateTimeOffset_1,
+        UpdatedAt: null,
+        Translations: [],
+        ExampleSentences: [],
+        SetWords: []
+      }
+    ],
+    TestCaseId: 8,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload",
+          "errorMessage": "The word \u0027run\u0027 with the type = \u0027verb\u0027 already exists.",
+          "attemptedValue": {
+            "word": "run",
+            "wordType": "verb",
+            "translations": [
+              "biega\u0107"
+            ],
+            "exampleSentences": []
+          },
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  }
+]
