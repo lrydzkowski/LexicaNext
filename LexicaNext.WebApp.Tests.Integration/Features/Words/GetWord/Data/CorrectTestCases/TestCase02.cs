@@ -13,7 +13,7 @@ internal static class TestCase02
     {
         return new TestCaseData
         {
-            TestCaseId = 1,
+            TestCaseId = 2,
             WordId = WordId.ToString(),
             Data = new BaseTestCaseData
             {
