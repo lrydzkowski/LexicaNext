@@ -36,7 +36,7 @@ internal class AzureFoundryAiService : IAiGenerationService, IScopedService
                           Format: [{"word": "example", "wordType": "Noun"}, ...]
                           """;
 
-        string response = await _azureFoundryAiClient.CallAsync(prompt, cancellationToken);
+        string? response = await _azureFoundryAiClient.CallAsync(prompt, cancellationToken);
 
         return _serializer.Deserialize<List<GeneratedWord>>(response) ?? [];
     }
@@ -58,7 +58,7 @@ internal class AzureFoundryAiService : IAiGenerationService, IScopedService
                          Format: ["translation1", "translation2", "translation3"]
                          """;
 
-        string response = await _azureFoundryAiClient.CallAsync(prompt, cancellationToken);
+        string? response = await _azureFoundryAiClient.CallAsync(prompt, cancellationToken);
 
         return _serializer.Deserialize<List<string>>(response) ?? [];
     }
@@ -83,7 +83,7 @@ internal class AzureFoundryAiService : IAiGenerationService, IScopedService
                          Format: ["Sentence one.", "Sentence two.", "Sentence three."]
                          """;
 
-        string response = await _azureFoundryAiClient.CallAsync(prompt, cancellationToken);
+        string? response = await _azureFoundryAiClient.CallAsync(prompt, cancellationToken);
 
         return _serializer.Deserialize<List<string>>(response) ?? [];
     }

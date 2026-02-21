@@ -12,7 +12,7 @@ namespace LexicaNext.Infrastructure.Foundry;
 
 internal interface IAzureFoundryAiClient
 {
-    Task<string> CallAsync(string prompt, CancellationToken cancellationToken);
+    Task<string?> CallAsync(string prompt, CancellationToken cancellationToken);
 }
 
 internal class AzureFoundryAiClient
@@ -36,11 +36,11 @@ internal class AzureFoundryAiClient
         _responsesClient = projectClient.OpenAI.GetProjectResponsesClientForModel(foundryOptions.ModelDeploymentName);
     }
 
-    public async Task<string> CallAsync(string prompt, CancellationToken cancellationToken)
+    public async Task<string?> CallAsync(string prompt, CancellationToken cancellationToken)
     {
         ClientResult<ResponseResult>? response =
             await _responsesClient.CreateResponseAsync(prompt, cancellationToken: cancellationToken);
 
-        return response.Value.GetOutputText();
+        return response?.Value?.GetOutputText();
     }
 }
