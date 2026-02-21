@@ -24,7 +24,6 @@ public static class GetWordSetsEndpoint
             .Produces<GetWordSetsResponse>()
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
-            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError)
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
