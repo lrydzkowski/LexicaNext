@@ -31,8 +31,7 @@ internal class AiServiceContextScope
             Mock.CallAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .ThrowsAsync(new InvalidOperationException("AI service unavailable"));
         }
-
-        if (data.Responses?.Count > 0)
+        else if (data.Responses?.Count > 0)
         {
             Mock.CallAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Returns(data.Responses[0], data.Responses.Skip(1).ToArray());
