@@ -1,4 +1,3 @@
-using System.Text.Json;
 using LexicaNext.Infrastructure.Foundry;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 using LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
@@ -11,11 +10,6 @@ namespace LexicaNext.WebApp.Tests.Integration.Common.Context.Services;
 
 internal class AiServiceContextScope
 {
-    public static readonly JsonSerializerOptions Options = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    };
-
     public IAzureFoundryAiClient? Mock { get; private set; }
 
     public Task<WebApplicationFactory<Program>> InitializeAsync(
