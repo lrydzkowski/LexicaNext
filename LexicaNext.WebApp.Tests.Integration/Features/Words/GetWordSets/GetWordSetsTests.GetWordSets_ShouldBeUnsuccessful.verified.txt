@@ -17,10 +17,22 @@
     WordId: not-a-valid-uuid,
     TestCaseId: 2,
     LogMessages: ,
-    StatusCode: OK,
+    StatusCode: BadRequest,
     Response:
     {
-      "sets": []
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "WordId",
+          "errorMessage": "\u0027Word Id\u0027 must be a valid GUID format.",
+          "attemptedValue": "not-a-valid-uuid",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
     }
   },
   {
