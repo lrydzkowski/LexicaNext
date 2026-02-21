@@ -1,6 +1,6 @@
-using FluentValidation;
 using FluentValidation.Results;
 using LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
+using LexicaNext.Core.Commands.GenerateTranslations.Services;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -29,7 +29,7 @@ public static class GenerateTranslationsEndpoint
     private static async Task<Results<ProblemHttpResult, Ok<GenerateTranslationsResponse>>> HandleAsync(
         [FromBody] GenerateTranslationsRequest request,
         [FromServices] IAiGenerationService aiGenerationService,
-        [FromServices] IValidator<GenerateTranslationsRequest> validator,
+        [FromServices] IGenerateTranslationsRequestValidator validator,
         CancellationToken cancellationToken
     )
     {

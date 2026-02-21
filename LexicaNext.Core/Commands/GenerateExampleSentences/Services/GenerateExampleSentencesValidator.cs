@@ -1,10 +1,18 @@
 using FluentValidation;
+using FluentValidation.Results;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 
 namespace LexicaNext.Core.Commands.GenerateExampleSentences.Services;
 
-public class GenerateExampleSentencesValidator : AbstractValidator<GenerateExampleSentencesRequest>
+public interface IGenerateExampleSentencesValidator
+{
+    Task<ValidationResult> ValidateAsync(GenerateExampleSentencesRequest instance, CancellationToken cancellation);
+}
+
+public class GenerateExampleSentencesValidator
+    : AbstractValidator<GenerateExampleSentencesRequest>, IGenerateExampleSentencesValidator, ITransientService
 {
     public GenerateExampleSentencesValidator()
     {

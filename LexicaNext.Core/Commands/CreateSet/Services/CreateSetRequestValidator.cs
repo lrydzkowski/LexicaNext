@@ -1,11 +1,18 @@
 using FluentValidation;
+using FluentValidation.Results;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Queries.GetWord.Interfaces;
 
 namespace LexicaNext.Core.Commands.CreateSet.Services;
 
-public class CreateSetRequestValidator : AbstractValidator<CreateSetRequest>
+public interface ICreateSetRequestValidator
+{
+    Task<ValidationResult> ValidateAsync(CreateSetRequest instance, CancellationToken cancellation);
+}
+
+public class CreateSetRequestValidator
+    : AbstractValidator<CreateSetRequest>, ICreateSetRequestValidator, ITransientService
 {
     private readonly IGetWordRepository _getWordRepository;
     private readonly IUserContextResolver _userContextResolver;

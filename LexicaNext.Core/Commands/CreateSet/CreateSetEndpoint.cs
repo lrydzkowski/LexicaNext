@@ -1,4 +1,3 @@
-using FluentValidation;
 using FluentValidation.Results;
 using LexicaNext.Core.Commands.CreateSet.Interfaces;
 using LexicaNext.Core.Commands.CreateSet.Models;
@@ -33,7 +32,7 @@ public static class CreateSetEndpoint
     private static async Task<Results<ProblemHttpResult, CreatedAtRoute<CreateSetResponse>, UnauthorizedHttpResult>>
         HandleAsync(
             [AsParameters] CreateSetRequest request,
-            [FromServices] IValidator<CreateSetRequest> validator,
+            [FromServices] ICreateSetRequestValidator validator,
             [FromServices] ICreateSetCommandMapper createSetCommandMapper,
             [FromServices] ICreateSetRepository createSetRepository,
             [FromServices] IUserContextResolver userContextResolver,

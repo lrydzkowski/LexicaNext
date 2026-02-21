@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 using LexicaNext.Core.Commands.UpdateWord.Interfaces;
 using LexicaNext.Core.Commands.UpdateWord.Models;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
@@ -7,7 +8,13 @@ using LexicaNext.Core.Common.Models;
 
 namespace LexicaNext.Core.Commands.UpdateWord.Services;
 
-public class UpdateWordRequestValidator : AbstractValidator<UpdateWordRequest>
+public interface IUpdateWordRequestValidator
+{
+    Task<ValidationResult> ValidateAsync(UpdateWordRequest instance, CancellationToken cancellation);
+}
+
+public class UpdateWordRequestValidator
+    : AbstractValidator<UpdateWordRequest>, IUpdateWordRequestValidator, ITransientService
 {
     private readonly IUpdateWordRepository _updateWordRepository;
     private readonly IUserContextResolver _userContextResolver;

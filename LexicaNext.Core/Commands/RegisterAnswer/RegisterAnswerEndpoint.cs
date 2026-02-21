@@ -1,4 +1,3 @@
-using FluentValidation;
 using FluentValidation.Results;
 using LexicaNext.Core.Commands.RegisterAnswer.Interface;
 using LexicaNext.Core.Commands.RegisterAnswer.Models;
@@ -30,7 +29,7 @@ public static class RegisterAnswerEndpoint
 
     private static async Task<Results<ProblemHttpResult, NoContent>> HandleAsync(
         [AsParameters] RegisterAnswerRequest request,
-        [FromServices] IValidator<RegisterAnswerRequest> validator,
+        [FromServices] IRegisterAnswerRequestValidator validator,
         [FromServices] IRegisterAnswerCommandMapper registerAnswerCommandMapper,
         [FromServices] IRegisterAnswerRepository registerAnswerRepository,
         CancellationToken cancellationToken

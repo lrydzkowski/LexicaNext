@@ -1,10 +1,18 @@
 using FluentValidation;
+using FluentValidation.Results;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 
 namespace LexicaNext.Core.Queries.GetRecording.Services;
 
-public class GetRecordingRequestValidator : AbstractValidator<GetRecordingRequest>
+public interface IGetRecordingRequestValidator
+{
+    Task<ValidationResult> ValidateAsync(GetRecordingRequest instance, CancellationToken cancellation);
+}
+
+public class GetRecordingRequestValidator
+    : AbstractValidator<GetRecordingRequest>, IGetRecordingRequestValidator, ITransientService
 {
     public GetRecordingRequestValidator()
     {

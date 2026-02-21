@@ -1,4 +1,3 @@
-using FluentValidation;
 using FluentValidation.Results;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
@@ -33,7 +32,7 @@ public static class GetSetsEndpoint
     private static async Task<Results<ProblemHttpResult, Ok<GetSetsResponse>, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] GetSetsRequest getSetsRequest,
         [FromServices] IGetSetsRequestProcessor processor,
-        [FromServices] IValidator<GetSetsRequest> validator,
+        [FromServices] IGetSetsRequestValidator validator,
         [FromServices] IListParametersMapper listParametersMapper,
         [FromServices] IGetSetsRepository getSetsRepository,
         [FromServices] ISetRecordMapper setRecordMapper,
