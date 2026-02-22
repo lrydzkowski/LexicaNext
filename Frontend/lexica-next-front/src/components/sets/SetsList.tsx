@@ -79,11 +79,6 @@ export function SetsList() {
   const totalCount = setsData?.count || 0;
 
   useEffect(() => {
-    mobileActionButtonRefs.current = [];
-    desktopActionButtonRefs.current = [];
-  }, [sets]);
-
-  useEffect(() => {
     if (createButtonRef.current) {
       createButtonRef.current.focus();
     }
