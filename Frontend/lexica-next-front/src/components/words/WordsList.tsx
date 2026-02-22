@@ -69,11 +69,6 @@ export function WordsList() {
   const totalCount = wordsData?.count || 0;
 
   useEffect(() => {
-    mobileActionButtonRefs.current = [];
-    desktopActionButtonRefs.current = [];
-  }, [words]);
-
-  useEffect(() => {
     if (createButtonRef.current) {
       createButtonRef.current.focus();
     }
