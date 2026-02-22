@@ -412,6 +412,3 @@ compose.yaml
 .claude/*
 .specify/*
 CLAUDE.md
-
-review.csharp.ps1
-review.security.ps1
