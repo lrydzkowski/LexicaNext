@@ -10,8 +10,8 @@ interface UserGroup {
 }
 
 const userGroups: UserGroup[] = [
-  { name: 'user-a', testDir: './tests/user-a' },
-  { name: 'user-b', testDir: './tests/user-b' },
+  { name: 'user-a', testDir: './tests' },
+  { name: 'user-b', testDir: './tests' },
 ];
 
 const browsers = [
