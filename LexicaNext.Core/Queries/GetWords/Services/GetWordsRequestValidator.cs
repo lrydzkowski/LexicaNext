@@ -1,10 +1,17 @@
 using FluentValidation;
+using FluentValidation.Results;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Lists;
 using LexicaNext.Core.Common.Infrastructure.Models;
 
 namespace LexicaNext.Core.Queries.GetWords.Services;
 
-public class GetWordsRequestValidator : AbstractValidator<GetWordsRequest>
+public interface IGetWordsRequestValidator
+{
+    Task<ValidationResult> ValidateAsync(GetWordsRequest instance, CancellationToken cancellation);
+}
+
+public class GetWordsRequestValidator : AbstractValidator<GetWordsRequest>, IGetWordsRequestValidator, ITransientService
 {
     public GetWordsRequestValidator()
     {

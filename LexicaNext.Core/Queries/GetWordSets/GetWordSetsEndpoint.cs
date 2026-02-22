@@ -1,10 +1,10 @@
-using FluentValidation;
 using FluentValidation.Results;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetWordSets.Interfaces;
+using LexicaNext.Core.Queries.GetWordSets.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -28,13 +28,14 @@ public static class GetWordSetsEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<ProblemHttpResult, NotFound, Ok<GetWordSetsResponse>, UnauthorizedHttpResult>> HandleAsync(
-        [AsParameters] GetWordSetsRequest request,
-        [FromServices] IValidator<GetWordSetsRequest> validator,
-        [FromServices] IGetWordSetsRepository getWordSetsRepository,
-        [FromServices] IUserContextResolver userContextResolver,
-        CancellationToken cancellationToken
-    )
+    private static async Task<Results<ProblemHttpResult, NotFound, Ok<GetWordSetsResponse>, UnauthorizedHttpResult>>
+        HandleAsync(
+            [AsParameters] GetWordSetsRequest request,
+            [FromServices] IGetWordSetsRequestValidator validator,
+            [FromServices] IGetWordSetsRepository getWordSetsRepository,
+            [FromServices] IUserContextResolver userContextResolver,
+            CancellationToken cancellationToken
+        )
     {
         ValidationResult validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)

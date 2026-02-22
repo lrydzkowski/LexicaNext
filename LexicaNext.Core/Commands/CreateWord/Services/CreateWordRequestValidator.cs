@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 using LexicaNext.Core.Commands.CreateWord.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Models;
@@ -6,7 +7,13 @@ using LexicaNext.Core.Common.Models;
 
 namespace LexicaNext.Core.Commands.CreateWord.Services;
 
-public class CreateWordRequestValidator : AbstractValidator<CreateWordRequest>
+public interface ICreateWordRequestValidator
+{
+    Task<ValidationResult> ValidateAsync(CreateWordRequest instance, CancellationToken cancellation);
+}
+
+public class CreateWordRequestValidator
+    : AbstractValidator<CreateWordRequest>, ICreateWordRequestValidator, ITransientService
 {
     private readonly ICreateWordRepository _createWordRepository;
     private readonly IUserContextResolver _userContextResolver;

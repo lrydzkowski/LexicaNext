@@ -1,4 +1,3 @@
-using FluentValidation;
 using FluentValidation.Results;
 using LexicaNext.Core.Commands.UpdateSet.Interfaces;
 using LexicaNext.Core.Commands.UpdateSet.Models;
@@ -32,7 +31,7 @@ public static class UpdateSetEndpoint
 
     private static async Task<Results<NotFound, ProblemHttpResult, NoContent, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] UpdateSetRequest request,
-        [FromServices] IValidator<UpdateSetRequest> validator,
+        [FromServices] IUpdateSetRequestValidator validator,
         [FromServices] IUpdateSetCommandMapper updateSetCommandMapper,
         [FromServices] IUpdateSetRepository updateSetRepository,
         [FromServices] IUserContextResolver userContextResolver,

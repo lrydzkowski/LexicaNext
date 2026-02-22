@@ -1,4 +1,3 @@
-using FluentValidation;
 using FluentValidation.Results;
 using LexicaNext.Core.Commands.CreateWord.Interfaces;
 using LexicaNext.Core.Commands.CreateWord.Models;
@@ -32,7 +31,7 @@ public static class CreateWordEndpoint
     private static async Task<Results<ProblemHttpResult, Created<CreateWordResponse>, UnauthorizedHttpResult>>
         HandleAsync(
             [AsParameters] CreateWordRequest request,
-            [FromServices] IValidator<CreateWordRequest> validator,
+            [FromServices] ICreateWordRequestValidator validator,
             [FromServices] ICreateWordCommandMapper createWordCommandMapper,
             [FromServices] ICreateWordRepository createWordRepository,
             [FromServices] IUserContextResolver userContextResolver,

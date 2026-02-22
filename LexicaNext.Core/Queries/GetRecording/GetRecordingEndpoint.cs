@@ -1,4 +1,3 @@
-using FluentValidation;
 using FluentValidation.Results;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Models;
@@ -32,7 +31,7 @@ public static class GetRecordingEndpoint
     private static async Task<Results<ProblemHttpResult, FileContentHttpResult, NotFound>> HandleAsync(
         [AsParameters] GetRecordingRequest request,
         [FromServices] IGetRecordingRequestProcessor processor,
-        [FromServices] IValidator<GetRecordingRequest> validator,
+        [FromServices] IGetRecordingRequestValidator validator,
         [FromServices] IWordTypeMapper wordTypeMapper,
         [FromServices] IRecordingMetaData recordingMetaData,
         [FromServices] IRecordingStorage recordingStorage,

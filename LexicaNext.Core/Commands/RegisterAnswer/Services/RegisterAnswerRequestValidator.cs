@@ -1,8 +1,16 @@
 using FluentValidation;
+using FluentValidation.Results;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 
 namespace LexicaNext.Core.Commands.RegisterAnswer.Services;
 
-public class RegisterAnswerRequestValidator : AbstractValidator<RegisterAnswerRequest>
+public interface IRegisterAnswerRequestValidator
+{
+    Task<ValidationResult> ValidateAsync(RegisterAnswerRequest instance, CancellationToken cancellation);
+}
+
+public class RegisterAnswerRequestValidator
+    : AbstractValidator<RegisterAnswerRequest>, IRegisterAnswerRequestValidator, ITransientService
 {
     public RegisterAnswerRequestValidator()
     {

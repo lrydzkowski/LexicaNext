@@ -1,4 +1,3 @@
-using FluentValidation;
 using FluentValidation.Results;
 using LexicaNext.Core.Commands.UpdateWord.Interfaces;
 using LexicaNext.Core.Commands.UpdateWord.Models;
@@ -32,7 +31,7 @@ public static class UpdateWordEndpoint
 
     private static async Task<Results<NotFound, ProblemHttpResult, NoContent, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] UpdateWordRequest request,
-        [FromServices] IValidator<UpdateWordRequest> validator,
+        [FromServices] IUpdateWordRequestValidator validator,
         [FromServices] IUpdateWordCommandMapper updateWordCommandMapper,
         [FromServices] IUpdateWordRepository updateWordRepository,
         [FromServices] IUserContextResolver userContextResolver,

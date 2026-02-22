@@ -1,10 +1,18 @@
 using FluentValidation;
+using FluentValidation.Results;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 
 namespace LexicaNext.Core.Commands.GenerateTranslations.Services;
 
-public class GenerateTranslationsRequestValidator : AbstractValidator<GenerateTranslationsRequest>
+public interface IGenerateTranslationsRequestValidator
+{
+    Task<ValidationResult> ValidateAsync(GenerateTranslationsRequest instance, CancellationToken cancellation);
+}
+
+public class GenerateTranslationsRequestValidator
+    : AbstractValidator<GenerateTranslationsRequest>, IGenerateTranslationsRequestValidator, ITransientService
 {
     public GenerateTranslationsRequestValidator()
     {

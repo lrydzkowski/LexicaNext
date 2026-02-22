@@ -1,5 +1,5 @@
-using FluentValidation;
 using FluentValidation.Results;
+using LexicaNext.Core.Commands.GenerateExampleSentences.Services;
 using LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
@@ -29,7 +29,7 @@ public static class GenerateExampleSentencesEndpoint
     private static async Task<Results<ProblemHttpResult, Ok<GenerateExampleSentencesResponse>>> HandleAsync(
         [FromBody] GenerateExampleSentencesRequest request,
         [FromServices] IAiGenerationService aiGenerationService,
-        [FromServices] IValidator<GenerateExampleSentencesRequest> validator,
+        [FromServices] IGenerateExampleSentencesValidator validator,
         CancellationToken cancellationToken
     )
     {

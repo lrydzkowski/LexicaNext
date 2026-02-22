@@ -1,4 +1,3 @@
-using FluentValidation;
 using FluentValidation.Results;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
@@ -34,7 +33,7 @@ public static class GetWordsEndpoint
     private static async Task<Results<ProblemHttpResult, Ok<GetWordsResponse>, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] GetWordsRequest getWordsRequest,
         [FromServices] IGetWordsRequestProcessor processor,
-        [FromServices] IValidator<GetWordsRequest> validator,
+        [FromServices] IGetWordsRequestValidator validator,
         [FromServices] IListParametersMapper listParametersMapper,
         [FromServices] IGetWordsRepository getWordsRepository,
         [FromServices] IWordRecordMapper wordRecordMapper,
@@ -43,7 +42,7 @@ public static class GetWordsEndpoint
     )
     {
         getWordsRequest = processor.Process(getWordsRequest);
-        ValidationResult? validationResult = await validator.ValidateAsync(getWordsRequest, cancellationToken);
+        ValidationResult validationResult = await validator.ValidateAsync(getWordsRequest, cancellationToken);
         if (!validationResult.IsValid)
         {
             return TypedResults.Problem(validationResult.ToProblemDetails());
