@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using LexicaNext.Core.Common.Infrastructure.Interfaces;
+﻿using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +9,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCoreServices(this IServiceCollection services)
     {
-        return services.AddAppHealthChecks().AddScrutor().AddFluentValidation().AddServices();
+        return services.AddAppHealthChecks().AddScrutor().AddServices();
     }
 
     public static IServiceCollection AddOptionsType<TOptions>(
@@ -46,11 +45,6 @@ public static class ServiceCollectionExtensions
                 .AsImplementedInterfaces()
                 .WithSingletonLifetime()
         );
-    }
-
-    private static IServiceCollection AddFluentValidation(this IServiceCollection services)
-    {
-        return services.AddValidatorsFromAssemblyContaining(typeof(ServiceCollectionExtensions))!;
     }
 
     private static IServiceCollection AddServices(this IServiceCollection services)
