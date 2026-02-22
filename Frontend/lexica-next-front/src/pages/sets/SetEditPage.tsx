@@ -16,7 +16,7 @@ export function SetEditPage() {
           <Group>
             <ActionIcon
               variant="subtle"
-              onClick={() => navigate(links.sets.getUrl({}, { returnPage }))}
+              onClick={() => navigate(links.sets.getUrl({}, { page: returnPage }))}
               aria-label="Go back to sets">
               <IconArrowLeft size={16} />
             </ActionIcon>

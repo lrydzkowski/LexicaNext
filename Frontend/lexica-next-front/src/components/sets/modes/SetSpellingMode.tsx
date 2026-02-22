@@ -151,7 +151,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
             <Group wrap="wrap" justify="center">
               <Button
                 variant="light"
-                onClick={() => navigate(links.sets.getUrl({}, { returnPage }))}
+                onClick={() => navigate(links.sets.getUrl({}, { page: returnPage }))}
                 size="md"
                 autoFocus>
                 Back to Sets

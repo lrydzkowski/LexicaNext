@@ -28,7 +28,7 @@ export function WordEditPage() {
         <Group>
           <ActionIcon
             variant="subtle"
-            onClick={() => navigate(links.words.getUrl({}, { returnPage }))}
+            onClick={() => navigate(links.words.getUrl({}, { page: returnPage }))}
             aria-label="Go back to words">
             <IconArrowLeft size={16} />
           </ActionIcon>
