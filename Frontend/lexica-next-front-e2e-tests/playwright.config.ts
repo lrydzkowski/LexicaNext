@@ -27,7 +27,7 @@ function createGroupProjects(group: UserGroup) {
   const setupProject = {
     name: setupName,
     testMatch: new RegExp(`${group.name}\\.setup\\.ts`),
-    testDir: './tests/auth',
+    testDir: './tests',
   };
 
   const browserProjects = browsers.map((browser, index) => ({
@@ -44,11 +44,12 @@ function createGroupProjects(group: UserGroup) {
 export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : 2,
   reporter: 'html',
   use: {
     baseURL: process.env.BASE_URL,
     trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
   },
   projects: userGroups.flatMap(createGroupProjects),
 });

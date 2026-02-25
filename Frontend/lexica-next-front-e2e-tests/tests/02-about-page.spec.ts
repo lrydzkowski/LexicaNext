@@ -1,0 +1,174 @@
+import { test, expect } from '@playwright/test';
+
+test.describe.serial('open about page', () => {
+  test('has correct content', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: 'About' }).click();
+
+    await expect(page.getByRole('main')).toMatchAriaSnapshot(`
+    - main:
+      - link "Home":
+        - /url: /
+      - text: /
+      - paragraph: About
+      - heading "About LexicaNext" [level=2]
+      - paragraph: LexicaNext is a comprehensive English vocabulary learning platform designed to help you master new words through various interactive learning modes.
+      - heading "Learning Modes" [level=2]
+      - img
+      - paragraph: Spelling Mode
+      - paragraph: Learn pronunciation and spelling by listening to words and typing them correctly.
+      - img
+      - paragraph: Full Mode
+      - paragraph: Comprehensive learning with both closed and open questions to master word meanings.
+      - img
+      - paragraph: Open Questions Mode
+      - paragraph: Advanced practice mode focusing on open-ended questions for knowledge retention.
+      - img
+      - paragraph: Content Mode
+      - paragraph: Review and study your vocabulary sets in a structured format.
+      - heading "How It Works" [level=2]
+      - paragraph: "1. Create Words: Add English words along with their translations and example sentences to build your vocabulary list."
+      - paragraph: "2. Create Sets: Build custom vocabulary sets using words you've previously added."
+      - paragraph: "3. Practice: Do one round of practice in spelling mode, full mode, and open questions mode."
+      - paragraph: "4. Master: Repeat and reinforce in open questions mode."
+      - img
+      - heading "Keyboard Shortcuts" [level=2]
+      - paragraph: Global
+      - paragraph: Go to Sets page
+      - text: Ctrl + 1
+      - paragraph: Go to Words page
+      - text: Ctrl + 2
+      - paragraph: Go to About page
+      - text: Ctrl + 3
+      - paragraph: Dismiss notifications
+      - text: Escape
+      - paragraph: Sets List
+      - paragraph: Create new item
+      - text: Alt + N
+      - paragraph: Focus search
+      - text: Alt + F
+      - paragraph: Focus row 1
+      - text: Alt + 1
+      - paragraph: Focus row 2
+      - text: Alt + 2
+      - paragraph: Focus row 3
+      - text: Alt + 3
+      - paragraph: Focus row 4
+      - text: Alt + 4
+      - paragraph: Focus row 5
+      - text: Alt + 5
+      - paragraph: Focus row 6
+      - text: Alt + 6
+      - paragraph: Focus row 7
+      - text: Alt + 7
+      - paragraph: Focus row 8
+      - text: Alt + 8
+      - paragraph: Focus row 9
+      - text: Alt + 9
+      - paragraph: Words List
+      - paragraph: Create new item
+      - text: Alt + N
+      - paragraph: Focus search
+      - text: Alt + F
+      - paragraph: Focus row 1
+      - text: Alt + 1
+      - paragraph: Focus row 2
+      - text: Alt + 2
+      - paragraph: Focus row 3
+      - text: Alt + 3
+      - paragraph: Focus row 4
+      - text: Alt + 4
+      - paragraph: Focus row 5
+      - text: Alt + 5
+      - paragraph: Focus row 6
+      - text: Alt + 6
+      - paragraph: Focus row 7
+      - text: Alt + 7
+      - paragraph: Focus row 8
+      - text: Alt + 8
+      - paragraph: Focus row 9
+      - text: Alt + 9
+      - paragraph: Set Form
+      - paragraph: Save
+      - text: Alt + S
+      - paragraph: Cancel
+      - text: Alt + C
+      - paragraph: Add words
+      - text: Alt + A
+      - paragraph: Create new word
+      - text: Alt + N
+      - paragraph: Focus delete row 1 (Enter to remove)
+      - text: Alt + 1
+      - paragraph: Focus delete row 2 (Enter to remove)
+      - text: Alt + 2
+      - paragraph: Focus delete row 3 (Enter to remove)
+      - text: Alt + 3
+      - paragraph: Focus delete row 4 (Enter to remove)
+      - text: Alt + 4
+      - paragraph: Focus delete row 5 (Enter to remove)
+      - text: Alt + 5
+      - paragraph: Focus delete row 6 (Enter to remove)
+      - text: Alt + 6
+      - paragraph: Focus delete row 7 (Enter to remove)
+      - text: Alt + 7
+      - paragraph: Focus delete row 8 (Enter to remove)
+      - text: Alt + 8
+      - paragraph: Focus delete row 9 (Enter to remove)
+      - text: Alt + 9
+      - paragraph: Select Words
+      - paragraph: Focus search
+      - text: Alt + F
+      - paragraph: Close
+      - text: Alt + C
+      - paragraph: Done
+      - text: Alt + S
+      - paragraph: Select row 1
+      - text: Alt + 1
+      - paragraph: Select row 2
+      - text: Alt + 2
+      - paragraph: Select row 3
+      - text: Alt + 3
+      - paragraph: Select row 4
+      - text: Alt + 4
+      - paragraph: Select row 5
+      - text: Alt + 5
+      - paragraph: Select row 6
+      - text: Alt + 6
+      - paragraph: Select row 7
+      - text: Alt + 7
+      - paragraph: Select row 8
+      - text: Alt + 8
+      - paragraph: Select row 9
+      - text: Alt + 9
+      - paragraph: Word Form
+      - paragraph: Save
+      - text: Alt + S
+      - paragraph: Cancel
+      - text: Alt + C
+      - paragraph: Generate translations & sentences
+      - text: Alt + G
+      - paragraph: Open Cambridge Dictionary
+      - text: Alt + D
+      - paragraph: Open Ling.pl
+      - text: Alt + L
+      - paragraph: Remove item 1
+      - text: Alt + 1
+      - paragraph: Remove item 2
+      - text: Alt + 2
+      - paragraph: Remove item 3
+      - text: Alt + 3
+      - paragraph: Remove item 4
+      - text: Alt + 4
+      - paragraph: Remove item 5
+      - text: Alt + 5
+      - paragraph: Remove item 6
+      - text: Alt + 6
+      - paragraph: Remove item 7
+      - text: Alt + 7
+      - paragraph: Remove item 8
+      - text: Alt + 8
+      - paragraph: Remove item 9
+      - text: Alt + 9
+    `);
+  });
+});
