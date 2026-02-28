@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe.serial('word form - remove translations and sentences', () => {
+test.describe('word form - remove translations and sentences', () => {
   test('removes a translation from the form', async ({ page }) => {
     await page.goto('/words/new');
 

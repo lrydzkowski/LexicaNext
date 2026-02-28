@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
+import { waitForSearchResponse } from './helpers';
 
-test.describe.serial('words list page', () => {
+test.describe('words list page', () => {
   test('navigates to words list from header', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('link', { name: 'Words' }).click();
@@ -30,16 +31,14 @@ test.describe.serial('words list page', () => {
     const searchInput = page.getByPlaceholder('Search words...');
     const initialRowCount = await page.getByRole('row').count();
 
-    const searchResponse = page.waitForResponse((resp) =>
-      resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
-    );
+    const searchResponse = waitForSearchResponse(page);
     await searchInput.fill('zzz_nonexistent_word_zzz');
     await searchResponse;
 
     await expect(page.getByRole('cell', { name: 'No words found matching your search.' })).toBeVisible();
 
-    const clearResponse = page.waitForResponse((resp) =>
-      resp.url().includes('/api/words') && resp.request().method() === 'GET',
+    const clearResponse = page.waitForResponse(
+      (resp) => resp.url().includes('/api/words') && resp.request().method() === 'GET',
     );
     await searchInput.clear();
     await clearResponse;
@@ -48,3 +47,4 @@ test.describe.serial('words list page', () => {
     expect(restoredRowCount).toBeGreaterThanOrEqual(initialRowCount);
   });
 });
+

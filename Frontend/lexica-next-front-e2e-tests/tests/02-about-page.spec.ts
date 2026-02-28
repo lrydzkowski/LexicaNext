@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe.serial('open about page', () => {
+test.describe('open about page', () => {
   test('has correct content', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('link', { name: 'About' }).click();

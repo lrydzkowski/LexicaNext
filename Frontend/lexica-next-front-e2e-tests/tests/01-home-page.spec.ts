@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe.serial('open home page', () => {
+test.describe('open home page', () => {
   test('has correct header', async ({ page }) => {
     await page.goto('/');
 
