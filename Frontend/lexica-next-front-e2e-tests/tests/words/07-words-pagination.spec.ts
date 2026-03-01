@@ -1,16 +1,37 @@
 import { test, expect } from '@playwright/test';
-import { generateTestPrefix, createWord, deleteWordsByPrefix, waitForWordsResponse } from './helpers';
+import { generateTestPrefix, captureAuthToken, createWordViaApi, deleteWordsByPrefix, waitForWordsResponse } from './helpers';
 
 const WORD_COUNT = 11;
 
 test.describe('words pagination', () => {
+  let prefix: string;
+
+  test.beforeAll(async ({ browser }, testInfo) => {
+    prefix = generateTestPrefix('page');
+    const storageState = testInfo.project.use.storageState as string;
+    const context = await browser.newContext({ storageState });
+    const page = await context.newPage();
+
+    const authToken = await captureAuthToken(page);
+    const createPromises = Array.from({ length: WORD_COUNT }, (_, i) =>
+      createWordViaApi(page, `${prefix}-${String(i + 1).padStart(2, '0')}`, `tlumaczenie-${i + 1}`, authToken),
+    );
+    await Promise.all(createPromises);
+
+    await page.close();
+    await context.close();
+  });
+
+  test.afterAll(async ({ browser }, testInfo) => {
+    const storageState = testInfo.project.use.storageState as string;
+    const context = await browser.newContext({ storageState });
+    const page = await context.newPage();
+    await deleteWordsByPrefix(page, prefix);
+    await page.close();
+    await context.close();
+  });
+
   test('pagination controls appear when enough words exist', async ({ page }) => {
-    const prefix = generateTestPrefix('page-ctrl');
-
-    for (let i = 1; i <= WORD_COUNT; i++) {
-      await createWord(page, `${prefix}-${String(i).padStart(2, '0')}`, `tlumaczenie-${i}`);
-    }
-
     const wordsResponsePromise = waitForWordsResponse(page);
     await page.goto('/words');
     await wordsResponsePromise;
@@ -25,17 +46,9 @@ test.describe('words pagination', () => {
       .getByRole('row')
       .filter({ hasNot: page.getByRole('columnheader') });
     await expect(tableBodyRows).toHaveCount(10);
-
-    await deleteWordsByPrefix(page, prefix);
   });
 
   test('navigates to next page', async ({ page }) => {
-    const prefix = generateTestPrefix('page-nav');
-
-    for (let i = 1; i <= WORD_COUNT; i++) {
-      await createWord(page, `${prefix}-${String(i).padStart(2, '0')}`, `tlumaczenie-${i}`);
-    }
-
     const initialResponse = waitForWordsResponse(page);
     await page.goto('/words');
     await initialResponse;
@@ -56,8 +69,5 @@ test.describe('words pagination', () => {
 
     await expect(page).toHaveURL(/page=2/);
     await expect(firstRowWordCell).not.toHaveText(firstRowWord!);
-
-    await deleteWordsByPrefix(page, prefix);
   });
 });
-

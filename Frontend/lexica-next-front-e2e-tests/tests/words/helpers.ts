@@ -4,6 +4,36 @@ export function generateTestPrefix(context: string): string {
   return `e2e-${context}-${Date.now()}`;
 }
 
+export async function captureAuthToken(page: Page): Promise<string> {
+  const requestPromise = page.waitForRequest(
+    (req) => req.url().includes('/api/') && !!req.headers()['authorization'],
+  );
+  await page.goto('/words');
+  const request = await requestPromise;
+  return request.headers()['authorization'];
+}
+
+export async function createWordViaApi(
+  page: Page,
+  name: string,
+  translation: string,
+  authToken: string,
+  options?: { type?: string },
+) {
+  const response = await page.request.post('/api/words', {
+    headers: { authorization: authToken },
+    data: {
+      word: name,
+      wordType: options?.type ?? 'noun',
+      translations: [translation],
+      exampleSentences: [],
+    },
+  });
+  if (!response.ok()) {
+    throw new Error(`Failed to create word "${name}" via API: ${response.status()}`);
+  }
+}
+
 export function waitForSearchResponse(page: Page) {
   return page.waitForResponse(
     (resp) =>

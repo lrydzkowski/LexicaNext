@@ -1,9 +1,23 @@
 import { test, expect } from '@playwright/test';
-import { generateTestPrefix, searchWord, waitForSearchResponse } from './helpers';
+import { generateTestPrefix, searchWord, deleteWordsByPrefix, waitForSearchResponse } from './helpers';
 
 test.describe('word full lifecycle', () => {
+  const prefixes: string[] = [];
+
+  test.afterAll(async ({ browser }, testInfo) => {
+    const storageState = testInfo.project.use.storageState as string;
+    const context = await browser.newContext({ storageState });
+    const page = await context.newPage();
+    for (const prefix of prefixes) {
+      await deleteWordsByPrefix(page, prefix);
+    }
+    await page.close();
+    await context.close();
+  });
+
   test('create, verify, edit type, verify, delete, verify', async ({ page }) => {
     const prefix = generateTestPrefix('lifecycle');
+    prefixes.push(prefix);
     const wordName = `${prefix}-transient`;
 
     await page.goto('/words');
@@ -43,9 +57,8 @@ test.describe('word full lifecycle', () => {
     await expect(page).toHaveURL(/\/words/);
     await expect(page.getByRole('table')).toBeVisible();
 
-    const searchInput = page.getByPlaceholder('Search words...');
     const postEditSearchResponse = waitForSearchResponse(page);
-    await searchInput.fill(wordName);
+    await page.getByPlaceholder('Search words...').fill(wordName);
     await postEditSearchResponse;
 
     const editedRow = page.getByRole('row').filter({ hasText: wordName });
@@ -65,4 +78,3 @@ test.describe('word full lifecycle', () => {
     await expect(page.getByRole('cell', { name: 'No words found matching your search.' })).toBeVisible();
   });
 });
-

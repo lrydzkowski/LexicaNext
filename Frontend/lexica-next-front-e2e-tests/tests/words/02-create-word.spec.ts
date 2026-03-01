@@ -2,6 +2,19 @@ import { test, expect } from '@playwright/test';
 import { generateTestPrefix, createWord, deleteWordsByPrefix } from './helpers';
 
 test.describe('create word', () => {
+  const prefixes: string[] = [];
+
+  test.afterAll(async ({ browser }, testInfo) => {
+    const storageState = testInfo.project.use.storageState as string;
+    const context = await browser.newContext({ storageState });
+    const page = await context.newPage();
+    for (const prefix of prefixes) {
+      await deleteWordsByPrefix(page, prefix);
+    }
+    await page.close();
+    await context.close();
+  });
+
   test('navigates to create word form', async ({ page }) => {
     await page.goto('/words');
     await page.getByRole('link', { name: 'Create New Word' }).click();
@@ -17,16 +30,16 @@ test.describe('create word', () => {
 
   test('creates a word with minimal data', async ({ page }) => {
     const prefix = generateTestPrefix('create-min');
+    prefixes.push(prefix);
     const wordName = `${prefix}-minimal`;
 
     await createWord(page, wordName, 'ulotny');
     await expect(page.getByRole('cell', { name: wordName, exact: true })).toBeVisible();
-
-    await deleteWordsByPrefix(page, prefix);
   });
 
   test('creates a word with full data', async ({ page }) => {
     const prefix = generateTestPrefix('create-full');
+    prefixes.push(prefix);
     const wordName = `${prefix}-full`;
 
     await createWord(page, wordName, 'drobiazgowy', {
@@ -35,8 +48,6 @@ test.describe('create word', () => {
       sentence: 'She is meticulous about her work.',
     });
     await expect(page.getByRole('cell', { name: wordName, exact: true })).toBeVisible();
-
-    await deleteWordsByPrefix(page, prefix);
   });
 
   test('validation - empty word field', async ({ page }) => {
@@ -69,4 +80,3 @@ test.describe('create word', () => {
     await expect(page.getByRole('cell', { name: wordName, exact: true })).not.toBeVisible();
   });
 });
-

@@ -2,8 +2,22 @@ import { test, expect } from '@playwright/test';
 import { generateTestPrefix, createWord, searchWord, deleteWordsByPrefix, waitForSearchResponse } from './helpers';
 
 test.describe('delete word', () => {
+  const prefixes: string[] = [];
+
+  test.afterAll(async ({ browser }, testInfo) => {
+    const storageState = testInfo.project.use.storageState as string;
+    const context = await browser.newContext({ storageState });
+    const page = await context.newPage();
+    for (const prefix of prefixes) {
+      await deleteWordsByPrefix(page, prefix);
+    }
+    await page.close();
+    await context.close();
+  });
+
   test('deletes a single word via action menu', async ({ page }) => {
     const prefix = generateTestPrefix('del-single');
+    prefixes.push(prefix);
     const wordName = `${prefix}-single`;
 
     await createWord(page, wordName, 'tymczasowy');
@@ -29,6 +43,7 @@ test.describe('delete word', () => {
 
   test('deletes multiple words via bulk selection', async ({ page }) => {
     const prefix = generateTestPrefix('del-bulk');
+    prefixes.push(prefix);
 
     await createWord(page, `${prefix}-bulk-a`, 'masowy-a');
     await createWord(page, `${prefix}-bulk-b`, 'masowy-b');
@@ -58,6 +73,7 @@ test.describe('delete word', () => {
 
   test('cancel deletion keeps the word', async ({ page }) => {
     const prefix = generateTestPrefix('del-cancel');
+    prefixes.push(prefix);
     const wordName = `${prefix}-cancel`;
 
     await createWord(page, wordName, 'anulowany');
@@ -75,8 +91,5 @@ test.describe('delete word', () => {
 
     await expect(dialog).not.toBeVisible();
     await expect(page.getByRole('cell', { name: wordName, exact: true })).toBeVisible();
-
-    await deleteWordsByPrefix(page, prefix);
   });
 });
-
