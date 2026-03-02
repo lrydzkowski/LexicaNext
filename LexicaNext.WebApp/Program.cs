@@ -22,7 +22,7 @@ using LexicaNext.WebApp;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddWebAppServices();
+builder.Services.AddWebAppServices(builder.Configuration);
 builder.Services.AddCoreServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 

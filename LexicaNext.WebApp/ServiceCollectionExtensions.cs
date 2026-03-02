@@ -4,11 +4,12 @@ namespace LexicaNext.WebApp;
 
 internal static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddWebAppServices(this IServiceCollection services)
+    public static IServiceCollection AddWebAppServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddProblemDetails();
         services.AddOpenApi();
         services.AddHttpContextAccessor();
+        services.AddLogging(builder => builder.AddSeq(configuration.GetSection("Seq")));
 
         return services;
     }
