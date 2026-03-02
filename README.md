@@ -129,6 +129,7 @@ The application follows Clean Architecture principles:
     - Storage configuration
     - Auth0 configuration
     - Microsoft Foundry configuration
+    - Seq configuration
 
 4. Apply EF Core migration:
 
