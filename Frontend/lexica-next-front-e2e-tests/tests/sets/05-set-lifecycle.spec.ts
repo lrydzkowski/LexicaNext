@@ -59,7 +59,10 @@ test.describe('set full lifecycle', () => {
 
     await page.getByRole('button', { name: 'Add Words' }).click();
 
-    const modalSearchInput = page.getByPlaceholder('Search words...');
+    const addWordsDialog = page.getByRole('dialog');
+    await expect(addWordsDialog).toBeVisible();
+    const modalSearchInput = addWordsDialog.getByPlaceholder('Search words...');
+    await modalSearchInput.click();
     const wordsSearchResponse = page.waitForResponse(
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
@@ -67,15 +70,15 @@ test.describe('set full lifecycle', () => {
     await modalSearchInput.fill(prefix);
     await wordsSearchResponse;
 
-    await page
+    await addWordsDialog
       .getByRole('row')
       .filter({ hasText: `${prefix}-word-a` })
       .click();
-    await page
+    await addWordsDialog
       .getByRole('row')
       .filter({ hasText: `${prefix}-word-b` })
       .click();
-    await page.getByRole('button', { name: 'Done' }).click();
+    await addWordsDialog.getByRole('button', { name: 'Done' }).click();
 
     await expect(page.getByText('Selected Words (2)')).toBeVisible();
 

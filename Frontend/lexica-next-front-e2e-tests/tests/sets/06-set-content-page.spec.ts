@@ -6,7 +6,7 @@ import {
   createSetViaApi,
   deleteSetViaApi,
   deleteWordsViaApi,
-  getSetNameFromProposedName,
+  getSetNameById,
 } from './helpers';
 
 test.describe('set content page', () => {
@@ -33,8 +33,8 @@ test.describe('set content page', () => {
     });
     wordIds.push(wordAId, wordBId);
 
-    setName = await getSetNameFromProposedName(page, authToken);
     setId = await createSetViaApi(page, [wordAId, wordBId], authToken);
+    setName = await getSetNameById(page, setId, authToken);
 
     await page.close();
     await context.close();

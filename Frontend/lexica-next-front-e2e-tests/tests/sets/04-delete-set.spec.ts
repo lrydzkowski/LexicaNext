@@ -8,7 +8,7 @@ import {
   deleteSetViaApi,
   searchSet,
   navigateToSetAction,
-  getSetNameFromProposedName,
+  getSetNameById,
   waitForSearchSetsResponse,
 } from './helpers';
 
@@ -48,8 +48,8 @@ test.describe('delete set', () => {
     const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
     wordIds.push(wordId);
 
-    const setName = await getSetNameFromProposedName(page, authToken);
-    await createSetViaApi(page, [wordId], authToken);
+    const setId = await createSetViaApi(page, [wordId], authToken);
+    const setName = await getSetNameById(page, setId, authToken);
 
     await page.goto('/sets');
     await navigateToSetAction(page, setName, 'Delete Set');
@@ -78,10 +78,10 @@ test.describe('delete set', () => {
     const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
     wordIds.push(wordId);
 
-    const setNameA = await getSetNameFromProposedName(page, authToken);
-    await createSetViaApi(page, [wordId], authToken);
-    const setNameB = await getSetNameFromProposedName(page, authToken);
-    await createSetViaApi(page, [wordId], authToken);
+    const setIdA = await createSetViaApi(page, [wordId], authToken);
+    const setNameA = await getSetNameById(page, setIdA, authToken);
+    const setIdB = await createSetViaApi(page, [wordId], authToken);
+    const setNameB = await getSetNameById(page, setIdB, authToken);
 
     await page.goto('/sets');
     await searchSet(page, setNameA.slice(0, -2));
@@ -111,10 +111,10 @@ test.describe('delete set', () => {
     const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
     wordIds.push(wordId);
 
-    const setNameA = await getSetNameFromProposedName(page, authToken);
     const setIdA = await createSetViaApi(page, [wordId], authToken);
-    const setNameB = await getSetNameFromProposedName(page, authToken);
+    const setNameA = await getSetNameById(page, setIdA, authToken);
     const setIdB = await createSetViaApi(page, [wordId], authToken);
+    const setNameB = await getSetNameById(page, setIdB, authToken);
     setIdsToClean.push(setIdA, setIdB);
 
     await page.goto('/sets');
@@ -141,8 +141,8 @@ test.describe('delete set', () => {
     const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
     wordIds.push(wordId);
 
-    const setName = await getSetNameFromProposedName(page, authToken);
     const setId = await createSetViaApi(page, [wordId], authToken);
+    const setName = await getSetNameById(page, setId, authToken);
     setIdsToClean.push(setId);
 
     await page.goto('/sets');
@@ -163,8 +163,8 @@ test.describe('delete set', () => {
     const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
     wordIds.push(wordId);
 
-    const setName = await getSetNameFromProposedName(page, authToken);
     const setId = await createSetViaApi(page, [wordId], authToken);
+    const setName = await getSetNameById(page, setId, authToken);
     setIdsToClean.push(setId);
 
     await page.goto('/sets');

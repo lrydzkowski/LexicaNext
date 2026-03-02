@@ -83,10 +83,12 @@ test.describe('create set', () => {
 
     await page.getByRole('button', { name: 'Add Words' }).click();
 
-    await expect(page.getByRole('heading', { name: 'Select Words' })).toBeVisible();
-    await expect(page.getByPlaceholder('Search words...')).toBeVisible();
+    const addWordsDialog = page.getByRole('dialog');
+    await expect(addWordsDialog).toBeVisible();
+    await expect(addWordsDialog.getByRole('heading', { name: 'Select Words' })).toBeVisible();
 
-    const modalSearchInput = page.getByPlaceholder('Search words...');
+    const modalSearchInput = addWordsDialog.getByPlaceholder('Search words...');
+    await modalSearchInput.click();
     const wordsSearchResponse = page.waitForResponse(
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
@@ -94,15 +96,15 @@ test.describe('create set', () => {
     await modalSearchInput.fill(prefix);
     await wordsSearchResponse;
 
-    const wordARow = page.getByRole('row').filter({ hasText: `${prefix}-word-a` });
-    const wordBRow = page.getByRole('row').filter({ hasText: `${prefix}-word-b` });
+    const wordARow = addWordsDialog.getByRole('row').filter({ hasText: `${prefix}-word-a` });
+    const wordBRow = addWordsDialog.getByRole('row').filter({ hasText: `${prefix}-word-b` });
     await expect(wordARow).toBeVisible();
     await expect(wordBRow).toBeVisible();
 
     await wordARow.click();
     await wordBRow.click();
 
-    await page.getByRole('button', { name: 'Done' }).click();
+    await addWordsDialog.getByRole('button', { name: 'Done' }).click();
 
     await expect(page.getByText('Selected Words (2)')).toBeVisible();
     await expect(page.getByRole('row').filter({ hasText: `${prefix}-word-a` })).toBeVisible();
@@ -152,8 +154,14 @@ test.describe('create set', () => {
     await expect(page.getByRole('heading', { name: 'Create New Word' })).toBeVisible();
 
     const dialog = page.getByRole('dialog');
-    await dialog.getByLabel('English Word').fill(inlineWordName);
-    await dialog.getByPlaceholder('Enter translation...').first().fill('test-translation');
+    await expect(dialog).toBeVisible();
+    const englishWordInput = dialog.getByLabel('English Word');
+    await expect(englishWordInput).toBeVisible();
+    await englishWordInput.click();
+    await englishWordInput.fill(inlineWordName);
+    const translationInput = dialog.getByPlaceholder('Enter translation...').first();
+    await translationInput.click();
+    await translationInput.fill('test-translation');
 
     const wordPostResponsePromise = page.waitForResponse(
       (resp) => resp.url().includes('/api/words') && resp.request().method() === 'POST',
@@ -187,7 +195,10 @@ test.describe('create set', () => {
     await page.goto('/sets/new');
     await page.getByRole('button', { name: 'Add Words' }).click();
 
-    const modalSearchInput = page.getByPlaceholder('Search words...');
+    const removeDialog = page.getByRole('dialog');
+    await expect(removeDialog).toBeVisible();
+    const modalSearchInput = removeDialog.getByPlaceholder('Search words...');
+    await modalSearchInput.click();
     const wordsSearchResponse = page.waitForResponse(
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
@@ -195,15 +206,15 @@ test.describe('create set', () => {
     await modalSearchInput.fill(prefix);
     await wordsSearchResponse;
 
-    await page
+    await removeDialog
       .getByRole('row')
       .filter({ hasText: `${prefix}-word-a` })
       .click();
-    await page
+    await removeDialog
       .getByRole('row')
       .filter({ hasText: `${prefix}-word-b` })
       .click();
-    await page.getByRole('button', { name: 'Done' }).click();
+    await removeDialog.getByRole('button', { name: 'Done' }).click();
 
     await expect(page.getByText('Selected Words (2)')).toBeVisible();
 

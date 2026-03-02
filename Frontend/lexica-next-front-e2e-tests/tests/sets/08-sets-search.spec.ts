@@ -9,7 +9,7 @@ import {
   searchSet,
   waitForSetsResponse,
   waitForSearchSetsResponse,
-  getSetNameFromProposedName,
+  getSetNameById,
 } from './helpers';
 
 test.describe('sets search', () => {
@@ -30,8 +30,8 @@ test.describe('sets search', () => {
     const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
     wordIds.push(wordId);
 
-    setName = await getSetNameFromProposedName(page, authToken);
     setId = await createSetViaApi(page, [wordId], authToken);
+    setName = await getSetNameById(page, setId, authToken);
 
     await page.close();
     await context.close();

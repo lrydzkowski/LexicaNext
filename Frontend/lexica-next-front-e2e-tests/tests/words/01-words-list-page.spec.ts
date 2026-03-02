@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForSearchResponse } from './helpers';
+import { waitForSearchResponse, waitForWordsResponse } from './helpers';
 
 test.describe('words list page', () => {
   test('navigates to words list from header', async ({ page }) => {
@@ -37,9 +37,7 @@ test.describe('words list page', () => {
 
     await expect(page.getByRole('cell', { name: 'No words found matching your search.' })).toBeVisible();
 
-    const clearResponse = page.waitForResponse(
-      (resp) => resp.url().includes('/api/words') && resp.request().method() === 'GET',
-    );
+    const clearResponse = waitForWordsResponse(page);
     await searchInput.clear();
     await clearResponse;
 
@@ -47,4 +45,3 @@ test.describe('words list page', () => {
     expect(restoredRowCount).toBeGreaterThanOrEqual(initialRowCount);
   });
 });
-

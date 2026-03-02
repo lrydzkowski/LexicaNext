@@ -25,17 +25,6 @@ export async function createSetViaApi(page: Page, wordIds: string[], authToken: 
   throw new Error(`Failed to create set via API after ${maxRetries} retries`);
 }
 
-export async function getSetNameFromProposedName(page: Page, authToken: string): Promise<string> {
-  const response = await page.request.get('/api/sets/proposed-name', {
-    headers: { authorization: authToken },
-  });
-  if (!response.ok()) {
-    throw new Error(`Failed to get proposed name: ${response.status()}`);
-  }
-  const body = await response.json();
-  return body.proposedName ?? body;
-}
-
 export function waitForSetsResponse(page: Page) {
   return page.waitForResponse(
     (resp) =>
@@ -52,6 +41,7 @@ export function waitForSearchSetsResponse(page: Page) {
 
 export async function searchSet(page: Page, term: string) {
   const searchInput = page.getByPlaceholder('Search sets...');
+  await searchInput.click();
   const searchResponse = waitForSearchSetsResponse(page);
   await searchInput.fill(term);
   await searchResponse;
@@ -66,8 +56,12 @@ export async function createSetViaUI(page: Page, wordNames: string[]): Promise<{
 
   await page.getByRole('button', { name: 'Add Words' }).click();
 
+  const addWordsDialog = page.getByRole('dialog');
+  await expect(addWordsDialog).toBeVisible();
+
   for (const wordName of wordNames) {
-    const modalSearchInput = page.getByPlaceholder('Search words...');
+    const modalSearchInput = addWordsDialog.getByPlaceholder('Search words...');
+    await modalSearchInput.click();
     const wordsSearchResponse = page.waitForResponse(
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
@@ -75,11 +69,11 @@ export async function createSetViaUI(page: Page, wordNames: string[]): Promise<{
     await modalSearchInput.fill(wordName);
     await wordsSearchResponse;
 
-    const wordRow = page.getByRole('row').filter({ hasText: wordName });
+    const wordRow = addWordsDialog.getByRole('row').filter({ hasText: wordName });
     await wordRow.click();
   }
 
-  await page.getByRole('button', { name: 'Done' }).click();
+  await addWordsDialog.getByRole('button', { name: 'Done' }).click();
 
   const postResponsePromise = page.waitForResponse(
     (resp) => resp.url().includes('/api/sets') && resp.request().method() === 'POST',
@@ -100,7 +94,7 @@ export async function navigateToSetAction(page: Page, setName: string, action: s
   if (currentValue !== setName) {
     await searchSet(page, setName);
   }
-  await page.getByRole('button', { name: `Actions for ${setName}` }).click();
+  await page.getByRole('button', { name: `Actions for ${setName}` }).first().click();
   await page.getByRole('menuitem', { name: action }).click();
 }
 

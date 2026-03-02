@@ -8,7 +8,7 @@ import {
   deleteWordsViaApi,
   searchSet,
   navigateToSetAction,
-  getSetNameFromProposedName,
+  getSetNameById,
   waitForSetsResponse,
 } from './helpers';
 
@@ -46,8 +46,8 @@ test.describe('edit set', () => {
     const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
     wordIds.push(wordId);
 
-    const setName = await getSetNameFromProposedName(page, authToken);
     const setId = await createSetViaApi(page, [wordId], authToken);
+    const setName = await getSetNameById(page, setId, authToken);
     setIds.push(setId);
 
     await page.goto('/sets');
@@ -71,8 +71,8 @@ test.describe('edit set', () => {
     const wordBId = await createWordViaApiReturningId(page, `${prefix}-word-b`, 'translation-b', authToken);
     wordIds.push(wordAId, wordBId);
 
-    const setName = await getSetNameFromProposedName(page, authToken);
     const setId = await createSetViaApi(page, [wordAId], authToken);
+    const setName = await getSetNameById(page, setId, authToken);
     setIds.push(setId);
 
     await page.goto('/sets');
@@ -82,7 +82,10 @@ test.describe('edit set', () => {
 
     await page.getByRole('button', { name: 'Add Words' }).click();
 
-    const modalSearchInput = page.getByPlaceholder('Search words...');
+    const addWordsDialog = page.getByRole('dialog');
+    await expect(addWordsDialog).toBeVisible();
+    const modalSearchInput = addWordsDialog.getByPlaceholder('Search words...');
+    await modalSearchInput.click();
     const wordsSearchResponse = page.waitForResponse(
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
@@ -90,11 +93,11 @@ test.describe('edit set', () => {
     await modalSearchInput.fill(`${prefix}-word-b`);
     await wordsSearchResponse;
 
-    await page
+    await addWordsDialog
       .getByRole('row')
       .filter({ hasText: `${prefix}-word-b` })
       .click();
-    await page.getByRole('button', { name: 'Done' }).click();
+    await addWordsDialog.getByRole('button', { name: 'Done' }).click();
 
     await expect(page.getByText('Selected Words (2)')).toBeVisible();
 
@@ -114,8 +117,8 @@ test.describe('edit set', () => {
     const wordBId = await createWordViaApiReturningId(page, `${prefix}-word-b`, 'translation-b', authToken);
     wordIds.push(wordAId, wordBId);
 
-    const setName = await getSetNameFromProposedName(page, authToken);
     const setId = await createSetViaApi(page, [wordAId, wordBId], authToken);
+    const setName = await getSetNameById(page, setId, authToken);
     setIds.push(setId);
 
     await page.goto('/sets');
@@ -143,8 +146,8 @@ test.describe('edit set', () => {
     const wordBId = await createWordViaApiReturningId(page, `${prefix}-word-b`, 'translation-b', authToken);
     wordIds.push(wordAId, wordBId);
 
-    const setName = await getSetNameFromProposedName(page, authToken);
     const setId = await createSetViaApi(page, [wordAId], authToken);
+    const setName = await getSetNameById(page, setId, authToken);
     setIds.push(setId);
 
     await page.goto('/sets');
@@ -153,12 +156,15 @@ test.describe('edit set', () => {
     await expect(page.getByText('Selected Words (1)')).toBeVisible();
     await page.getByRole('button', { name: 'Add Words' }).click();
 
-    const modalSearchInput = page.getByPlaceholder('Search words...');
+    const cancelDialog = page.getByRole('dialog');
+    await expect(cancelDialog).toBeVisible();
+    const modalSearchInput = cancelDialog.getByPlaceholder('Search words...');
+    await modalSearchInput.click();
     await modalSearchInput.fill(`${prefix}-word-b`);
-    const wordBRow = page.getByRole('row').filter({ hasText: `${prefix}-word-b` });
+    const wordBRow = cancelDialog.getByRole('row').filter({ hasText: `${prefix}-word-b` });
     await expect(wordBRow).toBeVisible();
     await wordBRow.click();
-    await page.getByRole('button', { name: 'Done' }).click();
+    await cancelDialog.getByRole('button', { name: 'Done' }).click();
 
     await expect(page.getByText('Selected Words (2)')).toBeVisible();
 
@@ -177,8 +183,8 @@ test.describe('edit set', () => {
     const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
     wordIds.push(wordId);
 
-    const setName = await getSetNameFromProposedName(page, authToken);
     const setId = await createSetViaApi(page, [wordId], authToken);
+    const setName = await getSetNameById(page, setId, authToken);
     setIds.push(setId);
 
     await page.goto('/sets');
@@ -187,7 +193,9 @@ test.describe('edit set', () => {
     await page.getByRole('button', { name: 'Add Words' }).click();
 
     const dialog = page.getByRole('dialog');
+    await expect(dialog).toBeVisible();
     const modalSearchInput = dialog.getByPlaceholder('Search words...');
+    await modalSearchInput.click();
     const wordsSearchResponse = page.waitForResponse(
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',

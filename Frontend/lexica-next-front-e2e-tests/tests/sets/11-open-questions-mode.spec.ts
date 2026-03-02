@@ -6,7 +6,7 @@ import {
   createSetViaApi,
   deleteSetViaApi,
   deleteWordsViaApi,
-  getSetNameFromProposedName,
+  getSetNameById,
 } from './helpers';
 
 test.describe('open questions mode', () => {
@@ -30,8 +30,8 @@ test.describe('open questions mode', () => {
       const id = await createWordViaApiReturningId(page, def.name, def.translation, authToken);
       createdWordIds.push(id);
     }
-    const setName = await getSetNameFromProposedName(page, authToken);
     const setId = await createSetViaApi(page, createdWordIds, authToken);
+    const setName = await getSetNameById(page, setId, authToken);
     return { setName, setId, wordIds: createdWordIds, words: wordDefs };
   }
 
