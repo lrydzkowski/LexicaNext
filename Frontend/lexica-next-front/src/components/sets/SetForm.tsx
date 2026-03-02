@@ -207,7 +207,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   };
 
   const handleCancel = () => {
-    navigate(links.sets.getUrl({}, { returnPage }));
+    navigate(links.sets.getUrl({}, { page: returnPage }));
   };
 
   const shortcutHandlers = useMemo(

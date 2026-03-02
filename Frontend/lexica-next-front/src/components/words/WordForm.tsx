@@ -234,7 +234,7 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
                   wordType: payload.wordType,
                 });
               } else {
-                navigate(links.words.getUrl({}, { returnPage }));
+                navigate(links.words.getUrl({}, { page: returnPage }));
               }
             },
             onError: (error) => {
@@ -251,7 +251,7 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
       if (onCancel) {
         onCancel();
       } else {
-        navigate(links.words.getUrl({}, { returnPage }));
+        navigate(links.words.getUrl({}, { page: returnPage }));
       }
     };
 

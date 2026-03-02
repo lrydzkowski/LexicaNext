@@ -46,7 +46,7 @@ export function SetSpellingModePage() {
           <Group wrap="nowrap" w="100%">
             <ActionIcon
               variant="subtle"
-              onClick={() => navigate(links.sets.getUrl({}, { returnPage }))}
+              onClick={() => navigate(links.sets.getUrl({}, { page: returnPage }))}
               aria-label="Go back to sets">
               <IconArrowLeft size={16} />
             </ActionIcon>
