@@ -51,7 +51,7 @@ export function WordsList() {
 
   const {
     data: wordsData,
-    isFetching,
+    isLoading,
     error,
     refetch,
   } = useWords({
@@ -271,7 +271,7 @@ export function WordsList() {
         </Group>
 
         <Box pos="relative">
-          <LoadingOverlay visible={isFetching} />
+          <LoadingOverlay visible={isLoading} />
           <Box hiddenFrom="md">
             {words.length > 0 ? (
               words.map((word, index) => (

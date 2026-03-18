@@ -61,7 +61,7 @@ export function SetsList() {
 
   const {
     data: setsData,
-    isFetching,
+    isLoading,
     error,
     refetch,
   } = useSets({
@@ -309,7 +309,7 @@ export function SetsList() {
         </Group>
 
         <Box pos="relative">
-          <LoadingOverlay visible={isFetching} />
+          <LoadingOverlay visible={isLoading} />
 
           <Box hiddenFrom="md">
             {sets.length > 0 ? (
