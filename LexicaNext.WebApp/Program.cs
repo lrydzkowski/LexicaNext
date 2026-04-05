@@ -32,6 +32,8 @@ CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 WebApplication app = builder.Build();
 
+app.UseSecurityHeaders();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
