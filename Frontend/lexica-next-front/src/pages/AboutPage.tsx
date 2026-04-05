@@ -49,7 +49,7 @@ export function AboutPage() {
       <Container p={{ base: 0 }}>
         <Stack gap="xl">
           <div>
-            <Title order={2} mb="sm" mt="sm">
+            <Title order={2} mb="sm" size="h3">
               About LexicaNext
             </Title>
             <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>

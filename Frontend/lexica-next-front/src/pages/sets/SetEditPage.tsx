@@ -20,7 +20,7 @@ export function SetEditPage() {
               aria-label="Go back to sets">
               <IconArrowLeft size={16} />
             </ActionIcon>
-            <Title order={2} mb="sm" mt="sm">
+            <Title order={2} size="h3">
               Edit Set
             </Title>
           </Group>

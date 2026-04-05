@@ -52,7 +52,7 @@ export function Breadcrumbs() {
   });
 
   return (
-    <MantineBreadcrumbs separator="/" mb="sm" mt={0} className={classes.breadcrumbs}>
+    <MantineBreadcrumbs separator="/" mb="md" mt={0} className={classes.breadcrumbs}>
       {items}
     </MantineBreadcrumbs>
   );

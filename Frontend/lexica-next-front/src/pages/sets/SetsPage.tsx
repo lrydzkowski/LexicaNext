@@ -7,7 +7,7 @@ export function SetsPage() {
       <Container p={0}>
         <Stack gap="lg">
           <Group justify="space-between" align="center" wrap="wrap">
-            <Title order={2} mb="sm" mt="sm">
+            <Title order={2} size="h3">
               My Vocabulary Sets
             </Title>
           </Group>
