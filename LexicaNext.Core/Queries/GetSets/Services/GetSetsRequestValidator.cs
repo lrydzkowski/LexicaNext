@@ -18,6 +18,7 @@ public class GetSetsRequestValidator : AbstractValidator<GetSetsRequest>, IGetSe
         AddValidationForPage();
         AddValidationForPageSize();
         AddValidationForSortingOrder();
+        AddValidationForSearchQuery();
         AddValidationForTimeZoneId();
     }
 
@@ -41,6 +42,13 @@ public class GetSetsRequestValidator : AbstractValidator<GetSetsRequest>, IGetSe
             .WithName(nameof(GetSetsRequest.SortingOrder))
             .WithMessage($"'{{PropertyName}}' must be one of the following: {SortingOrderConstants.Serialize()}.")
             .WithErrorCode(ValidationErrorCodes.ValueInSetValidator);
+    }
+
+    private void AddValidationForSearchQuery()
+    {
+        RuleFor(request => request.SearchQuery)
+            .MaximumLength(500)
+            .When(request => request.SearchQuery is not null);
     }
 
     private void AddValidationForTimeZoneId()

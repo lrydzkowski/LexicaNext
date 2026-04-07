@@ -1,14 +1,14 @@
 namespace LexicaNext.WebApp.Tests.Integration.Features.Sets.DeleteSets.Data.IncorrectTestCases;
 
-// Empty IDs list. Expected: 400 Bad Request.
-internal static class TestCase01
+// Too many IDs (101). Expected: 400 Bad Request.
+internal static class TestCase02
 {
     public static TestCaseData Get()
     {
         return new TestCaseData
         {
-            TestCaseId = 1,
-            Ids = []
+            TestCaseId = 2,
+            Ids = Enumerable.Range(1, 101).Select(i => Guid.NewGuid().ToString()).ToList()
         };
     }
 }

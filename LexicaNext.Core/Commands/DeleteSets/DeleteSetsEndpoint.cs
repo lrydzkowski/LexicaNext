@@ -1,5 +1,8 @@
+using FluentValidation.Results;
 using LexicaNext.Core.Commands.DeleteSets.Interfaces;
+using LexicaNext.Core.Commands.DeleteSets.Services;
 using LexicaNext.Core.Common.Infrastructure.Auth;
+using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -18,13 +21,15 @@ public static class DeleteSetsEndpoint
             .WithName(Name)
             .WithSummary("Delete multiple sets")
             .Produces(StatusCodes.Status204NoContent)
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status500InternalServerError)
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<NoContent, UnauthorizedHttpResult>> HandleAsync(
+    private static async Task<Results<ProblemHttpResult, NoContent, UnauthorizedHttpResult>> HandleAsync(
         [FromBody] DeleteSetsRequest request,
+        [FromServices] IDeleteSetsRequestValidator validator,
         [FromServices] IDeleteSetsRepository deleteSetsRepository,
         [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
@@ -34,6 +39,12 @@ public static class DeleteSetsEndpoint
         if (userId == null)
         {
             return TypedResults.Unauthorized();
+        }
+
+        ValidationResult validationResult = await validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.Problem(validationResult.ToProblemDetails());
         }
 
         List<Guid> setIds = request.Ids
