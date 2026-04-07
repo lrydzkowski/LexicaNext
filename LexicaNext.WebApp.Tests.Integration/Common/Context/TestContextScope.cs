@@ -26,6 +26,7 @@ internal class TestContextScope : IAsyncDisposable
         EnglishDictionaryApi = new EnglishDictionaryApiContextScope(WireMockServer);
         RecordingStorage = new RecordingStorageContextScope();
         Logging = new LoggingContextScope(LogMessages);
+        RateLimiting = new RateLimitingContextScope();
         Db = new DbContextScope(GetRequiredService<AppDbContext>());
     }
 
@@ -47,6 +48,8 @@ internal class TestContextScope : IAsyncDisposable
 
     public LoggingContextScope Logging { get; }
 
+    public RateLimitingContextScope RateLimiting { get; }
+
     public DbContextScope Db { get; }
 
     public ValueTask DisposeAsync()
@@ -66,6 +69,7 @@ internal class TestContextScope : IAsyncDisposable
         Factory = await EnglishDictionaryApi.InitializeAsync(Factory, testCaseData);
         Factory = await RecordingStorage.InitializeAsync(Factory, testCaseData);
         Factory = await Logging.InitializeAsync(Factory, testCaseData);
+        Factory = await RateLimiting.InitializeAsync(Factory, testCaseData);
         await Db.InitializeAsync(testCaseData);
     }
 

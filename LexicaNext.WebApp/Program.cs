@@ -43,6 +43,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseExceptionHandler();
 app.UseStatusCodePages();
+app.UseRateLimiter();
 app.UseStaticFiles();
 
 app.MapGetAppStatusEndpoint();

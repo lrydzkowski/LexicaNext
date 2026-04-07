@@ -1,8 +1,13 @@
 import { List, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { isValidationError } from './validation-errors';
+import { isRateLimitError, isValidationError } from './validation-errors';
 
 export const showErrorNotification = (title: string, error: Error) => {
+  if (isRateLimitError(error)) {
+    showErrorTextNotification(title, error.message);
+    return;
+  }
+
   if (isValidationError(error) && error.errors.length > 1) {
     showErrorListNotification(title, error.errors);
     return;

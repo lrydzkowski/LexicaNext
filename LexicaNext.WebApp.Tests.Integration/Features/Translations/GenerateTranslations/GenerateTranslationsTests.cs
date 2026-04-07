@@ -59,6 +59,15 @@ public class GenerateTranslationsTests
         await contextScope.InitializeAsync(testCase);
 
         HttpClient client = contextScope.Factory.CreateClient();
+
+        int preRequests = testCase.Data.RateLimiting?.NumberOfPreRequests ?? 0;
+        for (int i = 0; i < preRequests; i++)
+        {
+            using HttpRequestMessage preRequest = new(HttpMethod.Post, "/api/translations/generate");
+            preRequest.CreateContent(testCase.RequestBody!);
+            using HttpResponseMessage preResponse = await client.SendAsync(preRequest);
+        }
+
         using HttpRequestMessage request = new(HttpMethod.Post, "/api/translations/generate");
         if (testCase.RequestBody is not null)
         {
