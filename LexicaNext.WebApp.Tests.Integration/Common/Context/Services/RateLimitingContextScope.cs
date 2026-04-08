@@ -11,11 +11,12 @@ internal class RateLimitingContextScope
         ITestCaseData testCase
     )
     {
-        RateLimitingTestCaseData? data = testCase.Data.RateLimiting;
-        if (data is null)
-        {
-            return Task.FromResult(factory);
-        }
+        RateLimitingTestCaseData? data = testCase.Data.RateLimiting
+                                         ?? new RateLimitingTestCaseData
+                                         {
+                                             PermitLimit = int.MaxValue,
+                                             WindowTime = "00:00:01"
+                                         };
 
         factory = factory.WithCustomOptions(
             new Dictionary<string, string?>

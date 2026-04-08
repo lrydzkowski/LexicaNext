@@ -64,7 +64,11 @@ public class GenerateTranslationsTests
         for (int i = 0; i < preRequests; i++)
         {
             using HttpRequestMessage preRequest = new(HttpMethod.Post, "/api/translations/generate");
-            preRequest.CreateContent(testCase.RequestBody!);
+            if (testCase.RequestBody is not null)
+            {
+                preRequest.CreateContent(testCase.RequestBody);
+            }
+
             using HttpResponseMessage preResponse = await client.SendAsync(preRequest);
         }
 
