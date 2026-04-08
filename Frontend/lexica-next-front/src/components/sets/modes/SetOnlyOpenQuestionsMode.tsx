@@ -64,12 +64,16 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
     }
   }, [showFeedback, currentQuestion, playAudio]);
 
-  const generateNextQuestion = (currentEntries: OpenQuestionsEntry[]) => {
+  const generateNextQuestion = (currentEntries: OpenQuestionsEntry[], previousWord?: string) => {
     const shuffledEntries = [...currentEntries].sort(() => Math.random() - 0.5);
 
-    const eligibleEntries = shuffledEntries.filter((entry) => {
+    let eligibleEntries = shuffledEntries.filter((entry) => {
       return entry.englishOpenCounter < 2 || entry.nativeOpenCounter < 2;
     });
+
+    if (eligibleEntries.length > 1 && previousWord) {
+      eligibleEntries = eligibleEntries.filter((entry) => entry.word !== previousWord);
+    }
 
     if (eligibleEntries.length === 0) {
       setIsComplete(true);
@@ -152,7 +156,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
   const nextQuestion = () => {
     setShowFeedback(false);
     setUserAnswer('');
-    generateNextQuestion(entries);
+    generateNextQuestion(entries, currentQuestion?.entry.word);
   };
 
   const getProgress = () => {

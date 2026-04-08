@@ -71,11 +71,11 @@ export function SetFullMode({ set }: SetFullModeProps) {
     }
   }, [showFeedback, currentQuestion, playAudio]);
 
-  const generateNextQuestion = (currentEntries: FullModeEntry[]) => {
+  const generateNextQuestion = (currentEntries: FullModeEntry[], previousWord?: string) => {
     const shuffledEntries = [...currentEntries].sort(() => Math.random() - 0.5);
     const selectedEntries = shuffledEntries.slice(0, Math.min(7, shuffledEntries.length));
 
-    const eligibleEntries = selectedEntries.filter((entry) => {
+    let eligibleEntries = selectedEntries.filter((entry) => {
       return (
         entry.englishCloseCounter < 1 ||
         entry.nativeCloseCounter < 1 ||
@@ -83,6 +83,10 @@ export function SetFullMode({ set }: SetFullModeProps) {
         entry.nativeOpenCounter < 2
       );
     });
+
+    if (eligibleEntries.length > 1 && previousWord) {
+      eligibleEntries = eligibleEntries.filter((entry) => entry.word !== previousWord);
+    }
 
     if (eligibleEntries.length === 0) {
       const allComplete = currentEntries.every(
@@ -98,7 +102,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
         return;
       }
 
-      generateNextQuestion(currentEntries);
+      generateNextQuestion(currentEntries, previousWord);
       return;
     }
 
@@ -240,7 +244,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
   const nextQuestion = () => {
     setShowFeedback(false);
     setUserAnswer('');
-    generateNextQuestion(entries);
+    generateNextQuestion(entries, currentQuestion?.entry.word);
   };
 
   const getProgress = () => {
