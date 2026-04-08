@@ -3,6 +3,7 @@ using LexicaNext.Core.Commands.GenerateExampleSentences.Services;
 using LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Core.Common.Infrastructure.RateLimiting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -22,8 +23,10 @@ public static class GenerateExampleSentencesEndpoint
             .Produces<GenerateExampleSentencesResponse>()
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .Produces<ProblemDetails>(StatusCodes.Status429TooManyRequests)
             .Produces(StatusCodes.Status500InternalServerError)
-            .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
+            .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey)
+            .RequireRateLimiting(RateLimitingPolicyNames.AiGeneration);
     }
 
     private static async Task<Results<ProblemHttpResult, Ok<GenerateExampleSentencesResponse>>> HandleAsync(

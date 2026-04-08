@@ -79,7 +79,7 @@ public class DeleteSetsTests
             DbSetsBefore = setsBefore,
             DbSetsAfter = setsAfter,
             Request = requestBody,
-            Response = responseBody,
+            Response = responseBody.PrettifyJson(6),
             LogMessages = contextScope.LogMessages.GetSerialized(6)
         };
     }

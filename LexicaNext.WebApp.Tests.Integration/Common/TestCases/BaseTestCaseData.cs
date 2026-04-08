@@ -11,4 +11,6 @@ internal class BaseTestCaseData
     public RecordingStorageTestCaseData RecordingStorage { get; init; } = new();
 
     public LoggingTestCaseData Logging { get; init; } = new();
+
+    public RateLimitingTestCaseData? RateLimiting { get; init; }
 }

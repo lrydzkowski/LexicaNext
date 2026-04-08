@@ -51,7 +51,7 @@ export function SetContentPage() {
               <IconArrowLeft size={16} />
             </ActionIcon>
             <Stack gap={0} style={{ overflow: 'hidden' }}>
-              <Title order={2} mt="sm">
+              <Title order={2} size="h3">
                 Content Mode
               </Title>
               <Text c="dimmed" fz={{ base: 'sm', md: 'md' }} truncate>

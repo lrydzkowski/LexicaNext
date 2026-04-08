@@ -145,5 +145,22 @@
       "status": 500,
       "traceId": "Scrubbed"
     }
+  },
+  {
+    Request: {
+      Word: bright,
+      WordType: adjective,
+      Count: 3
+    },
+    TestCaseId: 7,
+    LogMessages: ,
+    StatusCode: TooManyRequests,
+    Response:
+    {
+      "type": "rate-limit-exceeded",
+      "title": "Too many requests",
+      "status": 429,
+      "detail": "You have exceeded the rate limit. Please wait a moment and try again."
+    }
   }
 ]

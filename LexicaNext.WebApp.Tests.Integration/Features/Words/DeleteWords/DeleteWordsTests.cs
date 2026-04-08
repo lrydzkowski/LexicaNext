@@ -79,7 +79,7 @@ public class DeleteWordsTests
             DbWordsBefore = wordsBefore,
             DbWordsAfter = wordsAfter,
             Request = requestBody,
-            Response = responseBody,
+            Response = responseBody.PrettifyJson(6),
             LogMessages = contextScope.LogMessages.GetSerialized(6)
         };
     }

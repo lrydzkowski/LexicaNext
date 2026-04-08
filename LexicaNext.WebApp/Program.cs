@@ -32,6 +32,8 @@ CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 WebApplication app = builder.Build();
 
+app.UseSecurityHeaders();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -41,6 +43,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseExceptionHandler();
 app.UseStatusCodePages();
+app.UseRateLimiter();
 app.UseStaticFiles();
 
 app.MapGetAppStatusEndpoint();

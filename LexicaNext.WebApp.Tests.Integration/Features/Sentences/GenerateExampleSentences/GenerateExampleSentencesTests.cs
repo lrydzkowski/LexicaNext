@@ -59,6 +59,19 @@ public class GenerateExampleSentencesTests
         await contextScope.InitializeAsync(testCase);
 
         HttpClient client = contextScope.Factory.CreateClient();
+
+        int preRequests = testCase.Data.RateLimiting?.NumberOfPreRequests ?? 0;
+        for (int i = 0; i < preRequests; i++)
+        {
+            using HttpRequestMessage preRequest = new(HttpMethod.Post, "/api/sentences/generate");
+            if (testCase.RequestBody is not null)
+            {
+                preRequest.CreateContent(testCase.RequestBody!);
+            }
+
+            using HttpResponseMessage preResponse = await client.SendAsync(preRequest);
+        }
+
         using HttpRequestMessage request = new(HttpMethod.Post, "/api/sentences/generate");
         if (testCase.RequestBody is not null)
         {
