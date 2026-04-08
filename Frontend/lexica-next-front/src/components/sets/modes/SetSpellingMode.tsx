@@ -113,11 +113,16 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
     setShowFeedback(false);
     setUserInput('');
 
-    const remainingEntries = entries.filter((entry) => entry.counter < 2);
+    let remainingEntries = entries.filter((entry) => entry.counter < 2);
 
     if (remainingEntries.length === 0) {
       setIsComplete(true);
       return;
+    }
+
+    if (remainingEntries.length > 1) {
+      const currentWord = entries[currentEntryIndex]?.word;
+      remainingEntries = remainingEntries.filter((entry) => entry.word !== currentWord);
     }
 
     const shuffled = remainingEntries.sort(() => Math.random() - 0.5);
