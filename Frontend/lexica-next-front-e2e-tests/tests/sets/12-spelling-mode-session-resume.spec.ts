@@ -71,19 +71,21 @@ test.describe('spelling mode session resume', () => {
     await warmUpRecordings(page, words);
     const { setName, setId, wordIds } = await createSpellingSet(page, words);
 
-    await page.goto(`/sets/${setId}/spelling-mode`);
+    try {
+      await page.goto(`/sets/${setId}/spelling-mode`);
 
-    await answerSpelling(page, `apple`);
-    await expect(page.getByText('Correct!')).toBeVisible();
+      await answerSpelling(page, `apple`);
+      await expect(page.getByText('Correct!')).toBeVisible();
 
-    const session = await expectSessionStored(page, setId, 'spelling');
-    expect(session.setId).toBe(setId);
-    expect(session.setName).toBe(setName);
-    expect(session.mode).toBe('spelling');
-    expect(session.entries).toHaveLength(1);
-    expect((session.entries[0] as { counter: number }).counter).toBe(1);
-
-    await cleanupSet(page, setId, wordIds);
+      const session = await expectSessionStored(page, setId, 'spelling');
+      expect(session.setId).toBe(setId);
+      expect(session.setName).toBe(setName);
+      expect(session.mode).toBe('spelling');
+      expect(session.entries).toHaveLength(1);
+      expect((session.entries[0] as { counter: number }).counter).toBe(1);
+    } finally {
+      await cleanupSet(page, setId, wordIds);
+    }
   });
 
   test('resume modal appears on reload with correct set name and mode label', async ({ page }) => {
@@ -91,15 +93,17 @@ test.describe('spelling mode session resume', () => {
     await warmUpRecordings(page, words);
     const { setName, setId, wordIds } = await createSpellingSet(page, words);
 
-    await page.goto(`/sets/${setId}/spelling-mode`);
-    await answerSpelling(page, `book`);
-    await expect(page.getByText('Correct!')).toBeVisible();
+    try {
+      await page.goto(`/sets/${setId}/spelling-mode`);
+      await answerSpelling(page, `book`);
+      await expect(page.getByText('Correct!')).toBeVisible();
 
-    await page.reload();
+      await page.reload();
 
-    await expectResumeModalVisible(page, setName, 'Spelling Mode');
-
-    await cleanupSet(page, setId, wordIds);
+      await expectResumeModalVisible(page, setName, 'Spelling Mode');
+    } finally {
+      await cleanupSet(page, setId, wordIds);
+    }
   });
 
   test('Continue restores progress and completion requires fewer answers', async ({ page }) => {
@@ -107,32 +111,34 @@ test.describe('spelling mode session resume', () => {
     await warmUpRecordings(page, words);
     const { setName, setId, wordIds } = await createSpellingSet(page, words);
 
-    await page.goto(`/sets/${setId}/spelling-mode`);
-    await answerSpelling(page, `river`);
-    await expect(page.getByText('Correct!')).toBeVisible();
+    try {
+      await page.goto(`/sets/${setId}/spelling-mode`);
+      await answerSpelling(page, `river`);
+      await expect(page.getByText('Correct!')).toBeVisible();
 
-    const beforeReload = await expectSessionStored(page, setId, 'spelling');
-    expect((beforeReload.entries[0] as { counter: number }).counter).toBe(1);
+      const beforeReload = await expectSessionStored(page, setId, 'spelling');
+      expect((beforeReload.entries[0] as { counter: number }).counter).toBe(1);
 
-    await page.reload();
+      await page.reload();
 
-    await expectResumeModalVisible(page, setName, 'Spelling Mode');
-    await page.getByRole('dialog', { name: 'Continue Learning?' }).getByRole('button', { name: 'Continue' }).click();
+      await expectResumeModalVisible(page, setName, 'Spelling Mode');
+      await page.getByRole('dialog', { name: 'Continue Learning?' }).getByRole('button', { name: 'Continue' }).click();
 
-    await expect(page).toHaveURL(new RegExp(`/sets/${setId}/spelling-mode`));
-    await expect(page.getByPlaceholder('Type the word you heard...')).toBeVisible({ timeout: 10000 });
+      await expect(page).toHaveURL(new RegExp(`/sets/${setId}/spelling-mode`));
+      await expect(page.getByPlaceholder('Type the word you heard...')).toBeVisible({ timeout: 10000 });
 
-    const afterResume = await expectSessionStored(page, setId, 'spelling');
-    expect((afterResume.entries[0] as { counter: number }).counter).toBe(1);
+      const afterResume = await expectSessionStored(page, setId, 'spelling');
+      expect((afterResume.entries[0] as { counter: number }).counter).toBe(1);
 
-    await answerSpelling(page, `river`);
-    await expect(page.getByText('Correct!')).toBeVisible();
-    await page.getByRole('button', { name: 'Continue' }).click();
+      await answerSpelling(page, `river`);
+      await expect(page.getByText('Correct!')).toBeVisible();
+      await page.getByRole('button', { name: 'Continue' }).click();
 
-    await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 10000 });
-    await expectSessionCleared(page, setId, 'spelling');
-
-    await cleanupSet(page, setId, wordIds);
+      await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 10000 });
+      await expectSessionCleared(page, setId, 'spelling');
+    } finally {
+      await cleanupSet(page, setId, wordIds);
+    }
   });
 
   test('Start Fresh clears the saved session and dismisses the modal', async ({ page }) => {
@@ -140,21 +146,23 @@ test.describe('spelling mode session resume', () => {
     await warmUpRecordings(page, words);
     const { setId, wordIds } = await createSpellingSet(page, words);
 
-    await page.goto(`/sets/${setId}/spelling-mode`);
-    await answerSpelling(page, `tree`);
-    await expect(page.getByText('Correct!')).toBeVisible();
-    await expectSessionStored(page, setId, 'spelling');
+    try {
+      await page.goto(`/sets/${setId}/spelling-mode`);
+      await answerSpelling(page, `tree`);
+      await expect(page.getByText('Correct!')).toBeVisible();
+      await expectSessionStored(page, setId, 'spelling');
 
-    await page.reload();
+      await page.reload();
 
-    const modal = page.getByRole('dialog', { name: 'Continue Learning?' });
-    await expect(modal).toBeVisible();
-    await modal.getByRole('button', { name: 'Start Fresh' }).click();
-    await expect(modal).not.toBeVisible();
+      const modal = page.getByRole('dialog', { name: 'Continue Learning?' });
+      await expect(modal).toBeVisible();
+      await modal.getByRole('button', { name: 'Start Fresh' }).click();
+      await expect(modal).not.toBeVisible();
 
-    await expectSessionCleared(page, setId, 'spelling');
-
-    await cleanupSet(page, setId, wordIds);
+      await expectSessionCleared(page, setId, 'spelling');
+    } finally {
+      await cleanupSet(page, setId, wordIds);
+    }
   });
 
   test('session is cleared on completion', async ({ page }) => {
@@ -162,17 +170,19 @@ test.describe('spelling mode session resume', () => {
     await warmUpRecordings(page, words);
     const { setId, wordIds } = await createSpellingSet(page, words);
 
-    await page.goto(`/sets/${setId}/spelling-mode`);
+    try {
+      await page.goto(`/sets/${setId}/spelling-mode`);
 
-    for (let i = 0; i < 2; i++) {
-      await answerSpelling(page, `stone`);
-      await expect(page.getByText('Correct!')).toBeVisible();
-      await page.getByRole('button', { name: 'Continue' }).click();
+      for (let i = 0; i < 2; i++) {
+        await answerSpelling(page, `stone`);
+        await expect(page.getByText('Correct!')).toBeVisible();
+        await page.getByRole('button', { name: 'Continue' }).click();
+      }
+
+      await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 10000 });
+      await expectSessionCleared(page, setId, 'spelling');
+    } finally {
+      await cleanupSet(page, setId, wordIds);
     }
-
-    await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 10000 });
-    await expectSessionCleared(page, setId, 'spelling');
-
-    await cleanupSet(page, setId, wordIds);
   });
 });
