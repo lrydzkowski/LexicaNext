@@ -18,9 +18,10 @@ import { links } from '@/config/links';
 import { serialize } from '@/utils/utils';
 import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
+import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
 
-interface SpellingEntry extends EntryDto {
+export interface SpellingEntry extends EntryDto {
   counter: number;
 }
 
@@ -53,12 +54,22 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   });
 
   useEffect(() => {
-    if (set?.entries) {
-      const shuffledEntries = [...set.entries]
-        .sort(() => Math.random() - 0.5)
-        .map((entry) => ({ ...entry, counter: 0 }));
-      setEntries(shuffledEntries);
+    if (!set?.entries || !set.setId) {
+      return;
     }
+
+    const saved = loadSession<SpellingEntry>(set.setId, 'spelling');
+    if (saved && validateSession(saved, set.entries)) {
+      setEntries(saved);
+      return;
+    }
+
+    if (saved) {
+      clearSession(set.setId, 'spelling');
+    }
+
+    const shuffledEntries = [...set.entries].sort(() => Math.random() - 0.5).map((entry) => ({ ...entry, counter: 0 }));
+    setEntries(shuffledEntries);
   }, [set]);
 
   useEffect(() => {
@@ -80,6 +91,9 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
         const updatedEntries = [...entries];
         updatedEntries[currentEntryIndex].counter += 1;
         setEntries(updatedEntries);
+        if (set?.setId) {
+          saveSession(set.setId, set.name ?? '', 'spelling', updatedEntries);
+        }
         nextQuestion();
 
         return;
@@ -107,6 +121,10 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
       updatedEntries[currentEntryIndex].counter = 0;
     }
     setEntries(updatedEntries);
+
+    if (set?.setId) {
+      saveSession(set.setId, set.name ?? '', 'spelling', updatedEntries);
+    }
   };
 
   const nextQuestion = () => {
@@ -117,6 +135,9 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
 
     if (remainingEntries.length === 0) {
       setIsComplete(true);
+      if (set?.setId) {
+        clearSession(set.setId, 'spelling');
+      }
       return;
     }
 

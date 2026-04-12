@@ -6,9 +6,10 @@ import { links } from '@/config/links';
 import { compareAnswers, serialize } from '@/utils/utils';
 import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
+import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
 
-interface OpenQuestionsEntry extends EntryDto {
+export interface OpenQuestionsEntry extends EntryDto {
   englishOpenCounter: number;
   nativeOpenCounter: number;
 }
@@ -44,15 +45,28 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
   });
 
   useEffect(() => {
-    if (set?.entries) {
-      const initialEntries = set.entries.map((entry) => ({
-        ...entry,
-        englishOpenCounter: 0,
-        nativeOpenCounter: 0,
-      }));
-      setEntries(initialEntries);
-      generateNextQuestion(initialEntries);
+    if (!set?.entries || !set.setId) {
+      return;
     }
+
+    const saved = loadSession<OpenQuestionsEntry>(set.setId, 'open-questions');
+    if (saved && validateSession(saved, set.entries)) {
+      setEntries(saved);
+      generateNextQuestion(saved);
+      return;
+    }
+
+    if (saved) {
+      clearSession(set.setId, 'open-questions');
+    }
+
+    const initialEntries = set.entries.map((entry) => ({
+      ...entry,
+      englishOpenCounter: 0,
+      nativeOpenCounter: 0,
+    }));
+    setEntries(initialEntries);
+    generateNextQuestion(initialEntries);
   }, [set]);
 
   useEffect(() => {
@@ -77,6 +91,9 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
 
     if (eligibleEntries.length === 0) {
       setIsComplete(true);
+      if (set?.setId) {
+        clearSession(set.setId, 'open-questions');
+      }
       return;
     }
 
@@ -151,6 +168,10 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
     }
 
     setEntries(updatedEntries);
+
+    if (set?.setId) {
+      saveSession(set.setId, set.name ?? '', 'open-questions', updatedEntries);
+    }
   };
 
   const nextQuestion = () => {
