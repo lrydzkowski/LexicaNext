@@ -6,9 +6,10 @@ import { links } from '@/config/links';
 import { compareAnswers, serialize } from '@/utils/utils';
 import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
+import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
 
-interface FullModeEntry extends EntryDto {
+export interface FullModeEntry extends EntryDto {
   englishCloseCounter: number;
   nativeCloseCounter: number;
   englishOpenCounter: number;
@@ -48,17 +49,30 @@ export function SetFullMode({ set }: SetFullModeProps) {
   });
 
   useEffect(() => {
-    if (set?.entries) {
-      const initialEntries = set.entries.map((entry) => ({
-        ...entry,
-        englishCloseCounter: 0,
-        nativeCloseCounter: 0,
-        englishOpenCounter: 0,
-        nativeOpenCounter: 0,
-      }));
-      setEntries(initialEntries);
-      generateNextQuestion(initialEntries);
+    if (!set?.entries || !set.setId) {
+      return;
     }
+
+    const saved = loadSession<FullModeEntry>(set.setId, 'full');
+    if (saved && validateSession(saved, set.entries)) {
+      setEntries(saved);
+      generateNextQuestion(saved);
+      return;
+    }
+
+    if (saved) {
+      clearSession(set.setId, 'full');
+    }
+
+    const initialEntries = set.entries.map((entry) => ({
+      ...entry,
+      englishCloseCounter: 0,
+      nativeCloseCounter: 0,
+      englishOpenCounter: 0,
+      nativeOpenCounter: 0,
+    }));
+    setEntries(initialEntries);
+    generateNextQuestion(initialEntries);
   }, [set]);
 
   useEffect(() => {
@@ -99,6 +113,9 @@ export function SetFullMode({ set }: SetFullModeProps) {
 
       if (allComplete) {
         setIsComplete(true);
+        if (set?.setId) {
+          clearSession(set.setId, 'full');
+        }
         return;
       }
 
@@ -239,6 +256,10 @@ export function SetFullMode({ set }: SetFullModeProps) {
     }
 
     setEntries(updatedEntries);
+
+    if (set?.setId) {
+      saveSession(set.setId, set.name ?? '', 'full', updatedEntries);
+    }
   };
 
   const nextQuestion = () => {

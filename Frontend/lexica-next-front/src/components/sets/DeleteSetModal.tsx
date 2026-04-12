@@ -20,7 +20,8 @@ export function DeleteSetModal({ opened, onClose, onConfirm, isDeleting, sets }:
       onClose={onClose}
       title="Delete Sets"
       closeOnClickOutside={!isDeleting}
-      closeOnEscape={!isDeleting}>
+      closeOnEscape={!isDeleting}
+      zIndex={400}>
       <Stack gap="md">
         <Text>Are you sure you want to delete the following sets? This action cannot be undone.</Text>
         <List size="sm" spacing="xs" styles={{ itemWrapper: { width: '100%' }, itemLabel: { width: '100%' } }}>
