@@ -3,6 +3,69 @@ import { expect, type Page } from '@playwright/test';
 export { generateTestPrefix, captureAuthToken, createWordViaApi } from '../words/helpers';
 import { generateTestPrefix } from '../words/helpers';
 
+export type SessionMode = 'spelling' | 'full' | 'open-questions';
+
+const SESSION_KEY_PREFIX = 'lexica-session:';
+
+function buildSessionKey(setId: string, mode: SessionMode): string {
+  return `${SESSION_KEY_PREFIX}${setId}:${mode}`;
+}
+
+export interface StoredSession {
+  setId: string;
+  setName: string;
+  mode: SessionMode;
+  timestamp: number;
+  entries: Array<Record<string, unknown>>;
+}
+
+export async function readSessionFromStorage(
+  page: Page,
+  setId: string,
+  mode: SessionMode,
+): Promise<StoredSession | null> {
+  const key = buildSessionKey(setId, mode);
+  const raw = await page.evaluate((k) => window.localStorage.getItem(k), key);
+  if (!raw) {
+    return null;
+  }
+  return JSON.parse(raw) as StoredSession;
+}
+
+export async function clearAllSessionStorage(page: Page): Promise<void> {
+  await page.evaluate((prefix) => {
+    const keys: string[] = [];
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const k = window.localStorage.key(i);
+      if (k && k.startsWith(prefix)) {
+        keys.push(k);
+      }
+    }
+    keys.forEach((k) => window.localStorage.removeItem(k));
+  }, SESSION_KEY_PREFIX);
+}
+
+export async function expectSessionStored(page: Page, setId: string, mode: SessionMode): Promise<StoredSession> {
+  const session = await readSessionFromStorage(page, setId, mode);
+  expect(session, `expected a stored session at lexica-session:${setId}:${mode}`).not.toBeNull();
+  return session!;
+}
+
+export async function expectSessionCleared(page: Page, setId: string, mode: SessionMode): Promise<void> {
+  const session = await readSessionFromStorage(page, setId, mode);
+  expect(session, `expected no stored session at lexica-session:${setId}:${mode}`).toBeNull();
+}
+
+export async function expectResumeModalVisible(page: Page, setName: string, modeLabel: string): Promise<void> {
+  const modal = page.getByRole('dialog', { name: 'Continue Learning?' });
+  await expect(modal).toBeVisible();
+  await expect(modal.getByText('You have an unfinished learning session:')).toBeVisible();
+  await expect(modal.getByText(setName)).toBeVisible();
+  await expect(modal.getByText(modeLabel)).toBeVisible();
+  await expect(modal.getByRole('button', { name: 'Start Fresh' })).toBeVisible();
+  await expect(modal.getByRole('button', { name: 'Continue' })).toBeVisible();
+}
+
 export async function createSetViaApi(page: Page, wordIds: string[], authToken: string): Promise<string> {
   const maxRetries = 3;
 
@@ -94,7 +157,10 @@ export async function navigateToSetAction(page: Page, setName: string, action: s
   if (currentValue !== setName) {
     await searchSet(page, setName);
   }
-  await page.getByRole('button', { name: `Actions for ${setName}` }).first().click();
+  await page
+    .getByRole('button', { name: `Actions for ${setName}` })
+    .first()
+    .click();
   await page.getByRole('menuitem', { name: action }).click();
 }
 
