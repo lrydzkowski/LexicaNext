@@ -113,7 +113,7 @@ export function validateSession(savedEntries: ModeEntriesDto, currentEntries: En
   }
 
   for (const word of currentWords) {
-    if (!savedWords.has(word!)) {
+    if (word && !savedWords.has(word)) {
       return false;
     }
   }
