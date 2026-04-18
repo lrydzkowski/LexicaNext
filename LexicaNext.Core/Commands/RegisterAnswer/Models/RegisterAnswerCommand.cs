@@ -2,6 +2,8 @@ namespace LexicaNext.Core.Commands.RegisterAnswer.Models;
 
 public class RegisterAnswerCommand
 {
+    public string UserId { get; init; } = "";
+
     public string Question { get; init; } = "";
 
     public string? GivenAnswer { get; init; }

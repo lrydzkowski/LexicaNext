@@ -11,6 +11,7 @@ internal class AnswerEntityTypeConfiguration : IEntityTypeConfiguration<AnswerEn
         SetTableName(builder);
         SetPrimaryKey(builder);
         ConfigureColumns(builder);
+        ConfigureIndexes(builder);
     }
 
     private void SetTableName(EntityTypeBuilder<AnswerEntity> builder)
@@ -29,6 +30,11 @@ internal class AnswerEntityTypeConfiguration : IEntityTypeConfiguration<AnswerEn
             .HasColumnName("answer_id")
             .IsRequired();
 
+        builder.Property(entity => entity.UserId)
+            .HasColumnName("user_id")
+            .IsRequired()
+            .HasMaxLength(200);
+
         builder.Property(entity => entity.Question)
             .HasColumnName("question")
             .HasMaxLength(500)
@@ -46,5 +52,10 @@ internal class AnswerEntityTypeConfiguration : IEntityTypeConfiguration<AnswerEn
         builder.Property(entity => entity.AnsweredAt)
             .HasColumnName("answered_at")
             .IsRequired();
+    }
+
+    private void ConfigureIndexes(EntityTypeBuilder<AnswerEntity> builder)
+    {
+        builder.HasIndex(entity => entity.UserId);
     }
 }

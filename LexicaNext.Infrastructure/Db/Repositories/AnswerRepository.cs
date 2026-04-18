@@ -22,6 +22,7 @@ internal class AnswerRepository : IScopedService, IRegisterAnswerRepository
         AnswerEntity answerEntity = new()
         {
             AnswerId = Guid.CreateVersion7(),
+            UserId = registerAnswerCommand.UserId,
             Question = registerAnswerCommand.Question,
             GivenAnswer = registerAnswerCommand.GivenAnswer,
             ExpectedAnswer = registerAnswerCommand.ExpectedAnswer,

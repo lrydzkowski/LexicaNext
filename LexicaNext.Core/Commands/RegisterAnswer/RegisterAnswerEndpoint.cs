@@ -4,6 +4,7 @@ using LexicaNext.Core.Commands.RegisterAnswer.Models;
 using LexicaNext.Core.Commands.RegisterAnswer.Services;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -27,21 +28,28 @@ public static class RegisterAnswerEndpoint
             .RequireAuthorization(AuthorizationPolicies.Auth0OrApiKey);
     }
 
-    private static async Task<Results<ProblemHttpResult, NoContent>> HandleAsync(
+    private static async Task<Results<ProblemHttpResult, NoContent, UnauthorizedHttpResult>> HandleAsync(
         [AsParameters] RegisterAnswerRequest request,
         [FromServices] IRegisterAnswerRequestValidator validator,
         [FromServices] IRegisterAnswerCommandMapper registerAnswerCommandMapper,
         [FromServices] IRegisterAnswerRepository registerAnswerRepository,
+        [FromServices] IUserContextResolver userContextResolver,
         CancellationToken cancellationToken
     )
     {
+        string? userId = userContextResolver.GetUserId();
+        if (userId == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
         ValidationResult? validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {
             return TypedResults.Problem(validationResult.ToProblemDetails());
         }
 
-        RegisterAnswerCommand command = registerAnswerCommandMapper.Map(request);
+        RegisterAnswerCommand command = registerAnswerCommandMapper.Map(userId, request);
         await registerAnswerRepository.RegisterAnswerAsync(command);
 
         return TypedResults.NoContent();

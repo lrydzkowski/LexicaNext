@@ -4,6 +4,7 @@
     DbAnswersAfter: [
       {
         AnswerId: Guid_1,
+        UserId: test-user-id,
         Question: What is the meaning of 'bright'?,
         GivenAnswer: jasny,
         ExpectedAnswer: jasny, świetlany,
@@ -25,6 +26,7 @@
     DbAnswersAfter: [
       {
         AnswerId: Guid_2,
+        UserId: test-user-id,
         Question: Translate 'apple' to Polish,
         GivenAnswer: ,
         ExpectedAnswer: jabłko,

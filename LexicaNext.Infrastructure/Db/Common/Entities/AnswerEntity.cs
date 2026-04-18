@@ -6,6 +6,8 @@ internal class AnswerEntity
 
     public Guid AnswerId { get; set; }
 
+    public string UserId { get; set; } = "";
+
     public string Question { get; set; } = "";
 
     public string? GivenAnswer { get; set; }
