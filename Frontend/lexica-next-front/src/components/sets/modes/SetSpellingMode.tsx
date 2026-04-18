@@ -242,7 +242,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
                   size="lg"
                   onKeyDown={handleKeyDown}
                   autoFocus
-                  spellCheck
+                  spellCheck={false}
                   lang="en"
                 />
                 <Button size="lg" onClick={checkAnswer}>
