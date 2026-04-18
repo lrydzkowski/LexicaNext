@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { Alert, Button, Container, Group, Paper, Progress, Stack, Text, TextInput, Title } from '@mantine/core';
 import { links } from '@/config/links';
 import { compareAnswers, serialize } from '@/utils/utils';
-import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
+import { type EntryDto, type GetSetResponse, useRegisterAnswer } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
 import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
@@ -38,6 +38,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const registerAnswer = useRegisterAnswer();
 
   const { playAudio } = usePronunciation(currentQuestion?.entry.word || '', currentQuestion?.entry.wordType, {
     autoPlay: false,
@@ -146,6 +147,12 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
     }
 
     const isCorrect = compareAnswers(userAnswer, currentQuestion.correctAnswers);
+
+    registerAnswer.mutate({
+      question: currentQuestion.question,
+      givenAnswer: userAnswer,
+      expectedAnswer: serialize(currentQuestion.correctAnswers),
+    });
 
     setIsCorrect(isCorrect);
     setShowFeedback(true);
