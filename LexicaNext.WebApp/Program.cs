@@ -19,6 +19,7 @@ using LexicaNext.Core.Queries.GetWords;
 using LexicaNext.Core.Queries.GetWordSets;
 using LexicaNext.Infrastructure;
 using LexicaNext.WebApp;
+using LexicaNext.WebApp.Security;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,8 @@ CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 WebApplication app = builder.Build();
 
-app.UseSecurityHeaders(SecurityHeadersPolicyFactory.Build(builder.Configuration));
+app.UseSecurityHeaders(builder.Configuration);
+app.UseApiSecurityHeaders();
 
 if (app.Environment.IsDevelopment())
 {
