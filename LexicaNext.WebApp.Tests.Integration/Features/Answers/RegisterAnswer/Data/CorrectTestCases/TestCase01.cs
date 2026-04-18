@@ -12,9 +12,11 @@ internal static class TestCase01
             TestCaseId = 1,
             RequestBody = new RegisterAnswerRequestPayload
             {
+                ModeType = "full",
                 Question = "What is the meaning of 'bright'?",
                 GivenAnswer = "jasny",
-                ExpectedAnswer = "jasny, świetlany"
+                ExpectedAnswer = "jasny, świetlany",
+                IsCorrect = true
             }
         };
     }

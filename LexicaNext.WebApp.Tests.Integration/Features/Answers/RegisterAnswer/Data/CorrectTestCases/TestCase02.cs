@@ -12,9 +12,11 @@ internal static class TestCase02
             TestCaseId = 2,
             RequestBody = new RegisterAnswerRequestPayload
             {
+                ModeType = "open-questions",
                 Question = "Translate 'apple' to Polish",
                 GivenAnswer = null,
-                ExpectedAnswer = "jabłko"
+                ExpectedAnswer = "jabłko",
+                IsCorrect = false
             }
         };
     }

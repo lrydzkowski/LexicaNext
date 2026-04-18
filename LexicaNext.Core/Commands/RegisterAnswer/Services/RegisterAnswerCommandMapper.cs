@@ -16,9 +16,11 @@ internal class RegisterAnswerCommandMapper
         return new RegisterAnswerCommand
         {
             UserId = userId,
+            ModeType = request.Payload?.ModeType ?? "",
             Question = request.Payload?.Question ?? "",
             GivenAnswer = request.Payload?.GivenAnswer ?? "",
-            ExpectedAnswer = request.Payload?.ExpectedAnswer ?? ""
+            ExpectedAnswer = request.Payload?.ExpectedAnswer ?? "",
+            IsCorrect = request.Payload?.IsCorrect ?? false
         };
     }
 }

@@ -149,9 +149,11 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
     const isCorrect = compareAnswers(userAnswer, currentQuestion.correctAnswers);
 
     registerAnswer.mutate({
+      modeType: 'open-questions',
       question: currentQuestion.question,
       givenAnswer: userAnswer,
       expectedAnswer: serialize(currentQuestion.correctAnswers),
+      isCorrect,
     });
 
     setIsCorrect(isCorrect);

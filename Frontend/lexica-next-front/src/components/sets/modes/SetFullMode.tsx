@@ -229,9 +229,11 @@ export function SetFullMode({ set }: SetFullModeProps) {
     const isCorrect = compareAnswers(userAnswer, currentQuestion.correctAnswers);
 
     registerAnswer.mutate({
+      modeType: 'full',
       question: currentQuestion.question,
       givenAnswer: userAnswer,
       expectedAnswer: serialize(currentQuestion.correctAnswers),
+      isCorrect,
     });
 
     setIsCorrect(isCorrect);

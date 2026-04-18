@@ -5,16 +5,20 @@
       {
         AnswerId: Guid_1,
         UserId: test-user-id,
+        ModeType: full,
         Question: What is the meaning of 'bright'?,
         GivenAnswer: jasny,
         ExpectedAnswer: jasny, świetlany,
+        IsCorrect: true,
         AnsweredAt: DateTimeOffset_1
       }
     ],
     Request: {
+      ModeType: full,
       Question: What is the meaning of 'bright'?,
       GivenAnswer: jasny,
-      ExpectedAnswer: jasny, świetlany
+      ExpectedAnswer: jasny, świetlany,
+      IsCorrect: true
     },
     TestCaseId: 1,
     LogMessages: ,
@@ -27,16 +31,20 @@
       {
         AnswerId: Guid_2,
         UserId: test-user-id,
+        ModeType: open-questions,
         Question: Translate 'apple' to Polish,
         GivenAnswer: ,
         ExpectedAnswer: jabłko,
+        IsCorrect: false,
         AnsweredAt: DateTimeOffset_2
       }
     ],
     Request: {
+      ModeType: open-questions,
       Question: Translate 'apple' to Polish,
       GivenAnswer: null,
-      ExpectedAnswer: jabłko
+      ExpectedAnswer: jabłko,
+      IsCorrect: false
     },
     TestCaseId: 2,
     LogMessages: ,

@@ -35,6 +35,11 @@ internal class AnswerEntityTypeConfiguration : IEntityTypeConfiguration<AnswerEn
             .IsRequired()
             .HasMaxLength(200);
 
+        builder.Property(entity => entity.ModeType)
+            .HasColumnName("mode_type")
+            .IsRequired()
+            .HasMaxLength(50);
+
         builder.Property(entity => entity.Question)
             .HasColumnName("question")
             .HasMaxLength(500)
@@ -48,6 +53,10 @@ internal class AnswerEntityTypeConfiguration : IEntityTypeConfiguration<AnswerEn
             .HasColumnName("expected_answer")
             .IsRequired()
             .HasMaxLength(500);
+
+        builder.Property(entity => entity.IsCorrect)
+            .HasColumnName("is_correct")
+            .IsRequired();
 
         builder.Property(entity => entity.AnsweredAt)
             .HasColumnName("answered_at")

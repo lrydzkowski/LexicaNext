@@ -304,9 +304,11 @@ export interface components {
             instance?: null | string;
         };
         RegisterAnswerRequestPayload: {
+            modeType?: null | string;
             question?: null | string;
             givenAnswer?: null | string;
             expectedAnswer?: null | string;
+            isCorrect?: null | boolean;
         };
         SetRecordDto: {
             /** Format: uuid */

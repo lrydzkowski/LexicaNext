@@ -23,9 +23,11 @@ internal class AnswerRepository : IScopedService, IRegisterAnswerRepository
         {
             AnswerId = Guid.CreateVersion7(),
             UserId = registerAnswerCommand.UserId,
+            ModeType = registerAnswerCommand.ModeType,
             Question = registerAnswerCommand.Question,
             GivenAnswer = registerAnswerCommand.GivenAnswer,
             ExpectedAnswer = registerAnswerCommand.ExpectedAnswer,
+            IsCorrect = registerAnswerCommand.IsCorrect,
             AnsweredAt = _dateTimeOffsetProvider.UtcNow
         };
         _dbContext.Answers.Add(answerEntity);

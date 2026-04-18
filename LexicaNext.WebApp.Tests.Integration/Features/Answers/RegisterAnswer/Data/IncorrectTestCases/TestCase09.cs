@@ -2,20 +2,20 @@ using LexicaNext.Core.Commands.RegisterAnswer;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Answers.RegisterAnswer.Data.IncorrectTestCases;
 
-// Empty expectedAnswer string. Expected: 400 Bad Request.
-internal static class TestCase03
+// ModeType is not one of the allowed values. Expected: 400 Bad Request.
+internal static class TestCase09
 {
     public static TestCaseData Get()
     {
         return new TestCaseData
         {
-            TestCaseId = 3,
+            TestCaseId = 9,
             RequestBody = new RegisterAnswerRequestPayload
             {
-                ModeType = "full",
+                ModeType = "invalid-mode",
                 Question = "What is the meaning of 'test'?",
                 GivenAnswer = "test",
-                ExpectedAnswer = "",
+                ExpectedAnswer = "test",
                 IsCorrect = true
             }
         };

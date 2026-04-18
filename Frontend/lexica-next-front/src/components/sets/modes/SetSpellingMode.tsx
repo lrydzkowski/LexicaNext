@@ -113,9 +113,11 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
     const correct = userInput.trim().toLowerCase() === (currentEntry.word || '').toLowerCase();
 
     registerAnswer.mutate({
+      modeType: 'spelling',
       question: 'Listen and spell the word',
       givenAnswer: userInput,
       expectedAnswer: currentEntry.word ?? '',
+      isCorrect: correct,
     });
 
     setIsCorrect(correct);
