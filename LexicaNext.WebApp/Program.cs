@@ -32,7 +32,7 @@ CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 WebApplication app = builder.Build();
 
-app.UseSecurityHeaders();
+app.UseSecurityHeaders(SecurityHeadersPolicyFactory.Build(builder.Configuration));
 
 if (app.Environment.IsDevelopment())
 {
