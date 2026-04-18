@@ -36,6 +36,9 @@ createRoot(document.getElementById('root')!).render(
           <Auth0Provider
             domain={appConfig.auth0Domain}
             clientId={appConfig.auth0ClientId}
+            useRefreshTokens
+            useRefreshTokensFallback
+            cacheLocation="localstorage"
             authorizationParams={{
               ...appConfig.buildGetTokenSilentlyOptions().authorizationParams,
               redirect_uri: window.location.origin,

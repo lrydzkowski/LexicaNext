@@ -58,8 +58,8 @@ internal class RecordingService : IScopedService, IRecordingApi
                 continue;
             }
 
-            HtmlNode? nextNode = wordNode.ParentNode.NextSibling;
-            if (!nextNode.HasChildNodes)
+            HtmlNode? nextNode = wordNode.ParentNode?.NextSibling;
+            if (nextNode is null or { HasChildNodes: false })
             {
                 continue;
             }
