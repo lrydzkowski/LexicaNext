@@ -12,9 +12,12 @@ internal static class TestCase06
             TestCaseId = 6,
             RequestBody = new RegisterAnswerRequestPayload
             {
-                Question = "What is the meaning of 'test'?",
+                ModeType = "full",
+                QuestionType = "english-open",
+                Question = "test",
                 GivenAnswer = "test",
-                ExpectedAnswer = new string('a', 501)
+                ExpectedAnswer = new string('a', 501),
+                IsCorrect = true
             }
         };
     }

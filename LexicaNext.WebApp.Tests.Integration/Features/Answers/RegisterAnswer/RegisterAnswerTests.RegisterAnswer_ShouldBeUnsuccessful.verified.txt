@@ -27,9 +27,12 @@
     DbAnswersBefore: [],
     DbAnswersAfter: [],
     Request: {
+      ModeType: full,
+      QuestionType: english-open,
       Question: ,
       GivenAnswer: test,
-      ExpectedAnswer: test
+      ExpectedAnswer: test,
+      IsCorrect: true
     },
     TestCaseId: 2,
     LogMessages: ,
@@ -55,9 +58,12 @@
     DbAnswersBefore: [],
     DbAnswersAfter: [],
     Request: {
-      Question: What is the meaning of 'test'?,
+      ModeType: full,
+      QuestionType: english-open,
+      Question: test,
       GivenAnswer: test,
-      ExpectedAnswer: 
+      ExpectedAnswer: ,
+      IsCorrect: true
     },
     TestCaseId: 3,
     LogMessages: ,
@@ -83,9 +89,12 @@
     DbAnswersBefore: [],
     DbAnswersAfter: [],
     Request: {
+      ModeType: full,
+      QuestionType: english-open,
       Question: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
       GivenAnswer: test,
-      ExpectedAnswer: test
+      ExpectedAnswer: test,
+      IsCorrect: true
     },
     TestCaseId: 4,
     LogMessages: ,
@@ -111,9 +120,12 @@
     DbAnswersBefore: [],
     DbAnswersAfter: [],
     Request: {
-      Question: What is the meaning of 'test'?,
+      ModeType: full,
+      QuestionType: english-open,
+      Question: test,
       GivenAnswer: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-      ExpectedAnswer: test
+      ExpectedAnswer: test,
+      IsCorrect: true
     },
     TestCaseId: 5,
     LogMessages: ,
@@ -139,9 +151,12 @@
     DbAnswersBefore: [],
     DbAnswersAfter: [],
     Request: {
-      Question: What is the meaning of 'test'?,
+      ModeType: full,
+      QuestionType: english-open,
+      Question: test,
       GivenAnswer: test,
-      ExpectedAnswer: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      ExpectedAnswer: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+      IsCorrect: true
     },
     TestCaseId: 6,
     LogMessages: ,
@@ -157,6 +172,223 @@
           "propertyName": "Payload.ExpectedAnswer",
           "errorMessage": "The length of \u0027ExpectedAnswer\u0027 must be 500 characters or fewer. You entered 501 characters.",
           "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [],
+    Request: {
+      ModeType: ,
+      QuestionType: english-open,
+      Question: test,
+      GivenAnswer: test,
+      ExpectedAnswer: test,
+      IsCorrect: true
+    },
+    TestCaseId: 7,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.ModeType",
+          "errorMessage": "\u0027ModeType\u0027 must not be empty.",
+          "attemptedValue": "",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [],
+    Request: {
+      ModeType: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+      QuestionType: english-open,
+      Question: test,
+      GivenAnswer: test,
+      ExpectedAnswer: test,
+      IsCorrect: true
+    },
+    TestCaseId: 8,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.ModeType",
+          "errorMessage": "The length of \u0027ModeType\u0027 must be 50 characters or fewer. You entered 51 characters.",
+          "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [],
+    Request: {
+      ModeType: invalid-mode,
+      QuestionType: english-open,
+      Question: test,
+      GivenAnswer: test,
+      ExpectedAnswer: test,
+      IsCorrect: true
+    },
+    TestCaseId: 9,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.ModeType",
+          "errorMessage": "\u0027ModeType\u0027 must be one of: full, open-questions, spelling.",
+          "attemptedValue": "invalid-mode",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [],
+    Request: {
+      ModeType: full,
+      QuestionType: english-open,
+      Question: test,
+      GivenAnswer: test,
+      ExpectedAnswer: test,
+      IsCorrect: null
+    },
+    TestCaseId: 10,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.IsCorrect",
+          "errorMessage": "\u0027IsCorrect\u0027 must not be empty.",
+          "attemptedValue": null,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [],
+    Request: {
+      ModeType: full,
+      QuestionType: ,
+      Question: test,
+      GivenAnswer: test,
+      ExpectedAnswer: test,
+      IsCorrect: true
+    },
+    TestCaseId: 11,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.QuestionType",
+          "errorMessage": "\u0027QuestionType\u0027 must not be empty.",
+          "attemptedValue": "",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [],
+    Request: {
+      ModeType: full,
+      QuestionType: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+      Question: test,
+      GivenAnswer: test,
+      ExpectedAnswer: test,
+      IsCorrect: true
+    },
+    TestCaseId: 12,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.QuestionType",
+          "errorMessage": "The length of \u0027QuestionType\u0027 must be 50 characters or fewer. You entered 51 characters.",
+          "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [],
+    Request: {
+      ModeType: full,
+      QuestionType: invalid-question-type,
+      Question: test,
+      GivenAnswer: test,
+      ExpectedAnswer: test,
+      IsCorrect: true
+    },
+    TestCaseId: 13,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.QuestionType",
+          "errorMessage": "\u0027QuestionType\u0027 must be one of: english-close, native-close, english-open, native-open, spelling.",
+          "attemptedValue": "invalid-question-type",
           "severity": 0
         }
       ],

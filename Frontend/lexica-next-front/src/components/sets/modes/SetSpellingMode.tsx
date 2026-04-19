@@ -16,7 +16,7 @@ import {
 } from '@mantine/core';
 import { links } from '@/config/links';
 import { serialize } from '@/utils/utils';
-import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
+import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
 import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
@@ -42,6 +42,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   const [progress, setProgress] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
   const [iteration, setIteration] = useState(0);
+  const registerAnswer = useRegisterAnswer();
 
   const currentEntry = entries[currentEntryIndex];
   const {
@@ -110,6 +111,15 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   const checkAnswer = () => {
     const currentEntry = entries[currentEntryIndex];
     const correct = userInput.trim().toLowerCase() === (currentEntry.word || '').toLowerCase();
+
+    registerAnswer.mutate({
+      modeType: 'spelling',
+      questionType: 'spelling',
+      question: currentEntry.word ?? '',
+      givenAnswer: userInput,
+      expectedAnswer: currentEntry.word ?? '',
+      isCorrect: correct,
+    });
 
     setIsCorrect(correct);
     setShowFeedback(true);

@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { Alert, Button, Container, Group, Paper, Progress, Stack, Text, TextInput, Title } from '@mantine/core';
 import { links } from '@/config/links';
 import { compareAnswers, serialize } from '@/utils/utils';
-import { type EntryDto, type GetSetResponse } from '../../../hooks/api';
+import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
 import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
@@ -21,6 +21,7 @@ interface Question {
   entryIndex: number;
   type: QuestionType;
   question: string;
+  questionWords: string;
   correctAnswers: string[];
 }
 
@@ -38,6 +39,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const registerAnswer = useRegisterAnswer();
 
   const { playAudio } = usePronunciation(currentQuestion?.entry.word || '', currentQuestion?.entry.wordType, {
     autoPlay: false,
@@ -123,17 +125,22 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
           entryIndex,
           type,
           question: `What does "${entry.word}" mean?`,
+          questionWords: entry.word ?? '',
           correctAnswers: entry.translations ?? [],
         };
 
-      case 'native-open':
+      case 'native-open': {
+        const serializedTranslations = serialize(entry.translations);
+
         return {
           entry,
           entryIndex,
           type,
-          question: `What is the English word for "${serialize(entry.translations)}"?`,
+          question: `What is the English word for "${serializedTranslations}"?`,
+          questionWords: serializedTranslations,
           correctAnswers: entry.word ? [entry.word] : [],
         };
+      }
 
       default:
         throw new Error('Invalid question type');
@@ -146,6 +153,15 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
     }
 
     const isCorrect = compareAnswers(userAnswer, currentQuestion.correctAnswers);
+
+    registerAnswer.mutate({
+      modeType: 'open-questions',
+      questionType: currentQuestion.type,
+      question: currentQuestion.questionWords,
+      givenAnswer: userAnswer,
+      expectedAnswer: serialize(currentQuestion.correctAnswers),
+      isCorrect,
+    });
 
     setIsCorrect(isCorrect);
     setShowFeedback(true);

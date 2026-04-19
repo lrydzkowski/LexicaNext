@@ -21,6 +21,7 @@ export type GenerateTranslationsRequest = components['schemas']['GenerateTransla
 export type GenerateTranslationsResponse = components['schemas']['GenerateTranslationsResponse'];
 export type GenerateExampleSentencesRequest = components['schemas']['GenerateExampleSentencesRequest'];
 export type GenerateExampleSentencesResponse = components['schemas']['GenerateExampleSentencesResponse'];
+export type RegisterAnswerRequestPayload = components['schemas']['RegisterAnswerRequestPayload'];
 
 export const useApiClient = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -370,5 +371,22 @@ export const useGenerateExampleSentences = () => {
 
       return data!;
     },
+  });
+};
+
+export const useRegisterAnswer = () => {
+  const client = useApiClient();
+
+  return useMutation({
+    mutationFn: async (payload: RegisterAnswerRequestPayload): Promise<void> => {
+      const { error } = await client.POST('/api/answer', {
+        body: payload,
+      });
+
+      if (error) {
+        console.error('Failed to register answer:', error);
+      }
+    },
+    retry: false,
   });
 };

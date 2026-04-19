@@ -22,9 +22,13 @@ internal class AnswerRepository : IScopedService, IRegisterAnswerRepository
         AnswerEntity answerEntity = new()
         {
             AnswerId = Guid.CreateVersion7(),
+            UserId = registerAnswerCommand.UserId,
+            ModeType = registerAnswerCommand.ModeType,
+            QuestionType = registerAnswerCommand.QuestionType,
             Question = registerAnswerCommand.Question,
             GivenAnswer = registerAnswerCommand.GivenAnswer,
             ExpectedAnswer = registerAnswerCommand.ExpectedAnswer,
+            IsCorrect = registerAnswerCommand.IsCorrect,
             AnsweredAt = _dateTimeOffsetProvider.UtcNow
         };
         _dbContext.Answers.Add(answerEntity);

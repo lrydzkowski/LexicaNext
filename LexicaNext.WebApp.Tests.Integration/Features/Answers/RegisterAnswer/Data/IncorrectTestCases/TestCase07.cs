@@ -2,20 +2,20 @@ using LexicaNext.Core.Commands.RegisterAnswer;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Answers.RegisterAnswer.Data.IncorrectTestCases;
 
-// GivenAnswer exceeds max length (501 chars). Expected: 400 Bad Request.
-internal static class TestCase05
+// Empty modeType string. Expected: 400 Bad Request.
+internal static class TestCase07
 {
     public static TestCaseData Get()
     {
         return new TestCaseData
         {
-            TestCaseId = 5,
+            TestCaseId = 7,
             RequestBody = new RegisterAnswerRequestPayload
             {
-                ModeType = "full",
+                ModeType = "",
                 QuestionType = "english-open",
                 Question = "test",
-                GivenAnswer = new string('a', 501),
+                GivenAnswer = "test",
                 ExpectedAnswer = "test",
                 IsCorrect = true
             }

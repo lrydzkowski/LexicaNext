@@ -5,19 +5,23 @@ namespace LexicaNext.Core.Commands.RegisterAnswer.Services;
 
 internal interface IRegisterAnswerCommandMapper
 {
-    RegisterAnswerCommand Map(RegisterAnswerRequest request);
+    RegisterAnswerCommand Map(string userId, RegisterAnswerRequest request);
 }
 
 internal class RegisterAnswerCommandMapper
     : ISingletonService, IRegisterAnswerCommandMapper
 {
-    public RegisterAnswerCommand Map(RegisterAnswerRequest request)
+    public RegisterAnswerCommand Map(string userId, RegisterAnswerRequest request)
     {
         return new RegisterAnswerCommand
         {
+            UserId = userId,
+            ModeType = request.Payload?.ModeType ?? "",
+            QuestionType = request.Payload?.QuestionType ?? "",
             Question = request.Payload?.Question ?? "",
             GivenAnswer = request.Payload?.GivenAnswer ?? "",
-            ExpectedAnswer = request.Payload?.ExpectedAnswer ?? ""
+            ExpectedAnswer = request.Payload?.ExpectedAnswer ?? "",
+            IsCorrect = request.Payload?.IsCorrect ?? false
         };
     }
 }

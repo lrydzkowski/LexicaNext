@@ -4,16 +4,23 @@
     DbAnswersAfter: [
       {
         AnswerId: Guid_1,
-        Question: What is the meaning of 'bright'?,
+        UserId: test-user-id,
+        ModeType: full,
+        QuestionType: english-open,
+        Question: bright,
         GivenAnswer: jasny,
         ExpectedAnswer: jasny, świetlany,
+        IsCorrect: true,
         AnsweredAt: DateTimeOffset_1
       }
     ],
     Request: {
-      Question: What is the meaning of 'bright'?,
+      ModeType: full,
+      QuestionType: english-open,
+      Question: bright,
       GivenAnswer: jasny,
-      ExpectedAnswer: jasny, świetlany
+      ExpectedAnswer: jasny, świetlany,
+      IsCorrect: true
     },
     TestCaseId: 1,
     LogMessages: ,
@@ -25,16 +32,23 @@
     DbAnswersAfter: [
       {
         AnswerId: Guid_2,
-        Question: Translate 'apple' to Polish,
+        UserId: test-user-id,
+        ModeType: open-questions,
+        QuestionType: native-open,
+        Question: jabłko,
         GivenAnswer: ,
-        ExpectedAnswer: jabłko,
+        ExpectedAnswer: apple,
+        IsCorrect: false,
         AnsweredAt: DateTimeOffset_2
       }
     ],
     Request: {
-      Question: Translate 'apple' to Polish,
+      ModeType: open-questions,
+      QuestionType: native-open,
+      Question: jabłko,
       GivenAnswer: null,
-      ExpectedAnswer: jabłko
+      ExpectedAnswer: apple,
+      IsCorrect: false
     },
     TestCaseId: 2,
     LogMessages: ,

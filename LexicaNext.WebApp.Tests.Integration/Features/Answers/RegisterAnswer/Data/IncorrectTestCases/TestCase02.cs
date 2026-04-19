@@ -12,9 +12,12 @@ internal static class TestCase02
             TestCaseId = 2,
             RequestBody = new RegisterAnswerRequestPayload
             {
+                ModeType = "full",
+                QuestionType = "english-open",
                 Question = "",
                 GivenAnswer = "test",
-                ExpectedAnswer = "test"
+                ExpectedAnswer = "test",
+                IsCorrect = true
             }
         };
     }

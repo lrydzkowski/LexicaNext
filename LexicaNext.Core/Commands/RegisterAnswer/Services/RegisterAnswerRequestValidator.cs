@@ -27,11 +27,41 @@ public class RegisterAnswerRequestValidator
 
 internal class RegisterAnswerRequestPayloadValidator : AbstractValidator<RegisterAnswerRequestPayload>
 {
+    private static readonly string[] AllowedModeTypes = ["full", "open-questions", "spelling"];
+
+    private static readonly string[] AllowedQuestionTypes =
+        ["english-close", "native-close", "english-open", "native-open", "spelling"];
+
     public RegisterAnswerRequestPayloadValidator()
     {
+        AddValidationForModeType();
+        AddValidationForQuestionType();
         AddValidationForQuestion();
         AddValidationForGivenAnswer();
         AddValidationForExpectedAnswer();
+        AddValidationForIsCorrect();
+    }
+
+    private void AddValidationForModeType()
+    {
+        RuleFor(request => request.ModeType)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty()
+            .MaximumLength(50)
+            .Must(value => value != null && AllowedModeTypes.Contains(value))
+            .WithMessage($"'ModeType' must be one of: {string.Join(", ", AllowedModeTypes)}.")
+            .WithName(nameof(RegisterAnswerRequestPayload.ModeType));
+    }
+
+    private void AddValidationForQuestionType()
+    {
+        RuleFor(request => request.QuestionType)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty()
+            .MaximumLength(50)
+            .Must(value => value != null && AllowedQuestionTypes.Contains(value))
+            .WithMessage($"'QuestionType' must be one of: {string.Join(", ", AllowedQuestionTypes)}.")
+            .WithName(nameof(RegisterAnswerRequestPayload.QuestionType));
     }
 
     private void AddValidationForQuestion()
@@ -52,5 +82,12 @@ internal class RegisterAnswerRequestPayloadValidator : AbstractValidator<Registe
             .NotEmpty()
             .MaximumLength(500)
             .WithName(nameof(RegisterAnswerRequestPayload.ExpectedAnswer));
+    }
+
+    private void AddValidationForIsCorrect()
+    {
+        RuleFor(request => request.IsCorrect)
+            .NotNull()
+            .WithName(nameof(RegisterAnswerRequestPayload.IsCorrect));
     }
 }
