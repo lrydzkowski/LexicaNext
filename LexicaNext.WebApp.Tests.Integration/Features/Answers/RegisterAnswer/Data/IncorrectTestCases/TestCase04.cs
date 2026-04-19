@@ -13,6 +13,7 @@ internal static class TestCase04
             RequestBody = new RegisterAnswerRequestPayload
             {
                 ModeType = "full",
+                QuestionType = "english-open",
                 Question = new string('a', 501),
                 GivenAnswer = "test",
                 ExpectedAnswer = "test",

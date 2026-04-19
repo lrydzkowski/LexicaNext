@@ -13,9 +13,10 @@ internal static class TestCase02
             RequestBody = new RegisterAnswerRequestPayload
             {
                 ModeType = "open-questions",
-                Question = "apple",
+                QuestionType = "native-open",
+                Question = "jabłko",
                 GivenAnswer = null,
-                ExpectedAnswer = "jabłko",
+                ExpectedAnswer = "apple",
                 IsCorrect = false
             }
         };

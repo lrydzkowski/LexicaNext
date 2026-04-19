@@ -10,6 +10,8 @@ internal class AnswerEntity
 
     public string ModeType { get; set; } = "";
 
+    public string QuestionType { get; set; } = "";
+
     public string Question { get; set; } = "";
 
     public string? GivenAnswer { get; set; }

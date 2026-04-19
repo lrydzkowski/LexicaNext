@@ -17,6 +17,7 @@ internal class RegisterAnswerCommandMapper
         {
             UserId = userId,
             ModeType = request.Payload?.ModeType ?? "",
+            QuestionType = request.Payload?.QuestionType ?? "",
             Question = request.Payload?.Question ?? "",
             GivenAnswer = request.Payload?.GivenAnswer ?? "",
             ExpectedAnswer = request.Payload?.ExpectedAnswer ?? "",

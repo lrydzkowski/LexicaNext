@@ -28,6 +28,7 @@
     DbAnswersAfter: [],
     Request: {
       ModeType: full,
+      QuestionType: english-open,
       Question: ,
       GivenAnswer: test,
       ExpectedAnswer: test,
@@ -58,6 +59,7 @@
     DbAnswersAfter: [],
     Request: {
       ModeType: full,
+      QuestionType: english-open,
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: ,
@@ -88,6 +90,7 @@
     DbAnswersAfter: [],
     Request: {
       ModeType: full,
+      QuestionType: english-open,
       Question: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
       GivenAnswer: test,
       ExpectedAnswer: test,
@@ -118,6 +121,7 @@
     DbAnswersAfter: [],
     Request: {
       ModeType: full,
+      QuestionType: english-open,
       Question: test,
       GivenAnswer: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
       ExpectedAnswer: test,
@@ -148,6 +152,7 @@
     DbAnswersAfter: [],
     Request: {
       ModeType: full,
+      QuestionType: english-open,
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
@@ -178,6 +183,7 @@
     DbAnswersAfter: [],
     Request: {
       ModeType: ,
+      QuestionType: english-open,
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: test,
@@ -208,6 +214,7 @@
     DbAnswersAfter: [],
     Request: {
       ModeType: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+      QuestionType: english-open,
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: test,
@@ -238,6 +245,7 @@
     DbAnswersAfter: [],
     Request: {
       ModeType: invalid-mode,
+      QuestionType: english-open,
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: test,
@@ -268,6 +276,7 @@
     DbAnswersAfter: [],
     Request: {
       ModeType: full,
+      QuestionType: english-open,
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: test,
@@ -287,6 +296,99 @@
           "propertyName": "Payload.IsCorrect",
           "errorMessage": "\u0027IsCorrect\u0027 must not be empty.",
           "attemptedValue": null,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [],
+    Request: {
+      ModeType: full,
+      QuestionType: ,
+      Question: test,
+      GivenAnswer: test,
+      ExpectedAnswer: test,
+      IsCorrect: true
+    },
+    TestCaseId: 11,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.QuestionType",
+          "errorMessage": "\u0027QuestionType\u0027 must not be empty.",
+          "attemptedValue": "",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [],
+    Request: {
+      ModeType: full,
+      QuestionType: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+      Question: test,
+      GivenAnswer: test,
+      ExpectedAnswer: test,
+      IsCorrect: true
+    },
+    TestCaseId: 12,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.QuestionType",
+          "errorMessage": "The length of \u0027QuestionType\u0027 must be 50 characters or fewer. You entered 51 characters.",
+          "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [],
+    Request: {
+      ModeType: full,
+      QuestionType: invalid-question-type,
+      Question: test,
+      GivenAnswer: test,
+      ExpectedAnswer: test,
+      IsCorrect: true
+    },
+    TestCaseId: 13,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.QuestionType",
+          "errorMessage": "\u0027QuestionType\u0027 must be one of: english-close, native-close, english-open, native-open, spelling.",
+          "attemptedValue": "invalid-question-type",
           "severity": 0
         }
       ],

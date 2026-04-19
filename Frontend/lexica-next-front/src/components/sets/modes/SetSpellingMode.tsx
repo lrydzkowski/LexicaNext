@@ -114,6 +114,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
 
     registerAnswer.mutate({
       modeType: 'spelling',
+      questionType: 'spelling',
       question: currentEntry.word ?? '',
       givenAnswer: userInput,
       expectedAnswer: currentEntry.word ?? '',

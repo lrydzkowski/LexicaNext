@@ -24,6 +24,7 @@ internal class AnswerRepository : IScopedService, IRegisterAnswerRepository
             AnswerId = Guid.CreateVersion7(),
             UserId = registerAnswerCommand.UserId,
             ModeType = registerAnswerCommand.ModeType,
+            QuestionType = registerAnswerCommand.QuestionType,
             Question = registerAnswerCommand.Question,
             GivenAnswer = registerAnswerCommand.GivenAnswer,
             ExpectedAnswer = registerAnswerCommand.ExpectedAnswer,

@@ -6,6 +6,7 @@
         AnswerId: Guid_1,
         UserId: test-user-id,
         ModeType: full,
+        QuestionType: english-open,
         Question: bright,
         GivenAnswer: jasny,
         ExpectedAnswer: jasny, świetlany,
@@ -15,6 +16,7 @@
     ],
     Request: {
       ModeType: full,
+      QuestionType: english-open,
       Question: bright,
       GivenAnswer: jasny,
       ExpectedAnswer: jasny, świetlany,
@@ -32,18 +34,20 @@
         AnswerId: Guid_2,
         UserId: test-user-id,
         ModeType: open-questions,
-        Question: apple,
+        QuestionType: native-open,
+        Question: jabłko,
         GivenAnswer: ,
-        ExpectedAnswer: jabłko,
+        ExpectedAnswer: apple,
         IsCorrect: false,
         AnsweredAt: DateTimeOffset_2
       }
     ],
     Request: {
       ModeType: open-questions,
-      Question: apple,
+      QuestionType: native-open,
+      Question: jabłko,
       GivenAnswer: null,
-      ExpectedAnswer: jabłko,
+      ExpectedAnswer: apple,
       IsCorrect: false
     },
     TestCaseId: 2,

@@ -156,6 +156,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
 
     registerAnswer.mutate({
       modeType: 'open-questions',
+      questionType: currentQuestion.type,
       question: currentQuestion.questionWords,
       givenAnswer: userAnswer,
       expectedAnswer: serialize(currentQuestion.correctAnswers),

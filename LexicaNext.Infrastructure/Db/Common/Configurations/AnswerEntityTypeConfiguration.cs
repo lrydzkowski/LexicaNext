@@ -40,6 +40,11 @@ internal class AnswerEntityTypeConfiguration : IEntityTypeConfiguration<AnswerEn
             .IsRequired()
             .HasMaxLength(50);
 
+        builder.Property(entity => entity.QuestionType)
+            .HasColumnName("question_type")
+            .IsRequired()
+            .HasMaxLength(50);
+
         builder.Property(entity => entity.Question)
             .HasColumnName("question")
             .HasMaxLength(500)

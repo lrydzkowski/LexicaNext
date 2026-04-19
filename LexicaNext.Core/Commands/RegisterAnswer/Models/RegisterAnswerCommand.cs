@@ -6,6 +6,8 @@ public class RegisterAnswerCommand
 
     public string ModeType { get; init; } = "";
 
+    public string QuestionType { get; init; } = "";
+
     public string Question { get; init; } = "";
 
     public string? GivenAnswer { get; init; }

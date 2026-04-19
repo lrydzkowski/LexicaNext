@@ -305,6 +305,7 @@ export interface components {
         };
         RegisterAnswerRequestPayload: {
             modeType?: null | string;
+            questionType?: null | string;
             question?: null | string;
             givenAnswer?: null | string;
             expectedAnswer?: null | string;

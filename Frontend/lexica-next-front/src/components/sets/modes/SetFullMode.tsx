@@ -239,6 +239,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
 
     registerAnswer.mutate({
       modeType: 'full',
+      questionType: currentQuestion.type,
       question: currentQuestion.questionWords,
       givenAnswer: userAnswer,
       expectedAnswer: serialize(currentQuestion.correctAnswers),
