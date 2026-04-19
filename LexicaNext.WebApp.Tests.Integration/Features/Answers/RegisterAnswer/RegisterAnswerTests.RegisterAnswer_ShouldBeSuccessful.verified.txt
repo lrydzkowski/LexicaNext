@@ -6,7 +6,7 @@
         AnswerId: Guid_1,
         UserId: test-user-id,
         ModeType: full,
-        Question: What is the meaning of 'bright'?,
+        Question: bright,
         GivenAnswer: jasny,
         ExpectedAnswer: jasny, świetlany,
         IsCorrect: true,
@@ -15,7 +15,7 @@
     ],
     Request: {
       ModeType: full,
-      Question: What is the meaning of 'bright'?,
+      Question: bright,
       GivenAnswer: jasny,
       ExpectedAnswer: jasny, świetlany,
       IsCorrect: true
@@ -32,7 +32,7 @@
         AnswerId: Guid_2,
         UserId: test-user-id,
         ModeType: open-questions,
-        Question: Translate 'apple' to Polish,
+        Question: apple,
         GivenAnswer: ,
         ExpectedAnswer: jabłko,
         IsCorrect: false,
@@ -41,7 +41,7 @@
     ],
     Request: {
       ModeType: open-questions,
-      Question: Translate 'apple' to Polish,
+      Question: apple,
       GivenAnswer: null,
       ExpectedAnswer: jabłko,
       IsCorrect: false

@@ -13,7 +13,7 @@ internal static class TestCase02
             RequestBody = new RegisterAnswerRequestPayload
             {
                 ModeType = "open-questions",
-                Question = "Translate 'apple' to Polish",
+                Question = "apple",
                 GivenAnswer = null,
                 ExpectedAnswer = "jabłko",
                 IsCorrect = false

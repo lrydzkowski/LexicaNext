@@ -13,7 +13,7 @@ internal static class TestCase01
             RequestBody = new RegisterAnswerRequestPayload
             {
                 ModeType = "full",
-                Question = "What is the meaning of 'bright'?",
+                Question = "bright",
                 GivenAnswer = "jasny",
                 ExpectedAnswer = "jasny, świetlany",
                 IsCorrect = true

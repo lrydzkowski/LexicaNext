@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { Alert, Button, Container, Group, Paper, Progress, Radio, Stack, Text, TextInput, Title } from '@mantine/core';
 import { links } from '@/config/links';
 import { compareAnswers, serialize } from '@/utils/utils';
-import { type EntryDto, type GetSetResponse, useRegisterAnswer } from '../../../hooks/api';
+import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
 import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
@@ -23,6 +23,7 @@ interface Question {
   entryIndex: number;
   type: QuestionType;
   question: string;
+  questionWords: string;
   options?: string[];
   correctAnswers: string[];
 }
@@ -173,6 +174,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
           entryIndex,
           type,
           question: `What does "${entry.word}" mean?`,
+          questionWords: entry.word ?? '',
           options,
           correctAnswers: correctTranslation,
         };
@@ -187,12 +189,14 @@ export function SetFullMode({ set }: SetFullModeProps) {
           .slice(0, 3);
 
         const wordOptions = [correctWord || '', ...wrongWords].sort(() => Math.random() - 0.5);
+        const serializedNativeCloseTranslations = serialize(entry.translations);
 
         return {
           entry,
           entryIndex,
           type,
-          question: `What is the English word for "${serialize(entry.translations)}"?`,
+          question: `What is the English word for "${serializedNativeCloseTranslations}"?`,
+          questionWords: serializedNativeCloseTranslations,
           options: wordOptions,
           correctAnswers: correctWord ? [correctWord] : [],
         };
@@ -204,17 +208,22 @@ export function SetFullMode({ set }: SetFullModeProps) {
           entryIndex,
           type,
           question: `What does "${entry.word}" mean? (Type your answer)`,
+          questionWords: entry.word ?? '',
           correctAnswers: entry.translations ?? [],
         };
 
-      case 'native-open':
+      case 'native-open': {
+        const serializedNativeOpenTranslations = serialize(entry.translations);
+
         return {
           entry,
           entryIndex,
           type,
-          question: `What is the English word for "${serialize(entry.translations)}"? (Type your answer)`,
+          question: `What is the English word for "${serializedNativeOpenTranslations}"? (Type your answer)`,
+          questionWords: serializedNativeOpenTranslations,
           correctAnswers: entry.word ? [entry.word] : [],
         };
+      }
 
       default:
         throw new Error('Invalid question type');
@@ -230,7 +239,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
 
     registerAnswer.mutate({
       modeType: 'full',
-      question: currentQuestion.question,
+      question: currentQuestion.questionWords,
       givenAnswer: userAnswer,
       expectedAnswer: serialize(currentQuestion.correctAnswers),
       isCorrect,

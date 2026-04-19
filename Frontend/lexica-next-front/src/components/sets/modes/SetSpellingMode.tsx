@@ -16,7 +16,7 @@ import {
 } from '@mantine/core';
 import { links } from '@/config/links';
 import { serialize } from '@/utils/utils';
-import { type EntryDto, type GetSetResponse, useRegisterAnswer } from '../../../hooks/api';
+import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
 import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
@@ -114,7 +114,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
 
     registerAnswer.mutate({
       modeType: 'spelling',
-      question: 'Listen and spell the word',
+      question: currentEntry.word ?? '',
       givenAnswer: userInput,
       expectedAnswer: currentEntry.word ?? '',
       isCorrect: correct,
