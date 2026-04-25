@@ -21,4 +21,8 @@ internal class AnswerEntity
     public bool IsCorrect { get; set; }
 
     public DateTimeOffset AnsweredAt { get; set; }
+
+    public Guid WordId { get; set; }
+
+    public WordEntity? Word { get; set; }
 }

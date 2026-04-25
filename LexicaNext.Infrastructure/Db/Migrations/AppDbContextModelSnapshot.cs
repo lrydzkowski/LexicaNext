@@ -72,9 +72,15 @@ namespace LexicaNext.Infrastructure.Db.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("user_id");
 
+                    b.Property<Guid>("WordId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("word_id");
+
                     b.HasKey("AnswerId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("WordId");
 
                     b.ToTable("answer", (string)null);
                 });
@@ -352,6 +358,17 @@ namespace LexicaNext.Infrastructure.Db.Migrations
                             WordTypeId = new Guid("0196294e-9a78-7e0a-b3b2-9c653699e41e"),
                             Name = "Adverb"
                         });
+                });
+
+            modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.AnswerEntity", b =>
+                {
+                    b.HasOne("LexicaNext.Infrastructure.Db.Common.Entities.WordEntity", "Word")
+                        .WithMany()
+                        .HasForeignKey("WordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Word");
                 });
 
             modelBuilder.Entity("LexicaNext.Infrastructure.Db.Common.Entities.ExampleSentenceEntity", b =>

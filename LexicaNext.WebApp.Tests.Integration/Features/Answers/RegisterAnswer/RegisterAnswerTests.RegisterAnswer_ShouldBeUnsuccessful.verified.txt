@@ -32,7 +32,8 @@
       Question: ,
       GivenAnswer: test,
       ExpectedAnswer: test,
-      IsCorrect: true
+      IsCorrect: true,
+      WordId: Guid_1
     },
     TestCaseId: 2,
     LogMessages: ,
@@ -63,7 +64,8 @@
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: ,
-      IsCorrect: true
+      IsCorrect: true,
+      WordId: Guid_1
     },
     TestCaseId: 3,
     LogMessages: ,
@@ -94,7 +96,8 @@
       Question: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
       GivenAnswer: test,
       ExpectedAnswer: test,
-      IsCorrect: true
+      IsCorrect: true,
+      WordId: Guid_1
     },
     TestCaseId: 4,
     LogMessages: ,
@@ -125,7 +128,8 @@
       Question: test,
       GivenAnswer: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
       ExpectedAnswer: test,
-      IsCorrect: true
+      IsCorrect: true,
+      WordId: Guid_1
     },
     TestCaseId: 5,
     LogMessages: ,
@@ -156,7 +160,8 @@
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-      IsCorrect: true
+      IsCorrect: true,
+      WordId: Guid_1
     },
     TestCaseId: 6,
     LogMessages: ,
@@ -187,7 +192,8 @@
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: test,
-      IsCorrect: true
+      IsCorrect: true,
+      WordId: Guid_1
     },
     TestCaseId: 7,
     LogMessages: ,
@@ -218,7 +224,8 @@
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: test,
-      IsCorrect: true
+      IsCorrect: true,
+      WordId: Guid_1
     },
     TestCaseId: 8,
     LogMessages: ,
@@ -249,7 +256,8 @@
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: test,
-      IsCorrect: true
+      IsCorrect: true,
+      WordId: Guid_1
     },
     TestCaseId: 9,
     LogMessages: ,
@@ -280,7 +288,8 @@
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: test,
-      IsCorrect: null
+      IsCorrect: null,
+      WordId: Guid_1
     },
     TestCaseId: 10,
     LogMessages: ,
@@ -311,7 +320,8 @@
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: test,
-      IsCorrect: true
+      IsCorrect: true,
+      WordId: Guid_1
     },
     TestCaseId: 11,
     LogMessages: ,
@@ -342,7 +352,8 @@
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: test,
-      IsCorrect: true
+      IsCorrect: true,
+      WordId: Guid_1
     },
     TestCaseId: 12,
     LogMessages: ,
@@ -373,7 +384,8 @@
       Question: test,
       GivenAnswer: test,
       ExpectedAnswer: test,
-      IsCorrect: true
+      IsCorrect: true,
+      WordId: Guid_1
     },
     TestCaseId: 13,
     LogMessages: ,
@@ -389,6 +401,70 @@
           "propertyName": "Payload.QuestionType",
           "errorMessage": "\u0027QuestionType\u0027 must be one of: english-close, native-close, english-open, native-open, spelling.",
           "attemptedValue": "invalid-question-type",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [],
+    Request: {
+      ModeType: full,
+      QuestionType: english-open,
+      Question: test,
+      GivenAnswer: test,
+      ExpectedAnswer: test,
+      IsCorrect: true,
+      WordId: Guid_Empty
+    },
+    TestCaseId: 14,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordId",
+          "errorMessage": "\u0027WordId\u0027 must be a non-empty GUID.",
+          "attemptedValue": "Guid_Empty",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [],
+    Request: {
+      ModeType: full,
+      QuestionType: english-open,
+      Question: test,
+      GivenAnswer: test,
+      ExpectedAnswer: test,
+      IsCorrect: true,
+      WordId: Guid_2
+    },
+    TestCaseId: 15,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordId",
+          "errorMessage": "\u0027WordId\u0027 must reference an existing word owned by the current user.",
+          "attemptedValue": "Guid_2",
           "severity": 0
         }
       ],
