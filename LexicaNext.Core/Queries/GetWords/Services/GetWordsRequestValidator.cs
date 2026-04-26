@@ -54,6 +54,7 @@ public class GetWordsRequestValidator : AbstractValidator<GetWordsRequest>, IGet
     private void AddValidationForTimeZoneId()
     {
         RuleFor(request => request.TimeZoneId)
+            .Cascade(CascadeMode.Stop)
             .MaximumLength(100)
             .Must(id => TimeZoneInfo.TryFindSystemTimeZoneById(id!, out _))
             .WithMessage("'{PropertyName}' must be a valid IANA timezone identifier.")
