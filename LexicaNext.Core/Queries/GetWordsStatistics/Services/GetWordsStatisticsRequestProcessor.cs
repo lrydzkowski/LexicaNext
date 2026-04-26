@@ -17,7 +17,7 @@ internal class GetWordsStatisticsRequestProcessor
             Page = request.Page ?? 1,
             PageSize = request.PageSize ?? 25,
             SortingFieldName = request.SortingFieldName?.Trim() ?? "incorrectCount",
-            SortingOrder = request.SortingOrder?.Trim() ?? "desc",
+            SortingOrder = request.SortingOrder?.Trim()?.ToLower() ?? "desc",
             SearchQuery = request.SearchQuery?.Trim(),
             TimeZoneId = request.TimeZoneId
         };

@@ -2,10 +2,8 @@ using System.Collections.Specialized;
 using System.Net;
 using System.Web;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
-using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common;
 using LexicaNext.WebApp.Tests.Integration.Common.Context;
-using LexicaNext.WebApp.Tests.Integration.Common.Context.Db;
 using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using LexicaNext.WebApp.Tests.Integration.Common.Models;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;
@@ -60,8 +58,6 @@ public class GetWordsStatisticsTests
     {
         await using TestContextScope contextScope = new(_webApiFactory, _logMessages);
         await contextScope.InitializeAsync(testCase);
-
-        List<AnswerEntity> dbAnswers = await contextScope.Db!.Context.GetAnswersAsync();
 
         HttpClient client = contextScope.Factory.CreateClient();
         string url = BuildUrl(testCase);

@@ -27,12 +27,14 @@ internal class WordsStatisticsRepository
         var aggregates = _dbContext.Answers.AsNoTracking()
             .Where(a => a.UserId == userId && a.ModeType == OpenQuestionsModeType)
             .GroupBy(a => a.WordId)
-            .Select(g => new
-            {
-                WordId = g.Key,
-                CorrectCount = g.Count(x => x.IsCorrect),
-                IncorrectCount = g.Count(x => !x.IsCorrect)
-            });
+            .Select(
+                g => new
+                {
+                    WordId = g.Key,
+                    CorrectCount = g.Count(x => x.IsCorrect),
+                    IncorrectCount = g.Count(x => !x.IsCorrect)
+                }
+            );
 
         IQueryable<WordStatisticsRecord> baseQuery =
             from s in aggregates
@@ -49,7 +51,11 @@ internal class WordsStatisticsRepository
         string? searchQuery = listParameters.Search.Query;
         if (!string.IsNullOrWhiteSpace(searchQuery))
         {
-            string pattern = $"%{searchQuery}%";
+            string escaped = searchQuery
+                .Replace("\\", "\\\\")
+                .Replace("%", "\\%")
+                .Replace("_", "\\_");
+            string pattern = $"%{escaped}%";
             baseQuery = baseQuery.Where(record => EF.Functions.ILike(record.Word, pattern));
         }
 

@@ -54,7 +54,8 @@ export function WordsStatisticsList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
-  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const parsedPage = parseInt(searchParams.get('page') ?? '1', 10);
+  const currentPage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   const sortingFieldName = parseSortField(searchParams.get('sortingFieldName'));
   const sortingOrder = parseSortOrder(searchParams.get('sortingOrder'));
   const urlSearchQuery = searchParams.get('searchQuery') || '';
