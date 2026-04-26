@@ -119,6 +119,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
       givenAnswer: userInput,
       expectedAnswer: currentEntry.word ?? '',
       isCorrect: correct,
+      wordId: currentEntry.wordId,
     });
 
     setIsCorrect(correct);

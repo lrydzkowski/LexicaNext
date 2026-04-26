@@ -10,19 +10,20 @@
 .link {
   display: flex;
   align-items: center;
-  height: 100%;
-  padding-left: var(--mantine-spacing-lg);
-  padding-right: var(--mantine-spacing-lg);
+  height: 48px;
+  padding-left: var(--mantine-spacing-md);
+  padding-right: var(--mantine-spacing-md);
   text-decoration: none;
   color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
   font-weight: 500;
   font-size: var(--mantine-font-size-md);
+  width: 100%;
 
-  @media (max-width: $mantine-breakpoint-sm) {
-    height: 48px;
-    width: 100%;
-    padding-left: var(--mantine-spacing-md);
-    padding-right: var(--mantine-spacing-md);
+  @media (min-width: $mantine-breakpoint-sm) {
+    height: 100%;
+    width: auto;
+    padding-left: var(--mantine-spacing-lg);
+    padding-right: var(--mantine-spacing-lg);
   }
 
   @mixin hover {

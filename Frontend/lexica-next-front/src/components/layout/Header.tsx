@@ -9,6 +9,7 @@ import classes from './Header.module.css';
 const items = [
   { label: 'Sets', href: links.sets.getUrl() },
   { label: 'Words', href: links.words.getUrl() },
+  { label: 'Words Statistics', href: links.wordsStatistics.getUrl() },
   { label: 'About', href: links.about.getUrl() },
 ];
 

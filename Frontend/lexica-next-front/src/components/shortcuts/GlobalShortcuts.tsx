@@ -1,6 +1,6 @@
-import { notifications } from '@mantine/notifications';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
+import { notifications } from '@mantine/notifications';
 import { links } from '../../config/links';
 import { SHORTCUT_KEYS } from '../../config/shortcuts';
 import { useGlobalShortcuts } from '../../hooks/useShortcuts';
@@ -17,6 +17,10 @@ export function GlobalShortcuts() {
       {
         key: SHORTCUT_KEYS.NAVIGATE_WORDS,
         handler: () => navigate(links.words.getUrl()),
+      },
+      {
+        key: SHORTCUT_KEYS.NAVIGATE_WORDS_STATISTICS,
+        handler: () => navigate(links.wordsStatistics.getUrl()),
       },
       {
         key: SHORTCUT_KEYS.NAVIGATE_ABOUT,

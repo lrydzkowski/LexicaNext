@@ -4,7 +4,7 @@ import { waitForSearchResponse, waitForWordsResponse } from './helpers';
 test.describe('words list page', () => {
   test('navigates to words list from header', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('link', { name: 'Words' }).click();
+    await page.getByRole('link', { name: 'Words', exact: true }).click();
 
     await expect(page).toHaveURL(/\/words/);
     await expect(page.getByRole('link', { name: 'Home' })).toBeVisible();

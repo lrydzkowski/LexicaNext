@@ -21,7 +21,8 @@ internal class RegisterAnswerCommandMapper
             Question = request.Payload?.Question ?? "",
             GivenAnswer = request.Payload?.GivenAnswer ?? "",
             ExpectedAnswer = request.Payload?.ExpectedAnswer ?? "",
-            IsCorrect = request.Payload?.IsCorrect ?? false
+            IsCorrect = request.Payload?.IsCorrect ?? false,
+            WordId = request.Payload?.WordId ?? Guid.Empty
         };
     }
 }

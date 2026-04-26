@@ -11,7 +11,9 @@
         GivenAnswer: jasny,
         ExpectedAnswer: jasny, świetlany,
         IsCorrect: true,
-        AnsweredAt: DateTimeOffset_1
+        AnsweredAt: DateTimeOffset_1,
+        WordId: Guid_2,
+        Word: null
       }
     ],
     Request: {
@@ -20,7 +22,8 @@
       Question: bright,
       GivenAnswer: jasny,
       ExpectedAnswer: jasny, świetlany,
-      IsCorrect: true
+      IsCorrect: true,
+      WordId: Guid_2
     },
     TestCaseId: 1,
     LogMessages: ,
@@ -31,7 +34,7 @@
     DbAnswersBefore: [],
     DbAnswersAfter: [
       {
-        AnswerId: Guid_2,
+        AnswerId: Guid_3,
         UserId: test-user-id,
         ModeType: open-questions,
         QuestionType: native-open,
@@ -39,7 +42,9 @@
         GivenAnswer: ,
         ExpectedAnswer: apple,
         IsCorrect: false,
-        AnsweredAt: DateTimeOffset_2
+        AnsweredAt: DateTimeOffset_2,
+        WordId: Guid_4,
+        Word: null
       }
     ],
     Request: {
@@ -48,7 +53,8 @@
       Question: jabłko,
       GivenAnswer: null,
       ExpectedAnswer: apple,
-      IsCorrect: false
+      IsCorrect: false,
+      WordId: Guid_4
     },
     TestCaseId: 2,
     LogMessages: ,

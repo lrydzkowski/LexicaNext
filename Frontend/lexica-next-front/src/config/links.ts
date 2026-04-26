@@ -105,6 +105,14 @@ export const links: Record<string, IAppLink> = {
       return url;
     },
   },
+  wordsStatistics: {
+    getUrl: (_, query) => {
+      let url = '/words-statistics';
+      url = addQuery(url, query);
+
+      return url;
+    },
+  },
 };
 
 const addQuery = (url: string, query: Record<string, string | undefined> | null | undefined): string => {

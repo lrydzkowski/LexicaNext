@@ -1,0 +1,90 @@
+﻿[
+  {
+    Url: /api/words-statistics?page=0,
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Page",
+          "errorMessage": "\u0027Page\u0027 must be greater than or equal to \u00271\u0027.",
+          "attemptedValue": 0,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    Url: /api/words-statistics?pageSize=0,
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "PageSize",
+          "errorMessage": "\u0027PageSize\u0027 must be greater than or equal to \u00271\u0027.",
+          "attemptedValue": 0,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    Url: /api/words-statistics?sortingFieldName=createdAt,
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "SortingFieldName",
+          "errorMessage": "\u0027SortingFieldName\u0027 must be one of: correctCount, incorrectCount, word.",
+          "attemptedValue": "createdAt",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    Url: /api/words-statistics?sortingOrder=sideways,
+    TestCaseId: 4,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "SortingOrder",
+          "errorMessage": "\u0027SortingOrder\u0027 must be one of the following: \u0027asc\u0027, \u0027desc\u0027.",
+          "attemptedValue": "sideways",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  }
+]

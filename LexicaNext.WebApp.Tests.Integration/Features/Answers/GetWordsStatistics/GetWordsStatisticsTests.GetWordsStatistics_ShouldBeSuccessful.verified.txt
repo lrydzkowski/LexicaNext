@@ -1,0 +1,157 @@
+﻿[
+  {
+    Url: /api/words-statistics,
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 0,
+      "data": []
+    }
+  },
+  {
+    Url: /api/words-statistics,
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_1",
+          "word": "bright",
+          "correctCount": 2,
+          "incorrectCount": 2
+        },
+        {
+          "wordId": "Guid_2",
+          "word": "run",
+          "correctCount": 1,
+          "incorrectCount": 2
+        },
+        {
+          "wordId": "Guid_3",
+          "word": "apple",
+          "correctCount": 3,
+          "incorrectCount": 1
+        }
+      ]
+    }
+  },
+  {
+    Url: /api/words-statistics,
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 1,
+      "data": [
+        {
+          "wordId": "Guid_4",
+          "word": "apple",
+          "correctCount": 1,
+          "incorrectCount": 0
+        }
+      ]
+    }
+  },
+  {
+    Url: /api/words-statistics,
+    TestCaseId: 4,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 1,
+      "data": [
+        {
+          "wordId": "Guid_5",
+          "word": "apple",
+          "correctCount": 1,
+          "incorrectCount": 0
+        }
+      ]
+    }
+  },
+  {
+    Url: /api/words-statistics?sortingFieldName=correctCount&sortingOrder=asc,
+    TestCaseId: 5,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_6",
+          "word": "run",
+          "correctCount": 1,
+          "incorrectCount": 0
+        },
+        {
+          "wordId": "Guid_7",
+          "word": "bright",
+          "correctCount": 2,
+          "incorrectCount": 0
+        },
+        {
+          "wordId": "Guid_8",
+          "word": "apple",
+          "correctCount": 3,
+          "incorrectCount": 0
+        }
+      ]
+    }
+  },
+  {
+    Url: /api/words-statistics?sortingFieldName=word&sortingOrder=asc&searchQuery=APP,
+    TestCaseId: 6,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 2,
+      "data": [
+        {
+          "wordId": "Guid_9",
+          "word": "apple",
+          "correctCount": 1,
+          "incorrectCount": 0
+        },
+        {
+          "wordId": "Guid_10",
+          "word": "pineapple",
+          "correctCount": 1,
+          "incorrectCount": 0
+        }
+      ]
+    }
+  },
+  {
+    Url: /api/words-statistics?page=2&pageSize=2&sortingFieldName=word&sortingOrder=asc,
+    TestCaseId: 7,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "count": 5,
+      "data": [
+        {
+          "wordId": "Guid_11",
+          "word": "charlie",
+          "correctCount": 0,
+          "incorrectCount": 1
+        },
+        {
+          "wordId": "Guid_12",
+          "word": "delta",
+          "correctCount": 0,
+          "incorrectCount": 1
+        }
+      ]
+    }
+  }
+]
