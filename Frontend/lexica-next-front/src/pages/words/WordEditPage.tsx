@@ -36,10 +36,7 @@ export function WordEditPage() {
     <Container p={0}>
       <Stack gap="sm">
         <Group>
-          <ActionIcon
-            variant="subtle"
-            onClick={handleBack}
-            aria-label="Go back">
+          <ActionIcon variant="subtle" onClick={handleBack} aria-label="Go back">
             <IconArrowLeft size={16} />
           </ActionIcon>
           <Title order={2} size="h3">

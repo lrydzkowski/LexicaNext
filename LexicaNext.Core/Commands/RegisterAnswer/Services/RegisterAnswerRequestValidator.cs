@@ -31,7 +31,9 @@ public class RegisterAnswerRequestValidator
     {
         RuleFor(request => request.Payload!)
             .NotNull()
-            .SetValidator(_ => new RegisterAnswerRequestPayloadValidator(_userContextResolver, _registerAnswerRepository));
+            .SetValidator(
+                _ => new RegisterAnswerRequestPayloadValidator(_userContextResolver, _registerAnswerRepository)
+            );
     }
 }
 
