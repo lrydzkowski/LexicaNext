@@ -17,7 +17,8 @@ internal static class TestCase10
                 Question = "test",
                 GivenAnswer = "test",
                 ExpectedAnswer = "test",
-                IsCorrect = null
+                IsCorrect = null,
+                WordId = Guid.Parse("0199e86c-0002-7000-8000-000000000002")
             }
         };
     }

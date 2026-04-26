@@ -15,4 +15,6 @@ public class RegisterAnswerCommand
     public string ExpectedAnswer { get; init; } = "";
 
     public bool IsCorrect { get; init; }
+
+    public Guid WordId { get; init; }
 }

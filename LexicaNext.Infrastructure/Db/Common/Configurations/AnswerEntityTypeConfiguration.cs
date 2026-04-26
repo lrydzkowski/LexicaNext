@@ -10,8 +10,18 @@ internal class AnswerEntityTypeConfiguration : IEntityTypeConfiguration<AnswerEn
     {
         SetTableName(builder);
         SetPrimaryKey(builder);
+        ConfigureRelations(builder);
         ConfigureColumns(builder);
         ConfigureIndexes(builder);
+    }
+
+    private void ConfigureRelations(EntityTypeBuilder<AnswerEntity> builder)
+    {
+        builder.HasOne(entity => entity.Word)
+            .WithMany()
+            .HasForeignKey(entity => entity.WordId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();
     }
 
     private void SetTableName(EntityTypeBuilder<AnswerEntity> builder)
@@ -66,10 +76,16 @@ internal class AnswerEntityTypeConfiguration : IEntityTypeConfiguration<AnswerEn
         builder.Property(entity => entity.AnsweredAt)
             .HasColumnName("answered_at")
             .IsRequired();
+
+        builder.Property(entity => entity.WordId)
+            .HasColumnName("word_id")
+            .IsRequired();
     }
 
     private void ConfigureIndexes(EntityTypeBuilder<AnswerEntity> builder)
     {
         builder.HasIndex(entity => entity.UserId);
+
+        builder.HasIndex(entity => entity.WordId);
     }
 }

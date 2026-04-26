@@ -9,7 +9,8 @@ export interface ShortcutDefinition {
 export const SHORTCUT_KEYS = {
   NAVIGATE_SETS: 'mod+1',
   NAVIGATE_WORDS: 'mod+2',
-  NAVIGATE_ABOUT: 'mod+3',
+  NAVIGATE_WORDS_STATISTICS: 'mod+3',
+  NAVIGATE_ABOUT: 'mod+4',
   CREATE_NEW: 'alt+n',
   FOCUS_SEARCH: 'alt+f',
   SAVE: 'alt+s',
@@ -34,6 +35,7 @@ export const SHORTCUT_KEYS = {
 export const SHORTCUT_DEFINITIONS: ShortcutDefinition[] = [
   { key: SHORTCUT_KEYS.NAVIGATE_SETS, description: 'Go to Sets page', scope: 'global' },
   { key: SHORTCUT_KEYS.NAVIGATE_WORDS, description: 'Go to Words page', scope: 'global' },
+  { key: SHORTCUT_KEYS.NAVIGATE_WORDS_STATISTICS, description: 'Go to Words Statistics page', scope: 'global' },
   { key: SHORTCUT_KEYS.NAVIGATE_ABOUT, description: 'Go to About page', scope: 'global' },
   { key: SHORTCUT_KEYS.DISMISS_NOTIFICATIONS, description: 'Dismiss notifications', scope: 'global' },
   { key: SHORTCUT_KEYS.CREATE_NEW, description: 'Create new item', scope: 'sets-list' },

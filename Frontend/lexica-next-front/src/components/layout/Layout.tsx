@@ -3,7 +3,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { Outlet, useLocation } from 'react-router';
 import { AppShell, Container } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { type SessionSummary, findAllSessions } from '../../services/session-storage';
+import { findAllSessions, type SessionSummary } from '../../services/session-storage';
 import { SessionResumeModal } from '../session/SessionResumeModal';
 import { GlobalShortcuts } from '../shortcuts/GlobalShortcuts';
 import { Header } from './Header';
@@ -20,6 +20,8 @@ export function Layout() {
 
   useEffect(() => {
     if (!isAuthenticated) {
+      setModalOpened(false);
+
       return;
     }
 
@@ -33,11 +35,7 @@ export function Layout() {
   return (
     <>
       <GlobalShortcuts />
-      <SessionResumeModal
-        opened={modalOpened}
-        session={resumeSession}
-        onClose={() => setModalOpened(false)}
-      />
+      <SessionResumeModal opened={modalOpened} session={resumeSession} onClose={() => setModalOpened(false)} />
       <AppShell header={{ height: 70 }} padding="md" miw={320}>
         <AppShell.Header px="md">
           <Container size="md" p={0}>

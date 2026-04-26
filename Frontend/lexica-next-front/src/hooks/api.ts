@@ -22,6 +22,8 @@ export type GenerateTranslationsResponse = components['schemas']['GenerateTransl
 export type GenerateExampleSentencesRequest = components['schemas']['GenerateExampleSentencesRequest'];
 export type GenerateExampleSentencesResponse = components['schemas']['GenerateExampleSentencesResponse'];
 export type RegisterAnswerRequestPayload = components['schemas']['RegisterAnswerRequestPayload'];
+export type WordStatisticsRecordDto = components['schemas']['WordStatisticsRecordDto'];
+export type GetWordsStatisticsResponse = components['schemas']['GetWordsStatisticsResponse'];
 
 export const useApiClient = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -82,6 +84,36 @@ export const useWords = (params?: {
 
       if (error) {
         throwApiError(error, 'Failed to fetch words');
+      }
+
+      return data!;
+    },
+    placeholderData: keepPreviousData,
+  });
+};
+
+export const useWordsStatistics = (params?: {
+  page?: number;
+  pageSize?: number;
+  sortingFieldName?: string;
+  sortingOrder?: string;
+  searchQuery?: string;
+  timeZoneId?: string;
+}) => {
+  const client = useApiClient();
+
+  return useQuery({
+    queryKey: ['wordsStatistics', params],
+    queryFn: async ({ signal }): Promise<GetWordsStatisticsResponse> => {
+      const { data, error } = await client.GET('/api/words-statistics', {
+        params: {
+          query: params,
+        },
+        signal,
+      });
+
+      if (error) {
+        throwApiError(error, 'Failed to fetch words statistics');
       }
 
       return data!;

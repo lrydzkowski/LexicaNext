@@ -17,6 +17,7 @@ using LexicaNext.Core.Queries.GetSets;
 using LexicaNext.Core.Queries.GetWord;
 using LexicaNext.Core.Queries.GetWords;
 using LexicaNext.Core.Queries.GetWordSets;
+using LexicaNext.Core.Queries.GetWordsStatistics;
 using LexicaNext.Infrastructure;
 using LexicaNext.WebApp;
 using LexicaNext.WebApp.Security;
@@ -67,7 +68,9 @@ app.MapGenerateTranslationsEndpoint();
 app.MapGenerateExampleSentencesEndpoint();
 
 app.MapGetRecordingEndpoint();
+
 app.MapRegisterAnswerEndpoint();
+app.MapGetWordsStatisticsEndpoint();
 
 app.MapFallbackToFile("index.html");
 

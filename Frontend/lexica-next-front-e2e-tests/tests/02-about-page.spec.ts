@@ -38,8 +38,10 @@ test.describe('open about page', () => {
       - text: Ctrl + 1
       - paragraph: Go to Words page
       - text: Ctrl + 2
-      - paragraph: Go to About page
+      - paragraph: Go to Words Statistics page
       - text: Ctrl + 3
+      - paragraph: Go to About page
+      - text: Ctrl + 4
       - paragraph: Dismiss notifications
       - text: Escape
       - paragraph: Sets List
