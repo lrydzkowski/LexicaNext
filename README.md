@@ -59,6 +59,12 @@ Advanced practice mode with open-ended questions. Type the meaning of words to t
 
 ![Open Questions Mode](docs/screenshots/open-questions-mode.png)
 
+### Words Statistics
+
+Track your progress in Open Questions mode with per-word accuracy statistics. The page lists every word you have practiced with its correct and incorrect answer counts, supports text filtering and click-to-sort on either count column, and provides a shortcut to jump straight to a word's edit form. Filter, sort, and page state all live in the URL, so any view is shareable and the back-control on the word form returns you exactly where you left off.
+
+![Words Statistics](docs/screenshots/words-statistics.png)
+
 ## Technical Documentation
 
 ### Tech Stack
