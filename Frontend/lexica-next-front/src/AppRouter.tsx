@@ -18,6 +18,7 @@ import { SignInPage } from './pages/SignInPage';
 import { WordEditPage } from './pages/words/WordEditPage';
 import { WordNewPage } from './pages/words/WordNewPage';
 import { WordsPage } from './pages/words/WordsPage';
+import { WordsStatisticsPage } from './pages/wordsStatistics/WordsStatisticsPage';
 
 export type BreadcrumbResolver = (id: string) => { label: string; isLoading: boolean };
 
@@ -266,6 +267,19 @@ const router = createBrowserRouter([
             ),
           },
         ],
+      },
+      {
+        path: 'words-statistics',
+        handle: {
+          breadcrumb: () => [{ link: links.wordsStatistics.getUrl(), label: 'Words Statistics' }],
+        },
+        element: (
+          <RequireAuth>
+            <PageWithBreadcrumbs>
+              <WordsStatisticsPage />
+            </PageWithBreadcrumbs>
+          </RequireAuth>
+        ),
       },
       {
         path: '*',

@@ -244,6 +244,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
       givenAnswer: userAnswer,
       expectedAnswer: serialize(currentQuestion.correctAnswers),
       isCorrect,
+      wordId: currentQuestion.entry.wordId,
     });
 
     setIsCorrect(isCorrect);

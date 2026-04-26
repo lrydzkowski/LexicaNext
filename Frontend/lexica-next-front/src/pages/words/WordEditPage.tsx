@@ -12,6 +12,8 @@ export function WordEditPage() {
   const { wordId } = useParams<{ wordId: string }>();
   const [searchParams] = useSearchParams();
   const returnPage = searchParams.get('returnPage') || '1';
+  const returnToRaw = searchParams.get('returnTo');
+  const returnTo = returnToRaw && returnToRaw.startsWith('/') ? returnToRaw : null;
 
   const { data: word, isLoading, error } = useWord(wordId!);
 
@@ -22,14 +24,22 @@ export function WordEditPage() {
     }
   }, [error, navigate]);
 
+  const handleBack = () => {
+    if (returnTo) {
+      navigate(returnTo);
+      return;
+    }
+    navigate(links.words.getUrl({}, { page: returnPage }));
+  };
+
   return (
     <Container p={0}>
       <Stack gap="sm">
         <Group>
           <ActionIcon
             variant="subtle"
-            onClick={() => navigate(links.words.getUrl({}, { page: returnPage }))}
-            aria-label="Go back to words">
+            onClick={handleBack}
+            aria-label="Go back">
             <IconArrowLeft size={16} />
           </ActionIcon>
           <Title order={2} size="h3">

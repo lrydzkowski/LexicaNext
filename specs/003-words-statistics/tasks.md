@@ -32,10 +32,10 @@ Web application layout:
 
 **Purpose**: Scaffolding and tooling needed before any production code is written. This feature slots into the existing solution, so setup is minimal.
 
-- [ ] T001 Create the feature folder `LexicaNext.Core/Queries/GetWordsStatistics/` with `Interfaces/` and `Services/` subfolders (empty placeholders, to be populated in later phases)
-- [ ] T002 [P] Create the integration-test feature folder `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/Data/CorrectTestCases/` and `.../IncorrectTestCases/` (empty placeholders)
-- [ ] T003 [P] Create the frontend page folder `Frontend/lexica-next-front/src/pages/wordsStatistics/` and component folder `Frontend/lexica-next-front/src/components/wordsStatistics/` (empty placeholders)
-- [ ] T004 [P] Create the E2E spec folder `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/` (empty placeholder)
+- [x] T001 Create the feature folder `LexicaNext.Core/Queries/GetWordsStatistics/` with `Interfaces/` and `Services/` subfolders (empty placeholders, to be populated in later phases)
+- [x] T002 [P] Create the integration-test feature folder `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/Data/CorrectTestCases/` and `.../IncorrectTestCases/` (empty placeholders)
+- [x] T003 [P] Create the frontend page folder `Frontend/lexica-next-front/src/pages/wordsStatistics/` and component folder `Frontend/lexica-next-front/src/components/wordsStatistics/` (empty placeholders)
+- [x] T004 [P] Create the E2E spec folder `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/` (empty placeholder)
 
 ---
 
@@ -47,40 +47,40 @@ Web application layout:
 
 ### Database & entity changes
 
-- [ ] T005 Add `WordId : Guid` property (and `WordEntity? Word` navigation) to `LexicaNext.Infrastructure/Db/Common/Entities/AnswerEntity.cs`
-- [ ] T006 Update `LexicaNext.Infrastructure/Db/Common/Configurations/AnswerEntityTypeConfiguration.cs`: map `WordId` to column `word_id` (required), configure `HasOne(Word).WithMany().HasForeignKey(WordId).OnDelete(DeleteBehavior.Cascade).IsRequired()`, and add `HasIndex(WordId)` in `ConfigureIndexes` (per data-model.md §Fluent configuration)
-- [ ] T007 Generate EF Core migration via `dotnet ef migrations add AddWordIdToAnswer --project LexicaNext.Infrastructure --startup-project LexicaNext.WebApp`, producing `LexicaNext.Infrastructure/Db/Migrations/<timestamp>_AddWordIdToAnswer.cs` and its `.Designer.cs` (depends on T005, T006)
-- [ ] T008 Replace the scaffolded migration body in `LexicaNext.Infrastructure/Db/Migrations/<timestamp>_AddWordIdToAnswer.cs` with the six-step raw-SQL `Up()` from research.md Decision 3 (add nullable `word_id`, UPDATE-JOIN backfill with single-match filter, DELETE unmatched, `SET NOT NULL`, `CREATE INDEX IX_answer_word_id`, add FK `FK_answer_word_word_id` with `ON DELETE CASCADE`) and a matching reverse-order `Down()` (depends on T007)
+- [x] T005 Add `WordId : Guid` property (and `WordEntity? Word` navigation) to `LexicaNext.Infrastructure/Db/Common/Entities/AnswerEntity.cs`
+- [x] T006 Update `LexicaNext.Infrastructure/Db/Common/Configurations/AnswerEntityTypeConfiguration.cs`: map `WordId` to column `word_id` (required), configure `HasOne(Word).WithMany().HasForeignKey(WordId).OnDelete(DeleteBehavior.Cascade).IsRequired()`, and add `HasIndex(WordId)` in `ConfigureIndexes` (per data-model.md §Fluent configuration)
+- [x] T007 Generate EF Core migration via `dotnet ef migrations add AddWordIdToAnswer --project LexicaNext.Infrastructure --startup-project LexicaNext.WebApp`, producing `LexicaNext.Infrastructure/Db/Migrations/<timestamp>_AddWordIdToAnswer.cs` and its `.Designer.cs` (depends on T005, T006)
+- [x] T008 Replace the scaffolded migration body in `LexicaNext.Infrastructure/Db/Migrations/<timestamp>_AddWordIdToAnswer.cs` with the six-step raw-SQL `Up()` from research.md Decision 3 (add nullable `word_id`, UPDATE-JOIN backfill with single-match filter, DELETE unmatched, `SET NOT NULL`, `CREATE INDEX IX_answer_word_id`, add FK `FK_answer_word_word_id` with `ON DELETE CASCADE`) and a matching reverse-order `Down()` (depends on T007)
 
 ### Write-path extension (RegisterAnswer)
 
-- [ ] T009 Add `public Guid WordId { get; init; }` to `LexicaNext.Core/Commands/RegisterAnswer/Models/RegisterAnswerCommand.cs`
-- [ ] T010 Add `WordId` (nullable `Guid?` on the HTTP payload, non-nullable on the mapped command) to the request payload in `LexicaNext.Core/Commands/RegisterAnswer/RegisterAnswerEndpoint.cs` and forward it in `LexicaNext.Core/Commands/RegisterAnswer/Services/RegisterAnswerCommandMapper.cs` (depends on T009)
-- [ ] T011 Update `LexicaNext.Core/Commands/RegisterAnswer/Services/RegisterAnswerRequestValidator.cs`: require `WordId != Guid.Empty` and verify it references a `WordEntity` owned by the current user via the existing `WordsRepository.WordExistsAsync(userId, wordId)` (per data-model.md §Command extension) (depends on T009)
-- [ ] T012 Update `LexicaNext.Infrastructure/Db/Repositories/AnswerRepository.cs` `RegisterAnswerAsync` to copy `command.WordId` onto the new `AnswerEntity.WordId` column (depends on T005, T009)
+- [x] T009 Add `public Guid WordId { get; init; }` to `LexicaNext.Core/Commands/RegisterAnswer/Models/RegisterAnswerCommand.cs`
+- [x] T010 Add `WordId` (nullable `Guid?` on the HTTP payload, non-nullable on the mapped command) to the request payload in `LexicaNext.Core/Commands/RegisterAnswer/RegisterAnswerEndpoint.cs` and forward it in `LexicaNext.Core/Commands/RegisterAnswer/Services/RegisterAnswerCommandMapper.cs` (depends on T009)
+- [x] T011 Update `LexicaNext.Core/Commands/RegisterAnswer/Services/RegisterAnswerRequestValidator.cs`: require `WordId != Guid.Empty` and verify it references a `WordEntity` owned by the current user via the existing `WordsRepository.WordExistsAsync(userId, wordId)` (per data-model.md §Command extension) (depends on T009)
+- [x] T012 Update `LexicaNext.Infrastructure/Db/Repositories/AnswerRepository.cs` `RegisterAnswerAsync` to copy `command.WordId` onto the new `AnswerEntity.WordId` column (depends on T005, T009)
 
 ### GetWordsStatistics endpoint scaffolding (no query logic yet)
 
-- [ ] T013 [P] Create the domain record `LexicaNext.Core/Common/Models/WordStatisticsRecord.cs` with `Guid WordId`, `string Word`, `int CorrectCount`, `int IncorrectCount` (init-only, per data-model.md §Domain model)
-- [ ] T014 [P] Create `LexicaNext.Core/Queries/GetWordsStatistics/Interfaces/IGetWordsStatisticsRepository.cs` defining `Task<(IReadOnlyList<WordStatisticsRecord> records, int totalCount)> GetWordsStatisticsAsync(string userId, ListParameters listParameters, CancellationToken cancellationToken)` — mirror the signature used by `IGetWordsRepository`
-- [ ] T015 [P] Create `LexicaNext.Core/Queries/GetWordsStatistics/Services/WordStatisticsRecordMapper.cs` translating `WordStatisticsRecord` → `WordStatisticsRecordDto` 1:1 (mirror `WordRecordMapper`) (depends on T013)
-- [ ] T016 [P] Create `LexicaNext.Core/Queries/GetWordsStatistics/Services/ListParametersMapper.cs` producing `ListParameters` from `GetWordsStatisticsRequest` with defaults `sortingFieldName="incorrectCount"`, `sortingOrder="desc"`, whitespace-only `searchQuery` normalised to null (per research.md Decision 4 and contracts/get-words-statistics.md §Query parameters)
-- [ ] T017 [P] Create `LexicaNext.Core/Queries/GetWordsStatistics/Services/GetWordsStatisticsRequestValidator.cs` validating `sortingFieldName ∈ {"correctCount","incorrectCount","word"}`, `sortingOrder ∈ SortingOrderConstants`, and `page`/`pageSize` bounds identical to `GetWordsRequestValidator`
-- [ ] T018 Create `LexicaNext.Core/Queries/GetWordsStatistics/Services/GetWordsStatisticsRequestProcessor.cs` orchestrating validator → `IUserContextResolver` → repository → mapper (mirror `GetWordsRequestProcessor`) (depends on T014, T015, T016, T017)
-- [ ] T019 Create `LexicaNext.Core/Queries/GetWordsStatistics/GetWordsStatisticsEndpoint.cs` defining `GetWordsStatisticsRequest` (`[AsParameters]`), `WordStatisticsRecordDto`, `GetWordsStatisticsResponse { int Count; IReadOnlyList<WordStatisticsRecordDto> Data }`, and `MapGetWordsStatisticsEndpoint` routing `GET /api/words-statistics` with policy `AuthorizationPolicies.Auth0OrApiKey`, returning `401` when `IUserContextResolver.GetUserId()` is null, and calling `Produces<GetWordsStatisticsResponse>()` (depends on T018)
-- [ ] T020 Create `LexicaNext.Infrastructure/Db/Repositories/WordsStatisticsRepository.cs` implementing `IGetWordsStatisticsRepository` — empty / `throw new NotImplementedException()` body is fine here; real query logic is added in US1 (T029). Register the type for DI following the existing convention used by `WordsRepository` (depends on T014)
-- [ ] T021 Wire the endpoint into the host: call `MapGetWordsStatisticsEndpoint(...)` from the endpoints wiring in `LexicaNext.WebApp/Program.cs` (or the equivalent `MapEndpoints` extension used by the other queries) (depends on T019)
+- [x] T013 [P] Create the domain record `LexicaNext.Core/Common/Models/WordStatisticsRecord.cs` with `Guid WordId`, `string Word`, `int CorrectCount`, `int IncorrectCount` (init-only, per data-model.md §Domain model)
+- [x] T014 [P] Create `LexicaNext.Core/Queries/GetWordsStatistics/Interfaces/IGetWordsStatisticsRepository.cs` defining `Task<(IReadOnlyList<WordStatisticsRecord> records, int totalCount)> GetWordsStatisticsAsync(string userId, ListParameters listParameters, CancellationToken cancellationToken)` — mirror the signature used by `IGetWordsRepository`
+- [x] T015 [P] Create `LexicaNext.Core/Queries/GetWordsStatistics/Services/WordStatisticsRecordMapper.cs` translating `WordStatisticsRecord` → `WordStatisticsRecordDto` 1:1 (mirror `WordRecordMapper`) (depends on T013)
+- [x] T016 [P] Create `LexicaNext.Core/Queries/GetWordsStatistics/Services/ListParametersMapper.cs` producing `ListParameters` from `GetWordsStatisticsRequest` with defaults `sortingFieldName="incorrectCount"`, `sortingOrder="desc"`, whitespace-only `searchQuery` normalised to null (per research.md Decision 4 and contracts/get-words-statistics.md §Query parameters)
+- [x] T017 [P] Create `LexicaNext.Core/Queries/GetWordsStatistics/Services/GetWordsStatisticsRequestValidator.cs` validating `sortingFieldName ∈ {"correctCount","incorrectCount","word"}`, `sortingOrder ∈ SortingOrderConstants`, and `page`/`pageSize` bounds identical to `GetWordsRequestValidator`
+- [x] T018 Create `LexicaNext.Core/Queries/GetWordsStatistics/Services/GetWordsStatisticsRequestProcessor.cs` orchestrating validator → `IUserContextResolver` → repository → mapper (mirror `GetWordsRequestProcessor`) (depends on T014, T015, T016, T017)
+- [x] T019 Create `LexicaNext.Core/Queries/GetWordsStatistics/GetWordsStatisticsEndpoint.cs` defining `GetWordsStatisticsRequest` (`[AsParameters]`), `WordStatisticsRecordDto`, `GetWordsStatisticsResponse { int Count; IReadOnlyList<WordStatisticsRecordDto> Data }`, and `MapGetWordsStatisticsEndpoint` routing `GET /api/words-statistics` with policy `AuthorizationPolicies.Auth0OrApiKey`, returning `401` when `IUserContextResolver.GetUserId()` is null, and calling `Produces<GetWordsStatisticsResponse>()` (depends on T018)
+- [x] T020 Create `LexicaNext.Infrastructure/Db/Repositories/WordsStatisticsRepository.cs` implementing `IGetWordsStatisticsRepository` — empty / `throw new NotImplementedException()` body is fine here; real query logic is added in US1 (T029). Register the type for DI following the existing convention used by `WordsRepository` (depends on T014)
+- [x] T021 Wire the endpoint into the host: call `MapGetWordsStatisticsEndpoint(...)` from the endpoints wiring in `LexicaNext.WebApp/Program.cs` (or the equivalent `MapEndpoints` extension used by the other queries) (depends on T019)
 
 ### Frontend foundational plumbing
 
-- [ ] T022 [P] Add a `wordsStatistics` link builder to `Frontend/lexica-next-front/src/config/links.ts` (path `/words-statistics`, supports `page`, `searchQuery`, `sortingFieldName`, `sortingOrder` query params)
-- [ ] T023 [P] Add navigation entry "Words Statistics" alongside Sets/Words/About in `Frontend/lexica-next-front/src/components/layout/Layout.tsx` (depends on T022)
-- [ ] T024 Add the `/words-statistics` route and breadcrumbs registration to `Frontend/lexica-next-front/src/AppRouter.tsx`, wiring it to `WordsStatisticsPage` (the component is created in US1; for now register a stub import so the route compiles) (depends on T022)
-- [ ] T025 After BE builds successfully, regenerate `Frontend/lexica-next-front/api-types/api-types.ts` via the existing generation step (run `dotnet build` of the WebApp project or the project-specific `npm run generate-api-types`) so `"/api/words-statistics"` and `WordStatisticsRecordDto` appear in the OpenAPI-derived types (depends on T019, T021)
+- [x] T022 [P] Add a `wordsStatistics` link builder to `Frontend/lexica-next-front/src/config/links.ts` (path `/words-statistics`, supports `page`, `searchQuery`, `sortingFieldName`, `sortingOrder` query params)
+- [x] T023 [P] Add navigation entry "Words Statistics" alongside Sets/Words/About in `Frontend/lexica-next-front/src/components/layout/Layout.tsx` (depends on T022)
+- [x] T024 Add the `/words-statistics` route and breadcrumbs registration to `Frontend/lexica-next-front/src/AppRouter.tsx`, wiring it to `WordsStatisticsPage` (the component is created in US1; for now register a stub import so the route compiles) (depends on T022)
+- [x] T025 After BE builds successfully, regenerate `Frontend/lexica-next-front/api-types/api-types.ts` via the existing generation step (run `dotnet build` of the WebApp project or the project-specific `npm run generate-api-types`) so `"/api/words-statistics"` and `WordStatisticsRecordDto` appear in the OpenAPI-derived types (depends on T019, T021)
 
 ### Regenerate existing snapshots affected by the new column
 
-- [ ] T026 Regenerate Verify snapshots under `LexicaNext.WebApp.Tests.Integration/Features/Answers/RegisterAnswer/**/*.verified.txt` after the `WordId` column/payload is added, by running `dotnet test LexicaNext.WebApp.Tests.Integration --filter "FullyQualifiedName~RegisterAnswer"` and accepting the resulting `.received.txt` files (depends on T008, T010, T011, T012)
+- [x] T026 Regenerate Verify snapshots under `LexicaNext.WebApp.Tests.Integration/Features/Answers/RegisterAnswer/**/*.verified.txt` after the `WordId` column/payload is added, by running `dotnet test LexicaNext.WebApp.Tests.Integration --filter "FullyQualifiedName~RegisterAnswer"` and accepting the resulting `.received.txt` files (depends on T008, T010, T011, T012)
 
 **Checkpoint**: Foundation ready — endpoint scaffolded (returns not-implemented in repo), schema migrated, write-path carries `WordId`. User story implementation can now begin.
 
@@ -94,21 +94,21 @@ Web application layout:
 
 ### Tests for User Story 1 ⚠️
 
-- [ ] T027 [P] [US1] Create `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/Data/CorrectTestCases/CorrectTestCasesGenerator.cs` producing seeded-history cases that exercise: single-word baseline, multi-word baseline, user-scoping (two users with overlapping words), and mode-scoping (non-open-questions answers excluded) — seed via the real `RegisterAnswer` command per research.md Decision 6
-- [ ] T028 [US1] Create `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/GetWordsStatisticsTests.cs` as an xUnit v3 class in `MainTestsCollection` that drives `GET /api/words-statistics` using the cases from T027 and verifies response shape via Verify, plus an unauthenticated-request case returning `401`, and an empty-state case returning `{"count":0,"data":[]}` (depends on T027)
+- [x] T027 [P] [US1] Create `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/Data/CorrectTestCases/CorrectTestCasesGenerator.cs` producing seeded-history cases that exercise: single-word baseline, multi-word baseline, user-scoping (two users with overlapping words), and mode-scoping (non-open-questions answers excluded) — seed via the real `RegisterAnswer` command per research.md Decision 6
+- [x] T028 [US1] Create `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/GetWordsStatisticsTests.cs` as an xUnit v3 class in `MainTestsCollection` that drives `GET /api/words-statistics` using the cases from T027 and verifies response shape via Verify, plus an unauthenticated-request case returning `401`, and an empty-state case returning `{"count":0,"data":[]}` (depends on T027)
 
 ### Implementation for User Story 1
 
-- [ ] T029 [US1] Implement `GetWordsStatisticsAsync` in `LexicaNext.Infrastructure/Db/Repositories/WordsStatisticsRepository.cs` — hand-rolled LINQ per research.md Decision 2: group `Answers` by `WordId` filtered to `UserId == userId && ModeType == "open-questions"`, join to `Words` scoped by `UserId == userId`, project to `WordStatisticsRecord`, apply pre-pagination `totalCount` after any filter, paginate via the existing `Paginate` extension, and return `(records, totalCount)`. Do NOT reuse the generic `Sort`/`Filter` extensions here — sorting and filtering logic are added in US2/US3 (see Dependencies below)
-- [ ] T030 [US1] Verify `GetWordsStatisticsEndpoint` (from T019) correctly propagates `count`/`data` shape and the `401` path; extend it if the scaffold stub returned a wrong shape (depends on T029)
+- [x] T029 [US1] Implement `GetWordsStatisticsAsync` in `LexicaNext.Infrastructure/Db/Repositories/WordsStatisticsRepository.cs` — hand-rolled LINQ per research.md Decision 2: group `Answers` by `WordId` filtered to `UserId == userId && ModeType == "open-questions"`, join to `Words` scoped by `UserId == userId`, project to `WordStatisticsRecord`, apply pre-pagination `totalCount` after any filter, paginate via the existing `Paginate` extension, and return `(records, totalCount)`. Do NOT reuse the generic `Sort`/`Filter` extensions here — sorting and filtering logic are added in US2/US3 (see Dependencies below)
+- [x] T030 [US1] Verify `GetWordsStatisticsEndpoint` (from T019) correctly propagates `count`/`data` shape and the `401` path; extend it if the scaffold stub returned a wrong shape (depends on T029)
 
 **Checkpoint**: MVP reachable. User can browse `/words-statistics` with the default endpoint response. Frontend page (T033–T036) is what makes it visible to users — implement now as part of US1 since the page is the delivery mechanism for this story.
 
 ### Frontend for User Story 1
 
-- [ ] T031 [P] [US1] Add a `useWordsStatistics` hook to `Frontend/lexica-next-front/src/hooks/api.ts` that calls `GET /api/words-statistics` via the openapi-typed fetch client and returns `{ data, count, isLoading, error }` (mirror `useWords`). Accept `{ page, searchQuery, sortingFieldName, sortingOrder }` params and pass them straight through (depends on T025)
-- [ ] T032 [US1] Create `Frontend/lexica-next-front/src/pages/wordsStatistics/WordsStatisticsPage.tsx` — page shell that renders the list component and owns the breadcrumb title. Replace the stub registered in T024 (depends on T024, T033)
-- [ ] T033 [US1] Create `Frontend/lexica-next-front/src/components/wordsStatistics/WordsStatisticsList.tsx` that:
+- [x] T031 [P] [US1] Add a `useWordsStatistics` hook to `Frontend/lexica-next-front/src/hooks/api.ts` that calls `GET /api/words-statistics` via the openapi-typed fetch client and returns `{ data, count, isLoading, error }` (mirror `useWords`). Accept `{ page, searchQuery, sortingFieldName, sortingOrder }` params and pass them straight through (depends on T025)
+- [x] T032 [US1] Create `Frontend/lexica-next-front/src/pages/wordsStatistics/WordsStatisticsPage.tsx` — page shell that renders the list component and owns the breadcrumb title. Replace the stub registered in T024 (depends on T024, T033)
+- [x] T033 [US1] Create `Frontend/lexica-next-front/src/components/wordsStatistics/WordsStatisticsList.tsx` that:
   - Reads `page`, `searchQuery`, `sortingFieldName`, `sortingOrder` from `useSearchParams`
   - Calls `useWordsStatistics(...)`
   - Renders columns: Word, Correct, Incorrect, Go-to-word action (go-to-word is wired in US4)
@@ -126,14 +126,14 @@ Web application layout:
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T034 [P] [US2] Extend `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/Data/CorrectTestCases/CorrectTestCasesGenerator.cs` with cases that assert sort behaviour: `sortingFieldName=correctCount` asc/desc, `sortingFieldName=incorrectCount` asc/desc, `sortingFieldName=word` asc/desc, and a tie-breaker case where the primary column ties and the secondary key `word asc` decides the order
-- [ ] T035 [P] [US2] Extend `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/Data/IncorrectTestCases/IncorrectTestCasesGenerator.cs` with unknown-`sortingFieldName` and out-of-range-`sortingOrder` cases asserting `400 Bad Request` with RFC 7807 body
-- [ ] T036 [P] [US2] Create `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/03-sort.spec.ts` covering: Correct asc/desc toggle, Incorrect asc/desc toggle, default load order (`incorrectCount desc`), URL persistence across reloads. Uses the seeding helper from T045
+- [x] T034 [P] [US2] Extend `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/Data/CorrectTestCases/CorrectTestCasesGenerator.cs` with cases that assert sort behaviour: `sortingFieldName=correctCount` asc/desc, `sortingFieldName=incorrectCount` asc/desc, `sortingFieldName=word` asc/desc, and a tie-breaker case where the primary column ties and the secondary key `word asc` decides the order
+- [x] T035 [P] [US2] Extend `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/Data/IncorrectTestCases/IncorrectTestCasesGenerator.cs` with unknown-`sortingFieldName` and out-of-range-`sortingOrder` cases asserting `400 Bad Request` with RFC 7807 body
+- [x] T036 [P] [US2] Create `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/03-sort.spec.ts` covering: Correct asc/desc toggle, Incorrect asc/desc toggle, default load order (`incorrectCount desc`), URL persistence across reloads. Uses the seeding helper from T045
 
 ### Implementation for User Story 2
 
-- [ ] T037 [US2] Extend `GetWordsStatisticsAsync` in `LexicaNext.Infrastructure/Db/Repositories/WordsStatisticsRepository.cs` to apply sorting on the projected `IQueryable<WordStatisticsRecord>`: switch on `listParameters.Sorting.FieldName` (`correctCount`, `incorrectCount`, `word`), direction from `SortingOrderConstants`, always append `ThenBy(x => x.Word)` when the primary key is not `word` (per research.md Decision 2 & 4) (depends on T029)
-- [ ] T038 [US2] Extend `WordsStatisticsList.tsx` to render Correct/Incorrect column headers as sort toggles: clicking cycles `desc → asc → desc`, mutates `sortingFieldName`/`sortingOrder` via `setSearchParams({ ..., page: undefined }, { replace: true })` to reset page to 1 per FR-016 (depends on T033)
+- [x] T037 [US2] Extend `GetWordsStatisticsAsync` in `LexicaNext.Infrastructure/Db/Repositories/WordsStatisticsRepository.cs` to apply sorting on the projected `IQueryable<WordStatisticsRecord>`: switch on `listParameters.Sorting.FieldName` (`correctCount`, `incorrectCount`, `word`), direction from `SortingOrderConstants`, always append `ThenBy(x => x.Word)` when the primary key is not `word` (per research.md Decision 2 & 4) (depends on T029)
+- [x] T038 [US2] Extend `WordsStatisticsList.tsx` to render Correct/Incorrect column headers as sort toggles: clicking cycles `desc → asc → desc`, mutates `sortingFieldName`/`sortingOrder` via `setSearchParams({ ..., page: undefined }, { replace: true })` to reset page to 1 per FR-016 (depends on T033)
 
 **Checkpoint**: User Stories 1 AND 2 both work independently.
 
@@ -147,13 +147,13 @@ Web application layout:
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T039 [P] [US3] Extend `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/Data/CorrectTestCases/CorrectTestCasesGenerator.cs` with filter cases: substring match, case-insensitive match, whitespace-only filter treated as empty, filter combined with sort, and zero-match filter producing `{"count":0,"data":[]}`
-- [ ] T040 [P] [US3] Create `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/02-filter.spec.ts` covering: typing narrows rows, debounce ≤300 ms, URL gains `searchQuery=...`, page resets to `1` after filter change, clearing restores full list, filtered-empty-state message visible when no rows match
+- [x] T039 [P] [US3] Extend `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/Data/CorrectTestCases/CorrectTestCasesGenerator.cs` with filter cases: substring match, case-insensitive match, whitespace-only filter treated as empty, filter combined with sort, and zero-match filter producing `{"count":0,"data":[]}`
+- [x] T040 [P] [US3] Create `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/02-filter.spec.ts` covering: typing narrows rows, debounce ≤300 ms, URL gains `searchQuery=...`, page resets to `1` after filter change, clearing restores full list, filtered-empty-state message visible when no rows match
 
 ### Implementation for User Story 3
 
-- [ ] T041 [US3] Extend `GetWordsStatisticsAsync` in `LexicaNext.Infrastructure/Db/Repositories/WordsStatisticsRepository.cs` to apply `EF.Functions.ILike(x.Word, $"%{searchQuery}%")` post-projection when `listParameters.Filtering?.SearchQuery` is non-null and non-whitespace (per research.md Decision 2 & contracts/get-words-statistics.md §Scope) (depends on T029)
-- [ ] T042 [US3] Extend `WordsStatisticsList.tsx` to render a `<TextInput>` filter bound through `useDebouncedValue(value, 300)` that writes `searchQuery` to the URL (drops the param when value is empty/whitespace), resets `page` to `1` on change, and renders the FR-011b filtered-empty-state message when `count === 0 && searchQuery !== ""` (depends on T033)
+- [x] T041 [US3] Extend `GetWordsStatisticsAsync` in `LexicaNext.Infrastructure/Db/Repositories/WordsStatisticsRepository.cs` to apply `EF.Functions.ILike(x.Word, $"%{searchQuery}%")` post-projection when `listParameters.Filtering?.SearchQuery` is non-null and non-whitespace (per research.md Decision 2 & contracts/get-words-statistics.md §Scope) (depends on T029)
+- [x] T042 [US3] Extend `WordsStatisticsList.tsx` to render a `<TextInput>` filter bound through `useDebouncedValue(value, 300)` that writes `searchQuery` to the URL (drops the param when value is empty/whitespace), resets `page` to `1` on change, and renders the FR-011b filtered-empty-state message when `count === 0 && searchQuery !== ""` (depends on T033)
 
 **Checkpoint**: User Stories 1, 2, 3 all work independently.
 
@@ -169,14 +169,14 @@ Web application layout:
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T043 [P] [US5] Extend `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/Data/CorrectTestCases/CorrectTestCasesGenerator.cs` with a case that seeds more rows than the default `pageSize`, asserting `count` reflects pre-pagination total and `data.Length <= pageSize` on page 1, and a `page=2` case returning the expected second-page rows
-- [ ] T044 [P] [US5] Create `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/04-pagination.spec.ts` covering: pagination control visible with seeded overflow, URL `?page=2` on next-page click, browser back restores filter+sort+page, filter/sort change resets to page 1
-- [ ] T045 [P] [US5] Create `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/helpers.ts` exporting `seedOpenQuestionAnswersViaApi({ word, correctCount, incorrectCount })` that hits `POST /api/words` and then `POST /api/answers` via the captured auth token and a `generateTestPrefix`ed word — reusable by tests T036, T040, T044, T048, T050
+- [x] T043 [P] [US5] Extend `LexicaNext.WebApp.Tests.Integration/Features/Answers/GetWordsStatistics/Data/CorrectTestCases/CorrectTestCasesGenerator.cs` with a case that seeds more rows than the default `pageSize`, asserting `count` reflects pre-pagination total and `data.Length <= pageSize` on page 1, and a `page=2` case returning the expected second-page rows
+- [x] T044 [P] [US5] Create `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/04-pagination.spec.ts` covering: pagination control visible with seeded overflow, URL `?page=2` on next-page click, browser back restores filter+sort+page, filter/sort change resets to page 1
+- [x] T045 [P] [US5] Create `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/helpers.ts` exporting `seedOpenQuestionAnswersViaApi({ word, correctCount, incorrectCount })` that hits `POST /api/words` and then `POST /api/answers` via the captured auth token and a `generateTestPrefix`ed word — reusable by tests T036, T040, T044, T048, T050
 
 ### Implementation for User Story 5
 
-- [ ] T046 [US5] Extend `WordsStatisticsList.tsx` to render the shared pagination control used by `WordsList`/`SetsList`, reading/writing `page` via `useSearchParams`, ensuring the default page size matches Sets/Words (depends on T033)
-- [ ] T047 [US5] Create `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/01-words-statistics-page.spec.ts` — baseline spec covering rows + counts correctness, primary empty state, filtered empty state (small surface test that verifies US1 + US3 + US5 basics work together end-to-end) (depends on T045)
+- [x] T046 [US5] Extend `WordsStatisticsList.tsx` to render the shared pagination control used by `WordsList`/`SetsList`, reading/writing `page` via `useSearchParams`, ensuring the default page size matches Sets/Words (depends on T033)
+- [x] T047 [US5] Create `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/01-words-statistics-page.spec.ts` — baseline spec covering rows + counts correctness, primary empty state, filtered empty state (small surface test that verifies US1 + US3 + US5 basics work together end-to-end) (depends on T045)
 
 **Checkpoint**: User Stories 1, 2, 3, 5 all work independently.
 
@@ -190,13 +190,13 @@ Web application layout:
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T048 [P] [US4] Create `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/05-go-to-word-and-back.spec.ts` covering: round-trip preserves filter+sort+page, back on the edit form lands on the right URL, existing Words-page return path still works (regression case) (depends on T045)
+- [x] T048 [P] [US4] Create `Frontend/lexica-next-front-e2e-tests/tests/words-statistics/05-go-to-word-and-back.spec.ts` covering: round-trip preserves filter+sort+page, back on the edit form lands on the right URL, existing Words-page return path still works (regression case) (depends on T045)
 
 ### Implementation for User Story 4
 
-- [ ] T049 [US4] Extend the `editWord` link builder in `Frontend/lexica-next-front/src/config/links.ts` to accept an optional `returnTo: string` second argument that gets appended as a URL-encoded query param (only when the value is a same-origin path starting with `/`; silently dropped otherwise to prevent open-redirect) (depends on T022)
-- [ ] T050 [US4] In `WordsStatisticsList.tsx` render each row's go-to-word control as a link built with `links.words.editWord.getUrl({ wordId }, { returnTo: "/words-statistics" + location.search })` (depends on T049)
-- [ ] T051 [US4] Update the word edit form's back handler (the component under `Frontend/lexica-next-front/src/pages/words/` that owns the edit route) to prefer a `returnTo` query param starting with `/` when present, falling back to the existing `returnPage`-based reconstruction otherwise — keep the existing branch untouched (depends on T049)
+- [x] T049 [US4] Extend the `editWord` link builder in `Frontend/lexica-next-front/src/config/links.ts` to accept an optional `returnTo: string` second argument that gets appended as a URL-encoded query param (only when the value is a same-origin path starting with `/`; silently dropped otherwise to prevent open-redirect) (depends on T022)
+- [x] T050 [US4] In `WordsStatisticsList.tsx` render each row's go-to-word control as a link built with `links.words.editWord.getUrl({ wordId }, { returnTo: "/words-statistics" + location.search })` (depends on T049)
+- [x] T051 [US4] Update the word edit form's back handler (the component under `Frontend/lexica-next-front/src/pages/words/` that owns the edit route) to prefer a `returnTo` query param starting with `/` when present, falling back to the existing `returnPage`-based reconstruction otherwise — keep the existing branch untouched (depends on T049)
 
 **Checkpoint**: All user stories (US1–US5) are independently functional and testable.
 
@@ -204,11 +204,11 @@ Web application layout:
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T052 [P] Run `dotnet test LexicaNext.WebApp.Tests.Integration --filter "FullyQualifiedName~GetWordsStatistics"` and accept any remaining `.received.txt` snapshots
-- [ ] T053 [P] Run the full Playwright suite `cd Frontend/lexica-next-front-e2e-tests && npx playwright test tests/words-statistics` and confirm all five specs pass
-- [ ] T054 Run `cd Frontend/lexica-next-front && npm run build` to confirm there are no TypeScript or Vite regressions introduced by the new page/hook/link/types
+- [x] T052 [P] Run `dotnet test LexicaNext.WebApp.Tests.Integration --filter "FullyQualifiedName~GetWordsStatistics"` and accept any remaining `.received.txt` snapshots
+- [x] T053 [P] Run the full Playwright suite `cd Frontend/lexica-next-front-e2e-tests && npx playwright test tests/words-statistics` and confirm all five specs pass
+- [x] T054 Run `cd Frontend/lexica-next-front && npm run build` to confirm there are no TypeScript or Vite regressions introduced by the new page/hook/link/types
 - [ ] T055 Run the regression sweep from `specs/003-words-statistics/quickstart.md` §9 (`dotnet test`, `npm run build`, `npx playwright test`) and file any failures (depends on T052, T053, T054)
-- [ ] T056 Manually walk through `specs/003-words-statistics/quickstart.md` §7 User Stories 1–5 in a local browser against a seeded DB to verify SC-001, SC-004, SC-006, SC-007 are demonstrable
+- [x] T056 Manually walk through `specs/003-words-statistics/quickstart.md` §7 User Stories 1–5 in a local browser against a seeded DB to verify SC-001, SC-004, SC-006, SC-007 are demonstrable
 
 ---
 
