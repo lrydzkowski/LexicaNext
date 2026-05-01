@@ -20,6 +20,7 @@ import {
 import { useDebouncedValue, useMediaQuery } from '@mantine/hooks';
 import { links } from '../../config/links';
 import { SHORTCUT_KEYS } from '../../config/shortcuts';
+import { useFocusClaim } from '../../contexts/FocusClaimContext';
 import { useDeleteWords, useWords, type WordRecordDto } from '../../hooks/api';
 import { generateRowHandlers, useShortcuts } from '../../hooks/useShortcuts';
 import { showErrorNotification } from '../../services/error-notifications';
@@ -28,6 +29,7 @@ import { DeleteWordModal } from './DeleteWordModal';
 
 export function WordsList() {
   const navigate = useNavigate();
+  const focusClaimed = useFocusClaim();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300);
@@ -69,6 +71,10 @@ export function WordsList() {
   const totalCount = wordsData?.count || 0;
 
   useEffect(() => {
+    if (focusClaimed) {
+      return;
+    }
+
     if (createButtonRef.current) {
       createButtonRef.current.focus();
     }

@@ -30,6 +30,7 @@ import {
 import { useDebouncedValue, useMediaQuery } from '@mantine/hooks';
 import { links } from '../../config/links';
 import { SHORTCUT_KEYS } from '../../config/shortcuts';
+import { useFocusClaim } from '../../contexts/FocusClaimContext';
 import { useDeleteSets, useSets, type SetRecordDto } from '../../hooks/api';
 import { generateRowHandlers, useShortcuts } from '../../hooks/useShortcuts';
 import { showErrorNotification } from '../../services/error-notifications';
@@ -38,6 +39,7 @@ import { DeleteSetModal } from './DeleteSetModal';
 
 export function SetsList() {
   const navigate = useNavigate();
+  const focusClaimed = useFocusClaim();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300);
@@ -79,6 +81,10 @@ export function SetsList() {
   const totalCount = setsData?.count || 0;
 
   useEffect(() => {
+    if (focusClaimed) {
+      return;
+    }
+
     if (createButtonRef.current) {
       createButtonRef.current.focus();
     }

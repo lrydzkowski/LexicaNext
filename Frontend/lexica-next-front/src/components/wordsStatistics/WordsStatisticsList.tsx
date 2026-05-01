@@ -23,6 +23,7 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { links } from '../../config/links';
+import { useFocusClaim } from '../../contexts/FocusClaimContext';
 import { useWordsStatistics } from '../../hooks/api';
 import { showErrorNotification } from '../../services/error-notifications';
 
@@ -51,6 +52,7 @@ const parseSortOrder = (value: string | null): SortOrder => {
 
 export function WordsStatisticsList() {
   const location = useLocation();
+  const focusClaimed = useFocusClaim();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -64,6 +66,10 @@ export function WordsStatisticsList() {
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300);
 
   useEffect(() => {
+    if (focusClaimed) {
+      return;
+    }
+
     if (searchInputRef.current) {
       searchInputRef.current.focus();
     }
