@@ -55,6 +55,7 @@ export function WordsStatisticsList() {
   const focusClaimed = useFocusClaim();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const hasAutoFocusedRef = useRef(false);
 
   const parsedPage = parseInt(searchParams.get('page') ?? '1', 10);
   const currentPage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
@@ -66,14 +67,15 @@ export function WordsStatisticsList() {
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300);
 
   useEffect(() => {
-    if (focusClaimed) {
+    if (hasAutoFocusedRef.current || focusClaimed) {
       return;
     }
 
     if (searchInputRef.current) {
       searchInputRef.current.focus();
+      hasAutoFocusedRef.current = true;
     }
-  }, []);
+  }, [focusClaimed]);
 
   useEffect(() => {
     if (debouncedSearchQuery === urlSearchQuery) {

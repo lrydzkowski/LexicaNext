@@ -46,6 +46,7 @@ export function SetsList() {
   const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const hasAutoFocusedRef = useRef(false);
   const mobileActionButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const desktopActionButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [deleteModalState, setDeleteModalState] = useState<{
@@ -81,14 +82,15 @@ export function SetsList() {
   const totalCount = setsData?.count || 0;
 
   useEffect(() => {
-    if (focusClaimed) {
+    if (hasAutoFocusedRef.current || focusClaimed) {
       return;
     }
 
     if (createButtonRef.current) {
       createButtonRef.current.focus();
+      hasAutoFocusedRef.current = true;
     }
-  }, []);
+  }, [focusClaimed]);
 
   useEffect(() => {
     setSearchParams((prev) => {
