@@ -20,6 +20,7 @@ import {
 import { useDebouncedValue, useMediaQuery } from '@mantine/hooks';
 import { links } from '../../config/links';
 import { SHORTCUT_KEYS } from '../../config/shortcuts';
+import { useFocusClaim } from '../../contexts/FocusClaimContext';
 import { useDeleteWords, useWords, type WordRecordDto } from '../../hooks/api';
 import { generateRowHandlers, useShortcuts } from '../../hooks/useShortcuts';
 import { showErrorNotification } from '../../services/error-notifications';
@@ -28,12 +29,14 @@ import { DeleteWordModal } from './DeleteWordModal';
 
 export function WordsList() {
   const navigate = useNavigate();
+  const focusClaimed = useFocusClaim();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300);
   const [selectedWordIds, setSelectedWordIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const hasAutoFocusedRef = useRef(false);
   const mobileActionButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const desktopActionButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [deleteModalState, setDeleteModalState] = useState<{
@@ -69,10 +72,15 @@ export function WordsList() {
   const totalCount = wordsData?.count || 0;
 
   useEffect(() => {
+    if (hasAutoFocusedRef.current || focusClaimed) {
+      return;
+    }
+
     if (createButtonRef.current) {
       createButtonRef.current.focus();
+      hasAutoFocusedRef.current = true;
     }
-  }, []);
+  }, [focusClaimed]);
 
   useEffect(() => {
     setSearchParams((prev) => {

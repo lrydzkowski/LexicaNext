@@ -30,6 +30,7 @@ import {
 import { useDebouncedValue, useMediaQuery } from '@mantine/hooks';
 import { links } from '../../config/links';
 import { SHORTCUT_KEYS } from '../../config/shortcuts';
+import { useFocusClaim } from '../../contexts/FocusClaimContext';
 import { useDeleteSets, useSets, type SetRecordDto } from '../../hooks/api';
 import { generateRowHandlers, useShortcuts } from '../../hooks/useShortcuts';
 import { showErrorNotification } from '../../services/error-notifications';
@@ -38,12 +39,14 @@ import { DeleteSetModal } from './DeleteSetModal';
 
 export function SetsList() {
   const navigate = useNavigate();
+  const focusClaimed = useFocusClaim();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300);
   const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const hasAutoFocusedRef = useRef(false);
   const mobileActionButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const desktopActionButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [deleteModalState, setDeleteModalState] = useState<{
@@ -79,10 +82,15 @@ export function SetsList() {
   const totalCount = setsData?.count || 0;
 
   useEffect(() => {
+    if (hasAutoFocusedRef.current || focusClaimed) {
+      return;
+    }
+
     if (createButtonRef.current) {
       createButtonRef.current.focus();
+      hasAutoFocusedRef.current = true;
     }
-  }, []);
+  }, [focusClaimed]);
 
   useEffect(() => {
     setSearchParams((prev) => {
