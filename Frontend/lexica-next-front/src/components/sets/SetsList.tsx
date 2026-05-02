@@ -223,16 +223,16 @@ export function SetsList() {
           Spelling Mode
         </Menu.Item>
         <Menu.Item
-          leftSection={<IconBrain size={16} />}
-          component={Link}
-          to={links.fullMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
-          Full Mode
-        </Menu.Item>
-        <Menu.Item
           leftSection={<IconBlockquote size={16} />}
           component={Link}
           to={links.sentencesMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
           Sentences Mode
+        </Menu.Item>
+        <Menu.Item
+          leftSection={<IconBrain size={16} />}
+          component={Link}
+          to={links.fullMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
+          Full Mode
         </Menu.Item>
         <Menu.Item
           leftSection={<IconTarget size={16} />}
