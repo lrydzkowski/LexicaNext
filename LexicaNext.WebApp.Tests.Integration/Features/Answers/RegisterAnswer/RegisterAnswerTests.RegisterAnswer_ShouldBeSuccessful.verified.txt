@@ -60,5 +60,36 @@
     LogMessages: ,
     StatusCode: NoContent,
     Response: 
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [
+      {
+        AnswerId: Guid_5,
+        UserId: test-user-id,
+        ModeType: sentences,
+        QuestionType: sentence-fill,
+        Question: The cat sat on the _____.,
+        GivenAnswer: mat,
+        ExpectedAnswer: mat,
+        IsCorrect: true,
+        AnsweredAt: DateTimeOffset_3,
+        WordId: Guid_6,
+        Word: null
+      }
+    ],
+    Request: {
+      ModeType: sentences,
+      QuestionType: sentence-fill,
+      Question: The cat sat on the _____.,
+      GivenAnswer: mat,
+      ExpectedAnswer: mat,
+      IsCorrect: true,
+      WordId: Guid_6
+    },
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: NoContent,
+    Response: 
   }
 ]

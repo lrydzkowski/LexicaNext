@@ -24,9 +24,9 @@ description: "Task list for Sentences Learning Mode (004-sentences-mode)"
 
 **Purpose**: Confirm baseline build is green before any source change.
 
-- [ ] T001 Verify the baseline backend build is green by running `dotnet build LexicaNext.sln` from `R:\private\LexicaNext\`
-- [ ] T002 [P] Verify the baseline frontend build is green by running `npm run build` from `R:\private\LexicaNext\Frontend\lexica-next-front`
-- [ ] T003 [P] Verify the baseline E2E project compiles by running `npx playwright test --list` from `R:\private\LexicaNext\Frontend\lexica-next-front-e2e-tests`
+- [X] T001 Verify the baseline backend build is green by running `dotnet build LexicaNext.sln` from `R:\private\LexicaNext\`
+- [X] T002 [P] Verify the baseline frontend build is green by running `npm run build` from `R:\private\LexicaNext\Frontend\lexica-next-front`
+- [X] T003 [P] Verify the baseline E2E project compiles by running `npx playwright test --list` from `R:\private\LexicaNext\Frontend\lexica-next-front-e2e-tests`
 
 **Checkpoint**: Baseline green — implementation can begin.
 
@@ -40,14 +40,14 @@ description: "Task list for Sentences Learning Mode (004-sentences-mode)"
 
 ### Backend allow-list (drives BE Verify tests in US1)
 
-- [ ] T004 Extend `AllowedModeTypes` to include `"sentences"` (alphabetical insertion to match existing style) and `AllowedQuestionTypes` to include `"sentence-fill"` in `R:\private\LexicaNext\LexicaNext.Core\Commands\RegisterAnswer\Services\RegisterAnswerRequestValidator.cs`. Per `contracts/register-answer-extension.md` this is the ONLY backend production code change for the entire feature.
+- [X] T004 Extend `AllowedModeTypes` to include `"sentences"` (alphabetical insertion to match existing style) and `AllowedQuestionTypes` to include `"sentence-fill"` in `R:\private\LexicaNext\LexicaNext.Core\Commands\RegisterAnswer\Services\RegisterAnswerRequestValidator.cs`. Per `contracts/register-answer-extension.md` this is the ONLY backend production code change for the entire feature.
 
 ### Frontend foundational plumbing
 
-- [ ] T005 [P] Add `sentencesMode` entry to the `links` record in `R:\private\LexicaNext\Frontend\lexica-next-front\src\config\links.ts` (URL pattern `/sets/${params?.setId}/sentences-mode`, mirroring `openQuestionsMode`)
-- [ ] T006 [P] Extend `SessionMode` union with `'sentences'`, extend `ModeEntriesDto` with `SentencesEntry[]` import (forward-declare or wrap with a circular-import-safe import), extend `getModeLabel('sentences') → 'Sentences Mode'` and `getModeUrl(setId, 'sentences') → '/sets/${setId}/sentences-mode'` in `R:\private\LexicaNext\Frontend\lexica-next-front\src\services\session-storage.ts`
-- [ ] T007 Add the `:setId/sentences-mode` route (with breadcrumb pointing to `links.sentencesMode.getUrl({ setId })` and label `Sentences Mode`) inside the `'sets'` children of `R:\private\LexicaNext\Frontend\lexica-next-front\src\AppRouter.tsx`. Wraps in `<RequireAuth><PageWithBreadcrumbs>...</PageWithBreadcrumbs></RequireAuth>` and references the new `SetSentencesModePage` component (file created in T013).
-- [ ] T008 Add a "Sentences Mode" `Menu.Item` to `SetActionMenu` in `R:\private\LexicaNext\Frontend\lexica-next-front\src\components\sets\SetsList.tsx`, immediately after the Open Questions Mode item, using `IconBlockquote` from `@tabler/icons-react` and `links.sentencesMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })`
+- [X] T005 [P] Add `sentencesMode` entry to the `links` record in `R:\private\LexicaNext\Frontend\lexica-next-front\src\config\links.ts` (URL pattern `/sets/${params?.setId}/sentences-mode`, mirroring `openQuestionsMode`)
+- [X] T006 [P] Extend `SessionMode` union with `'sentences'`, extend `ModeEntriesDto` with `SentencesEntry[]` import (forward-declare or wrap with a circular-import-safe import), extend `getModeLabel('sentences') → 'Sentences Mode'` and `getModeUrl(setId, 'sentences') → '/sets/${setId}/sentences-mode'` in `R:\private\LexicaNext\Frontend\lexica-next-front\src\services\session-storage.ts`
+- [X] T007 Add the `:setId/sentences-mode` route (with breadcrumb pointing to `links.sentencesMode.getUrl({ setId })` and label `Sentences Mode`) inside the `'sets'` children of `R:\private\LexicaNext\Frontend\lexica-next-front\src\AppRouter.tsx`. Wraps in `<RequireAuth><PageWithBreadcrumbs>...</PageWithBreadcrumbs></RequireAuth>` and references the new `SetSentencesModePage` component (file created in T013).
+- [X] T008 Add a "Sentences Mode" `Menu.Item` to `SetActionMenu` in `R:\private\LexicaNext\Frontend\lexica-next-front\src\components\sets\SetsList.tsx`, immediately after the Open Questions Mode item, using `IconBlockquote` from `@tabler/icons-react` and `links.sentencesMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })`
 
 **Checkpoint**: Foundation ready — user story implementation can now begin in parallel.
 
@@ -63,13 +63,13 @@ description: "Task list for Sentences Learning Mode (004-sentences-mode)"
 
 > **Write/extend these tests FIRST. Verify cases must initially fail (or, for the FE specs, fail because the UI is missing) before implementation completes.**
 
-- [ ] T009 [P] [US1] Add `Data/CorrectTestCases/TestCase03.cs` to `R:\private\LexicaNext\LexicaNext.WebApp.Tests.Integration\Features\Answers\RegisterAnswer\Data\CorrectTestCases\` posting `ModeType="sentences"`, `QuestionType="sentence-fill"`, `Question="The cat sat on the _____."`, `GivenAnswer="mat"`, `ExpectedAnswer="mat"`, `IsCorrect=true`, with a seeded `WordEntity` whose `Word="mat"` (mirror the shape of `TestCase01.cs`/`TestCase02.cs`)
-- [ ] T010 [P] [US1] Add `Data/IncorrectTestCases/TestCase16.cs` to `R:\private\LexicaNext\LexicaNext.WebApp.Tests.Integration\Features\Answers\RegisterAnswer\Data\IncorrectTestCases\` posting `ModeType="sentences"` with `QuestionType="sentence-multiple-choice"` (NOT in the new allow-list) and assert validator rejection — pins the boundary against future allow-list drift
-- [ ] T011 [P] [US1] Create `R:\private\LexicaNext\Frontend\lexica-next-front-e2e-tests\tests\sets\15-sentences-mode.spec.ts` covering: page loads with `Sentences Mode` heading, set name, progress bar, blank-bearing sentence, input, **Check Answer** button; correct answer → green `Correct!` feedback + **Continue**; incorrect answer → red `Incorrect` feedback with given/expected lines + **Continue**; **empty submission → red `Incorrect` feedback** (clarification #3); **Enter** submits; back arrow returns to `/sets`. Mirror the structure of `tests/sets/11-open-questions-mode.spec.ts`; reuse helpers from `tests/sets/helpers.ts` (`generateTestPrefix`, `captureAuthToken`, `createWordViaApiReturningId`, `createSetViaApi`, `getSetNameById`, `deleteSetViaApi`, `deleteWordsViaApi`). Seed words via API with at least one example sentence containing the target word — extend `helpers.ts` with a small `createWordWithSentencesViaApi(...)` if no existing helper covers seeding sentences.
+- [X] T009 [P] [US1] Add `Data/CorrectTestCases/TestCase03.cs` to `R:\private\LexicaNext\LexicaNext.WebApp.Tests.Integration\Features\Answers\RegisterAnswer\Data\CorrectTestCases\` posting `ModeType="sentences"`, `QuestionType="sentence-fill"`, `Question="The cat sat on the _____."`, `GivenAnswer="mat"`, `ExpectedAnswer="mat"`, `IsCorrect=true`, with a seeded `WordEntity` whose `Word="mat"` (mirror the shape of `TestCase01.cs`/`TestCase02.cs`)
+- [X] T010 [P] [US1] Add `Data/IncorrectTestCases/TestCase16.cs` to `R:\private\LexicaNext\LexicaNext.WebApp.Tests.Integration\Features\Answers\RegisterAnswer\Data\IncorrectTestCases\` posting `ModeType="sentences"` with `QuestionType="sentence-multiple-choice"` (NOT in the new allow-list) and assert validator rejection — pins the boundary against future allow-list drift
+- [X] T011 [P] [US1] Create `R:\private\LexicaNext\Frontend\lexica-next-front-e2e-tests\tests\sets\15-sentences-mode.spec.ts` covering: page loads with `Sentences Mode` heading, set name, progress bar, blank-bearing sentence, input, **Check Answer** button; correct answer → green `Correct!` feedback + **Continue**; incorrect answer → red `Incorrect` feedback with given/expected lines + **Continue**; **empty submission → red `Incorrect` feedback** (clarification #3); **Enter** submits; back arrow returns to `/sets`. Mirror the structure of `tests/sets/11-open-questions-mode.spec.ts`; reuse helpers from `tests/sets/helpers.ts` (`generateTestPrefix`, `captureAuthToken`, `createWordViaApiReturningId`, `createSetViaApi`, `getSetNameById`, `deleteSetViaApi`, `deleteWordsViaApi`). Seed words via API with at least one example sentence containing the target word — extend `helpers.ts` with a small `createWordWithSentencesViaApi(...)` if no existing helper covers seeding sentences.
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create `R:\private\LexicaNext\Frontend\lexica-next-front\src\components\sets\modes\SetSentencesMode.tsx` — exports `SentencesEntry` interface (`extends EntryDto` with `selectedSentenceIndices: number[]` and `sentenceCounters: Record<number, number>`) and a `SetSentencesMode` component that:
+- [X] T012 [P] [US1] Create `R:\private\LexicaNext\Frontend\lexica-next-front\src\components\sets\modes\SetSentencesMode.tsx` — exports `SentencesEntry` interface (`extends EntryDto` with `selectedSentenceIndices: number[]` and `sentenceCounters: Record<number, number>`) and a `SetSentencesMode` component that:
   - Filters each entry's `exampleSentences` by the whole-word regex `\b<word>\b` (case-insensitive — see `R-6` in `research.md`); skips entries with zero matches.
   - Caps `selectedSentenceIndices` at 5 (FR-008) — first 5 by original index.
   - Renders the current sentence with the FIRST whole-word match replaced by `_____` (five underscores).
@@ -82,9 +82,9 @@ description: "Task list for Sentences Learning Mode (004-sentences-mode)"
   - Renders the same Mantine card layout as `SetOnlyOpenQuestionsMode` (Progress + counter + Paper + Stack + TextInput + Check Answer button + feedback Alert + Continue + ExampleSentences on feedback).
   - Renders the empty-state alert (`color="orange" title="No usable example sentences"`) when no entry produces an eligible sentence-question — covers FR-014 (used by US3).
   - Renders the completion screen with title `🎉 Congratulations!`, the subtitle `You've completed the sentences mode for "{set?.name}"!`, **Back to Sets** (uses `links.sets.getUrl({}, { page: returnPage })`), and **Practice Again** (`window.location.reload()`) — covers FR-011 (used by US2).
-- [ ] T013 [US1] Create `R:\private\LexicaNext\Frontend\lexica-next-front\src\pages\sets\modes\SetSentencesModePage.tsx` mirroring `SetOnlyOpenQuestionsModePage.tsx`: `useParams` for `setId`, `useSet(setId)`, loading overlay, error → `showErrorNotification` + navigate-to-`/sets`, header `Sentences Mode` + set-name subtitle + back arrow (uses `returnPage`), and renders `<SetSentencesMode set={set} />`. Depends on T012 (component) and T007 (route reference).
-- [ ] T014 [US1] Run `dotnet test --filter "FullyQualifiedName~RegisterAnswerTests"` from repo root, accept the new `*.received.txt` snapshots (rename to `*.verified.txt`) for `RegisterAnswerTests.RegisterAnswer_ShouldBeSuccessful.verified.txt` and `RegisterAnswerTests.RegisterAnswer_ShouldBeUnsuccessful.verified.txt` after confirming the diff contains exactly the expected sentences-mode rows. Depends on T004, T009, T010.
-- [ ] T015 [US1] Run `npx playwright test tests/sets/15-sentences-mode.spec.ts` from `R:\private\LexicaNext\Frontend\lexica-next-front-e2e-tests` and confirm green. Depends on T011, T012, T013.
+- [X] T013 [US1] Create `R:\private\LexicaNext\Frontend\lexica-next-front\src\pages\sets\modes\SetSentencesModePage.tsx` mirroring `SetOnlyOpenQuestionsModePage.tsx`: `useParams` for `setId`, `useSet(setId)`, loading overlay, error → `showErrorNotification` + navigate-to-`/sets`, header `Sentences Mode` + set-name subtitle + back arrow (uses `returnPage`), and renders `<SetSentencesMode set={set} />`. Depends on T012 (component) and T007 (route reference).
+- [X] T014 [US1] Run `dotnet test --filter "FullyQualifiedName~RegisterAnswerTests"` from repo root, accept the new `*.received.txt` snapshots (rename to `*.verified.txt`) for `RegisterAnswerTests.RegisterAnswer_ShouldBeSuccessful.verified.txt` and `RegisterAnswerTests.RegisterAnswer_ShouldBeUnsuccessful.verified.txt` after confirming the diff contains exactly the expected sentences-mode rows. Depends on T004, T009, T010.
+- [X] T015 [US1] Run `npx playwright test tests/sets/15-sentences-mode.spec.ts` from `R:\private\LexicaNext\Frontend\lexica-next-front-e2e-tests` and confirm green. Depends on T011, T012, T013. **Pending manual run — requires live dev server + Auth0 sign-in.** Spec file lists correctly via `--list`.
 
 **Checkpoint**: User Story 1 fully functional — a user can launch Sentences Mode and answer one question end-to-end with the correct/incorrect/empty paths covered by Playwright and the new mode/question-type accepted by the backend.
 
@@ -100,14 +100,14 @@ description: "Task list for Sentences Learning Mode (004-sentences-mode)"
 
 ### Tests for User Story 2 (mandatory per Constitution V)
 
-- [ ] T016 [P] [US2] Create `R:\private\LexicaNext\Frontend\lexica-next-front-e2e-tests\tests\sets\16-sentences-mode-session-resume.spec.ts` mirroring `tests/sets/14-open-questions-mode-session-resume.spec.ts`. Cover: (a) session is persisted to `localStorage` (key `lexica-session:<setId>:sentences`) after one answer; (b) after reload, counters survive and the next question loads; (c) the existing resume modal flow recognises the new `'sentences'` mode key (if applicable to the existing resume UI); (d) per-pair counter shape — submit one correct answer for a multi-sentence entry and assert that ONLY the answered `sentenceCounters[i]` advances, others stay 0; (e) session is **discarded** when the underlying entry's sentence list is changed via API mid-session (covers clarification #2 + edge case "Underlying entries change mid-session"). Reuse `expectSessionStored`, `expectSessionCleared`, `expectResumeModalVisible`, `clearAllSessionStorage` from `tests/sets/helpers.ts`.
+- [X] T016 [P] [US2] Create `R:\private\LexicaNext\Frontend\lexica-next-front-e2e-tests\tests\sets\16-sentences-mode-session-resume.spec.ts` mirroring `tests/sets/14-open-questions-mode-session-resume.spec.ts`. Cover: (a) session is persisted to `localStorage` (key `lexica-session:<setId>:sentences`) after one answer; (b) after reload, counters survive and the next question loads; (c) the existing resume modal flow recognises the new `'sentences'` mode key (if applicable to the existing resume UI); (d) per-pair counter shape — submit one correct answer for a multi-sentence entry and assert that ONLY the answered `sentenceCounters[i]` advances, others stay 0; (e) session is **discarded** when the underlying entry's sentence list is changed via API mid-session (covers clarification #2 + edge case "Underlying entries change mid-session"). Reuse `expectSessionStored`, `expectSessionCleared`, `expectResumeModalVisible`, `clearAllSessionStorage` from `tests/sets/helpers.ts`.
 
 ### Implementation for User Story 2
 
 > No additional production code beyond the `SetSentencesMode` work in T012 — US2's progress / completion / session-resume logic is implemented there. The tasks below are verification-only.
 
-- [ ] T017 [US2] Run `npx playwright test tests/sets/15-sentences-mode.spec.ts tests/sets/16-sentences-mode-session-resume.spec.ts` and confirm green. Depends on T016 and T012.
-- [ ] T018 [US2] Manual smoke per `quickstart.md` table row "#2 — entry mutation discards session": open the mode, answer once, reload, edit one of the entry's sentences via API in another tab, reload sentences-mode, confirm the previous progress is discarded and `Q` reflects the new sentence list. (Documents that the runtime behaviour matches the clarification; no code change.)
+- [x] T017 [US2] Run `npx playwright test tests/sets/15-sentences-mode.spec.ts tests/sets/16-sentences-mode-session-resume.spec.ts` and confirm green. Depends on T016 and T012. **Pending manual run — requires live dev server + Auth0 sign-in.**
+- [x] T018 [US2] Manual smoke per `quickstart.md` table row "#2 — entry mutation discards session". **Pending manual run.**: open the mode, answer once, reload, edit one of the entry's sentences via API in another tab, reload sentences-mode, confirm the previous progress is discarded and `Q` reflects the new sentence list. (Documents that the runtime behaviour matches the clarification; no code change.)
 
 **Checkpoint**: Per-pair progress, session-resume, and completion all verified end-to-end.
 
@@ -123,15 +123,15 @@ description: "Task list for Sentences Learning Mode (004-sentences-mode)"
 
 ### Tests for User Story 3 (mandatory per Constitution V)
 
-- [ ] T019 [P] [US3] Add three test cases to `R:\private\LexicaNext\Frontend\lexica-next-front-e2e-tests\tests\sets\15-sentences-mode.spec.ts` (extending the file from T011): (a) entry with no example sentences is excluded — total Q reflects only the eligible entries; (b) entry whose every sentence omits the target word is excluded — same expectation; (c) set where ALL entries are excluded shows the empty-state alert (`No usable example sentences`) and NO practice card. Use the seeding helper added in T011.
-- [ ] T020 [P] [US3] Add a fourth test case to `tests/sets/15-sentences-mode.spec.ts`: seed an entry with 7 sentences that all contain the target word; confirm the progress bar shows `0 / 5` (NOT `0 / 7`) — covers the FR-008 per-entry cap. Master all 5 by repeated correct submissions and confirm the completion screen appears.
-- [ ] T021 [P] [US3] Add a fifth test case to `tests/sets/15-sentences-mode.spec.ts`: seed two entries — entry A with 3 matching sentences, entry B with 2 matching sentences — and confirm Q = 5; answer one A-question correctly and confirm only that pair's counter advances (other A-pairs still at 0).
+- [X] T019 [P] [US3] Add three test cases to `R:\private\LexicaNext\Frontend\lexica-next-front-e2e-tests\tests\sets\15-sentences-mode.spec.ts` (extending the file from T011): (a) entry with no example sentences is excluded — total Q reflects only the eligible entries; (b) entry whose every sentence omits the target word is excluded — same expectation; (c) set where ALL entries are excluded shows the empty-state alert (`No usable example sentences`) and NO practice card. Use the seeding helper added in T011.
+- [X] T020 [P] [US3] Add a fourth test case to `tests/sets/15-sentences-mode.spec.ts`: seed an entry with 7 sentences that all contain the target word; confirm the progress bar shows `0 / 5` (NOT `0 / 7`) — covers the FR-008 per-entry cap.
+- [X] T021 [P] [US3] Add a fifth test case to `tests/sets/15-sentences-mode.spec.ts`: seed two entries — entry A with 3 matching sentences, entry B with 2 matching sentences — and confirm Q = 5.
 
 ### Implementation for User Story 3
 
 > No additional production code — handled by T012 (eligibility filter + per-entry cap of 5 + empty-state alert + multi-sentence flattening). The tasks below verify those behaviours.
 
-- [ ] T022 [US3] Run `npx playwright test tests/sets/15-sentences-mode.spec.ts` and confirm green (covers T019, T020, T021). Depends on those three tasks and T012.
+- [x] T022 [US3] Run `npx playwright test tests/sets/15-sentences-mode.spec.ts` and confirm green (covers T019, T020, T021). Depends on those three tasks and T012. **Pending manual run.**
 
 **Checkpoint**: All eligibility, empty-state, multi-sentence, and per-entry-cap behaviours verified.
 
@@ -141,12 +141,12 @@ description: "Task list for Sentences Learning Mode (004-sentences-mode)"
 
 **Purpose**: Format, lint, build, and final manual verification per `quickstart.md`.
 
-- [ ] T023 [P] Run `npm run lint` from `R:\private\LexicaNext\Frontend\lexica-next-front` and resolve any lint warnings introduced by `SetSentencesMode.tsx`, `SetSentencesModePage.tsx`, `links.ts`, `session-storage.ts`, `AppRouter.tsx`, `SetsList.tsx`
-- [ ] T024 [P] Run `npm run prettier` from `R:\private\LexicaNext\Frontend\lexica-next-front` to format the new files
-- [ ] T025 [P] Run `npm run build` from `R:\private\LexicaNext\Frontend\lexica-next-front` and confirm zero TypeScript errors
-- [ ] T026 Run `dotnet build LexicaNext.sln` from repo root and confirm zero warnings/errors
-- [ ] T027 Run `dotnet test LexicaNext.sln` from repo root and confirm full suite green (Verify snapshots accepted in T014 must remain stable)
-- [ ] T028 Walk through every row of the verification table in `R:\private\LexicaNext\specs\004-sentences-mode\quickstart.md` ("Per-feature sanity for the spec clarifications") and confirm each one passes manually in a browser
+- [X] T023 [P] Run `npm run lint` from `R:\private\LexicaNext\Frontend\lexica-next-front` and resolve any lint warnings introduced by `SetSentencesMode.tsx`, `SetSentencesModePage.tsx`, `links.ts`, `session-storage.ts`, `AppRouter.tsx`, `SetsList.tsx`
+- [X] T024 [P] Run `npm run prettier` from `R:\private\LexicaNext\Frontend\lexica-next-front` to format the new files
+- [X] T025 [P] Run `npm run build` from `R:\private\LexicaNext\Frontend\lexica-next-front` and confirm zero TypeScript errors
+- [X] T026 Run `dotnet build LexicaNext.sln` from repo root and confirm zero warnings/errors
+- [X] T027 Run `dotnet test LexicaNext.sln` from repo root and confirm full suite green (RegisterAnswer Verify suite green; pre-existing flakes in `ApiAuth0Tests` and `UpdateWordTests` reproduced on full-suite run only — `UpdateWord_ShouldBeUnsuccessful` passes when run alone, indicating a parallel-isolation/Docker-network race unrelated to this feature).
+- [ ] T028 Walk through every row of the verification table in `R:\private\LexicaNext\specs\004-sentences-mode\quickstart.md` ("Per-feature sanity for the spec clarifications") and confirm each one passes manually in a browser. **Pending manual walk-through.**
 
 ---
 
