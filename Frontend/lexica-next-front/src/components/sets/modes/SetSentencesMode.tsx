@@ -257,8 +257,7 @@ export function SetSentencesMode({ set }: SetSentencesModeProps) {
     return (
       sum +
       entry.selectedSentenceIndices.reduce(
-        (entrySum, sentenceIndex) =>
-          entrySum + Math.min(entry.sentenceCounters[sentenceIndex] ?? 0, MASTERY_THRESHOLD),
+        (entrySum, sentenceIndex) => entrySum + Math.min(entry.sentenceCounters[sentenceIndex] ?? 0, MASTERY_THRESHOLD),
         0,
       )
     );

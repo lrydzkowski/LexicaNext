@@ -24,6 +24,10 @@ export type GenerateExampleSentencesResponse = components['schemas']['GenerateEx
 export type RegisterAnswerRequestPayload = components['schemas']['RegisterAnswerRequestPayload'];
 export type WordStatisticsRecordDto = components['schemas']['WordStatisticsRecordDto'];
 export type GetWordsStatisticsResponse = components['schemas']['GetWordsStatisticsResponse'];
+export type GetRandomOpenQuestionsPracticeEntriesResponse =
+  components['schemas']['GetRandomOpenQuestionsPracticeEntriesResponse'];
+export type GetWeakestOpenQuestionsPracticeEntriesResponse =
+  components['schemas']['GetWeakestOpenQuestionsPracticeEntriesResponse'];
 
 export const useApiClient = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -403,6 +407,56 @@ export const useGenerateExampleSentences = () => {
 
       return data!;
     },
+  });
+};
+
+export const useRandomOpenQuestionsPractice = (enabled: boolean) => {
+  const client = useApiClient();
+
+  return useQuery({
+    queryKey: ['practice', 'open-questions', 'random'],
+    queryFn: async ({ signal }): Promise<EntryDto[]> => {
+      const { data, error } = await client.GET('/api/practice/open-questions/random', {
+        signal,
+      });
+
+      if (error) {
+        throwApiError(error, 'Failed to fetch random practice entries');
+      }
+
+      return data!.entries ?? [];
+    },
+    enabled,
+    staleTime: Infinity,
+    gcTime: 0,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+};
+
+export const useWeakestOpenQuestionsPractice = (enabled: boolean) => {
+  const client = useApiClient();
+
+  return useQuery({
+    queryKey: ['practice', 'open-questions', 'weakest'],
+    queryFn: async ({ signal }): Promise<EntryDto[]> => {
+      const { data, error } = await client.GET('/api/practice/open-questions/weakest', {
+        signal,
+      });
+
+      if (error) {
+        throwApiError(error, 'Failed to fetch weakest practice entries');
+      }
+
+      return data!.entries ?? [];
+    },
+    enabled,
+    staleTime: Infinity,
+    gcTime: 0,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };
 

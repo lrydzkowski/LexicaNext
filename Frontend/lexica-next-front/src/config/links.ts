@@ -121,6 +121,22 @@ export const links: Record<string, IAppLink> = {
       return url;
     },
   },
+  randomOpenQuestionsPractice: {
+    getUrl: (_, query) => {
+      let url = '/practice/open-questions/random';
+      url = addQuery(url, query);
+
+      return url;
+    },
+  },
+  weakestOpenQuestionsPractice: {
+    getUrl: (_, query) => {
+      let url = '/practice/open-questions/weakest';
+      url = addQuery(url, query);
+
+      return url;
+    },
+  },
 };
 
 const addQuery = (url: string, query: Record<string, string | undefined> | null | undefined): string => {

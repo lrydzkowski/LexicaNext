@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   IconBlockquote,
   IconBrain,
+  IconDice5,
   IconDots,
   IconEdit,
   IconEye,
@@ -11,6 +12,7 @@ import {
   IconSearch,
   IconTarget,
   IconTrash,
+  IconTrendingDown,
 } from '@tabler/icons-react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import {
@@ -277,6 +279,48 @@ export function SetsList() {
       />
 
       <Stack gap="md">
+        <Group wrap="wrap" gap="sm">
+          <ActionIcon
+            component={Link}
+            to={links.randomOpenQuestionsPractice.getUrl()}
+            variant="light"
+            color="blue"
+            size="xl"
+            aria-label="Practice 20 random words"
+            hiddenFrom="md">
+            <IconDice5 size={22} />
+          </ActionIcon>
+          <Button
+            leftSection={<IconDice5 size={16} />}
+            component={Link}
+            to={links.randomOpenQuestionsPractice.getUrl()}
+            variant="light"
+            color="blue"
+            size="md"
+            visibleFrom="md">
+            Practice 20 random words
+          </Button>
+          <ActionIcon
+            component={Link}
+            to={links.weakestOpenQuestionsPractice.getUrl()}
+            variant="light"
+            color="orange"
+            size="xl"
+            aria-label="Practice 20 weakest words"
+            hiddenFrom="md">
+            <IconTrendingDown size={22} />
+          </ActionIcon>
+          <Button
+            leftSection={<IconTrendingDown size={16} />}
+            component={Link}
+            to={links.weakestOpenQuestionsPractice.getUrl()}
+            variant="light"
+            color="orange"
+            size="md"
+            visibleFrom="md">
+            Practice 20 weakest words
+          </Button>
+        </Group>
         <Group wrap="wrap" gap="sm">
           <ActionIcon component={Link} to={links.newSet.getUrl()} size="xl" hiddenFrom="md">
             <IconPlus size={22} />

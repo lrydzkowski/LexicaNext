@@ -29,6 +29,10 @@ function buildKey(setId: string, mode: SessionMode): string {
   return `${KEY_PREFIX}${setId}:${mode}`;
 }
 
+function buildKeyFromString(key: string): string {
+  return `${KEY_PREFIX}${key}`;
+}
+
 export function saveSession(setId: string, setName: string, mode: SessionMode, entries: ModeEntriesDto): void {
   try {
     const data: SessionData = {
@@ -63,6 +67,45 @@ export function loadSession<T>(setId: string, mode: SessionMode): T[] | null {
 export function clearSession(setId: string, mode: SessionMode): void {
   try {
     localStorage.removeItem(buildKey(setId, mode));
+  } catch (error) {
+    console.error('Failed to clear session:', error);
+  }
+}
+
+export function saveSessionByKey(key: string, setName: string, mode: SessionMode, entries: ModeEntriesDto): void {
+  try {
+    const data: SessionData = {
+      setId: key,
+      setName,
+      mode,
+      timestamp: Date.now(),
+      entries,
+    };
+    localStorage.setItem(buildKeyFromString(key), JSON.stringify(data));
+  } catch (error) {
+    console.error('Failed to save session:', error);
+  }
+}
+
+export function loadSessionByKey<T>(key: string): T[] | null {
+  try {
+    const raw = localStorage.getItem(buildKeyFromString(key));
+    if (!raw) {
+      return null;
+    }
+
+    const data: SessionData = JSON.parse(raw);
+    return data.entries as T[];
+  } catch (error) {
+    console.error('Failed to load session:', error);
+
+    return null;
+  }
+}
+
+export function clearSessionByKey(key: string): void {
+  try {
+    localStorage.removeItem(buildKeyFromString(key));
   } catch (error) {
     console.error('Failed to clear session:', error);
   }

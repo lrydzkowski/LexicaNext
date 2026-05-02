@@ -11,9 +11,11 @@ using LexicaNext.Core.Commands.UpdateSet;
 using LexicaNext.Core.Commands.UpdateWord;
 using LexicaNext.Core.Queries.GetAppStatus;
 using LexicaNext.Core.Queries.GetProposedSetName;
+using LexicaNext.Core.Queries.GetRandomOpenQuestionsPracticeEntries;
 using LexicaNext.Core.Queries.GetRecording;
 using LexicaNext.Core.Queries.GetSet;
 using LexicaNext.Core.Queries.GetSets;
+using LexicaNext.Core.Queries.GetWeakestOpenQuestionsPracticeEntries;
 using LexicaNext.Core.Queries.GetWord;
 using LexicaNext.Core.Queries.GetWords;
 using LexicaNext.Core.Queries.GetWordSets;
@@ -71,6 +73,9 @@ app.MapGetRecordingEndpoint();
 
 app.MapRegisterAnswerEndpoint();
 app.MapGetWordsStatisticsEndpoint();
+
+app.MapGetRandomOpenQuestionsPracticeEntriesEndpoint();
+app.MapGetWeakestOpenQuestionsPracticeEntriesEndpoint();
 
 app.MapFallbackToFile("index.html");
 

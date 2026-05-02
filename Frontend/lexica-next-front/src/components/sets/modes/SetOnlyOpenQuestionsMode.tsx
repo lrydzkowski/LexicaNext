@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import { Alert, Button, Container, Group, Paper, Progress, Stack, Text, TextInput, Title } from '@mantine/core';
-import { links } from '@/config/links';
 import { compareAnswers, serialize } from '@/utils/utils';
-import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
+import { useRegisterAnswer, type EntryDto } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
-import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
+import { clearSessionByKey, loadSessionByKey, saveSessionByKey } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
 
 export interface OpenQuestionsEntry extends EntryDto {
@@ -26,13 +25,19 @@ interface Question {
 }
 
 export interface SetOnlyOpenQuestionsModeProps {
-  set: GetSetResponse;
+  entries: EntryDto[];
+  sessionKey: string;
+  title: string;
+  backUrl: string;
 }
 
-export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps) {
+export function SetOnlyOpenQuestionsMode({
+  entries: sourceEntries,
+  sessionKey,
+  title,
+  backUrl,
+}: SetOnlyOpenQuestionsModeProps) {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const returnPage = searchParams.get('returnPage') || '1';
   const [entries, setEntries] = useState<OpenQuestionsEntry[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
@@ -47,29 +52,25 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
   });
 
   useEffect(() => {
-    if (!set?.entries || !set.setId) {
+    if (!sourceEntries) {
       return;
     }
 
-    const saved = loadSession<OpenQuestionsEntry>(set.setId, 'open-questions');
-    if (saved && validateSession(saved, set.entries)) {
+    const saved = loadSessionByKey<OpenQuestionsEntry>(sessionKey);
+    if (saved && saved.length > 0) {
       setEntries(saved);
       generateNextQuestion(saved);
       return;
     }
 
-    if (saved) {
-      clearSession(set.setId, 'open-questions');
-    }
-
-    const initialEntries = set.entries.map((entry) => ({
+    const initialEntries = sourceEntries.map((entry) => ({
       ...entry,
       englishOpenCounter: 0,
       nativeOpenCounter: 0,
     }));
     setEntries(initialEntries);
     generateNextQuestion(initialEntries);
-  }, [set]);
+  }, [sourceEntries, sessionKey]);
 
   useEffect(() => {
     if (showFeedback && currentQuestion) {
@@ -93,9 +94,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
 
     if (eligibleEntries.length === 0) {
       setIsComplete(true);
-      if (set?.setId) {
-        clearSession(set.setId, 'open-questions');
-      }
+      clearSessionByKey(sessionKey);
       return;
     }
 
@@ -186,9 +185,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
 
     setEntries(updatedEntries);
 
-    if (set?.setId) {
-      saveSession(set.setId, set.name ?? '', 'open-questions', updatedEntries);
-    }
+    saveSessionByKey(sessionKey, title, 'open-questions', updatedEntries);
   };
 
   const nextQuestion = () => {
@@ -238,18 +235,14 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
               🎉 Congratulations!
             </Title>
             <Text fz={{ base: 'md', md: 'lg' }} ta="center">
-              You've completed the open questions mode for "{set?.name}"!
+              You've completed the open questions mode for "{title}"!
             </Text>
             <Text c="dimmed" ta="center" fz={{ base: 'sm', md: 'md' }}>
               You've mastered all the words through advanced open question practice.
             </Text>
             <Group wrap="wrap" justify="center">
-              <Button
-                variant="light"
-                onClick={() => navigate(links.sets.getUrl({}, { page: returnPage }))}
-                size="md"
-                autoFocus>
-                Back to Sets
+              <Button variant="light" onClick={() => navigate(backUrl)} size="md" autoFocus>
+                Back
               </Button>
               <Button onClick={() => window.location.reload()} size="md">
                 Practice Again

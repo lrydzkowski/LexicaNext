@@ -1,0 +1,319 @@
+﻿[
+  {
+    Url: /api/practice/open-questions/weakest,
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "entries": []
+    }
+  },
+  {
+    Url: /api/practice/open-questions/weakest,
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "entries": [
+        {
+          "wordId": "Guid_1",
+          "word": "high",
+          "wordType": "noun",
+          "translations": [
+            "wysoki"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_2",
+          "word": "mid",
+          "wordType": "noun",
+          "translations": [
+            "\u015Bredni"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_3",
+          "word": "low",
+          "wordType": "noun",
+          "translations": [
+            "niski"
+          ],
+          "exampleSentences": []
+        }
+      ]
+    }
+  },
+  {
+    Url: /api/practice/open-questions/weakest,
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "entries": [
+        {
+          "wordId": "Guid_4",
+          "word": "big",
+          "wordType": "noun",
+          "translations": [
+            "du\u017Cy"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_5",
+          "word": "medium",
+          "wordType": "noun",
+          "translations": [
+            "\u015Bredni"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_6",
+          "word": "small",
+          "wordType": "noun",
+          "translations": [
+            "ma\u0142y"
+          ],
+          "exampleSentences": []
+        }
+      ]
+    }
+  },
+  {
+    Url: /api/practice/open-questions/weakest,
+    TestCaseId: 4,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "entries": [
+        {
+          "wordId": "Guid_7",
+          "word": "candidate",
+          "wordType": "noun",
+          "translations": [
+            "kandydat"
+          ],
+          "exampleSentences": []
+        }
+      ]
+    }
+  },
+  {
+    Url: /api/practice/open-questions/weakest,
+    TestCaseId: 5,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "entries": [
+        {
+          "wordId": "Guid_8",
+          "word": "mine",
+          "wordType": "noun",
+          "translations": [
+            "moje"
+          ],
+          "exampleSentences": []
+        }
+      ]
+    }
+  },
+  {
+    Url: /api/practice/open-questions/weakest,
+    TestCaseId: 6,
+    LogMessages: ,
+    StatusCode: OK,
+    Response:
+    {
+      "entries": [
+        {
+          "wordId": "Guid_9",
+          "word": "word00",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie00"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_10",
+          "word": "word01",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie01"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_11",
+          "word": "word02",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie02"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_12",
+          "word": "word03",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie03"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_13",
+          "word": "word04",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie04"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_14",
+          "word": "word05",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie05"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_15",
+          "word": "word06",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie06"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_16",
+          "word": "word07",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie07"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_17",
+          "word": "word08",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie08"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_18",
+          "word": "word09",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie09"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_19",
+          "word": "word10",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie10"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_20",
+          "word": "word11",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie11"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_21",
+          "word": "word12",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie12"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_22",
+          "word": "word13",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie13"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_23",
+          "word": "word14",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie14"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_24",
+          "word": "word15",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie15"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_25",
+          "word": "word16",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie16"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_26",
+          "word": "word17",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie17"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_27",
+          "word": "word18",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie18"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_28",
+          "word": "word19",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie19"
+          ],
+          "exampleSentences": []
+        }
+      ]
+    }
+  }
+]
