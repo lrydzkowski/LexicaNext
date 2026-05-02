@@ -47,6 +47,10 @@ Practice pronunciation and spelling by listening to words and typing them correc
 
 ![Spelling Mode](docs/screenshots/spelling-mode.png)
 
+#### Sentences Mode
+
+Practice recall by filling in the blank. Each question presents an AI-generated example sentence from your set with the target word removed, and you type the missing word.
+
 #### Full Mode
 
 Comprehensive learning with multiple-choice questions. Given a translation, select the correct English word from several options.

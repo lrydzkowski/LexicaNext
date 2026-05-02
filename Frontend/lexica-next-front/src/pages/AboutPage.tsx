@@ -1,4 +1,4 @@
-import { IconBooks, IconBrain, IconHeadphones, IconKeyboard, IconTarget } from '@tabler/icons-react';
+import { IconBlockquote, IconBooks, IconBrain, IconHeadphones, IconKeyboard, IconTarget } from '@tabler/icons-react';
 import { Box, Container, Group, Kbd, Paper, Stack, Text, ThemeIcon, Title } from '@mantine/core';
 import {
   formatShortcutKey,
@@ -78,6 +78,20 @@ export function AboutPage() {
               </Group>
 
               <Group align="flex-start" wrap="nowrap">
+                <ThemeIcon size="lg" color="cyan" style={{ flexShrink: 0 }}>
+                  <IconBlockquote size={20} />
+                </ThemeIcon>
+                <div>
+                  <Text fw={600} fz={{ base: 'md', md: 'lg' }}>
+                    Sentences Mode
+                  </Text>
+                  <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
+                    Practice recall by typing the missing word in AI-generated example sentences from your set.
+                  </Text>
+                </div>
+              </Group>
+
+              <Group align="flex-start" wrap="nowrap">
                 <ThemeIcon size="lg" color="teal" style={{ flexShrink: 0 }}>
                   <IconBrain size={20} />
                 </ThemeIcon>
@@ -145,7 +159,7 @@ export function AboutPage() {
                 <Text span c="black" fw={600} fz={{ base: 'md', md: 'lg' }}>
                   Practice:
                 </Text>{' '}
-                Do one round of practice in spelling mode, full mode, and open questions mode.
+                Do one round of practice in spelling mode, sentences mode, full mode, and open questions mode.
               </Text>
               <Text c="dimmed" fz={{ base: 'md', md: 'lg' }}>
                 4.{' '}
