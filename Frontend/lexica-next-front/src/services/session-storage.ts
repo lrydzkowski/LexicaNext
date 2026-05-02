@@ -1,10 +1,11 @@
 import { FullModeEntry } from '@/components/sets/modes/SetFullMode';
 import { OpenQuestionsEntry } from '@/components/sets/modes/SetOnlyOpenQuestionsMode';
+import { SentencesEntry } from '@/components/sets/modes/SetSentencesMode';
 import { SpellingEntry } from '@/components/sets/modes/SetSpellingMode';
 import type { EntryDto } from '../hooks/api';
 
-export type SessionMode = 'spelling' | 'full' | 'open-questions';
-type ModeEntriesDto = SpellingEntry[] | OpenQuestionsEntry[] | FullModeEntry[];
+export type SessionMode = 'spelling' | 'full' | 'open-questions' | 'sentences';
+type ModeEntriesDto = SpellingEntry[] | OpenQuestionsEntry[] | FullModeEntry[] | SentencesEntry[];
 
 export interface SessionData {
   setId: string;
@@ -129,6 +130,8 @@ export function getModeLabel(mode: SessionMode): string {
       return 'Full Mode';
     case 'open-questions':
       return 'Open Questions Mode';
+    case 'sentences':
+      return 'Sentences Mode';
   }
 }
 
@@ -140,5 +143,7 @@ export function getModeUrl(setId: string, mode: SessionMode): string {
       return `/sets/${setId}/full-mode`;
     case 'open-questions':
       return `/sets/${setId}/open-questions-mode`;
+    case 'sentences':
+      return `/sets/${setId}/sentences-mode`;
   }
 }

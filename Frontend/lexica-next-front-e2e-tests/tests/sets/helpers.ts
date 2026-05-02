@@ -3,7 +3,7 @@ import { expect, type Page } from '@playwright/test';
 export { generateTestPrefix, captureAuthToken, createWordViaApi } from '../words/helpers';
 import { generateTestPrefix } from '../words/helpers';
 
-export type SessionMode = 'spelling' | 'full' | 'open-questions';
+export type SessionMode = 'spelling' | 'full' | 'open-questions' | 'sentences';
 
 const SESSION_KEY_PREFIX = 'lexica-session:';
 
@@ -233,6 +233,68 @@ export async function createWordViaApiReturningId(
   }
 
   throw new Error(`Failed to create word "${name}" via API after ${maxRetries} retries`);
+}
+
+export async function createWordWithSentencesViaApi(
+  page: Page,
+  name: string,
+  translation: string,
+  sentences: string[],
+  authToken: string,
+  options?: { type?: string },
+): Promise<string> {
+  const wordType = options?.type ?? 'noun';
+  const maxRetries = 3;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    const response = await page.request.post('/api/words', {
+      headers: { authorization: authToken },
+      data: {
+        word: name,
+        wordType,
+        translations: [translation],
+        exampleSentences: sentences,
+      },
+    });
+    if (response.ok()) {
+      const body = await response.json();
+      return body.wordId;
+    }
+    if (response.status() === 400) {
+      return findExistingWordId(page, name, wordType, authToken);
+    }
+    if (response.status() >= 500 && attempt < maxRetries) {
+      await page.waitForTimeout(1000 * attempt);
+      continue;
+    }
+    throw new Error(`Failed to create word "${name}" via API: ${response.status()}`);
+  }
+
+  throw new Error(`Failed to create word "${name}" via API after ${maxRetries} retries`);
+}
+
+export async function updateWordSentencesViaApi(
+  page: Page,
+  wordId: string,
+  name: string,
+  translation: string,
+  sentences: string[],
+  authToken: string,
+  options?: { type?: string },
+): Promise<void> {
+  const wordType = options?.type ?? 'noun';
+  const response = await page.request.put(`/api/words/${wordId}`, {
+    headers: { authorization: authToken },
+    data: {
+      word: name,
+      wordType,
+      translations: [translation],
+      exampleSentences: sentences,
+    },
+  });
+  if (!response.ok()) {
+    throw new Error(`Failed to update word "${name}" via API: ${response.status()}`);
+  }
 }
 
 async function findExistingWordId(page: Page, name: string, wordType: string, authToken: string): Promise<string> {

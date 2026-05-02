@@ -39,10 +39,10 @@ public class RegisterAnswerRequestValidator
 
 internal class RegisterAnswerRequestPayloadValidator : AbstractValidator<RegisterAnswerRequestPayload>
 {
-    private static readonly string[] AllowedModeTypes = ["full", "open-questions", "spelling"];
+    private static readonly string[] AllowedModeTypes = ["full", "open-questions", "sentences", "spelling"];
 
     private static readonly string[] AllowedQuestionTypes =
-        ["english-close", "native-close", "english-open", "native-open", "spelling"];
+        ["english-close", "native-close", "english-open", "native-open", "sentence-fill", "spelling"];
 
     private readonly IRegisterAnswerRepository _registerAnswerRepository;
     private readonly IUserContextResolver _userContextResolver;

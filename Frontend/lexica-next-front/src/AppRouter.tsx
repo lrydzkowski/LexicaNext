@@ -9,6 +9,7 @@ import { AboutPage } from './pages/AboutPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { SetFullModePage } from './pages/sets/modes/SetFullModePage';
 import { SetOnlyOpenQuestionsModePage } from './pages/sets/modes/SetOnlyOpenQuestionsModePage';
+import { SetSentencesModePage } from './pages/sets/modes/SetSentencesModePage';
 import { SetSpellingModePage } from './pages/sets/modes/SetSpellingModePage';
 import { SetContentPage } from './pages/sets/SetContentPage';
 import { SetEditPage } from './pages/sets/SetEditPage';
@@ -187,6 +188,28 @@ const router = createBrowserRouter([
               <RequireAuth>
                 <PageWithBreadcrumbs>
                   <SetOnlyOpenQuestionsModePage />
+                </PageWithBreadcrumbs>
+              </RequireAuth>
+            ),
+          },
+          {
+            path: ':setId/sentences-mode',
+            handle: {
+              breadcrumb: (params: Record<string, string | undefined>) => [
+                {
+                  label: params.setId ?? '',
+                  resolver: { id: params.setId, resolveLabel: useSetLabel },
+                },
+                {
+                  link: links.sentencesMode.getUrl({ setId: params.setId }),
+                  label: 'Sentences Mode',
+                },
+              ],
+            },
+            element: (
+              <RequireAuth>
+                <PageWithBreadcrumbs>
+                  <SetSentencesModePage />
                 </PageWithBreadcrumbs>
               </RequireAuth>
             ),

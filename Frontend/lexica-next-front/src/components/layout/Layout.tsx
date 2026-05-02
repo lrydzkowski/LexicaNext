@@ -37,8 +37,7 @@ export function Layout() {
     }
   }, [isAuthenticated, sessionsSnapshot]);
 
-  const focusClaimed =
-    modalOpened || (isAuthenticated && !authProcessedRef.current && sessionsSnapshot.length > 0);
+  const focusClaimed = modalOpened || (isAuthenticated && !authProcessedRef.current && sessionsSnapshot.length > 0);
 
   return (
     <FocusClaimProvider claimed={focusClaimed}>

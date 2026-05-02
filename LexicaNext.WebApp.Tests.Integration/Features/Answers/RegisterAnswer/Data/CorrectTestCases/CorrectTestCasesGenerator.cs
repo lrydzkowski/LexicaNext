@@ -6,5 +6,6 @@ internal static class CorrectTestCasesGenerator
     {
         yield return TestCase01.Get();
         yield return TestCase02.Get();
+        yield return TestCase03.Get();
     }
 }

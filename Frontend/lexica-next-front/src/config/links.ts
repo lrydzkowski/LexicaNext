@@ -73,6 +73,14 @@ export const links: Record<string, IAppLink> = {
       return url;
     },
   },
+  sentencesMode: {
+    getUrl: (params, query) => {
+      let url = `/sets/${params?.setId}/sentences-mode`;
+      url = addQuery(url, query);
+
+      return url;
+    },
+  },
   fullMode: {
     getUrl: (params, query) => {
       let url = `/sets/${params?.setId}/full-mode`;
