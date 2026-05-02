@@ -271,7 +271,7 @@
       "errors": [
         {
           "propertyName": "Payload.ModeType",
-          "errorMessage": "\u0027ModeType\u0027 must be one of: full, open-questions, spelling.",
+          "errorMessage": "\u0027ModeType\u0027 must be one of: full, open-questions, sentences, spelling.",
           "attemptedValue": "invalid-mode",
           "severity": 0
         }
@@ -399,7 +399,7 @@
       "errors": [
         {
           "propertyName": "Payload.QuestionType",
-          "errorMessage": "\u0027QuestionType\u0027 must be one of: english-close, native-close, english-open, native-open, spelling.",
+          "errorMessage": "\u0027QuestionType\u0027 must be one of: english-close, native-close, english-open, native-open, sentence-fill, spelling.",
           "attemptedValue": "invalid-question-type",
           "severity": 0
         }
@@ -465,6 +465,38 @@
           "propertyName": "Payload.WordId",
           "errorMessage": "\u0027WordId\u0027 must reference an existing word owned by the current user.",
           "attemptedValue": "Guid_2",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+  },
+  {
+    DbAnswersBefore: [],
+    DbAnswersAfter: [],
+    Request: {
+      ModeType: sentences,
+      QuestionType: sentence-multiple-choice,
+      Question: The cat sat on the _____.,
+      GivenAnswer: mat,
+      ExpectedAnswer: mat,
+      IsCorrect: true,
+      WordId: Guid_1
+    },
+    TestCaseId: 16,
+    LogMessages: ,
+    StatusCode: BadRequest,
+    Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.QuestionType",
+          "errorMessage": "\u0027QuestionType\u0027 must be one of: english-close, native-close, english-open, native-open, sentence-fill, spelling.",
+          "attemptedValue": "sentence-multiple-choice",
           "severity": 0
         }
       ],

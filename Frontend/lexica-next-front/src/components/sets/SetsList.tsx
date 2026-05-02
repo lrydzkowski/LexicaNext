@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  IconBlockquote,
   IconBrain,
   IconDots,
   IconEdit,
@@ -220,6 +221,12 @@ export function SetsList() {
           component={Link}
           to={links.spellingMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
           Spelling Mode
+        </Menu.Item>
+        <Menu.Item
+          leftSection={<IconBlockquote size={16} />}
+          component={Link}
+          to={links.sentencesMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
+          Sentences Mode
         </Menu.Item>
         <Menu.Item
           leftSection={<IconBrain size={16} />}
