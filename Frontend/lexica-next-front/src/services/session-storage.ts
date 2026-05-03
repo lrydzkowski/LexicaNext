@@ -2,6 +2,7 @@ import { FullModeEntry } from '@/components/sets/modes/SetFullMode';
 import { OpenQuestionsEntry } from '@/components/sets/modes/SetOnlyOpenQuestionsMode';
 import { SentencesEntry } from '@/components/sets/modes/SetSentencesMode';
 import { SpellingEntry } from '@/components/sets/modes/SetSpellingMode';
+import { links } from '@/config/links';
 
 export type SessionMode = 'spelling' | 'full' | 'open-questions' | 'sentences';
 type ModeEntriesDto = SpellingEntry[] | OpenQuestionsEntry[] | FullModeEntry[] | SentencesEntry[];
@@ -114,6 +115,13 @@ export function getModeLabel(mode: SessionMode): string {
 }
 
 export function getModeUrl(setId: string, mode: SessionMode): string {
+  switch (setId) {
+    case 'practice:random':
+      return links.randomOpenQuestionsPractice.getUrl();
+    case 'practice:weakest':
+      return links.weakestOpenQuestionsPractice.getUrl();
+  }
+
   switch (mode) {
     case 'spelling':
       return `/sets/${setId}/spelling-mode`;
