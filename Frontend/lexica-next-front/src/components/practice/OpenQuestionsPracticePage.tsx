@@ -6,10 +6,10 @@ import { links } from '@/config/links';
 import { showErrorNotification } from '@/services/error-notifications';
 import { SetOnlyOpenQuestionsMode, type OpenQuestionsEntry } from '../sets/modes/SetOnlyOpenQuestionsMode';
 import type { EntryDto } from '../../hooks/api';
-import { loadSessionByKey } from '../../services/session-storage';
+import { loadSession } from '../../services/session-storage';
 
 export interface OpenQuestionsPracticePageProps {
-  sessionKey: string;
+  sessionSetId: string;
   title: string;
   usePracticeQuery: (enabled: boolean) => {
     data: EntryDto[] | undefined;
@@ -18,11 +18,11 @@ export interface OpenQuestionsPracticePageProps {
   };
 }
 
-export function OpenQuestionsPracticePage({ sessionKey, title, usePracticeQuery }: OpenQuestionsPracticePageProps) {
+export function OpenQuestionsPracticePage({ sessionSetId, title, usePracticeQuery }: OpenQuestionsPracticePageProps) {
   const navigate = useNavigate();
   const backUrl = links.sets.getUrl();
 
-  const savedEntries = useMemo(() => loadSessionByKey<OpenQuestionsEntry>(sessionKey), [sessionKey]);
+  const savedEntries = useMemo(() => loadSession<OpenQuestionsEntry>(sessionSetId, 'open-questions'), [sessionSetId]);
   const hasSavedSession = (savedEntries?.length ?? 0) > 0;
   const [practiceEntries, setPracticeEntries] = useState<EntryDto[] | null>(
     hasSavedSession ? (savedEntries as EntryDto[]) : null,
@@ -80,7 +80,7 @@ export function OpenQuestionsPracticePage({ sessionKey, title, usePracticeQuery 
           </Group>
           <SetOnlyOpenQuestionsMode
             entries={practiceEntries}
-            sessionKey={sessionKey}
+            sessionSetId={sessionSetId}
             title={title}
             backUrl={backUrl}
           />

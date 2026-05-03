@@ -4,7 +4,7 @@ import { useRandomOpenQuestionsPractice } from '../../hooks/api';
 export function RandomOpenQuestionsPracticePage() {
   return (
     <OpenQuestionsPracticePage
-      sessionKey="practice:random-open-questions"
+      sessionSetId="practice:random"
       title="Random 20 words"
       usePracticeQuery={useRandomOpenQuestionsPractice}
     />

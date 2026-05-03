@@ -4,7 +4,7 @@ import { useWeakestOpenQuestionsPractice } from '../../hooks/api';
 export function WeakestOpenQuestionsPracticePage() {
   return (
     <OpenQuestionsPracticePage
-      sessionKey="practice:weakest-open-questions"
+      sessionSetId="practice:weakest"
       title="Weakest 20 words"
       usePracticeQuery={useWeakestOpenQuestionsPractice}
     />

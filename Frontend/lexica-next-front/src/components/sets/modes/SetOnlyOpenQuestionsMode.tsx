@@ -5,7 +5,7 @@ import { Alert, Button, Container, Group, Paper, Progress, Stack, Text, TextInpu
 import { compareAnswers, serialize } from '@/utils/utils';
 import { useRegisterAnswer, type EntryDto } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
-import { clearSessionByKey, loadSessionByKey, saveSessionByKey } from '../../../services/session-storage';
+import { clearSession, loadSession, saveSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
 
 export interface OpenQuestionsEntry extends EntryDto {
@@ -26,14 +26,14 @@ interface Question {
 
 export interface SetOnlyOpenQuestionsModeProps {
   entries: EntryDto[];
-  sessionKey: string;
+  sessionSetId: string;
   title: string;
   backUrl: string;
 }
 
 export function SetOnlyOpenQuestionsMode({
   entries: sourceEntries,
-  sessionKey,
+  sessionSetId,
   title,
   backUrl,
 }: SetOnlyOpenQuestionsModeProps) {
@@ -56,7 +56,7 @@ export function SetOnlyOpenQuestionsMode({
       return;
     }
 
-    const saved = loadSessionByKey<OpenQuestionsEntry>(sessionKey);
+    const saved = loadSession<OpenQuestionsEntry>(sessionSetId, 'open-questions');
     if (saved && saved.length > 0) {
       setEntries(saved);
       generateNextQuestion(saved);
@@ -70,7 +70,7 @@ export function SetOnlyOpenQuestionsMode({
     }));
     setEntries(initialEntries);
     generateNextQuestion(initialEntries);
-  }, [sourceEntries, sessionKey]);
+  }, [sourceEntries, sessionSetId]);
 
   useEffect(() => {
     if (showFeedback && currentQuestion) {
@@ -94,7 +94,7 @@ export function SetOnlyOpenQuestionsMode({
 
     if (eligibleEntries.length === 0) {
       setIsComplete(true);
-      clearSessionByKey(sessionKey);
+      clearSession(sessionSetId, 'open-questions');
       return;
     }
 
@@ -185,7 +185,7 @@ export function SetOnlyOpenQuestionsMode({
 
     setEntries(updatedEntries);
 
-    saveSessionByKey(sessionKey, title, 'open-questions', updatedEntries);
+    saveSession(sessionSetId, title, 'open-questions', updatedEntries);
   };
 
   const nextQuestion = () => {

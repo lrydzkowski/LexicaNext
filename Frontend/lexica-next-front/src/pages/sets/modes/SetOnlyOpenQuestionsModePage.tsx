@@ -59,7 +59,7 @@ export function SetOnlyOpenQuestionsModePage() {
           </Group>
           <SetOnlyOpenQuestionsMode
             entries={set.entries ?? []}
-            sessionKey={`${set.setId}:open-questions`}
+            sessionSetId={set.setId ?? ''}
             title={set.name ?? ''}
             backUrl={backUrl}
           />
