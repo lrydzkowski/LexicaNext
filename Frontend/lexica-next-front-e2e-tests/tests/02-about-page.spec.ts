@@ -18,6 +18,9 @@ test.describe('open about page', () => {
       - paragraph: Spelling Mode
       - paragraph: Learn pronunciation and spelling by listening to words and typing them correctly.
       - img
+      - paragraph: Sentences Mode
+      - paragraph: Practice recall by typing the missing word in AI-generated example sentences from your set.
+      - img
       - paragraph: Full Mode
       - paragraph: Comprehensive learning with both closed and open questions to master word meanings.
       - img
@@ -29,7 +32,7 @@ test.describe('open about page', () => {
       - heading "How It Works" [level=2]
       - paragraph: "1. Create Words: Add English words along with their translations and example sentences to build your vocabulary list."
       - paragraph: "2. Create Sets: Build custom vocabulary sets using words you've previously added."
-      - paragraph: "3. Practice: Do one round of practice in spelling mode, full mode, and open questions mode."
+      - paragraph: "3. Practice: Do one round of practice in spelling mode, sentences mode, full mode, and open questions mode."
       - paragraph: "4. Master: Repeat and reinforce in open questions mode."
       - img
       - heading "Keyboard Shortcuts" [level=2]

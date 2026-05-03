@@ -209,7 +209,7 @@ test.describe('open questions mode', () => {
     }
 
     await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole('button', { name: 'Back to Sets', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Back', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Practice Again' })).toBeVisible();
 
     await cleanupSet(page, setId, wordIds);
