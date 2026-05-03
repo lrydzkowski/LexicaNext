@@ -1,13 +1,28 @@
 import { useEffect, useRef, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { Alert, Button, Container, Group, Paper, Progress, Radio, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Alert,
+  Anchor,
+  Button,
+  Container,
+  Group,
+  Paper,
+  Progress,
+  Radio,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { links } from '@/config/links';
 import { compareAnswers, serialize } from '@/utils/utils';
 import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
 import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
+import { ModeWordsListModal } from './ModeWordsListModal';
 
 export interface FullModeEntry extends EntryDto {
   englishCloseCounter: number;
@@ -44,6 +59,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
   const [isComplete, setIsComplete] = useState(false);
   const optionsRef = useRef<(HTMLInputElement | null)[]>([]);
   const registerAnswer = useRegisterAnswer();
+  const [wordsModalOpened, { open: openWordsModal, close: closeWordsModal }] = useDisclosure(false);
 
   const { playAudio } = usePronunciation(currentQuestion?.entry.word || '', currentQuestion?.entry.wordType, {
     autoPlay: false,
@@ -380,9 +396,13 @@ export function SetFullMode({ set }: SetFullModeProps) {
               <Button onClick={() => window.location.reload()} size="md">
                 Practice Again
               </Button>
+              <Button variant="subtle" onClick={openWordsModal} size="md">
+                Show Words
+              </Button>
             </Group>
           </Stack>
         </Container>
+        <ModeWordsListModal opened={wordsModalOpened} onClose={closeWordsModal} entries={entries} />
       </>
     );
   }
@@ -403,9 +423,14 @@ export function SetFullMode({ set }: SetFullModeProps) {
     <>
       <Stack gap="lg">
         <Progress value={getProgress()} size="lg" radius="md" />
-        <Text size="sm" c="dimmed" ta="center">
-          {getCompletedCount(entries)} / {entries.length} words completed
-        </Text>
+        <Group justify="space-between" align="center" wrap="nowrap" gap="xs">
+          <Text size="sm" c="dimmed">
+            {getCompletedCount(entries)} / {entries.length} words completed
+          </Text>
+          <Anchor component="button" type="button" size="sm" onClick={openWordsModal}>
+            Show Words
+          </Anchor>
+        </Group>
 
         <Paper onKeyDown={handleKeyDown}>
           <Stack gap="lg">
@@ -496,6 +521,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
           </Stack>
         </Paper>
       </Stack>
+      <ModeWordsListModal opened={wordsModalOpened} onClose={closeWordsModal} entries={entries} />
     </>
   );
 }
