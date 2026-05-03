@@ -1,13 +1,26 @@
 import { useEffect, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import { useNavigate, useSearchParams } from 'react-router';
-import { Alert, Button, Container, Group, Paper, Progress, Stack, Text, TextInput, Title } from '@mantine/core';
-import { links } from '@/config/links';
+import { useNavigate } from 'react-router';
+import {
+  Alert,
+  Anchor,
+  Button,
+  Container,
+  Group,
+  Paper,
+  Progress,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { compareAnswers, serialize } from '@/utils/utils';
-import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
+import { useRegisterAnswer, type EntryDto } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
-import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
+import { clearSession, loadSession, saveSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
+import { ModeWordsListModal } from './ModeWordsListModal';
 
 export interface OpenQuestionsEntry extends EntryDto {
   englishOpenCounter: number;
@@ -26,13 +39,19 @@ interface Question {
 }
 
 export interface SetOnlyOpenQuestionsModeProps {
-  set: GetSetResponse;
+  entries: EntryDto[];
+  sessionSetId: string;
+  title: string;
+  backUrl: string;
 }
 
-export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps) {
+export function SetOnlyOpenQuestionsMode({
+  entries: sourceEntries,
+  sessionSetId,
+  title,
+  backUrl,
+}: SetOnlyOpenQuestionsModeProps) {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const returnPage = searchParams.get('returnPage') || '1';
   const [entries, setEntries] = useState<OpenQuestionsEntry[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
@@ -40,6 +59,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
   const [isCorrect, setIsCorrect] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const registerAnswer = useRegisterAnswer();
+  const [wordsModalOpened, { open: openWordsModal, close: closeWordsModal }] = useDisclosure(false);
 
   const { playAudio } = usePronunciation(currentQuestion?.entry.word || '', currentQuestion?.entry.wordType, {
     autoPlay: false,
@@ -47,29 +67,25 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
   });
 
   useEffect(() => {
-    if (!set?.entries || !set.setId) {
+    if (!sourceEntries) {
       return;
     }
 
-    const saved = loadSession<OpenQuestionsEntry>(set.setId, 'open-questions');
-    if (saved && validateSession(saved, set.entries)) {
+    const saved = loadSession<OpenQuestionsEntry>(sessionSetId, 'open-questions');
+    if (saved && saved.length > 0) {
       setEntries(saved);
       generateNextQuestion(saved);
       return;
     }
 
-    if (saved) {
-      clearSession(set.setId, 'open-questions');
-    }
-
-    const initialEntries = set.entries.map((entry) => ({
+    const initialEntries = sourceEntries.map((entry) => ({
       ...entry,
       englishOpenCounter: 0,
       nativeOpenCounter: 0,
     }));
     setEntries(initialEntries);
     generateNextQuestion(initialEntries);
-  }, [set]);
+  }, [sourceEntries, sessionSetId]);
 
   useEffect(() => {
     if (showFeedback && currentQuestion) {
@@ -93,9 +109,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
 
     if (eligibleEntries.length === 0) {
       setIsComplete(true);
-      if (set?.setId) {
-        clearSession(set.setId, 'open-questions');
-      }
+      clearSession(sessionSetId, 'open-questions');
       return;
     }
 
@@ -186,9 +200,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
 
     setEntries(updatedEntries);
 
-    if (set?.setId) {
-      saveSession(set.setId, set.name ?? '', 'open-questions', updatedEntries);
-    }
+    saveSession(sessionSetId, title, 'open-questions', updatedEntries);
   };
 
   const nextQuestion = () => {
@@ -238,25 +250,25 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
               🎉 Congratulations!
             </Title>
             <Text fz={{ base: 'md', md: 'lg' }} ta="center">
-              You've completed the open questions mode for "{set?.name}"!
+              You've completed the open questions mode for "{title}"!
             </Text>
             <Text c="dimmed" ta="center" fz={{ base: 'sm', md: 'md' }}>
               You've mastered all the words through advanced open question practice.
             </Text>
             <Group wrap="wrap" justify="center">
-              <Button
-                variant="light"
-                onClick={() => navigate(links.sets.getUrl({}, { page: returnPage }))}
-                size="md"
-                autoFocus>
-                Back to Sets
+              <Button variant="light" onClick={() => navigate(backUrl)} size="md" autoFocus>
+                Back
               </Button>
               <Button onClick={() => window.location.reload()} size="md">
                 Practice Again
               </Button>
+              <Button variant="subtle" onClick={openWordsModal} size="md">
+                Show Words
+              </Button>
             </Group>
           </Stack>
         </Container>
+        <ModeWordsListModal opened={wordsModalOpened} onClose={closeWordsModal} entries={entries} />
       </>
     );
   }
@@ -277,9 +289,14 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
     <>
       <Stack gap="lg">
         <Progress value={getProgress()} size="lg" radius="md" />
-        <Text size="sm" c="dimmed" ta="center">
-          {getCompletedCount(entries)} / {entries.length} words completed
-        </Text>
+        <Group justify="space-between" align="center" wrap="nowrap" gap="xs">
+          <Text size="sm" c="dimmed">
+            {getCompletedCount(entries)} / {entries.length} words completed
+          </Text>
+          <Anchor component="button" type="button" size="sm" onClick={openWordsModal}>
+            Show Words
+          </Anchor>
+        </Group>
 
         <Paper>
           <Stack gap="lg">
@@ -352,6 +369,7 @@ export function SetOnlyOpenQuestionsMode({ set }: SetOnlyOpenQuestionsModeProps)
           </Stack>
         </Paper>
       </Stack>
+      <ModeWordsListModal opened={wordsModalOpened} onClose={closeWordsModal} entries={entries} />
     </>
   );
 }

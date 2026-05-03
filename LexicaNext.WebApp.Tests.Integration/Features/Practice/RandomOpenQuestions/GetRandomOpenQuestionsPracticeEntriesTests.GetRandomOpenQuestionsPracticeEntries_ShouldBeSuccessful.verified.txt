@@ -1,0 +1,100 @@
+﻿[
+  {
+    Url: /api/practice/open-questions/random,
+    ExpectedCount: 0,
+    ActualCount: 0,
+    AllReturnedWordIdsAreInExpectedPool: true,
+    ReturnedWordIdsSorted: [],
+    TestCaseId: 1,
+    LogMessages: ,
+    StatusCode: OK,
+    Response: null
+  },
+  {
+    Url: /api/practice/open-questions/random,
+    ExpectedCount: 0,
+    ActualCount: 0,
+    AllReturnedWordIdsAreInExpectedPool: true,
+    ReturnedWordIdsSorted: [],
+    TestCaseId: 2,
+    LogMessages: ,
+    StatusCode: OK,
+    Response: null
+  },
+  {
+    Url: /api/practice/open-questions/random,
+    ExpectedCount: 3,
+    ActualCount: 3,
+    AllReturnedWordIdsAreInExpectedPool: true,
+    ReturnedWordIdsSorted: [
+      Guid_1,
+      Guid_2,
+      Guid_3
+    ],
+    TestCaseId: 3,
+    LogMessages: ,
+    StatusCode: OK,
+    Response: null
+  },
+  {
+    Url: /api/practice/open-questions/random,
+    ExpectedCount: 20,
+    ActualCount: 20,
+    AllReturnedWordIdsAreInExpectedPool: true,
+    ReturnedWordIdsSorted: [
+      Guid_4,
+      Guid_5,
+      Guid_6,
+      Guid_7,
+      Guid_8,
+      Guid_9,
+      Guid_10,
+      Guid_11,
+      Guid_12,
+      Guid_13,
+      Guid_14,
+      Guid_15,
+      Guid_16,
+      Guid_17,
+      Guid_18,
+      Guid_19,
+      Guid_20,
+      Guid_21,
+      Guid_22,
+      Guid_23
+    ],
+    TestCaseId: 4,
+    LogMessages: ,
+    StatusCode: OK,
+    Response: null
+  },
+  {
+    Url: /api/practice/open-questions/random,
+    ExpectedCount: 2,
+    ActualCount: 2,
+    AllReturnedWordIdsAreInExpectedPool: true,
+    ReturnedWordIdsSorted: [
+      Guid_24,
+      Guid_25
+    ],
+    TestCaseId: 5,
+    LogMessages: ,
+    StatusCode: OK,
+    Response: null
+  },
+  {
+    Url: /api/practice/open-questions/random,
+    ExpectedCount: 3,
+    ActualCount: 3,
+    AllReturnedWordIdsAreInExpectedPool: true,
+    ReturnedWordIdsSorted: [
+      Guid_26,
+      Guid_27,
+      Guid_28
+    ],
+    TestCaseId: 6,
+    LogMessages: ,
+    StatusCode: OK,
+    Response: null
+  }
+]

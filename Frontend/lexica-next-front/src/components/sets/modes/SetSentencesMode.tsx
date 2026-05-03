@@ -1,13 +1,27 @@
 import { useEffect, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { Alert, Button, Container, Group, Paper, Progress, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Alert,
+  Anchor,
+  Button,
+  Container,
+  Group,
+  Paper,
+  Progress,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { links } from '@/config/links';
 import { serialize } from '@/utils/utils';
 import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
 import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
+import { ModeWordsListModal } from './ModeWordsListModal';
 
 const MAX_SENTENCES_PER_ENTRY = 5;
 const MASTERY_THRESHOLD = 2;
@@ -87,6 +101,7 @@ export function SetSentencesMode({ set }: SetSentencesModeProps) {
   const [isCorrect, setIsCorrect] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const registerAnswer = useRegisterAnswer();
+  const [wordsModalOpened, { open: openWordsModal, close: closeWordsModal }] = useDisclosure(false);
 
   const { playAudio } = usePronunciation(currentQuestion?.entry.word || '', currentQuestion?.entry.wordType, {
     autoPlay: false,
@@ -257,8 +272,7 @@ export function SetSentencesMode({ set }: SetSentencesModeProps) {
     return (
       sum +
       entry.selectedSentenceIndices.reduce(
-        (entrySum, sentenceIndex) =>
-          entrySum + Math.min(entry.sentenceCounters[sentenceIndex] ?? 0, MASTERY_THRESHOLD),
+        (entrySum, sentenceIndex) => entrySum + Math.min(entry.sentenceCounters[sentenceIndex] ?? 0, MASTERY_THRESHOLD),
         0,
       )
     );
@@ -310,9 +324,13 @@ export function SetSentencesMode({ set }: SetSentencesModeProps) {
               <Button onClick={() => window.location.reload()} size="md">
                 Practice Again
               </Button>
+              <Button variant="subtle" onClick={openWordsModal} size="md">
+                Show Words
+              </Button>
             </Group>
           </Stack>
         </Container>
+        <ModeWordsListModal opened={wordsModalOpened} onClose={closeWordsModal} entries={entries} />
       </>
     );
   }
@@ -333,9 +351,14 @@ export function SetSentencesMode({ set }: SetSentencesModeProps) {
     <>
       <Stack gap="lg">
         <Progress value={progress} size="lg" radius="md" />
-        <Text size="sm" c="dimmed" ta="center">
-          {masteredQuestions} / {totalQuestions} questions completed
-        </Text>
+        <Group justify="space-between" align="center" wrap="nowrap" gap="xs">
+          <Text size="sm" c="dimmed">
+            {masteredQuestions} / {totalQuestions} questions completed
+          </Text>
+          <Anchor component="button" type="button" size="sm" onClick={openWordsModal}>
+            Show Words
+          </Anchor>
+        </Group>
 
         <Paper>
           <Stack gap="lg">
@@ -414,6 +437,7 @@ export function SetSentencesMode({ set }: SetSentencesModeProps) {
           </Stack>
         </Paper>
       </Stack>
+      <ModeWordsListModal opened={wordsModalOpened} onClose={closeWordsModal} entries={entries} />
     </>
   );
 }

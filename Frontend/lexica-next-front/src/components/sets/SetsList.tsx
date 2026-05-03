@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   IconBlockquote,
   IconBrain,
+  IconDice5,
   IconDots,
   IconEdit,
   IconEye,
@@ -11,6 +12,7 @@ import {
   IconSearch,
   IconTarget,
   IconTrash,
+  IconTrendingDown,
 } from '@tabler/icons-react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import {
@@ -266,6 +268,23 @@ export function SetsList() {
     </Menu>
   );
 
+  const practiceMenuItems = (
+    <>
+      <Menu.Item
+        leftSection={<IconDice5 size={16} />}
+        component={Link}
+        to={links.randomOpenQuestionsPractice.getUrl()}>
+        20 random words
+      </Menu.Item>
+      <Menu.Item
+        leftSection={<IconTrendingDown size={16} />}
+        component={Link}
+        to={links.weakestOpenQuestionsPractice.getUrl()}>
+        20 weakest words
+      </Menu.Item>
+    </>
+  );
+
   return (
     <>
       <DeleteSetModal
@@ -278,6 +297,26 @@ export function SetsList() {
 
       <Stack gap="md">
         <Group wrap="wrap" gap="sm">
+          <Box hiddenFrom="md">
+            <Menu shadow="md" width={220} position="bottom-start">
+              <Menu.Target>
+                <ActionIcon variant="light" color="blue" size="xl" aria-label="Practice">
+                  <IconTarget size={22} />
+                </ActionIcon>
+              </Menu.Target>
+              <Menu.Dropdown>{practiceMenuItems}</Menu.Dropdown>
+            </Menu>
+          </Box>
+          <Box visibleFrom="md">
+            <Menu shadow="md" width={220} position="bottom-start">
+              <Menu.Target>
+                <Button leftSection={<IconTarget size={16} />} variant="light" color="blue" size="md">
+                  Practice
+                </Button>
+              </Menu.Target>
+              <Menu.Dropdown>{practiceMenuItems}</Menu.Dropdown>
+            </Menu>
+          </Box>
           <ActionIcon component={Link} to={links.newSet.getUrl()} size="xl" hiddenFrom="md">
             <IconPlus size={22} />
           </ActionIcon>

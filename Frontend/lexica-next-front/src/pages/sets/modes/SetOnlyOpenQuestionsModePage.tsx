@@ -13,6 +13,7 @@ export function SetOnlyOpenQuestionsModePage() {
   const { data: set, isLoading: loading, error } = useSet(setId!);
   const [searchParams] = useSearchParams();
   const returnPage = searchParams.get('returnPage') || '1';
+  const backUrl = links.sets.getUrl({}, { page: returnPage });
 
   useEffect(() => {
     if (error) {
@@ -44,10 +45,7 @@ export function SetOnlyOpenQuestionsModePage() {
       <Container p={0}>
         <Stack gap="lg">
           <Group wrap="nowrap" w="100%">
-            <ActionIcon
-              variant="subtle"
-              onClick={() => navigate(links.sets.getUrl({}, { page: returnPage }))}
-              aria-label="Go back to sets">
+            <ActionIcon variant="subtle" onClick={() => navigate(backUrl)} aria-label="Go back to sets">
               <IconArrowLeft size={16} />
             </ActionIcon>
             <Stack gap={0} style={{ overflow: 'hidden' }}>
@@ -59,7 +57,12 @@ export function SetOnlyOpenQuestionsModePage() {
               </Text>
             </Stack>
           </Group>
-          <SetOnlyOpenQuestionsMode set={set} />
+          <SetOnlyOpenQuestionsMode
+            entries={set.entries ?? []}
+            sessionSetId={set.setId ?? ''}
+            title={set.name ?? ''}
+            backUrl={backUrl}
+          />
         </Stack>
       </Container>
     </>

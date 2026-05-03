@@ -7,6 +7,8 @@ import { links } from './config/links';
 import { useSetLabel, useWordLabel } from './hooks/useBreadcrumbLabel';
 import { AboutPage } from './pages/AboutPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { RandomOpenQuestionsPracticePage } from './pages/practice/RandomOpenQuestionsPracticePage';
+import { WeakestOpenQuestionsPracticePage } from './pages/practice/WeakestOpenQuestionsPracticePage';
 import { SetFullModePage } from './pages/sets/modes/SetFullModePage';
 import { SetOnlyOpenQuestionsModePage } from './pages/sets/modes/SetOnlyOpenQuestionsModePage';
 import { SetSentencesModePage } from './pages/sets/modes/SetSentencesModePage';
@@ -303,6 +305,46 @@ const router = createBrowserRouter([
             </PageWithBreadcrumbs>
           </RequireAuth>
         ),
+      },
+      {
+        path: 'practice',
+        handle: {
+          breadcrumb: () => [{ label: 'Practice' }],
+        },
+        children: [
+          {
+            path: 'open-questions/random',
+            handle: {
+              breadcrumb: () => [
+                { label: 'Practice' },
+                { link: links.randomOpenQuestionsPractice.getUrl(), label: 'Random 20 words' },
+              ],
+            },
+            element: (
+              <RequireAuth>
+                <PageWithBreadcrumbs>
+                  <RandomOpenQuestionsPracticePage />
+                </PageWithBreadcrumbs>
+              </RequireAuth>
+            ),
+          },
+          {
+            path: 'open-questions/weakest',
+            handle: {
+              breadcrumb: () => [
+                { label: 'Practice' },
+                { link: links.weakestOpenQuestionsPractice.getUrl(), label: 'Weakest 20 words' },
+              ],
+            },
+            element: (
+              <RequireAuth>
+                <PageWithBreadcrumbs>
+                  <WeakestOpenQuestionsPracticePage />
+                </PageWithBreadcrumbs>
+              </RequireAuth>
+            ),
+          },
+        ],
       },
       {
         path: '*',

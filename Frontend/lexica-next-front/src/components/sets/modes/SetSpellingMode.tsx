@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 import {
   ActionIcon,
   Alert,
+  Anchor,
   Button,
   Container,
   Group,
@@ -14,12 +15,14 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { links } from '@/config/links';
 import { serialize } from '@/utils/utils';
 import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
 import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
+import { ModeWordsListModal } from './ModeWordsListModal';
 
 export interface SpellingEntry extends EntryDto {
   counter: number;
@@ -43,6 +46,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
   const [completedCount, setCompletedCount] = useState(0);
   const [iteration, setIteration] = useState(0);
   const registerAnswer = useRegisterAnswer();
+  const [wordsModalOpened, { open: openWordsModal, close: closeWordsModal }] = useDisclosure(false);
 
   const currentEntry = entries[currentEntryIndex];
   const {
@@ -196,9 +200,13 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
               <Button onClick={() => window.location.reload()} size="md">
                 Practice Again
               </Button>
+              <Button variant="subtle" onClick={openWordsModal} size="md">
+                Show Words
+              </Button>
             </Group>
           </Stack>
         </Container>
+        <ModeWordsListModal opened={wordsModalOpened} onClose={closeWordsModal} entries={entries} />
       </>
     );
   }
@@ -219,9 +227,14 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
     <>
       <Stack gap="lg">
         <Progress value={progress} size="lg" radius="md" />
-        <Text size="sm" c="dimmed" ta="center">
-          {completedCount} / {entries.length} words completed
-        </Text>
+        <Group justify="space-between" align="center" wrap="nowrap" gap="xs">
+          <Text size="sm" c="dimmed">
+            {completedCount} / {entries.length} words completed
+          </Text>
+          <Anchor component="button" type="button" size="sm" onClick={openWordsModal}>
+            Show Words
+          </Anchor>
+        </Group>
 
         <Paper>
           <Stack gap="lg">
@@ -303,6 +316,7 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
           </Stack>
         </Paper>
       </Stack>
+      <ModeWordsListModal opened={wordsModalOpened} onClose={closeWordsModal} entries={entries} />
     </>
   );
 }

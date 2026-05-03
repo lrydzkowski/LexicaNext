@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router';
 import {
   ActionIcon,
@@ -30,6 +30,7 @@ import {
 } from '../../hooks/api';
 import { WordFormSuccessData } from '../words/WordFormTypes';
 import { CreateWordModal } from './CreateWordModal';
+import { EditWordModal } from './EditWordModal';
 import { SelectWordsModal } from './SelectWordsModal';
 
 interface SelectedWord {
@@ -61,6 +62,8 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([]);
   const [selectModalOpened, { open: openSelectModal, close: closeSelectModal }] = useDisclosure(false);
   const [createModalOpened, { open: openCreateModal, close: closeCreateModal }] = useDisclosure(false);
+  const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
+  const [editingWordId, setEditingWordId] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
   const mobileDeleteButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const desktopDeleteButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -158,6 +161,22 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         wordType: data.wordType,
       },
     ]);
+  };
+
+  const handleEditWord = (wordId: string) => {
+    setEditingWordId(wordId);
+    openEditModal();
+  };
+
+  const handleCloseEditModal = () => {
+    closeEditModal();
+    setEditingWordId(null);
+  };
+
+  const handleWordEdited = (data: WordFormSuccessData) => {
+    setSelectedWords((prev) =>
+      prev.map((w) => (w.wordId === data.wordId ? { ...w, word: data.word, wordType: data.wordType } : w)),
+    );
   };
 
   const handleSubmit = (_: FormValues) => {
@@ -308,6 +327,14 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                         </div>
                         <Group gap={4}>
                           <ActionIcon
+                            variant="subtle"
+                            color="blue"
+                            size="sm"
+                            onClick={() => handleEditWord(word.wordId)}
+                            aria-label="Edit word">
+                            <IconPencil size={14} />
+                          </ActionIcon>
+                          <ActionIcon
                             ref={(el) => {
                               mobileDeleteButtonRefs.current[index] = el;
                             }}
@@ -329,7 +356,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                       <Table.Th w={60}>#</Table.Th>
                       <Table.Th>Word</Table.Th>
                       <Table.Th w={120}>Type</Table.Th>
-                      <Table.Th w={50} style={{ textAlign: 'center' }}>
+                      <Table.Th w={90} style={{ textAlign: 'center' }}>
                         Actions
                       </Table.Th>
                     </Table.Tr>
@@ -348,8 +375,16 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
                             {word.wordType}
                           </Badge>
                         </Table.Td>
-                        <Table.Td w={50}>
+                        <Table.Td w={90}>
                           <Group gap={4} justify="center">
+                            <ActionIcon
+                              variant="subtle"
+                              color="blue"
+                              size="sm"
+                              onClick={() => handleEditWord(word.wordId)}
+                              aria-label="Edit word">
+                              <IconPencil size={14} />
+                            </ActionIcon>
                             <ActionIcon
                               ref={(el) => {
                                 desktopDeleteButtonRefs.current[index] = el;
@@ -394,6 +429,13 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
       />
 
       <CreateWordModal opened={createModalOpened} onClose={closeCreateModal} onSuccess={handleWordCreated} />
+
+      <EditWordModal
+        opened={editModalOpened}
+        onClose={handleCloseEditModal}
+        wordId={editingWordId}
+        onSuccess={handleWordEdited}
+      />
     </>
   );
 }
