@@ -19,7 +19,7 @@ import { links } from '@/config/links';
 import { serialize } from '@/utils/utils';
 import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
-import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
+import { clearSession, loadSession, saveSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
 import { ModeWordsListModal } from './ModeWordsListModal';
 
@@ -114,15 +114,11 @@ export function SetSentencesMode({ set }: SetSentencesModeProps) {
     }
 
     const saved = loadSession<SentencesEntry>(set.setId, 'sentences');
-    if (saved && validateSession(saved, set.entries)) {
+    if (saved && saved.length > 0) {
       setEntries(saved);
       setHasInitialized(true);
       generateNextQuestion(saved);
       return;
-    }
-
-    if (saved) {
-      clearSession(set.setId, 'sentences');
     }
 
     const initialEntries = buildSentencesEntries(set.entries);

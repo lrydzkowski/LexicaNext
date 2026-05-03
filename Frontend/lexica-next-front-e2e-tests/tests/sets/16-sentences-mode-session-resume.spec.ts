@@ -165,6 +165,48 @@ test.describe('sentences mode session resume', () => {
     }
   });
 
+  test('reload restores counters when some entries have no eligible sentences', async ({ page }) => {
+    const prefix = generateTestPrefix('sn-resume-filtered');
+    const eligibleWord = `${prefix}-mat`;
+    const ineligibleWord = `${prefix}-dog`;
+    const { setName, setId, wordIds } = await createSentencesSet(page, [
+      { name: eligibleWord, translation: 'mata', sentences: [`The cat sat on the ${eligibleWord}.`] },
+      { name: ineligibleWord, translation: 'pies', sentences: ['She loves to dance.'] },
+    ]);
+
+    try {
+      await page.goto(`/sets/${setId}/sentences-mode`);
+      const input = page.getByPlaceholder('Type the missing word...');
+      await expect(input).toBeVisible();
+      await input.fill(eligibleWord);
+      await page.getByRole('button', { name: 'Check Answer' }).click();
+      await expect(page.getByText('Correct!')).toBeVisible();
+
+      const before = await expectSessionStored(page, setId, 'sentences');
+      expect(before.entries).toHaveLength(1);
+      const beforeEntry = before.entries[0] as unknown as SentencesEntryShape;
+      expect(beforeEntry.word).toBe(eligibleWord);
+      expect(beforeEntry.sentenceCounters).toEqual({ '0': 1 });
+
+      await page.reload();
+
+      await expectResumeModalVisible(page, setName, 'Sentences Mode');
+      await page.getByRole('dialog', { name: 'Continue Learning?' }).getByRole('button', { name: 'Continue' }).click();
+
+      await expect(page).toHaveURL(new RegExp(`/sets/${setId}/sentences-mode`));
+      await expect(page.getByPlaceholder('Type the missing word...')).toBeVisible({ timeout: 10000 });
+      await expect(page.getByText('0 / 1 questions completed')).toBeVisible();
+
+      const after = await expectSessionStored(page, setId, 'sentences');
+      expect(after.entries).toHaveLength(1);
+      const afterEntry = after.entries[0] as unknown as SentencesEntryShape;
+      expect(afterEntry.word).toBe(eligibleWord);
+      expect(afterEntry.sentenceCounters).toEqual(beforeEntry.sentenceCounters);
+    } finally {
+      await cleanupSet(page, setId, wordIds);
+    }
+  });
+
   test('Start Fresh clears the saved session and dismisses the modal', async ({ page }) => {
     const prefix = generateTestPrefix('sn-resume-fresh');
     const word = `${prefix}-mat`;

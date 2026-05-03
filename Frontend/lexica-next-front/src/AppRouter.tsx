@@ -316,7 +316,6 @@ const router = createBrowserRouter([
             path: 'open-questions/random',
             handle: {
               breadcrumb: () => [
-                { label: 'Practice' },
                 { link: links.randomOpenQuestionsPractice.getUrl(), label: 'Random 20 words' },
               ],
             },
@@ -332,7 +331,6 @@ const router = createBrowserRouter([
             path: 'open-questions/weakest',
             handle: {
               breadcrumb: () => [
-                { label: 'Practice' },
                 { link: links.weakestOpenQuestionsPractice.getUrl(), label: 'Weakest 20 words' },
               ],
             },

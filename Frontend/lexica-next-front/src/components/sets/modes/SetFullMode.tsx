@@ -20,7 +20,7 @@ import { links } from '@/config/links';
 import { compareAnswers, serialize } from '@/utils/utils';
 import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
-import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
+import { clearSession, loadSession, saveSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
 import { ModeWordsListModal } from './ModeWordsListModal';
 
@@ -72,14 +72,10 @@ export function SetFullMode({ set }: SetFullModeProps) {
     }
 
     const saved = loadSession<FullModeEntry>(set.setId, 'full');
-    if (saved && validateSession(saved, set.entries)) {
+    if (saved && saved.length > 0) {
       setEntries(saved);
       generateNextQuestion(saved);
       return;
-    }
-
-    if (saved) {
-      clearSession(set.setId, 'full');
     }
 
     const initialEntries = set.entries.map((entry) => ({
