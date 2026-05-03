@@ -11,4 +11,6 @@ internal class UserSetSequenceEntity
     public int NextValue { get; set; }
 
     public DateTimeOffset LastUpdated { get; set; }
+
+    public uint Xmin { get; set; }
 }

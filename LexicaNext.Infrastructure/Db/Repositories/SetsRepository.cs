@@ -13,6 +13,7 @@ using LexicaNext.Core.Queries.GetSets.Interfaces;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.Infrastructure.Db.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace LexicaNext.Infrastructure.Db.Repositories;
 
@@ -61,40 +62,56 @@ internal class SetsRepository
         CancellationToken cancellationToken = default
     )
     {
-        UserSetSequenceEntity sequenceEntity =
-            await GetOrCreateSequenceAsync(createSetCommand.UserId, cancellationToken);
-        SetEntity setEntity = new()
-        {
-            SetId = Guid.CreateVersion7(),
-            UserId = createSetCommand.UserId,
-            Name = BuildSetName(sequenceEntity),
-            CreatedAt = _dateTimeOffsetProvider.UtcNow
-        };
-        await _dbContext.Sets.AddAsync(setEntity, cancellationToken);
+        const int maxAttempts = 10;
 
-        List<SetWordEntity> setWordEntities = createSetCommand.WordIds
-            .Select(
-                (wordId, index) => new SetWordEntity
-                {
-                    SetId = setEntity.SetId,
-                    WordId = wordId,
-                    Order = index
-                }
-            )
-            .ToList();
-        await _dbContext.SetWords.AddRangeAsync(setWordEntities, cancellationToken);
-
-        sequenceEntity.NextValue++;
-        if (sequenceEntity.NextValue > 999999)
+        for (int attempt = 1; attempt <= maxAttempts; attempt++)
         {
-            sequenceEntity.NextValue = 1;
+            UserSetSequenceEntity sequenceEntity =
+                await GetOrCreateSequenceAsync(createSetCommand.UserId, cancellationToken);
+            SetEntity setEntity = new()
+            {
+                SetId = Guid.CreateVersion7(),
+                UserId = createSetCommand.UserId,
+                Name = BuildSetName(sequenceEntity),
+                CreatedAt = _dateTimeOffsetProvider.UtcNow
+            };
+            await _dbContext.Sets.AddAsync(setEntity, cancellationToken);
+
+            List<SetWordEntity> setWordEntities = createSetCommand.WordIds
+                .Select(
+                    (wordId, index) => new SetWordEntity
+                    {
+                        SetId = setEntity.SetId,
+                        WordId = wordId,
+                        Order = index
+                    }
+                )
+                .ToList();
+            await _dbContext.SetWords.AddRangeAsync(setWordEntities, cancellationToken);
+
+            sequenceEntity.NextValue++;
+            if (sequenceEntity.NextValue > 999999)
+            {
+                sequenceEntity.NextValue = 1;
+            }
+
+            sequenceEntity.LastUpdated = _dateTimeOffsetProvider.UtcNow;
+
+            try
+            {
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return setEntity.SetId;
+            }
+            catch (DbUpdateException ex) when (IsConcurrencyConflict(ex) && attempt < maxAttempts)
+            {
+                ResetTrackedChangesForRetry(sequenceEntity, setEntity, setWordEntities);
+            }
         }
 
-        sequenceEntity.LastUpdated = _dateTimeOffsetProvider.UtcNow;
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return setEntity.SetId;
+        throw new InvalidOperationException(
+            $"Failed to create set after {maxAttempts} attempts due to concurrent set creation."
+        );
     }
 
     public async Task DeleteSetsAsync(string userId, List<Guid> setIds, CancellationToken cancellationToken = default)
@@ -267,5 +284,33 @@ internal class SetsRepository
     private string BuildSetName(UserSetSequenceEntity sequenceEntity)
     {
         return $"set_{sequenceEntity.NextValue:D6}";
+    }
+
+    private static bool IsConcurrencyConflict(DbUpdateException ex)
+    {
+        if (ex is DbUpdateConcurrencyException)
+        {
+            return true;
+        }
+
+        return ex.InnerException is Npgsql.PostgresException
+            {
+                SqlState: PostgresErrorCodes.UniqueViolation
+            };
+    }
+
+    private void ResetTrackedChangesForRetry(
+        UserSetSequenceEntity sequenceEntity,
+        SetEntity setEntity,
+        IEnumerable<SetWordEntity> setWordEntities
+    )
+    {
+        _dbContext.Entry(setEntity).State = EntityState.Detached;
+        foreach (SetWordEntity setWordEntity in setWordEntities)
+        {
+            _dbContext.Entry(setWordEntity).State = EntityState.Detached;
+        }
+
+        _dbContext.Entry(sequenceEntity).State = EntityState.Detached;
     }
 }
