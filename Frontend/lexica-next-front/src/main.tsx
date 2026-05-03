@@ -37,7 +37,6 @@ createRoot(document.getElementById('root')!).render(
             domain={appConfig.auth0Domain}
             clientId={appConfig.auth0ClientId}
             useRefreshTokens
-            useRefreshTokensFallback
             cacheLocation="localstorage"
             authorizationParams={{
               ...appConfig.buildGetTokenSilentlyOptions().authorizationParams,
