@@ -43,9 +43,6 @@ internal class UserSetSequenceEntityTypeConfiguration : IEntityTypeConfiguration
         builder.Property(entity => entity.LastUpdated)
             .HasColumnName("last_updated")
             .IsRequired();
-
-        builder.Property(entity => entity.Xmin)
-            .IsRowVersion();
     }
 
     private void ConfigureIndexes(EntityTypeBuilder<UserSetSequenceEntity> builder)

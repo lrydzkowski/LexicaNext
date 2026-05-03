@@ -255,12 +255,6 @@ namespace LexicaNext.Infrastructure.Db.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("user_id");
 
-                    b.Property<uint>("Xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
                     b.HasKey("UserSetSequenceId");
 
                     b.HasIndex("UserId")
