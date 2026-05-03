@@ -20,7 +20,7 @@ import { links } from '@/config/links';
 import { serialize } from '@/utils/utils';
 import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
-import { clearSession, loadSession, saveSession, validateSession } from '../../../services/session-storage';
+import { clearSession, loadSession, saveSession } from '../../../services/session-storage';
 import { ExampleSentences } from '../ExampleSentences';
 import { ModeWordsListModal } from './ModeWordsListModal';
 
@@ -64,13 +64,9 @@ export function SetSpellingMode({ set }: SetSpellingModeProps) {
     }
 
     const saved = loadSession<SpellingEntry>(set.setId, 'spelling');
-    if (saved && validateSession(saved, set.entries)) {
+    if (saved && saved.length > 0) {
       setEntries(saved);
       return;
-    }
-
-    if (saved) {
-      clearSession(set.setId, 'spelling');
     }
 
     const shuffledEntries = [...set.entries].sort(() => Math.random() - 0.5).map((entry) => ({ ...entry, counter: 0 }));

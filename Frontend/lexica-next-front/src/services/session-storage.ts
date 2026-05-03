@@ -2,7 +2,6 @@ import { FullModeEntry } from '@/components/sets/modes/SetFullMode';
 import { OpenQuestionsEntry } from '@/components/sets/modes/SetOnlyOpenQuestionsMode';
 import { SentencesEntry } from '@/components/sets/modes/SetSentencesMode';
 import { SpellingEntry } from '@/components/sets/modes/SetSpellingMode';
-import type { EntryDto } from '../hooks/api';
 
 export type SessionMode = 'spelling' | 'full' | 'open-questions' | 'sentences';
 type ModeEntriesDto = SpellingEntry[] | OpenQuestionsEntry[] | FullModeEntry[] | SentencesEntry[];
@@ -99,27 +98,6 @@ export function findAllSessions(): SessionSummary[] {
   }
 
   return sessions.sort((a, b) => b.timestamp - a.timestamp);
-}
-
-export function validateSession(savedEntries: ModeEntriesDto, currentEntries: EntryDto[]): boolean {
-  if (savedEntries.length !== currentEntries.length) {
-    return false;
-  }
-
-  const savedWords = new Set(savedEntries.map((e) => e.word as string));
-  const currentWords = new Set(currentEntries.map((e) => e.word));
-
-  if (savedWords.size !== currentWords.size) {
-    return false;
-  }
-
-  for (const word of currentWords) {
-    if (word && !savedWords.has(word)) {
-      return false;
-    }
-  }
-
-  return true;
 }
 
 export function getModeLabel(mode: SessionMode): string {
