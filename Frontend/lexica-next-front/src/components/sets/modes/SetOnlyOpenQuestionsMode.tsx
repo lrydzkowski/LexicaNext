@@ -1,19 +1,7 @@
 import { useEffect, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
-import {
-  Alert,
-  Anchor,
-  Button,
-  Container,
-  Group,
-  Paper,
-  Progress,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core';
+import { Alert, Anchor, Button, Container, Group, Paper, Progress, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { compareAnswers, serialize } from '@/utils/utils';
 import { useRegisterAnswer, type EntryDto } from '../../../hooks/api';

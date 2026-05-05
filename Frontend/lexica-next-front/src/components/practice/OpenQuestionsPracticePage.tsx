@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router';
 import { ActionIcon, Container, Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { links } from '@/config/links';
 import { showErrorNotification } from '@/services/error-notifications';
-import { SetOnlyOpenQuestionsMode, type OpenQuestionsEntry } from '../sets/modes/SetOnlyOpenQuestionsMode';
 import type { EntryDto } from '../../hooks/api';
 import { loadSession } from '../../services/session-storage';
+import { SetOnlyOpenQuestionsMode, type OpenQuestionsEntry } from '../sets/modes/SetOnlyOpenQuestionsMode';
 
 export interface OpenQuestionsPracticePageProps {
   sessionSetId: string;
