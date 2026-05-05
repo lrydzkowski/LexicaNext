@@ -1,11 +1,11 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
-import { useNavigate, useSearchParams } from 'react-router';
 import { ActionIcon, Box, Button, Divider, Group, LoadingOverlay, Select, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { randomId } from '@mantine/hooks';
 import { links } from '@/config/links';
 import { SHORTCUT_KEYS } from '@/config/shortcuts';
+import { useReturnTo } from '@/hooks/useReturnTo';
 import { generateRowHandlers, useShortcuts } from '@/hooks/useShortcuts';
 import { showErrorNotification } from '@/services/error-notifications';
 import { useCreateWord, useUpdateWord, type GetWordResponse } from '../../hooks/api';
@@ -29,7 +29,7 @@ interface WordFormProps {
 
 export const WordForm = forwardRef<WordFormRef, WordFormProps>(
   ({ mode, wordId, word, isLoading, onSuccess, onCancel }, ref) => {
-    const navigate = useNavigate();
+    const goBack = useReturnTo(links.words.getUrl());
     const createWordMutation = useCreateWord();
     const updateWordMutation = useUpdateWord();
     const wordInputRef = useRef<HTMLInputElement | null>(null);
@@ -45,9 +45,6 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
     const formRef = useRef<HTMLFormElement | null>(null);
     const [focusTranslation, setFocusTranslation] = useState<number | null>(null);
     const [focusSentence, setFocusSentence] = useState<number | null>(null);
-    const [searchParams] = useSearchParams();
-    const returnPage = searchParams.get('returnPage') || '1';
-
     const getInitialValues = (): WordFormValues => {
       return {
         word: '',
@@ -215,7 +212,7 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
                 wordType: payload.wordType,
               });
             } else {
-              navigate(links.words.getUrl());
+              goBack();
             }
           },
           onError: (error) => {
@@ -234,7 +231,7 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
                   wordType: payload.wordType,
                 });
               } else {
-                navigate(links.words.getUrl({}, { page: returnPage }));
+                goBack();
               }
             },
             onError: (error) => {
@@ -251,7 +248,7 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
       if (onCancel) {
         onCancel();
       } else {
-        navigate(links.words.getUrl({}, { page: returnPage }));
+        goBack();
       }
     };
 
@@ -320,7 +317,7 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
         },
         ...generateRowHandlers(removeItemByIndex),
       ],
-      [navigate, onCancel, returnPage],
+      [goBack, onCancel],
     );
 
     useShortcuts('word-form', shortcutHandlers);

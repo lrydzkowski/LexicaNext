@@ -10,10 +10,10 @@ import { useSet } from '../../../hooks/api';
 export function SetOnlyOpenQuestionsModePage() {
   const { setId } = useParams<{ setId: string }>();
   const navigate = useNavigate();
-  const { data: set, isLoading: loading, error } = useSet(setId!);
   const [searchParams] = useSearchParams();
-  const returnPage = searchParams.get('returnPage') || '1';
-  const backUrl = links.sets.getUrl({}, { page: returnPage });
+  const { data: set, isLoading: loading, error } = useSet(setId!);
+  const returnTo = searchParams.get('returnTo');
+  const backUrl = returnTo && returnTo.startsWith('/') ? returnTo : links.sets.getUrl();
 
   useEffect(() => {
     if (error) {

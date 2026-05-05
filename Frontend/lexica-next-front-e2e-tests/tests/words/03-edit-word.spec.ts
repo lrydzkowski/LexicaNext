@@ -95,10 +95,6 @@ test.describe('edit word', () => {
     await expect(page).toHaveURL(/\/words/);
     await expect(page.getByRole('table')).toBeVisible();
 
-    const postEditSearchResponse = waitForSearchResponse(page);
-    await page.getByPlaceholder('Search words...').fill(wordName);
-    await postEditSearchResponse;
-
     const wordRow = page.getByRole('row').filter({ hasText: wordName });
     await expect(wordRow.getByText('Adjective')).toBeVisible();
   });
@@ -146,10 +142,6 @@ test.describe('edit word', () => {
 
     await expect(page).toHaveURL(/\/words/);
     await expect(page.getByRole('table')).toBeVisible();
-
-    const postCancelSearchResponse = waitForSearchResponse(page);
-    await page.getByPlaceholder('Search words...').fill(wordName);
-    await postCancelSearchResponse;
 
     await page.getByRole('button', { name: `Actions for ${wordName}` }).click();
     await page.getByRole('menuitem', { name: 'Edit Word' }).click();

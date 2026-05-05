@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { IconDots, IconEdit, IconPlus, IconRefresh, IconSearch, IconTrash } from '@tabler/icons-react';
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router';
 import {
   ActionIcon,
   Badge,
@@ -29,9 +29,11 @@ import { DeleteWordModal } from './DeleteWordModal';
 
 export function WordsList() {
   const navigate = useNavigate();
+  const location = useLocation();
   const focusClaimed = useFocusClaim();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState('');
+  const urlSearchQuery = searchParams.get('searchQuery') || '';
+  const [searchQuery, setSearchQuery] = useState(urlSearchQuery);
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300);
   const [selectedWordIds, setSelectedWordIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
@@ -83,13 +85,26 @@ export function WordsList() {
   }, [focusClaimed]);
 
   useEffect(() => {
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      newParams.set('page', '1');
+    if (debouncedSearchQuery === urlSearchQuery) {
+      return;
+    }
 
-      return newParams;
-    });
-  }, [debouncedSearchQuery]);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (debouncedSearchQuery) {
+          next.set('searchQuery', debouncedSearchQuery);
+        } else {
+          next.delete('searchQuery');
+        }
+
+        next.delete('page');
+
+        return next;
+      },
+      { replace: true },
+    );
+  }, [debouncedSearchQuery, urlSearchQuery, setSearchParams]);
 
   useEffect(() => {
     if (error) {
@@ -155,12 +170,13 @@ export function WordsList() {
   };
 
   const totalPages = Math.ceil((totalCount as number) / pageSize);
+  const currentUrl = `/words${location.search}`;
 
   const shortcutHandlers = useMemo(
     () => [
       {
         key: SHORTCUT_KEYS.CREATE_NEW,
-        handler: () => navigate(links.newWord.getUrl({}, { returnPage: currentPage.toString() })),
+        handler: () => navigate(links.newWord.getUrl({}, { returnTo: currentUrl })),
       },
       {
         key: SHORTCUT_KEYS.FOCUS_SEARCH,
@@ -171,7 +187,7 @@ export function WordsList() {
         refs.current[index]?.focus();
       }),
     ],
-    [navigate, currentPage, isDesktop],
+    [navigate, currentUrl, isDesktop],
   );
 
   useShortcuts('words-list', shortcutHandlers);
@@ -204,7 +220,7 @@ export function WordsList() {
         <Menu.Item
           leftSection={<IconEdit size={16} />}
           component={Link}
-          to={links.editWord.getUrl({ wordId: word.wordId }, { returnPage: currentPage.toString() })}>
+          to={links.editWord.getUrl({ wordId: word.wordId }, { returnTo: currentUrl })}>
           Edit Word
         </Menu.Item>
         <Menu.Item
@@ -231,7 +247,7 @@ export function WordsList() {
         <Group wrap="wrap" gap="sm">
           <ActionIcon
             component={Link}
-            to={links.newWord.getUrl({}, { returnPage: currentPage.toString() })}
+            to={links.newWord.getUrl({}, { returnTo: currentUrl })}
             size="xl"
             hiddenFrom="md">
             <IconPlus size={22} />
@@ -240,7 +256,7 @@ export function WordsList() {
             ref={createButtonRef}
             leftSection={<IconPlus size={16} />}
             component={Link}
-            to={links.newWord.getUrl({}, { returnPage: currentPage.toString() })}
+            to={links.newWord.getUrl({}, { returnTo: currentUrl })}
             size="md"
             visibleFrom="md">
             <Text>Create New Word</Text>

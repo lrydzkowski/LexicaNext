@@ -14,7 +14,7 @@ import {
   IconTrash,
   IconTrendingDown,
 } from '@tabler/icons-react';
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router';
 import {
   ActionIcon,
   Box,
@@ -42,9 +42,11 @@ import { DeleteSetModal } from './DeleteSetModal';
 
 export function SetsList() {
   const navigate = useNavigate();
+  const location = useLocation();
   const focusClaimed = useFocusClaim();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState('');
+  const urlSearchQuery = searchParams.get('searchQuery') || '';
+  const [searchQuery, setSearchQuery] = useState(urlSearchQuery);
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300);
   const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set());
   const createButtonRef = useRef<HTMLAnchorElement | null>(null);
@@ -96,13 +98,26 @@ export function SetsList() {
   }, [focusClaimed]);
 
   useEffect(() => {
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      newParams.set('page', '1');
+    if (debouncedSearchQuery === urlSearchQuery) {
+      return;
+    }
 
-      return newParams;
-    });
-  }, [debouncedSearchQuery]);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (debouncedSearchQuery) {
+          next.set('searchQuery', debouncedSearchQuery);
+        } else {
+          next.delete('searchQuery');
+        }
+
+        next.delete('page');
+
+        return next;
+      },
+      { replace: true },
+    );
+  }, [debouncedSearchQuery, urlSearchQuery, setSearchParams]);
 
   useEffect(() => {
     if (error) {
@@ -172,12 +187,13 @@ export function SetsList() {
   };
 
   const totalPages = Math.ceil((totalCount as number) / pageSize);
+  const currentUrl = `/sets${location.search}`;
 
   const shortcutHandlers = useMemo(
     () => [
       {
         key: SHORTCUT_KEYS.CREATE_NEW,
-        handler: () => navigate(links.newSet.getUrl({}, { returnPage: currentPage.toString() })),
+        handler: () => navigate(links.newSet.getUrl({}, { returnTo: currentUrl })),
       },
       {
         key: SHORTCUT_KEYS.FOCUS_SEARCH,
@@ -188,7 +204,7 @@ export function SetsList() {
         refs.current[index]?.focus();
       }),
     ],
-    [navigate, currentPage, isDesktop],
+    [navigate, currentUrl, isDesktop],
   );
 
   useShortcuts('sets-list', shortcutHandlers);
@@ -221,25 +237,25 @@ export function SetsList() {
         <Menu.Item
           leftSection={<IconHeadphones size={16} />}
           component={Link}
-          to={links.spellingMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
+          to={links.spellingMode.getUrl({ setId: set.setId }, { returnTo: currentUrl })}>
           Spelling Mode
         </Menu.Item>
         <Menu.Item
           leftSection={<IconBlockquote size={16} />}
           component={Link}
-          to={links.sentencesMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
+          to={links.sentencesMode.getUrl({ setId: set.setId }, { returnTo: currentUrl })}>
           Sentences Mode
         </Menu.Item>
         <Menu.Item
           leftSection={<IconBrain size={16} />}
           component={Link}
-          to={links.fullMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
+          to={links.fullMode.getUrl({ setId: set.setId }, { returnTo: currentUrl })}>
           Full Mode
         </Menu.Item>
         <Menu.Item
           leftSection={<IconTarget size={16} />}
           component={Link}
-          to={links.openQuestionsMode.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
+          to={links.openQuestionsMode.getUrl({ setId: set.setId }, { returnTo: currentUrl })}>
           Open Questions Mode
         </Menu.Item>
 
@@ -249,13 +265,13 @@ export function SetsList() {
         <Menu.Item
           leftSection={<IconEye size={16} />}
           component={Link}
-          to={links.setContent.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
+          to={links.setContent.getUrl({ setId: set.setId }, { returnTo: currentUrl })}>
           View Content
         </Menu.Item>
         <Menu.Item
           leftSection={<IconEdit size={16} />}
           component={Link}
-          to={links.editSet.getUrl({ setId: set.setId }, { returnPage: currentPage.toString() })}>
+          to={links.editSet.getUrl({ setId: set.setId }, { returnTo: currentUrl })}>
           Edit Set
         </Menu.Item>
         <Menu.Item
@@ -270,10 +286,7 @@ export function SetsList() {
 
   const practiceMenuItems = (
     <>
-      <Menu.Item
-        leftSection={<IconDice5 size={16} />}
-        component={Link}
-        to={links.randomOpenQuestionsPractice.getUrl()}>
+      <Menu.Item leftSection={<IconDice5 size={16} />} component={Link} to={links.randomOpenQuestionsPractice.getUrl()}>
         20 random words
       </Menu.Item>
       <Menu.Item
@@ -324,7 +337,7 @@ export function SetsList() {
             ref={createButtonRef}
             leftSection={<IconPlus size={16} />}
             component={Link}
-            to={links.newSet.getUrl({}, { returnPage: currentPage.toString() })}
+            to={links.newSet.getUrl({}, { returnTo: currentUrl })}
             size="md"
             visibleFrom="md">
             <Text>Create New Set</Text>

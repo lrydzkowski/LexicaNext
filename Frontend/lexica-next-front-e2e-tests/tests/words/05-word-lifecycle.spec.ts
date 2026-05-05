@@ -57,10 +57,6 @@ test.describe('word full lifecycle', () => {
     await expect(page).toHaveURL(/\/words/);
     await expect(page.getByRole('table')).toBeVisible();
 
-    const postEditSearchResponse = waitForSearchResponse(page);
-    await page.getByPlaceholder('Search words...').fill(wordName);
-    await postEditSearchResponse;
-
     const editedRow = page.getByRole('row').filter({ hasText: wordName });
     await expect(editedRow.getByText('Noun')).toBeVisible();
 
