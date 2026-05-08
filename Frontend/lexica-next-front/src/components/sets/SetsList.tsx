@@ -286,13 +286,16 @@ export function SetsList() {
 
   const practiceMenuItems = (
     <>
-      <Menu.Item leftSection={<IconDice5 size={16} />} component={Link} to={links.randomOpenQuestionsPractice.getUrl()}>
+      <Menu.Item
+        leftSection={<IconDice5 size={16} />}
+        component={Link}
+        to={links.randomOpenQuestionsPractice.getUrl({}, { returnTo: currentUrl })}>
         20 random words
       </Menu.Item>
       <Menu.Item
         leftSection={<IconTrendingDown size={16} />}
         component={Link}
-        to={links.weakestOpenQuestionsPractice.getUrl()}>
+        to={links.weakestOpenQuestionsPractice.getUrl({}, { returnTo: currentUrl })}>
         20 weakest words
       </Menu.Item>
     </>

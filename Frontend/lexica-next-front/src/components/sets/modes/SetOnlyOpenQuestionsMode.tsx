@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import { useNavigate } from 'react-router';
 import { Alert, Anchor, Button, Container, Group, Paper, Progress, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { links } from '@/config/links';
+import { useReturnTo } from '@/hooks/useReturnTo';
 import { compareAnswers, serialize } from '@/utils/utils';
 import { useRegisterAnswer, type EntryDto } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
@@ -30,16 +31,14 @@ export interface SetOnlyOpenQuestionsModeProps {
   entries: EntryDto[];
   sessionSetId: string;
   title: string;
-  backUrl: string;
 }
 
 export function SetOnlyOpenQuestionsMode({
   entries: sourceEntries,
   sessionSetId,
   title,
-  backUrl,
 }: SetOnlyOpenQuestionsModeProps) {
-  const navigate = useNavigate();
+  const goBack = useReturnTo(links.sets.getUrl());
   const [entries, setEntries] = useState<OpenQuestionsEntry[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
@@ -244,7 +243,7 @@ export function SetOnlyOpenQuestionsMode({
               You've mastered all the words through advanced open question practice.
             </Text>
             <Group wrap="wrap" justify="center">
-              <Button variant="light" onClick={() => navigate(backUrl)} size="md" autoFocus>
+              <Button variant="light" onClick={goBack} size="md" autoFocus>
                 Back
               </Button>
               <Button onClick={() => window.location.reload()} size="md">
