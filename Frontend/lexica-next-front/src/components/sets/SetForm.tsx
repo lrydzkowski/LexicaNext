@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
-import { useNavigate, useSearchParams } from 'react-router';
 import {
   ActionIcon,
   Badge,
@@ -19,6 +18,7 @@ import { useForm } from '@mantine/form';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { links } from '@/config/links';
 import { SHORTCUT_KEYS } from '@/config/shortcuts';
+import { useReturnTo } from '@/hooks/useReturnTo';
 import { generateRowHandlers, useShortcuts } from '@/hooks/useShortcuts';
 import { showErrorNotification, showErrorTextNotification } from '@/services/error-notifications';
 import {
@@ -51,12 +51,10 @@ interface SetFormProps {
 }
 
 export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
-  const navigate = useNavigate();
+  const goBack = useReturnTo(links.sets.getUrl());
   const createSetMutation = useCreateSet();
   const updateSetMutation = useUpdateSet();
   const proposedSetNameQuery = useProposedSetName();
-  const [searchParams] = useSearchParams();
-  const returnPage = searchParams.get('returnPage') || '1';
   const addWordsButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([]);
@@ -194,7 +192,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         },
         {
           onSuccess: () => {
-            navigate(links.sets.getUrl());
+            goBack();
           },
           onError: (error) => {
             showErrorNotification('Error Creating Set', error);
@@ -215,7 +213,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         },
         {
           onSuccess: () => {
-            navigate(links.sets.getUrl());
+            goBack();
           },
           onError: (error) => {
             showErrorNotification('Error Updating Set', error);
@@ -226,7 +224,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   };
 
   const handleCancel = () => {
-    navigate(links.sets.getUrl({}, { page: returnPage }));
+    goBack();
   };
 
   const shortcutHandlers = useMemo(
@@ -252,7 +250,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
         refs.current[index]?.focus();
       }),
     ],
-    [navigate, returnPage, openSelectModal, openCreateModal, isDesktop],
+    [goBack, openSelectModal, openCreateModal, isDesktop],
   );
 
   useShortcuts('set-form', shortcutHandlers);

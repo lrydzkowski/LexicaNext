@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import { useNavigate, useSearchParams } from 'react-router';
 import {
   Alert,
   Anchor,
@@ -17,6 +16,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { links } from '@/config/links';
+import { useReturnTo } from '@/hooks/useReturnTo';
 import { compareAnswers, serialize } from '@/utils/utils';
 import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
@@ -48,9 +48,7 @@ export interface SetFullModeProps {
 }
 
 export function SetFullMode({ set }: SetFullModeProps) {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const returnPage = searchParams.get('returnPage') || '1';
+  const goBack = useReturnTo(links.sets.getUrl());
   const [entries, setEntries] = useState<FullModeEntry[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
@@ -382,11 +380,7 @@ export function SetFullMode({ set }: SetFullModeProps) {
               You've mastered all the words in this set through comprehensive practice.
             </Text>
             <Group wrap="wrap" justify="center">
-              <Button
-                variant="light"
-                onClick={() => navigate(links.sets.getUrl({}, { page: returnPage }))}
-                size="md"
-                autoFocus>
+              <Button variant="light" onClick={goBack} size="md" autoFocus>
                 Back to Sets
               </Button>
               <Button onClick={() => window.location.reload()} size="md">

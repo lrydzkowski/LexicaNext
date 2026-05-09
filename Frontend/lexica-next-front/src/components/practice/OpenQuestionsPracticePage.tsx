@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { IconArrowLeft } from '@tabler/icons-react';
-import { useNavigate } from 'react-router';
 import { ActionIcon, Container, Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { links } from '@/config/links';
+import { useReturnTo } from '@/hooks/useReturnTo';
 import { showErrorNotification } from '@/services/error-notifications';
-import { SetOnlyOpenQuestionsMode, type OpenQuestionsEntry } from '../sets/modes/SetOnlyOpenQuestionsMode';
 import type { EntryDto } from '../../hooks/api';
 import { loadSession } from '../../services/session-storage';
+import { SetOnlyOpenQuestionsMode, type OpenQuestionsEntry } from '../sets/modes/SetOnlyOpenQuestionsMode';
 
 export interface OpenQuestionsPracticePageProps {
   sessionSetId: string;
@@ -19,8 +19,7 @@ export interface OpenQuestionsPracticePageProps {
 }
 
 export function OpenQuestionsPracticePage({ sessionSetId, title, usePracticeQuery }: OpenQuestionsPracticePageProps) {
-  const navigate = useNavigate();
-  const backUrl = links.sets.getUrl();
+  const goBack = useReturnTo(links.sets.getUrl());
 
   const savedEntries = useMemo(() => loadSession<OpenQuestionsEntry>(sessionSetId, 'open-questions'), [sessionSetId]);
   const hasSavedSession = (savedEntries?.length ?? 0) > 0;
@@ -33,9 +32,9 @@ export function OpenQuestionsPracticePage({ sessionSetId, title, usePracticeQuer
   useEffect(() => {
     if (error) {
       showErrorNotification('Error Loading Practice', error);
-      navigate(links.sets.getUrl());
+      goBack();
     }
-  }, [error, navigate]);
+  }, [error, goBack]);
 
   useEffect(() => {
     if (!hasSavedSession && data) {
@@ -66,7 +65,7 @@ export function OpenQuestionsPracticePage({ sessionSetId, title, usePracticeQuer
       <Container p={0}>
         <Stack gap="lg">
           <Group wrap="nowrap" w="100%">
-            <ActionIcon variant="subtle" onClick={() => navigate(backUrl)} aria-label="Go back to sets">
+            <ActionIcon variant="subtle" onClick={goBack} aria-label="Go back to sets">
               <IconArrowLeft size={16} />
             </ActionIcon>
             <Stack gap={0} style={{ overflow: 'hidden' }}>
@@ -78,12 +77,7 @@ export function OpenQuestionsPracticePage({ sessionSetId, title, usePracticeQuer
               </Text>
             </Stack>
           </Group>
-          <SetOnlyOpenQuestionsMode
-            entries={practiceEntries}
-            sessionSetId={sessionSetId}
-            title={title}
-            backUrl={backUrl}
-          />
+          <SetOnlyOpenQuestionsMode entries={practiceEntries} sessionSetId={sessionSetId} title={title} />
         </Stack>
       </Container>
     </>

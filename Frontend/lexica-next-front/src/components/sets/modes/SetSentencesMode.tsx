@@ -1,21 +1,9 @@
 import { useEffect, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import { useNavigate, useSearchParams } from 'react-router';
-import {
-  Alert,
-  Anchor,
-  Button,
-  Container,
-  Group,
-  Paper,
-  Progress,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core';
+import { Alert, Anchor, Button, Container, Group, Paper, Progress, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { links } from '@/config/links';
+import { useReturnTo } from '@/hooks/useReturnTo';
 import { serialize } from '@/utils/utils';
 import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
 import { usePronunciation } from '../../../hooks/usePronunciation';
@@ -90,9 +78,7 @@ function buildSentencesEntries(rawEntries: EntryDto[]): SentencesEntry[] {
 }
 
 export function SetSentencesMode({ set }: SetSentencesModeProps) {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const returnPage = searchParams.get('returnPage') || '1';
+  const goBack = useReturnTo(links.sets.getUrl());
   const [entries, setEntries] = useState<SentencesEntry[]>([]);
   const [hasInitialized, setHasInitialized] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
@@ -310,11 +296,7 @@ export function SetSentencesMode({ set }: SetSentencesModeProps) {
               You've mastered every sentence-question in this set.
             </Text>
             <Group wrap="wrap" justify="center">
-              <Button
-                variant="light"
-                onClick={() => navigate(links.sets.getUrl({}, { page: returnPage }))}
-                size="md"
-                autoFocus>
+              <Button variant="light" onClick={goBack} size="md" autoFocus>
                 Back to Sets
               </Button>
               <Button onClick={() => window.location.reload()} size="md">

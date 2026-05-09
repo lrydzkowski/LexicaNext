@@ -315,9 +315,7 @@ const router = createBrowserRouter([
           {
             path: 'open-questions/random',
             handle: {
-              breadcrumb: () => [
-                { link: links.randomOpenQuestionsPractice.getUrl(), label: 'Random 20 words' },
-              ],
+              breadcrumb: () => [{ link: links.randomOpenQuestionsPractice.getUrl(), label: 'Random 20 words' }],
             },
             element: (
               <RequireAuth>
@@ -330,9 +328,7 @@ const router = createBrowserRouter([
           {
             path: 'open-questions/weakest',
             handle: {
-              breadcrumb: () => [
-                { link: links.weakestOpenQuestionsPractice.getUrl(), label: 'Weakest 20 words' },
-              ],
+              breadcrumb: () => [{ link: links.weakestOpenQuestionsPractice.getUrl(), label: 'Weakest 20 words' }],
             },
             element: (
               <RequireAuth>

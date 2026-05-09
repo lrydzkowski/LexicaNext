@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { IconArrowLeft } from '@tabler/icons-react';
-import { useNavigate, useParams, useSearchParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { ActionIcon, Container, Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { links } from '@/config/links';
+import { useReturnTo } from '@/hooks/useReturnTo';
 import { showErrorNotification } from '@/services/error-notifications';
 import { SetContent } from '../../components/sets/SetContent';
 import { useSet } from '../../hooks/api';
@@ -11,8 +12,7 @@ export function SetContentPage() {
   const { setId } = useParams<{ setId: string }>();
   const navigate = useNavigate();
   const { data: set, isLoading: loading, error } = useSet(setId!);
-  const [searchParams] = useSearchParams();
-  const returnPage = searchParams.get('returnPage') || '1';
+  const goBack = useReturnTo(links.sets.getUrl());
 
   useEffect(() => {
     if (error) {
@@ -44,10 +44,7 @@ export function SetContentPage() {
       <Container p={0}>
         <Stack gap="lg">
           <Group wrap="nowrap" w="100%">
-            <ActionIcon
-              variant="subtle"
-              onClick={() => navigate(links.sets.getUrl({}, { page: returnPage }))}
-              aria-label="Go back to sets">
+            <ActionIcon variant="subtle" onClick={goBack} aria-label="Go back to sets">
               <IconArrowLeft size={16} />
             </ActionIcon>
             <Stack gap={0} style={{ overflow: 'hidden' }}>
