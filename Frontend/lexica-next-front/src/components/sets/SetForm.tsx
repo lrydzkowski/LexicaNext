@@ -219,7 +219,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
               return;
             }
 
-            const search = window.location.search;
+            const search = location.search;
             const successState: SuccessNotificationState = {
               successNotification: { title: 'Set created', message: 'Continue editing the set.' },
             };
