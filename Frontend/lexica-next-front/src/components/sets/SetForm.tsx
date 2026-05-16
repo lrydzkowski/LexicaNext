@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
+import { useLocation, useNavigate } from 'react-router';
 import {
   ActionIcon,
   Badge,
@@ -21,6 +22,7 @@ import { SHORTCUT_KEYS } from '@/config/shortcuts';
 import { useReturnTo } from '@/hooks/useReturnTo';
 import { generateRowHandlers, useShortcuts } from '@/hooks/useShortcuts';
 import { showErrorNotification, showErrorTextNotification } from '@/services/error-notifications';
+import { showSuccessNotification } from '@/services/success-notifications';
 import {
   useCreateSet,
   useProposedSetName,
@@ -50,8 +52,14 @@ interface SetFormProps {
   isLoading?: boolean;
 }
 
+interface SuccessNotificationState {
+  successNotification?: { title: string; message: string };
+}
+
 export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
   const goBack = useReturnTo(links.sets.getUrl());
+  const navigate = useNavigate();
+  const location = useLocation();
   const createSetMutation = useCreateSet();
   const updateSetMutation = useUpdateSet();
   const proposedSetNameQuery = useProposedSetName();
@@ -127,6 +135,16 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
     }
   }, [mode, proposedSetNameQuery.isLoading]);
 
+  useEffect(() => {
+    const state = location.state as SuccessNotificationState | null;
+    if (!state?.successNotification) {
+      return;
+    }
+
+    showSuccessNotification(state.successNotification.title, state.successNotification.message);
+    navigate(location.pathname + location.search, { replace: true, state: null });
+  }, []);
+
   const handleSelectWord = (word: WordRecordDto) => {
     if (!word.wordId) {
       return;
@@ -177,7 +195,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
     );
   };
 
-  const handleSubmit = (_: FormValues) => {
+  const save = (shouldClose: boolean) => {
     if (selectedWords.length === 0) {
       showErrorTextNotification('Validation Error', 'Please select at least one word for the set');
       return;
@@ -191,36 +209,59 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
           wordIds,
         },
         {
-          onSuccess: () => {
-            goBack();
+          onSuccess: (response) => {
+            if (shouldClose) {
+              goBack();
+              return;
+            }
+
+            if (!response.setId) {
+              return;
+            }
+
+            const search = window.location.search;
+            const successState: SuccessNotificationState = {
+              successNotification: { title: 'Set created', message: 'Continue editing the set.' },
+            };
+            navigate(links.editSet.getUrl({ setId: response.setId }) + search, {
+              replace: true,
+              state: successState,
+            });
           },
           onError: (error) => {
             showErrorNotification('Error Creating Set', error);
           },
         },
       );
-    } else {
-      if (!setId) {
-        return;
-      }
 
-      updateSetMutation.mutate(
-        {
-          setId,
-          data: {
-            wordIds,
-          },
-        },
-        {
-          onSuccess: () => {
-            goBack();
-          },
-          onError: (error) => {
-            showErrorNotification('Error Updating Set', error);
-          },
-        },
-      );
+      return;
     }
+
+    if (!setId) {
+      return;
+    }
+
+    updateSetMutation.mutate(
+      {
+        setId,
+        data: {
+          wordIds,
+        },
+      },
+      {
+        onSuccess: () => {
+          if (shouldClose) {
+            goBack();
+            return;
+          }
+
+          showSuccessNotification('Set saved', 'Your changes have been saved.');
+        },
+        onError: (error) => {
+          showErrorNotification('Error Updating Set', error);
+        },
+      },
+    );
   };
 
   const handleCancel = () => {
@@ -255,6 +296,8 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
 
   useShortcuts('set-form', shortcutHandlers);
 
+  const isPending = mode === 'create' ? createSetMutation.isPending : updateSetMutation.isPending;
+
   if (isLoading || (mode === 'create' && proposedSetNameQuery.isLoading)) {
     return (
       <Stack pos="relative" mih="12rem">
@@ -265,7 +308,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
 
   return (
     <>
-      <form ref={formRef} onSubmit={form.onSubmit(handleSubmit)}>
+      <form ref={formRef} onSubmit={form.onSubmit(() => save(false))}>
         <Stack gap="lg">
           <TextInput
             label="Set Name"
@@ -408,13 +451,14 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
             <Button variant="light" onClick={handleCancel} size="md" w={120}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              loading={mode === 'create' ? createSetMutation.isPending : updateSetMutation.isPending}
-              size="md"
-              w={120}>
-              Save
-            </Button>
+            <Group gap="sm">
+              <Button type="submit" loading={isPending} size="md" w={120}>
+                Save
+              </Button>
+              <Button variant="light" type="button" loading={isPending} size="md" onClick={() => save(true)}>
+                Save and Close
+              </Button>
+            </Group>
           </Group>
         </Stack>
       </form>

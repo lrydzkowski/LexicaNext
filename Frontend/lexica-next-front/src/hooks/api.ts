@@ -16,6 +16,7 @@ export type CreateWordRequestPayload = components['schemas']['CreateWordRequestP
 export type CreateWordResponse = components['schemas']['CreateWordResponse'];
 export type UpdateWordRequestPayload = components['schemas']['UpdateWordRequestPayload'];
 export type CreateSetRequestPayload = components['schemas']['CreateSetRequestPayload'];
+export type CreateSetResponse = components['schemas']['CreateSetResponse'];
 export type UpdateSetRequestPayload = components['schemas']['UpdateSetRequestPayload'];
 export type GenerateTranslationsRequest = components['schemas']['GenerateTranslationsRequest'];
 export type GenerateTranslationsResponse = components['schemas']['GenerateTranslationsResponse'];
@@ -174,14 +175,16 @@ export const useCreateSet = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: CreateSetRequestPayload): Promise<void> => {
-      const { error } = await client.POST('/api/sets', {
+    mutationFn: async (data: CreateSetRequestPayload): Promise<CreateSetResponse> => {
+      const { data: responseData, error } = await client.POST('/api/sets', {
         body: data,
       });
 
-      if (error) {
+      if (error || !responseData) {
         throwApiError(error, 'Failed to create set');
       }
+
+      return responseData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sets'] });

@@ -81,7 +81,7 @@ test.describe('edit word from set form', () => {
     const setPutResponse = page.waitForResponse(
       (resp) => resp.url().includes('/api/sets/') && resp.request().method() === 'PUT',
     );
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save and Close' }).click();
     await setPutResponse;
 
     await expect(page).toHaveURL(/\/sets(\?|$)/);
