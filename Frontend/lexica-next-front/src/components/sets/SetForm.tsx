@@ -308,7 +308,13 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
 
   return (
     <>
-      <form ref={formRef} onSubmit={form.onSubmit(() => save(false))}>
+      <form
+        ref={formRef}
+        onSubmit={(event) => {
+          const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+          const shouldClose = submitter?.dataset.close === 'true';
+          form.onSubmit(() => save(shouldClose))(event);
+        }}>
         <Stack gap="lg">
           <TextInput
             label="Set Name"
@@ -455,7 +461,7 @@ export function SetForm({ mode, setId, set, isLoading }: SetFormProps) {
               <Button type="submit" loading={isPending} size="md" w={120}>
                 Save
               </Button>
-              <Button variant="light" type="button" loading={isPending} size="md" onClick={() => save(true)}>
+              <Button variant="light" type="submit" data-close="true" loading={isPending} size="md">
                 Save and Close
               </Button>
             </Group>
