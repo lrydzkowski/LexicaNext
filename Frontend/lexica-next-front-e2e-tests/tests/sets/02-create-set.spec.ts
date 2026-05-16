@@ -60,7 +60,8 @@ test.describe('create set', () => {
     await expect(page.getByRole('button', { name: 'Add Words' })).toBeFocused();
     await expect(page.getByRole('button', { name: 'Create New Word' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Save and Close' })).toBeVisible();
     await expect(
       page.getByText('No words selected. Click "Add Words" to select words from your library.'),
     ).toBeVisible();
@@ -113,7 +114,7 @@ test.describe('create set', () => {
     const postResponse = page.waitForResponse(
       (resp) => resp.url().includes('/api/sets') && resp.request().method() === 'POST',
     );
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save and Close' }).click();
     await postResponse;
 
     await expect(page).toHaveURL(/\/sets(\?|$)/);
@@ -124,7 +125,7 @@ test.describe('create set', () => {
 
   test('validation - cannot save set with no words selected', async ({ page }) => {
     await page.goto('/sets/new');
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
 
     await expect(page.getByText('Please select at least one word for the set')).toBeVisible();
     await expect(page).toHaveURL(/\/sets\/new/);
@@ -179,7 +180,7 @@ test.describe('create set', () => {
     const setPostResponse = page.waitForResponse(
       (resp) => resp.url().includes('/api/sets') && resp.request().method() === 'POST',
     );
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save and Close' }).click();
     await setPostResponse;
 
     await expect(page).toHaveURL(/\/sets(\?|$)/);
@@ -221,6 +222,56 @@ test.describe('create set', () => {
     await page.getByRole('button', { name: 'Remove word' }).first().click();
 
     await expect(page.getByText('Selected Words (1)')).toBeVisible();
+  });
+
+  test('Save (without close) stays on form and switches to edit mode after create', async ({ page }) => {
+    const prefix = generateTestPrefix('create-save-stay');
+
+    const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
+    wordIdsToClean.push(wordId);
+
+    await page.goto('/sets/new');
+
+    const setName = await page.getByLabel('Set Name').inputValue();
+    setNamesToClean.push(setName);
+
+    await page.getByRole('button', { name: 'Add Words' }).click();
+    const addDialog = page.getByRole('dialog');
+    await expect(addDialog).toBeVisible();
+    const modalSearchInput = addDialog.getByPlaceholder('Search words...');
+    await modalSearchInput.click();
+    const wordsSearchResponse = page.waitForResponse(
+      (resp) =>
+        resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
+    );
+    await modalSearchInput.fill(prefix);
+    await wordsSearchResponse;
+    await addDialog
+      .getByRole('row')
+      .filter({ hasText: `${prefix}-word` })
+      .click();
+    await addDialog.getByRole('button', { name: 'Done' }).click();
+
+    await expect(page.getByText('Selected Words (1)')).toBeVisible();
+
+    const postResponse = page.waitForResponse(
+      (resp) => resp.url().includes('/api/sets') && resp.request().method() === 'POST',
+    );
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await postResponse;
+
+    await expect(page).toHaveURL(/\/sets\/[0-9a-f-]+\/edit/);
+    await expect(page.getByRole('heading', { name: 'Edit Set' })).toBeVisible();
+    await expect(page.getByText('Selected Words (1)')).toBeVisible();
+    await expect(page.getByText('Set created')).toBeVisible();
+
+    const putResponse = page.waitForResponse(
+      (resp) => resp.url().includes('/api/sets/') && resp.request().method() === 'PUT',
+    );
+    await page.getByRole('button', { name: 'Save and Close' }).click();
+    await putResponse;
+
+    await expect(page).toHaveURL(/\/sets(\?|$)/);
   });
 
   test('back arrow navigates to sets list', async ({ page }) => {

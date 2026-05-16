@@ -85,7 +85,7 @@ test.describe('set full lifecycle', () => {
     const postResponsePromise = page.waitForResponse(
       (resp) => resp.url().includes('/api/sets') && resp.request().method() === 'POST',
     );
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save and Close' }).click();
     const postResponse = await postResponsePromise;
     const postBody = await postResponse.json();
     const setId = postBody.setId;
@@ -117,7 +117,7 @@ test.describe('set full lifecycle', () => {
     const putResponse = page.waitForResponse(
       (resp) => resp.url().includes('/api/sets/') && resp.request().method() === 'PUT',
     );
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save and Close' }).click();
     await putResponse;
 
     await expect(page).toHaveURL(/\/sets(\?|$)/);
