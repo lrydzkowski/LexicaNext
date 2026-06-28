@@ -2,6 +2,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { components } from '../../api-types/api-types';
 import { createAuthenticatedClient } from '../services/api-client';
+import { redirectToLogin } from '../services/auth-session';
 import { throwApiError } from '../services/validation-errors';
 
 export type EntryDto = components['schemas']['EntryDto'];
@@ -31,8 +32,8 @@ export type GetWeakestOpenQuestionsPracticeEntriesResponse =
   components['schemas']['GetWeakestOpenQuestionsPracticeEntriesResponse'];
 
 export const useApiClient = () => {
-  const { getAccessTokenSilently } = useAuth0();
-  const client = createAuthenticatedClient(getAccessTokenSilently);
+  const { getAccessTokenSilently, loginWithRedirect } = useAuth0();
+  const client = createAuthenticatedClient(getAccessTokenSilently, () => redirectToLogin(loginWithRedirect));
 
   return client;
 };
