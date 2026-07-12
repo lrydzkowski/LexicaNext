@@ -69,9 +69,9 @@ public class CreateSetTests
             request.CreateContent(testCase.RequestBody);
         }
 
-        using HttpResponseMessage response = await client.SendAsync(request);
+        using HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
-        string responseBody = await response.Content.ReadAsStringAsync();
+        string responseBody = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         List<SetEntity> setsAfter = await contextScope.Db!.Context.GetSetsAsync();
 

@@ -66,9 +66,9 @@ public class DeleteSetsTests
         DeleteSetsRequest requestBody = new() { Ids = testCase.Ids };
         using HttpRequestMessage request = new(HttpMethod.Delete, "/api/sets");
         request.CreateContent(requestBody);
-        using HttpResponseMessage response = await client.SendAsync(request);
+        using HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
-        string responseBody = await response.Content.ReadAsStringAsync();
+        string responseBody = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         List<SetEntity> setsAfter = await contextScope.Db!.Context.GetSetsAsync();
 

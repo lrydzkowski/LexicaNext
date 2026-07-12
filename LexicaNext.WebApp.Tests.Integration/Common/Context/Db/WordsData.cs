@@ -9,7 +9,7 @@ internal static class WordsData
     public static async Task CreateWordsAsync(this AppDbContext context, IEnumerable<WordEntity> words)
     {
         context.Words.AddRange(words);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 
     public static async Task CreateTranslationsAsync(
@@ -18,7 +18,7 @@ internal static class WordsData
     )
     {
         context.Translations.AddRange(translations);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 
     public static async Task CreateExampleSentencesAsync(
@@ -27,7 +27,7 @@ internal static class WordsData
     )
     {
         context.ExampleSentences.AddRange(exampleSentences);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 
     public static async Task CreateRecordingsAsync(
@@ -36,7 +36,7 @@ internal static class WordsData
     )
     {
         context.Recordings.AddRange(recordings);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 
     public static async Task<List<WordEntity>> GetWordsAsync(this AppDbContext context)
@@ -46,7 +46,7 @@ internal static class WordsData
             .Include(w => w.ExampleSentences.OrderBy(y => y.Order))
             .AsNoTracking()
             .OrderBy(x => x.CreatedAt)
-            .ToListAsync();
+            .ToListAsync(TestContext.Current.CancellationToken);
     }
 
     public static async Task<List<RecordingEntity>> GetRecordingsAsync(this AppDbContext context)
@@ -54,6 +54,6 @@ internal static class WordsData
         return await context.Recordings
             .AsNoTracking()
             .OrderBy(x => x.Word)
-            .ToListAsync();
+            .ToListAsync(TestContext.Current.CancellationToken);
     }
 }

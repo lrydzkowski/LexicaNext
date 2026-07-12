@@ -47,9 +47,9 @@ public class GetWeakestOpenQuestionsPracticeEntriesTests
         await contextScope.InitializeAsync(testCase);
 
         HttpClient client = contextScope.Factory.CreateClient();
-        using HttpResponseMessage response = await client.GetAsync(Url);
+        using HttpResponseMessage response = await client.GetAsync(Url, TestContext.Current.CancellationToken);
 
-        string responseBody = await response.Content.ReadAsStringAsync();
+        string responseBody = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         return new GetWeakestOpenQuestionsPracticeEntriesTestResult
         {
