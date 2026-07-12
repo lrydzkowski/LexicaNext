@@ -12,13 +12,13 @@ internal static class AnswersData
     )
     {
         context.Answers.AddRange(answers);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 
     public static async Task<List<AnswerEntity>> GetAnswersAsync(this AppDbContext context)
     {
         return await context.Answers
             .AsNoTracking()
-            .ToListAsync();
+            .ToListAsync(TestContext.Current.CancellationToken);
     }
 }

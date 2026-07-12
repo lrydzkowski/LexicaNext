@@ -69,7 +69,7 @@ public class GenerateTranslationsTests
                 preRequest.CreateContent(testCase.RequestBody);
             }
 
-            using HttpResponseMessage preResponse = await client.SendAsync(preRequest);
+            using HttpResponseMessage preResponse = await client.SendAsync(preRequest, TestContext.Current.CancellationToken);
         }
 
         using HttpRequestMessage request = new(HttpMethod.Post, "/api/translations/generate");
@@ -78,9 +78,9 @@ public class GenerateTranslationsTests
             request.CreateContent(testCase.RequestBody);
         }
 
-        using HttpResponseMessage response = await client.SendAsync(request);
+        using HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
-        string responseBody = await response.Content.ReadAsStringAsync();
+        string responseBody = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         return new GenerateTranslationsTestResult
         {

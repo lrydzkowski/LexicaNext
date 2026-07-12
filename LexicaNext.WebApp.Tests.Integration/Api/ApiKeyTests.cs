@@ -74,7 +74,7 @@ public class ApiKeyTests
                 .WithLogging(_logMessages, "Microsoft.AspNetCore.Authentication", LogLevel.Information)
                 .WithLogging(_logMessages, "Microsoft.AspNetCore.Authorization", LogLevel.Information)
                 .CreateClient()
-                .SendAsync(requestMessage);
+                .SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
             results.Add(
                 new ApiAuth0TestsResult

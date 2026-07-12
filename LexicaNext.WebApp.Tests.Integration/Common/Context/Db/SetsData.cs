@@ -9,7 +9,7 @@ internal static class SetsData
     public static async Task CreateSetsAsync(this AppDbContext context, IEnumerable<SetEntity> sets)
     {
         context.Sets.AddRange(sets);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 
     public static async Task CreateSetWordsAsync(
@@ -18,7 +18,7 @@ internal static class SetsData
     )
     {
         context.SetWords.AddRange(setWords);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 
     public static async Task CreateUserSetSequencesAsync(
@@ -27,7 +27,7 @@ internal static class SetsData
     )
     {
         context.UserSetSequences.AddRange(sequences);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 
     public static async Task<List<SetEntity>> GetSetsAsync(this AppDbContext context)
@@ -36,7 +36,7 @@ internal static class SetsData
             .Include(s => s.SetWords.OrderBy(sw => sw.Order))
             .OrderBy(s => s.CreatedAt)
             .AsNoTracking()
-            .ToListAsync();
+            .ToListAsync(TestContext.Current.CancellationToken);
 
         return sets;
     }

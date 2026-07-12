@@ -70,13 +70,13 @@ public class GetRecordingTests
             url += $"?wordType={testCase.WordType}";
         }
 
-        using HttpResponseMessage response = await client.GetAsync(url);
+        using HttpResponseMessage response = await client.GetAsync(url, TestContext.Current.CancellationToken);
 
         byte[]? responseBytes = response.IsSuccessStatusCode
-            ? await response.Content.ReadAsByteArrayAsync()
+            ? await response.Content.ReadAsByteArrayAsync(TestContext.Current.CancellationToken)
             : null;
         string? responseBody = !response.IsSuccessStatusCode
-            ? (await response.Content.ReadAsStringAsync()).PrettifyJson(4)
+            ? (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).PrettifyJson(4)
             : null;
 
         List<RecordingEntity> dbRecordings = await contextScope.Db!.Context.GetRecordingsAsync();

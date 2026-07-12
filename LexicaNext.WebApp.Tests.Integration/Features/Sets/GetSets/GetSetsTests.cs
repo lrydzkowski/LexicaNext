@@ -65,9 +65,9 @@ public class GetSetsTests
 
         HttpClient client = contextScope.Factory.CreateClient();
         string url = BuildUrl(testCase);
-        using HttpResponseMessage response = await client.GetAsync(url);
+        using HttpResponseMessage response = await client.GetAsync(url, TestContext.Current.CancellationToken);
 
-        string responseBody = await response.Content.ReadAsStringAsync();
+        string responseBody = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         return new GetSetsTestResult
         {

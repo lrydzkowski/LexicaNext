@@ -25,14 +25,14 @@ public class WebApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public LogMessages LogMessages { get; } = new();
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
-        await DbContainer.StartAsync();
+        await DbContainer.StartAsync(TestContext.Current.CancellationToken);
 
         Services.ExecuteDbMigration();
     }
 
-    public new async Task DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         await DbContainer.DisposeAsync();
         WireMockServer.Dispose();

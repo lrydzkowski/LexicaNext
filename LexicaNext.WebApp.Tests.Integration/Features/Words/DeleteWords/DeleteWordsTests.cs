@@ -66,9 +66,9 @@ public class DeleteWordsTests
         DeleteWordsRequest requestBody = new() { Ids = testCase.Ids };
         using HttpRequestMessage request = new(HttpMethod.Delete, "/api/words");
         request.CreateContent(requestBody);
-        using HttpResponseMessage response = await client.SendAsync(request);
+        using HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
-        string responseBody = await response.Content.ReadAsStringAsync();
+        string responseBody = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         List<WordEntity> wordsAfter = await contextScope.Db!.Context.GetWordsAsync();
 

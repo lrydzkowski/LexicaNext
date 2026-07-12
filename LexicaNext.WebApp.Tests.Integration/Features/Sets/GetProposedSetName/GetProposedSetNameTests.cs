@@ -45,9 +45,9 @@ public class GetProposedSetNameTests
         await contextScope.InitializeAsync(testCase);
 
         HttpClient client = contextScope.Factory.CreateClient();
-        using HttpResponseMessage response = await client.GetAsync("/api/sets/proposed-name");
+        using HttpResponseMessage response = await client.GetAsync("/api/sets/proposed-name", TestContext.Current.CancellationToken);
 
-        string responseBody = await response.Content.ReadAsStringAsync();
+        string responseBody = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         return new GetProposedSetNameTestResult
         {

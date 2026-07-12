@@ -31,9 +31,9 @@ public class GetAppStatusTests
         await using TestContextScope contextScope = new(_webApiFactory, _logMessages);
 
         HttpClient client = _webApiFactory.CreateClient();
-        using HttpResponseMessage response = await client.GetAsync("/api/status");
+        using HttpResponseMessage response = await client.GetAsync("/api/status", TestContext.Current.CancellationToken);
 
-        string responseBody = await response.Content.ReadAsStringAsync();
+        string responseBody = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         GetAppStatusTestResult result = new()
         {

@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Reflection;
 using LexicaNext.Infrastructure.Auth;
 using LexicaNext.WebApp.Tests.Integration.Common;
@@ -105,7 +105,7 @@ public class ApiAuth0Tests
                 .WithLogging(_logMessages, "Microsoft.AspNetCore.Authorization", LogLevel.Information)
                 .WithLogging(_logMessages, "Microsoft.AspNetCore.Authentication", LogLevel.Information)
                 .CreateClient()
-                .SendAsync(requestMessage);
+                .SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
             results.Add(
                 new ApiAuth0TestsResult

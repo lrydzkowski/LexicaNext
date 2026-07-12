@@ -62,9 +62,9 @@ public class GetWordTests
         List<WordEntity> dbWords = await contextScope.Db!.Context.GetWordsAsync();
 
         HttpClient client = contextScope.Factory.CreateClient();
-        using HttpResponseMessage response = await client.GetAsync($"/api/words/{testCase.WordId}");
+        using HttpResponseMessage response = await client.GetAsync($"/api/words/{testCase.WordId}", TestContext.Current.CancellationToken);
 
-        string responseBody = await response.Content.ReadAsStringAsync();
+        string responseBody = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         return new GetWordTestResult
         {
