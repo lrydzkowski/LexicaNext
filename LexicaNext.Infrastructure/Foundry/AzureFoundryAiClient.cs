@@ -1,8 +1,8 @@
 #pragma warning disable CA2252, OPENAI001
 
 using System.ClientModel;
+using Azure.AI.Extensions.OpenAI;
 using Azure.AI.Projects;
-using Azure.AI.Projects.OpenAI;
 using Azure.Identity;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using Microsoft.Extensions.Options;
@@ -33,7 +33,8 @@ internal class AzureFoundryAiClient
             new Uri(foundryOptions.ProjectEndpoint),
             credential
         );
-        _responsesClient = projectClient.OpenAI.GetProjectResponsesClientForModel(foundryOptions.ModelDeploymentName);
+        _responsesClient =
+            projectClient.ProjectOpenAIClient.GetProjectResponsesClientForModel(foundryOptions.ModelDeploymentName);
     }
 
     public async Task<string?> CallAsync(string prompt, CancellationToken cancellationToken)
