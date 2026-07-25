@@ -3,6 +3,7 @@ using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Lists;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetWords.Interfaces;
 using LexicaNext.Core.Queries.GetWords.Services;
@@ -23,6 +24,7 @@ public static class GetWordsEndpoint
         app.MapGet("/api/words", HandleAsync)
             .WithName(Name)
             .WithSummary("Return the list of words")
+            .WithTags(EndpointCategories.Words)
             .Produces<GetWordsResponse>()
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

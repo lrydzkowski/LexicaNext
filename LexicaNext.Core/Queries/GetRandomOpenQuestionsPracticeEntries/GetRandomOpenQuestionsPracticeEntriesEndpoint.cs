@@ -1,5 +1,6 @@
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetRandomOpenQuestionsPracticeEntries.Interfaces;
 using LexicaNext.Core.Queries.GetSet;
@@ -22,6 +23,7 @@ public static class GetRandomOpenQuestionsPracticeEntriesEndpoint
         app.MapGet("/api/practice/open-questions/random", HandleAsync)
             .WithName(Name)
             .WithSummary("Return up to 20 random words for the user's open-questions practice")
+            .WithTags(EndpointCategories.Practice)
             .Produces<GetRandomOpenQuestionsPracticeEntriesResponse>()
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status500InternalServerError)

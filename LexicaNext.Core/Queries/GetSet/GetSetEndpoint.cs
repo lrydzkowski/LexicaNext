@@ -1,5 +1,6 @@
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetSet.Interfaces;
 using LexicaNext.Core.Queries.GetSet.Services;
@@ -19,6 +20,7 @@ public static class GetSetEndpoint
         app.MapGet("/api/sets/{setId}", HandleAsync)
             .WithName(Name)
             .WithSummary("Return a set represented by the given id")
+            .WithTags(EndpointCategories.Sets)
             .Produces<GetSetResponse>()
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)

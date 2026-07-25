@@ -5,6 +5,7 @@ using LexicaNext.Core.Commands.RegisterAnswer.Services;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -21,6 +22,7 @@ public static class RegisterAnswerEndpoint
         app.MapPost("/api/answer", HandleAsync)
             .WithName(Name)
             .WithSummary("Register an answer for a word")
+            .WithTags(EndpointCategories.Answers)
             .Produces(StatusCodes.Status204NoContent)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

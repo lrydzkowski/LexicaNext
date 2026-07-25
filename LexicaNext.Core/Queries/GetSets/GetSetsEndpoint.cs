@@ -3,6 +3,7 @@ using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Lists;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetSets.Interfaces;
 using LexicaNext.Core.Queries.GetSets.Services;
@@ -22,6 +23,7 @@ public static class GetSetsEndpoint
         app.MapGet("/api/sets", HandleAsync)
             .WithName(Name)
             .WithSummary("Return the list of sets")
+            .WithTags(EndpointCategories.Sets)
             .Produces<GetSetsResponse>()
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

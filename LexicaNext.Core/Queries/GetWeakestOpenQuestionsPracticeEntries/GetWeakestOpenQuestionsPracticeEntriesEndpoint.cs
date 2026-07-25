@@ -1,5 +1,6 @@
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetSet;
 using LexicaNext.Core.Queries.GetSet.Services;
@@ -24,6 +25,7 @@ public static class GetWeakestOpenQuestionsPracticeEntriesEndpoint
             .WithSummary(
                 "Return up to 20 words with the worst open-questions answer history for the user's practice"
             )
+            .WithTags(EndpointCategories.Practice)
             .Produces<GetWeakestOpenQuestionsPracticeEntriesResponse>()
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status500InternalServerError)

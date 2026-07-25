@@ -4,6 +4,7 @@ using LexicaNext.Core.Commands.DeleteSets.Services;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -20,6 +21,7 @@ public static class DeleteSetsEndpoint
         app.MapDelete("/api/sets", HandleAsync)
             .WithName(Name)
             .WithSummary("Delete multiple sets")
+            .WithTags(EndpointCategories.Sets)
             .Produces(StatusCodes.Status204NoContent)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

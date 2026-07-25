@@ -2,6 +2,7 @@ using FluentValidation.Results;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetWordSets.Interfaces;
 using LexicaNext.Core.Queries.GetWordSets.Services;
@@ -21,6 +22,7 @@ public static class GetWordSetsEndpoint
         app.MapGet("/api/words/{wordId}/sets", HandleAsync)
             .WithName(Name)
             .WithSummary("Return the sets that contain a specific word")
+            .WithTags(EndpointCategories.Words)
             .Produces<GetWordSetsResponse>()
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
