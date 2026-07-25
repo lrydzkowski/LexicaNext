@@ -5,6 +5,7 @@ using LexicaNext.Core.Commands.UpdateSet.Services;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -21,6 +22,7 @@ public static class UpdateSetEndpoint
         app.MapPut("/api/sets/{setId}", HandleAsync)
             .WithName(Name)
             .WithSummary("Update an existing set")
+            .WithTags(EndpointCategories.Sets)
             .Produces(StatusCodes.Status204NoContent)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

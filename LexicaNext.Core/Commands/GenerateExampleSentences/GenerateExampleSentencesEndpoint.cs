@@ -3,6 +3,7 @@ using LexicaNext.Core.Commands.GenerateExampleSentences.Services;
 using LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Infrastructure.RateLimiting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -20,6 +21,7 @@ public static class GenerateExampleSentencesEndpoint
         app.MapPost("/api/sentences/generate", HandleAsync)
             .WithName(Name)
             .WithSummary("Generate example sentences for an English word using AI")
+            .WithTags(EndpointCategories.Generators)
             .Produces<GenerateExampleSentencesResponse>()
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

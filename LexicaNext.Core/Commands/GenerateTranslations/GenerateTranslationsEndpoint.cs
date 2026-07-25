@@ -3,6 +3,7 @@ using LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
 using LexicaNext.Core.Commands.GenerateTranslations.Services;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Infrastructure.RateLimiting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -20,6 +21,7 @@ public static class GenerateTranslationsEndpoint
         app.MapPost("/api/translations/generate", HandleAsync)
             .WithName(Name)
             .WithSummary("Generate Polish translations for an English word using AI")
+            .WithTags(EndpointCategories.Generators)
             .Produces<GenerateTranslationsResponse>()
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

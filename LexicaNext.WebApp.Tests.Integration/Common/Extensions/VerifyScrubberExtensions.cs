@@ -27,7 +27,13 @@ internal static partial class VerifyScrubberExtensions
             input =>
             {
                 string original = input.ToString();
-                string updated = original.Replace("\\r\\n", " ").Replace("\\n", " ");
+                string updated = original
+                    .Replace("\\\\r\\\\n", " ")
+                    .Replace("\\r\\n", " ")
+                    .Replace("\\\\n", " ")
+                    .Replace("\\\\r", " ")
+                    .Replace("\\n", " ")
+                    .Replace("\\r", " ");
 
                 input.Clear();
                 input.Append(updated);

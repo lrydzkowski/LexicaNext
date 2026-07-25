@@ -5,6 +5,7 @@ using LexicaNext.Core.Commands.CreateWord.Services;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -21,6 +22,7 @@ public static class CreateWordEndpoint
         app.MapPost("/api/words", HandleAsync)
             .WithName(Name)
             .WithSummary("Create a new word")
+            .WithTags(EndpointCategories.Words)
             .Produces<CreateWordResponse>(StatusCodes.Status201Created)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

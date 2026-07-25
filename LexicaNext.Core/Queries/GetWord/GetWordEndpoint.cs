@@ -1,5 +1,6 @@
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetWord.Interfaces;
 using LexicaNext.Core.Queries.GetWord.Services;
@@ -19,6 +20,7 @@ public static class GetWordEndpoint
         app.MapGet("/api/words/{wordId}", HandleAsync)
             .WithName(Name)
             .WithSummary("Return a word represented by the given id")
+            .WithTags(EndpointCategories.Words)
             .Produces<GetWordResponse>()
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status404NotFound)

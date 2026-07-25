@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Argon;
 using LexicaNext.WebApp.Tests.Integration.Common.Extensions;
@@ -10,8 +11,8 @@ internal static class VerifySettingsBuilder
     {
         VerifySettings settings = new();
         settings.ScrubInlineGuids();
-        settings.ScrubInlineDateTimes("M/d/yyyy h:mm:ss tt");
-        settings.ScrubInlineDateTimes("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
+        settings.ScrubInlineDateTimes("M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+        settings.ScrubInlineDateTimes("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture);
         settings.ScrubNewLineCharacters();
         settings.ScrubCustomBlankCharacters();
         settings.ScrubTraceId();

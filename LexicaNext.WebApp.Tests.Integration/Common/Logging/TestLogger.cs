@@ -41,7 +41,7 @@ internal class TestLogger : ILogger
         {
             LogLevel = logLevel.ToString(),
             Category = _categoryName,
-            Message = formatter(state, exception)
+            Message = formatter(state, exception).Replace('\u202F', ' ')
         };
 
         string logDetails = JsonSerializer.Serialize(

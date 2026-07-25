@@ -1,5 +1,6 @@
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Queries.GetProposedSetName.Interfaces;
 using LexicaNext.Core.Queries.GetProposedSetName.Models;
 using Microsoft.AspNetCore.Builder;
@@ -18,6 +19,7 @@ public static class GetProposedSetNameEndpoint
         app.MapGet("/api/sets/proposed-name", HandleAsync)
             .WithName(Name)
             .WithSummary("Return the next proposed set name in format set_XXXX")
+            .WithTags(EndpointCategories.Sets)
             .Produces<GetProposedSetNameResponse>()
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status500InternalServerError)

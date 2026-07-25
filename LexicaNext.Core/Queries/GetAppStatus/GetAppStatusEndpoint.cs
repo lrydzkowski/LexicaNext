@@ -1,3 +1,4 @@
+using LexicaNext.Core.Common.Infrastructure.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -13,6 +14,7 @@ public static class GetAppStatusEndpoint
         app.MapGet("/api/status", Handle)
             .WithName(Name)
             .WithSummary("Return the status of the application")
+            .WithTags(EndpointCategories.Status)
             .Produces<GetAppStatusResponse>()
             .Produces(StatusCodes.Status500InternalServerError)
             .AllowAnonymous();

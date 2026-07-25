@@ -5,6 +5,7 @@ using LexicaNext.Core.Commands.CreateSet.Services;
 using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Queries.GetSet;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +23,7 @@ public static class CreateSetEndpoint
         app.MapPost("/api/sets", HandleAsync)
             .WithName(Name)
             .WithSummary("Create a new set")
+            .WithTags(EndpointCategories.Sets)
             .Produces<CreateSetResponse>()
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

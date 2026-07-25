@@ -3,6 +3,7 @@ using LexicaNext.Core.Common.Infrastructure.Auth;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Lists;
+using LexicaNext.Core.Common.Infrastructure.Models;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetWordsStatistics.Interfaces;
 using LexicaNext.Core.Queries.GetWordsStatistics.Services;
@@ -22,6 +23,7 @@ public static class GetWordsStatisticsEndpoint
         app.MapGet("/api/words-statistics", HandleAsync)
             .WithName(Name)
             .WithSummary("Return per-word statistics for the current user's open-questions answers")
+            .WithTags(EndpointCategories.Statistics)
             .Produces<GetWordsStatisticsResponse>()
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
