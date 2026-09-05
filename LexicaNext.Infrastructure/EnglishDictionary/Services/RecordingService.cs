@@ -1,4 +1,4 @@
-﻿using HtmlAgilityPack;
+using HtmlAgilityPack;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Models;
 using LexicaNext.Core.Queries.GetRecording.Interfaces;
@@ -44,7 +44,12 @@ internal class RecordingService : IScopedService, IRecordingApi
         HtmlDocument htmlDoc = new();
         htmlDoc.LoadHtml(pageContent);
 
-        HtmlNodeCollection wordNodes = htmlDoc.DocumentNode.SelectNodes("//span[contains(@class, 'headword')]");
+        HtmlNodeCollection? wordNodes = htmlDoc.DocumentNode.SelectNodes("//span[contains(@class, 'headword')]");
+        if (wordNodes is null)
+        {
+            return null;
+        }
+
         foreach (HtmlNode? wordNode in wordNodes)
         {
             if (!wordNode.HasChildNodes)
