@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="compose.yaml" />
+    <File Path="Directory.Packages.props" />
+    <File Path="NuGet.Config" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="LexicaNext.CLI/LexicaNext.CLI.csproj" />
+  <Project Path="LexicaNext.Core/LexicaNext.Core.csproj" />
+  <Project Path="LexicaNext.Infrastructure/LexicaNext.Infrastructure.csproj" />
+  <Project Path="LexicaNext.WebApp.Tests.Integration/LexicaNext.WebApp.Tests.Integration.csproj" />
+  <Project Path="LexicaNext.WebApp/LexicaNext.WebApp.csproj" />
+</Solution>
