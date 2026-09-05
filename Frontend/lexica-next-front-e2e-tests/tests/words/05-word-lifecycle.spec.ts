@@ -26,7 +26,7 @@ test.describe('word full lifecycle', () => {
     await expect(page).toHaveURL(/\/words\/new/);
 
     await page.getByLabel('English Word').fill(wordName);
-    await page.getByRole('textbox', { name: 'Word Type' }).click();
+    await page.getByRole('combobox', { name: 'Word Type' }).click();
     await page.getByRole('option', { name: 'Adjective' }).click();
     await page.getByPlaceholder('Enter translation...').fill('przejsciowy');
     await page.getByRole('button', { name: 'Add Sentence' }).click();
@@ -46,11 +46,11 @@ test.describe('word full lifecycle', () => {
 
     await expect(page).toHaveURL(/\/words\/.*\/edit/);
     await expect(page.getByLabel('English Word')).toHaveValue(wordName);
-    await expect(page.getByRole('textbox', { name: 'Word Type' })).toHaveValue('Adjective');
+    await expect(page.getByRole('combobox', { name: 'Word Type' })).toHaveValue('Adjective');
     await expect(page.getByPlaceholder('Enter translation...')).toHaveValue('przejsciowy');
     await expect(page.getByPlaceholder('Enter example sentence...')).toHaveValue('This is a transient state.');
 
-    await page.getByRole('textbox', { name: 'Word Type' }).click();
+    await page.getByRole('combobox', { name: 'Word Type' }).click();
     await page.getByRole('option', { name: 'Noun' }).click();
     await page.getByRole('button', { name: 'Save' }).click();
 

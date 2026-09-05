@@ -31,7 +31,7 @@ test.describe('edit word', () => {
     await expect(page).toHaveURL(/\/words\/.*\/edit/);
     await expect(page.getByRole('heading', { name: 'Edit Word' })).toBeVisible();
     await expect(page.getByLabel('English Word')).toHaveValue(wordName);
-    await expect(page.getByRole('textbox', { name: 'Word Type' })).toHaveValue('Noun');
+    await expect(page.getByRole('combobox', { name: 'Word Type' })).toHaveValue('Noun');
     await expect(page.getByPlaceholder('Enter translation...')).toHaveValue('ulotny');
   });
 
@@ -88,7 +88,7 @@ test.describe('edit word', () => {
     await page.getByRole('menuitem', { name: 'Edit Word' }).click();
     await expect(page).toHaveURL(/\/words\/.*\/edit/);
 
-    await page.getByRole('textbox', { name: 'Word Type' }).click();
+    await page.getByRole('combobox', { name: 'Word Type' }).click();
     await page.getByRole('option', { name: 'Adjective' }).click();
     await page.getByRole('button', { name: 'Save' }).click();
 

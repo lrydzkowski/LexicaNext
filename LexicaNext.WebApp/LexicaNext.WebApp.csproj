@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <Target Name="OpenAPI" AfterTargets="Build" Condition="$(Configuration)=='Debug'">
-    <Exec Command="npx openapi-typescript@7.10.1 ./obj/LexicaNext.WebApp.json -o ../Frontend/lexica-next-front/api-types/api-types.d.ts" WorkingDirectory="$(ProjectDir)" />
+    <Exec Command="npx openapi-typescript@7.13.0 ./obj/LexicaNext.WebApp.json -o ../Frontend/lexica-next-front/api-types/api-types.d.ts" WorkingDirectory="$(ProjectDir)" />
   </Target>
 
 </Project>

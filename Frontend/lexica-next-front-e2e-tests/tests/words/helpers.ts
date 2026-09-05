@@ -5,9 +5,7 @@ export function generateTestPrefix(context: string): string {
 }
 
 export async function captureAuthToken(page: Page): Promise<string> {
-  const requestPromise = page.waitForRequest(
-    (req) => req.url().includes('/api/') && !!req.headers()['authorization'],
-  );
+  const requestPromise = page.waitForRequest((req) => req.url().includes('/api/') && !!req.headers()['authorization']);
   await page.goto('/words');
   const request = await requestPromise;
   return request.headers()['authorization'];
@@ -55,7 +53,7 @@ export async function createWord(
   await page.getByLabel('English Word').fill(name);
 
   if (options?.type) {
-    await page.getByRole('textbox', { name: 'Word Type' }).click();
+    await page.getByRole('combobox', { name: 'Word Type' }).click();
     await page.getByRole('option', { name: options.type }).click();
   }
 

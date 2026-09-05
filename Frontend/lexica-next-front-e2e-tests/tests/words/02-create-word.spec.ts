@@ -22,7 +22,7 @@ test.describe('create word', () => {
     await expect(page).toHaveURL(/\/words\/new/);
     await expect(page.getByRole('heading', { name: 'Create New Word' })).toBeVisible();
     await expect(page.getByLabel('English Word')).toBeFocused();
-    await expect(page.getByRole('textbox', { name: 'Word Type' })).toHaveValue('Noun');
+    await expect(page.getByRole('combobox', { name: 'Word Type' })).toHaveValue('Noun');
     await expect(page.getByPlaceholder('Enter translation...')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
