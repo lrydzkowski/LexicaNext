@@ -37,7 +37,7 @@ function createGroupProjects(group: UserGroup) {
     use: { ...browser.device, storageState: authFile },
     testDir: group.testDir,
     fullyParallel: false,
-    dependencies: index === 0 ? [setupName] : [`${group.name}-${browsers[index - 1].suffix}`],
+    dependencies: [setupName],
   }));
 
   return [setupProject, ...browserProjects];
