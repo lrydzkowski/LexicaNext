@@ -31,22 +31,34 @@ Run all tests:
 npx playwright test
 ```
 
+or
+
+```bash
+npm test
+```
+
 Run tests for a specific user group:
 
 ```bash
 npx playwright test --project="user-a-chromium"
 ```
 
-Run a specific test file:
+or
 
 ```bash
-npx playwright test tests/sets/01-sets-list-page.spec.ts
+npm test -- --project="user-a-chromium"
 ```
 
 Run tests in headed mode (visible browser):
 
 ```bash
 npx playwright test --headed
+```
+
+or
+
+```bash
+npm test -- --headed
 ```
 
 ## Viewing Reports
