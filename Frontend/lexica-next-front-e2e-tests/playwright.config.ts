@@ -4,6 +4,8 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '.env'), quiet: true });
 
+const proxyServer = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+
 interface UserGroup {
   name: string;
   testDir: string;
@@ -48,6 +50,7 @@ export default defineConfig({
   reporter: 'html',
   use: {
     baseURL: process.env.BASE_URL,
+    proxy: proxyServer ? { server: proxyServer, bypass: process.env.NO_PROXY } : undefined,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
