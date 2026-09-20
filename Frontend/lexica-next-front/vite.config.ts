@@ -5,7 +5,7 @@ import { defineConfig, loadEnv } from 'vite';
 // https://vite.dev/config/
 export default defineConfig(({ command, mode }) => {
   const isProduction = command === 'build';
-  const outputDir = '../../LexicaNext.WebApp/wwwroot';
+  const outputDir = process.env.VITE_OUTPUT_DIR || '../../LexicaNext.WebApp/wwwroot';
   const env = loadEnv(mode, './env-config', 'LEXICA_');
 
   return {
