@@ -26,7 +26,7 @@ Create a `.env` file in this directory based on `.env.example` file.
 
 Set `AUTH_EMAIL_USER_A` and `AUTH_PASSWORD_USER_A` for Chromium.
 
-Set `AUTH_EMAIL_USER_C` and `AUTH_PASSWORD_USER_C` for WebKit.
+Set `AUTH_EMAIL_USER_B` and `AUTH_PASSWORD_USER_B` for WebKit.
 
 ## Running Tests
 
