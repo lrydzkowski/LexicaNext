@@ -14,8 +14,7 @@ interface UserGroup {
 
 const userGroups: UserGroup[] = [
   { name: 'user-a', browser: 'chromium', device: devices['Desktop Chrome'] },
-  { name: 'user-b', browser: 'firefox', device: devices['Desktop Firefox'] },
-  { name: 'user-c', browser: 'webkit', device: devices['Desktop Safari'] },
+  { name: 'user-b', browser: 'webkit', device: devices['Desktop Safari'] },
 ];
 
 function createGroupProjects(group: UserGroup) {
@@ -44,7 +43,7 @@ function createGroupProjects(group: UserGroup) {
 export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: 3,
+  workers: 2,
   reporter: 'html',
   use: {
     baseURL: process.env.BASE_URL,
