@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Outlet, useLocation } from 'react-router';
 import { AppShell, Container } from '@mantine/core';
@@ -18,7 +18,7 @@ export function Layout() {
   const sessionsSnapshot = useMemo(() => (isAuthenticated ? findAllSessions() : []), [isAuthenticated]);
   const authProcessedRef = useRef(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     notifications.clean();
   }, [pathname]);
 

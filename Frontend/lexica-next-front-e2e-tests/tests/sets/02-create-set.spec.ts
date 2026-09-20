@@ -240,7 +240,9 @@ test.describe('create set', () => {
     await expect(page).toHaveURL(/\/sets\/[0-9a-f-]+\/edit/);
     await expect(page.getByRole('heading', { name: 'Edit Set' })).toBeVisible();
     await expect(page.getByText('Selected Words (1)')).toBeVisible();
-    await expect(page.getByText('Set created')).toBeVisible();
+    await expect(page.getByText('Set created', { exact: true })).toBeVisible();
+    await expect(page.getByText('Set created', { exact: true })).toHaveCount(1);
+    await expect(page.getByText('Continue editing the set.', { exact: true })).toBeVisible();
 
     const putResponse = page.waitForResponse(
       (resp) => resp.url().includes('/api/sets/') && resp.request().method() === 'PUT',
@@ -249,6 +251,7 @@ test.describe('create set', () => {
     await putResponse;
 
     await expect(page).toHaveURL(/\/sets(\?|$)/);
+    await expect(page.getByText('Set created', { exact: true })).not.toBeVisible();
   });
 
   test('back arrow navigates to sets list', async ({ page }) => {
