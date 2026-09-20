@@ -1,16 +1,20 @@
 import { test, expect, type Page } from '@playwright/test';
 import {
-  generateTestPrefix,
+  cleanupCreatedData,
   captureAuthToken,
   createWordViaApiReturningId,
   createWordWithSentencesViaApi,
   createSetViaApi,
-  deleteSetViaApi,
-  deleteWordsViaApi,
 } from './helpers';
 
 test.describe('mode words list', () => {
   let authToken: string;
+  const testWordIds: string[] = [];
+  const testSetIds: string[] = [];
+
+  test.afterEach(async ({ page }) => {
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
+  });
 
   test.beforeAll(async ({ browser }, testInfo) => {
     const storageState = testInfo.project.use.storageState as string;
@@ -24,16 +28,11 @@ test.describe('mode words list', () => {
   async function createSimpleSet(page: Page, wordDefs: { name: string; translation: string }[]) {
     const createdWordIds: string[] = [];
     for (const def of wordDefs) {
-      const id = await createWordViaApiReturningId(page, def.name, def.translation, authToken);
+      const id = await createWordViaApiReturningId(page, def.name, def.translation, authToken, testWordIds);
       createdWordIds.push(id);
     }
-    const setId = await createSetViaApi(page, createdWordIds, authToken);
+    const setId = await createSetViaApi(page, createdWordIds, authToken, testSetIds);
     return { setId, wordIds: createdWordIds };
-  }
-
-  async function cleanupSet(page: Page, setId: string, wordIds: string[]) {
-    await deleteSetViaApi(page, [setId], authToken);
-    await deleteWordsViaApi(page, wordIds, authToken);
   }
 
   async function openWordsModal(page: Page) {
@@ -50,14 +49,13 @@ test.describe('mode words list', () => {
   }
 
   test('full mode shows the words list modal with all set words', async ({ page }) => {
-    const prefix = generateTestPrefix('mwl-full');
     const wordDefs = [
-      { name: `${prefix}-cat`, translation: 'kot' },
-      { name: `${prefix}-dog`, translation: 'pies' },
-      { name: `${prefix}-bird`, translation: 'ptak' },
-      { name: `${prefix}-fish`, translation: 'ryba' },
+      { name: 'cat', translation: 'kot' },
+      { name: 'dog', translation: 'pies' },
+      { name: 'bird', translation: 'ptak' },
+      { name: 'fish', translation: 'ryba' },
     ];
-    const { setId, wordIds } = await createSimpleSet(page, wordDefs);
+    const { setId } = await createSimpleSet(page, wordDefs);
 
     try {
       await page.goto(`/sets/${setId}/full-mode`);
@@ -65,22 +63,22 @@ test.describe('mode words list', () => {
 
       const dialog = await openWordsModal(page);
       for (const def of wordDefs) {
-        await expect(dialog.getByText(def.name)).toBeVisible();
+        await expect(dialog.getByText(def.name, { exact: true })).toBeVisible();
       }
 
       await closeWordsModal(page, dialog);
       await expect(page.getByRole('button', { name: 'Check Answer' })).toBeVisible();
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('spelling mode shows the words list modal with all set words', async ({ page }) => {
     const wordDefs = [
-      { name: `apple`, translation: 'jablko' },
-      { name: `pear`, translation: 'gruszka' },
+      { name: 'apple', translation: 'jablko' },
+      { name: 'pear', translation: 'gruszka' },
     ];
-    const { setId, wordIds } = await createSimpleSet(page, wordDefs);
+    const { setId } = await createSimpleSet(page, wordDefs);
 
     try {
       await page.goto(`/sets/${setId}/spelling-mode`);
@@ -88,23 +86,22 @@ test.describe('mode words list', () => {
 
       const dialog = await openWordsModal(page);
       for (const def of wordDefs) {
-        await expect(dialog.getByText(def.name)).toBeVisible();
+        await expect(dialog.getByText(def.name, { exact: true })).toBeVisible();
       }
 
       await closeWordsModal(page, dialog);
       await expect(page.getByPlaceholder('Type the word you heard...')).toBeVisible();
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('open questions mode shows the words list modal with all set words', async ({ page }) => {
-    const prefix = generateTestPrefix('mwl-oq');
     const wordDefs = [
-      { name: `${prefix}-rain`, translation: 'deszcz' },
-      { name: `${prefix}-snow`, translation: 'snieg' },
+      { name: 'rain', translation: 'deszcz' },
+      { name: 'snow', translation: 'snieg' },
     ];
-    const { setId, wordIds } = await createSimpleSet(page, wordDefs);
+    const { setId } = await createSimpleSet(page, wordDefs);
 
     try {
       await page.goto(`/sets/${setId}/open-questions-mode`);
@@ -112,20 +109,19 @@ test.describe('mode words list', () => {
 
       const dialog = await openWordsModal(page);
       for (const def of wordDefs) {
-        await expect(dialog.getByText(def.name)).toBeVisible();
+        await expect(dialog.getByText(def.name, { exact: true })).toBeVisible();
       }
 
       await closeWordsModal(page, dialog);
       await expect(page.getByPlaceholder('Type your answer...')).toBeVisible();
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('sentences mode shows only words with eligible sentences', async ({ page }) => {
-    const prefix = generateTestPrefix('mwl-sn');
-    const includedWord = `${prefix}-mat`;
-    const excludedWord = `${prefix}-glove`;
+    const includedWord = 'mat';
+    const excludedWord = 'glove';
 
     const includedId = await createWordWithSentencesViaApi(
       page,
@@ -133,6 +129,7 @@ test.describe('mode words list', () => {
       'mata',
       [`The cat sat on the ${includedWord}.`],
       authToken,
+      testWordIds,
     );
     const excludedId = await createWordWithSentencesViaApi(
       page,
@@ -140,22 +137,22 @@ test.describe('mode words list', () => {
       'rekawiczka',
       ['Something completely unrelated to the headword.'],
       authToken,
+      testWordIds,
     );
-    const setId = await createSetViaApi(page, [includedId, excludedId], authToken);
-    const wordIds = [includedId, excludedId];
+    const setId = await createSetViaApi(page, [includedId, excludedId], authToken, testSetIds);
 
     try {
       await page.goto(`/sets/${setId}/sentences-mode`);
       await expect(page.getByRole('heading', { name: 'Sentences Mode' })).toBeVisible();
 
       const dialog = await openWordsModal(page);
-      await expect(dialog.getByText(includedWord)).toBeVisible();
-      await expect(dialog.getByText(excludedWord)).toHaveCount(0);
+      await expect(dialog.getByText(includedWord, { exact: true })).toBeVisible();
+      await expect(dialog.getByText(excludedWord, { exact: true })).toHaveCount(0);
 
       await closeWordsModal(page, dialog);
       await expect(page.getByPlaceholder('Type the missing word...')).toBeVisible();
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 });

@@ -1,24 +1,19 @@
 import { test, expect } from '@playwright/test';
-import { generateTestPrefix, searchWord, deleteWordsByPrefix, waitForSearchResponse } from './helpers';
+import { captureAuthToken, searchWord, deleteWordsViaApi, waitForSearchResponse } from './helpers';
 
 test.describe('word full lifecycle', () => {
-  const prefixes: string[] = [];
+  const wordIds: string[] = [];
 
-  test.afterAll(async ({ browser }, testInfo) => {
-    const storageState = testInfo.project.use.storageState as string;
-    const context = await browser.newContext({ storageState });
-    const page = await context.newPage();
-    for (const prefix of prefixes) {
-      await deleteWordsByPrefix(page, prefix);
+  test.afterEach(async ({ page }) => {
+    if (wordIds.length > 0) {
+      const authToken = await captureAuthToken(page);
+      await deleteWordsViaApi(page, wordIds, authToken);
+      wordIds.length = 0;
     }
-    await page.close();
-    await context.close();
   });
 
   test('create, verify, edit type, verify, delete, verify', async ({ page }) => {
-    const prefix = generateTestPrefix('lifecycle');
-    prefixes.push(prefix);
-    const wordName = `${prefix}-transient`;
+    const wordName = 'orange';
 
     await page.goto('/words');
     await page.getByRole('link', { name: 'Create New Word' }).click();
@@ -28,16 +23,23 @@ test.describe('word full lifecycle', () => {
     await page.getByLabel('English Word').fill(wordName);
     await page.getByRole('combobox', { name: 'Word Type' }).click();
     await page.getByRole('option', { name: 'Adjective' }).click();
-    await page.getByPlaceholder('Enter translation...').fill('przejsciowy');
+    await page.getByPlaceholder('Enter translation...').fill('pomarańczowy');
     await page.getByRole('button', { name: 'Add Sentence' }).click();
-    await page.getByPlaceholder('Enter example sentence...').fill('This is a transient state.');
+    await page.getByPlaceholder('Enter example sentence...').fill('This is an orange flower.');
+    const createResponsePromise = page.waitForResponse(
+      (response) => new URL(response.url()).pathname === '/api/words' && response.request().method() === 'POST',
+    );
     await page.getByRole('button', { name: 'Save' }).click();
+    const createResponse = await createResponsePromise;
+    expect(createResponse.ok(), await createResponse.text()).toBeTruthy();
+    const { wordId } = await createResponse.json();
+    wordIds.push(wordId);
 
     await expect(page).toHaveURL(/\/words/);
 
     await searchWord(page, wordName);
 
-    const wordRow = page.getByRole('row').filter({ hasText: wordName });
+    const wordRow = page.getByRole('row').filter({ has: page.getByRole('cell', { name: wordName, exact: true }) });
     await expect(wordRow).toBeVisible();
     await expect(wordRow.getByText('Adjective')).toBeVisible();
 
@@ -47,8 +49,8 @@ test.describe('word full lifecycle', () => {
     await expect(page).toHaveURL(/\/words\/.*\/edit/);
     await expect(page.getByLabel('English Word')).toHaveValue(wordName);
     await expect(page.getByRole('combobox', { name: 'Word Type' })).toHaveValue('Adjective');
-    await expect(page.getByPlaceholder('Enter translation...')).toHaveValue('przejsciowy');
-    await expect(page.getByPlaceholder('Enter example sentence...')).toHaveValue('This is a transient state.');
+    await expect(page.getByPlaceholder('Enter translation...')).toHaveValue('pomarańczowy');
+    await expect(page.getByPlaceholder('Enter example sentence...')).toHaveValue('This is an orange flower.');
 
     await page.getByRole('combobox', { name: 'Word Type' }).click();
     await page.getByRole('option', { name: 'Noun' }).click();
@@ -57,7 +59,7 @@ test.describe('word full lifecycle', () => {
     await expect(page).toHaveURL(/\/words/);
     await expect(page.getByRole('table')).toBeVisible();
 
-    const editedRow = page.getByRole('row').filter({ hasText: wordName });
+    const editedRow = page.getByRole('row').filter({ has: page.getByRole('cell', { name: wordName, exact: true }) });
     await expect(editedRow.getByText('Noun')).toBeVisible();
 
     await page.getByRole('button', { name: `Actions for ${wordName}` }).click();

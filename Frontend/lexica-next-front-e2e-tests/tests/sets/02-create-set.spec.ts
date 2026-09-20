@@ -1,46 +1,20 @@
 import { test, expect } from '@playwright/test';
-import {
-  generateTestPrefix,
-  captureAuthToken,
-  createWordViaApiReturningId,
-  deleteWordsViaApi,
-  deleteSetViaApi,
-  getSetIdByName,
-  waitForSetsResponse,
-  searchSet,
-} from './helpers';
+import { cleanupCreatedData, captureAuthToken, createWordViaApiReturningId, searchSet } from './helpers';
 
 test.describe('create set', () => {
-  const setIdsToClean: string[] = [];
-  const setNamesToClean: string[] = [];
-  const wordIdsToClean: string[] = [];
   let authToken: string;
+  const testWordIds: string[] = [];
+  const testSetIds: string[] = [];
+
+  test.afterEach(async ({ page }) => {
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
+  });
 
   test.beforeAll(async ({ browser }, testInfo) => {
     const storageState = testInfo.project.use.storageState as string;
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
     authToken = await captureAuthToken(page);
-    await page.close();
-    await context.close();
-  });
-
-  test.afterAll(async ({ browser }, testInfo) => {
-    const storageState = testInfo.project.use.storageState as string;
-    const context = await browser.newContext({ storageState });
-    const page = await context.newPage();
-    for (const name of setNamesToClean) {
-      try {
-        const id = await getSetIdByName(page, name, authToken);
-        setIdsToClean.push(id);
-      } catch {}
-    }
-    if (setIdsToClean.length > 0) {
-      await deleteSetViaApi(page, setIdsToClean, authToken);
-    }
-    if (wordIdsToClean.length > 0) {
-      await deleteWordsViaApi(page, wordIdsToClean, authToken);
-    }
     await page.close();
     await context.close();
   });
@@ -69,18 +43,14 @@ test.describe('create set', () => {
   });
 
   test('creates a set by selecting existing words via Add Words modal', async ({ page }) => {
-    const prefix = generateTestPrefix('create-set');
-
-    const wordAId = await createWordViaApiReturningId(page, `${prefix}-word-a`, 'translation-a', authToken);
-    const wordBId = await createWordViaApiReturningId(page, `${prefix}-word-b`, 'translation-b', authToken);
-    wordIdsToClean.push(wordAId, wordBId);
+    await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
+    await createWordViaApiReturningId(page, 'bookshop', 'księgarnia', authToken, testWordIds);
 
     await page.goto('/sets/new');
 
     const setNameInput = page.getByLabel('Set Name');
     await expect(setNameInput).not.toHaveValue('');
     const setName = await setNameInput.inputValue();
-    setNamesToClean.push(setName);
 
     await page.getByRole('button', { name: 'Add Words' }).click();
 
@@ -94,11 +64,15 @@ test.describe('create set', () => {
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
     );
-    await modalSearchInput.fill(prefix);
+    await modalSearchInput.fill('book');
     await wordsSearchResponse;
 
-    const wordARow = addWordsDialog.getByRole('row').filter({ hasText: `${prefix}-word-a` });
-    const wordBRow = addWordsDialog.getByRole('row').filter({ hasText: `${prefix}-word-b` });
+    const wordARow = addWordsDialog
+      .getByRole('row')
+      .filter({ has: page.getByRole('cell', { name: 'bookcase', exact: true }) });
+    const wordBRow = addWordsDialog
+      .getByRole('row')
+      .filter({ has: page.getByRole('cell', { name: 'bookshop', exact: true }) });
     await expect(wordARow).toBeVisible();
     await expect(wordBRow).toBeVisible();
 
@@ -108,14 +82,21 @@ test.describe('create set', () => {
     await addWordsDialog.getByRole('button', { name: 'Done' }).click();
 
     await expect(page.getByText('Selected Words (2)')).toBeVisible();
-    await expect(page.getByRole('row').filter({ hasText: `${prefix}-word-a` })).toBeVisible();
-    await expect(page.getByRole('row').filter({ hasText: `${prefix}-word-b` })).toBeVisible();
+    await expect(
+      page.getByRole('row').filter({ has: page.getByRole('cell', { name: 'bookcase', exact: true }) }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('row').filter({ has: page.getByRole('cell', { name: 'bookshop', exact: true }) }),
+    ).toBeVisible();
 
     const postResponse = page.waitForResponse(
       (resp) => resp.url().includes('/api/sets') && resp.request().method() === 'POST',
     );
     await page.getByRole('button', { name: 'Save and Close' }).click();
-    await postResponse;
+    const createdSetResponse = await postResponse;
+    expect(createdSetResponse.ok(), await createdSetResponse.text()).toBeTruthy();
+    const createdSet = await createdSetResponse.json();
+    testSetIds.push(createdSet.setId);
 
     await expect(page).toHaveURL(/\/sets(\?|$)/);
 
@@ -142,13 +123,9 @@ test.describe('create set', () => {
   });
 
   test('creates a word inline via Create New Word modal and it auto-adds to selected words', async ({ page }) => {
-    const prefix = generateTestPrefix('create-inline');
-    const inlineWordName = `${prefix}-inline-word`;
+    const inlineWordName = 'bookmark';
 
     await page.goto('/sets/new');
-
-    const inlineSetName = await page.getByLabel('Set Name').inputValue();
-    setNamesToClean.push(inlineSetName);
 
     await page.getByRole('button', { name: 'Create New Word' }).click();
 
@@ -162,36 +139,39 @@ test.describe('create set', () => {
     await englishWordInput.fill(inlineWordName);
     const translationInput = dialog.getByPlaceholder('Enter translation...').first();
     await translationInput.click();
-    await translationInput.fill('test-translation');
+    await translationInput.fill('zakładka');
 
     const wordPostResponsePromise = page.waitForResponse(
       (resp) => resp.url().includes('/api/words') && resp.request().method() === 'POST',
     );
     await dialog.getByRole('button', { name: 'Save' }).click();
     const wordPostResponse = await wordPostResponsePromise;
+    expect(wordPostResponse.ok(), await wordPostResponse.text()).toBeTruthy();
     const wordBody = await wordPostResponse.json();
-    wordIdsToClean.push(wordBody.wordId);
+    testWordIds.push(wordBody.wordId);
 
     await expect(dialog).not.toBeVisible();
 
     await expect(page.getByText('Selected Words (1)')).toBeVisible();
-    await expect(page.getByRole('row').filter({ hasText: inlineWordName })).toBeVisible();
+    await expect(
+      page.getByRole('row').filter({ has: page.getByRole('cell', { name: inlineWordName, exact: true }) }),
+    ).toBeVisible();
 
     const setPostResponse = page.waitForResponse(
       (resp) => resp.url().includes('/api/sets') && resp.request().method() === 'POST',
     );
     await page.getByRole('button', { name: 'Save and Close' }).click();
-    await setPostResponse;
+    const createdSetResponse = await setPostResponse;
+    expect(createdSetResponse.ok(), await createdSetResponse.text()).toBeTruthy();
+    const createdSet = await createdSetResponse.json();
+    testSetIds.push(createdSet.setId);
 
     await expect(page).toHaveURL(/\/sets(\?|$)/);
   });
 
   test('removes a selected word from the set form using the trash icon', async ({ page }) => {
-    const prefix = generateTestPrefix('create-remove');
-
-    const wordAId = await createWordViaApiReturningId(page, `${prefix}-word-a`, 'translation-a', authToken);
-    const wordBId = await createWordViaApiReturningId(page, `${prefix}-word-b`, 'translation-b', authToken);
-    wordIdsToClean.push(wordAId, wordBId);
+    await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
+    await createWordViaApiReturningId(page, 'bookshop', 'księgarnia', authToken, testWordIds);
 
     await page.goto('/sets/new');
     await page.getByRole('button', { name: 'Add Words' }).click();
@@ -204,16 +184,16 @@ test.describe('create set', () => {
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
     );
-    await modalSearchInput.fill(prefix);
+    await modalSearchInput.fill('book');
     await wordsSearchResponse;
 
     await removeDialog
       .getByRole('row')
-      .filter({ hasText: `${prefix}-word-a` })
+      .filter({ has: page.getByRole('cell', { name: 'bookcase', exact: true }) })
       .click();
     await removeDialog
       .getByRole('row')
-      .filter({ hasText: `${prefix}-word-b` })
+      .filter({ has: page.getByRole('cell', { name: 'bookshop', exact: true }) })
       .click();
     await removeDialog.getByRole('button', { name: 'Done' }).click();
 
@@ -225,15 +205,9 @@ test.describe('create set', () => {
   });
 
   test('Save (without close) stays on form and switches to edit mode after create', async ({ page }) => {
-    const prefix = generateTestPrefix('create-save-stay');
-
-    const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
-    wordIdsToClean.push(wordId);
+    await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
 
     await page.goto('/sets/new');
-
-    const setName = await page.getByLabel('Set Name').inputValue();
-    setNamesToClean.push(setName);
 
     await page.getByRole('button', { name: 'Add Words' }).click();
     const addDialog = page.getByRole('dialog');
@@ -244,11 +218,11 @@ test.describe('create set', () => {
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
     );
-    await modalSearchInput.fill(prefix);
+    await modalSearchInput.fill('book');
     await wordsSearchResponse;
     await addDialog
       .getByRole('row')
-      .filter({ hasText: `${prefix}-word` })
+      .filter({ has: page.getByRole('cell', { name: 'bookcase', exact: true }) })
       .click();
     await addDialog.getByRole('button', { name: 'Done' }).click();
 
@@ -258,7 +232,10 @@ test.describe('create set', () => {
       (resp) => resp.url().includes('/api/sets') && resp.request().method() === 'POST',
     );
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await postResponse;
+    const createdSetResponse = await postResponse;
+    expect(createdSetResponse.ok(), await createdSetResponse.text()).toBeTruthy();
+    const createdSet = await createdSetResponse.json();
+    testSetIds.push(createdSet.setId);
 
     await expect(page).toHaveURL(/\/sets\/[0-9a-f-]+\/edit/);
     await expect(page.getByRole('heading', { name: 'Edit Set' })).toBeVisible();

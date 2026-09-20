@@ -1,22 +1,23 @@
 import { test, expect } from '@playwright/test';
-import { generateTestPrefix, captureAuthToken, createWordViaApi, deleteWordsByPrefix, waitForWordsResponse } from './helpers';
+import { captureAuthToken, createWordViaApi, deleteWordsViaApi, waitForWordsResponse } from './helpers';
+
+import { bookWords } from './test-words';
 
 const WORD_COUNT = 11;
 
 test.describe('words pagination', () => {
-  let prefix: string;
+  const wordIds: string[] = [];
+  let authToken: string;
 
   test.beforeAll(async ({ browser }, testInfo) => {
-    prefix = generateTestPrefix('page');
     const storageState = testInfo.project.use.storageState as string;
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
 
-    const authToken = await captureAuthToken(page);
-    const createPromises = Array.from({ length: WORD_COUNT }, (_, i) =>
-      createWordViaApi(page, `${prefix}-${String(i + 1).padStart(2, '0')}`, `tlumaczenie-${i + 1}`, authToken),
-    );
-    await Promise.all(createPromises);
+    authToken = await captureAuthToken(page);
+    for (const { word, translation } of bookWords.slice(0, WORD_COUNT)) {
+      await createWordViaApi(page, word, translation, authToken, { createdWordIds: wordIds });
+    }
 
     await page.close();
     await context.close();
@@ -26,7 +27,7 @@ test.describe('words pagination', () => {
     const storageState = testInfo.project.use.storageState as string;
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
-    await deleteWordsByPrefix(page, prefix);
+    await deleteWordsViaApi(page, wordIds, authToken);
     await page.close();
     await context.close();
   });

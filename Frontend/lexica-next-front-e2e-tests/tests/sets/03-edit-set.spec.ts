@@ -1,21 +1,21 @@
 import { test, expect } from '@playwright/test';
 import {
-  generateTestPrefix,
+  cleanupCreatedData,
   captureAuthToken,
   createWordViaApiReturningId,
   createSetViaApi,
-  deleteSetViaApi,
-  deleteWordsViaApi,
-  searchSet,
   navigateToSetAction,
   getSetNameById,
-  waitForSetsResponse,
 } from './helpers';
 
 test.describe('edit set', () => {
-  const setIds: string[] = [];
-  const wordIds: string[] = [];
   let authToken: string;
+  const testWordIds: string[] = [];
+  const testSetIds: string[] = [];
+
+  test.afterEach(async ({ page }) => {
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
+  });
 
   test.beforeAll(async ({ browser }, testInfo) => {
     const storageState = testInfo.project.use.storageState as string;
@@ -26,29 +26,11 @@ test.describe('edit set', () => {
     await context.close();
   });
 
-  test.afterAll(async ({ browser }, testInfo) => {
-    const storageState = testInfo.project.use.storageState as string;
-    const context = await browser.newContext({ storageState });
-    const page = await context.newPage();
-    if (setIds.length > 0) {
-      await deleteSetViaApi(page, setIds, authToken);
-    }
-    if (wordIds.length > 0) {
-      await deleteWordsViaApi(page, wordIds, authToken);
-    }
-    await page.close();
-    await context.close();
-  });
-
   test('navigates to edit set form with pre-populated data', async ({ page }) => {
-    const prefix = generateTestPrefix('edit-nav');
+    const wordId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
 
-    const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
-    wordIds.push(wordId);
-
-    const setId = await createSetViaApi(page, [wordId], authToken);
+    const setId = await createSetViaApi(page, [wordId], authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
-    setIds.push(setId);
 
     await page.goto('/sets');
     await navigateToSetAction(page, setName, 'Edit Set');
@@ -61,19 +43,17 @@ test.describe('edit set', () => {
     await expect(setNameInput).toBeDisabled();
 
     await expect(page.getByText('Selected Words (1)')).toBeVisible();
-    await expect(page.getByRole('row').filter({ hasText: `${prefix}-word` })).toBeVisible();
+    await expect(
+      page.getByRole('row').filter({ has: page.getByRole('cell', { name: 'bookcase', exact: true }) }),
+    ).toBeVisible();
   });
 
   test('adds a new word to an existing set', async ({ page }) => {
-    const prefix = generateTestPrefix('edit-add');
+    const wordAId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
+    await createWordViaApiReturningId(page, 'bookshop', 'księgarnia', authToken, testWordIds);
 
-    const wordAId = await createWordViaApiReturningId(page, `${prefix}-word-a`, 'translation-a', authToken);
-    const wordBId = await createWordViaApiReturningId(page, `${prefix}-word-b`, 'translation-b', authToken);
-    wordIds.push(wordAId, wordBId);
-
-    const setId = await createSetViaApi(page, [wordAId], authToken);
+    const setId = await createSetViaApi(page, [wordAId], authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
-    setIds.push(setId);
 
     await page.goto('/sets');
     await navigateToSetAction(page, setName, 'Edit Set');
@@ -90,12 +70,12 @@ test.describe('edit set', () => {
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
     );
-    await modalSearchInput.fill(`${prefix}-word-b`);
+    await modalSearchInput.fill('bookshop');
     await wordsSearchResponse;
 
     await addWordsDialog
       .getByRole('row')
-      .filter({ hasText: `${prefix}-word-b` })
+      .filter({ has: page.getByRole('cell', { name: 'bookshop', exact: true }) })
       .click();
     await addWordsDialog.getByRole('button', { name: 'Done' }).click();
 
@@ -111,15 +91,11 @@ test.describe('edit set', () => {
   });
 
   test('removes a word from an existing set', async ({ page }) => {
-    const prefix = generateTestPrefix('edit-rm');
+    const wordAId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
+    const wordBId = await createWordViaApiReturningId(page, 'bookshop', 'księgarnia', authToken, testWordIds);
 
-    const wordAId = await createWordViaApiReturningId(page, `${prefix}-word-a`, 'translation-a', authToken);
-    const wordBId = await createWordViaApiReturningId(page, `${prefix}-word-b`, 'translation-b', authToken);
-    wordIds.push(wordAId, wordBId);
-
-    const setId = await createSetViaApi(page, [wordAId, wordBId], authToken);
+    const setId = await createSetViaApi(page, [wordAId, wordBId], authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
-    setIds.push(setId);
 
     await page.goto('/sets');
     await navigateToSetAction(page, setName, 'Edit Set');
@@ -140,15 +116,11 @@ test.describe('edit set', () => {
   });
 
   test('cancel editing preserves original set data', async ({ page }) => {
-    const prefix = generateTestPrefix('edit-cancel');
+    const wordAId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
+    await createWordViaApiReturningId(page, 'bookshop', 'księgarnia', authToken, testWordIds);
 
-    const wordAId = await createWordViaApiReturningId(page, `${prefix}-word-a`, 'translation-a', authToken);
-    const wordBId = await createWordViaApiReturningId(page, `${prefix}-word-b`, 'translation-b', authToken);
-    wordIds.push(wordAId, wordBId);
-
-    const setId = await createSetViaApi(page, [wordAId], authToken);
+    const setId = await createSetViaApi(page, [wordAId], authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
-    setIds.push(setId);
 
     await page.goto('/sets');
     await navigateToSetAction(page, setName, 'Edit Set');
@@ -160,8 +132,10 @@ test.describe('edit set', () => {
     await expect(cancelDialog).toBeVisible();
     const modalSearchInput = cancelDialog.getByPlaceholder('Search words...');
     await modalSearchInput.click();
-    await modalSearchInput.fill(`${prefix}-word-b`);
-    const wordBRow = cancelDialog.getByRole('row').filter({ hasText: `${prefix}-word-b` });
+    await modalSearchInput.fill('bookshop');
+    const wordBRow = cancelDialog
+      .getByRole('row')
+      .filter({ has: page.getByRole('cell', { name: 'bookshop', exact: true }) });
     await expect(wordBRow).toBeVisible();
     await wordBRow.click();
     await cancelDialog.getByRole('button', { name: 'Done' }).click();
@@ -178,16 +152,12 @@ test.describe('edit set', () => {
   });
 
   test('Save (without close) stays on edit form and persists changes', async ({ page }) => {
-    const prefix = generateTestPrefix('edit-save-stay');
+    const wordAId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
+    await createWordViaApiReturningId(page, 'bookshop', 'księgarnia', authToken, testWordIds);
+    await createWordViaApiReturningId(page, 'notebook', 'zeszyt', authToken, testWordIds);
 
-    const wordAId = await createWordViaApiReturningId(page, `${prefix}-word-a`, 'translation-a', authToken);
-    const wordBId = await createWordViaApiReturningId(page, `${prefix}-word-b`, 'translation-b', authToken);
-    const wordCId = await createWordViaApiReturningId(page, `${prefix}-word-c`, 'translation-c', authToken);
-    wordIds.push(wordAId, wordBId, wordCId);
-
-    const setId = await createSetViaApi(page, [wordAId], authToken);
+    const setId = await createSetViaApi(page, [wordAId], authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
-    setIds.push(setId);
 
     await page.goto('/sets');
     await navigateToSetAction(page, setName, 'Edit Set');
@@ -203,11 +173,11 @@ test.describe('edit set', () => {
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
     );
-    await search1.fill(`${prefix}-word-b`);
+    await search1.fill('bookshop');
     await searchResp1;
     await addDialog1
       .getByRole('row')
-      .filter({ hasText: `${prefix}-word-b` })
+      .filter({ has: page.getByRole('cell', { name: 'bookshop', exact: true }) })
       .click();
     await addDialog1.getByRole('button', { name: 'Done' }).click();
 
@@ -233,11 +203,11 @@ test.describe('edit set', () => {
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
     );
-    await search2.fill(`${prefix}-word-c`);
+    await search2.fill('notebook');
     await searchResp2;
     await addDialog2
       .getByRole('row')
-      .filter({ hasText: `${prefix}-word-c` })
+      .filter({ has: page.getByRole('cell', { name: 'notebook', exact: true }) })
       .click();
     await addDialog2.getByRole('button', { name: 'Done' }).click();
 
@@ -253,14 +223,10 @@ test.describe('edit set', () => {
   });
 
   test('already-selected words are highlighted in the Select Words modal', async ({ page }) => {
-    const prefix = generateTestPrefix('edit-highlight');
+    const wordId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
 
-    const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
-    wordIds.push(wordId);
-
-    const setId = await createSetViaApi(page, [wordId], authToken);
+    const setId = await createSetViaApi(page, [wordId], authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
-    setIds.push(setId);
 
     await page.goto('/sets');
     await navigateToSetAction(page, setName, 'Edit Set');
@@ -275,10 +241,10 @@ test.describe('edit set', () => {
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
     );
-    await modalSearchInput.fill(`${prefix}-word`);
+    await modalSearchInput.fill('bookcase');
     await wordsSearchResponse;
 
-    const wordRow = dialog.getByRole('row').filter({ hasText: `${prefix}-word` });
+    const wordRow = dialog.getByRole('row').filter({ has: page.getByRole('cell', { name: 'bookcase', exact: true }) });
     await expect(wordRow).toBeVisible();
 
     const checkbox = wordRow.getByRole('checkbox');

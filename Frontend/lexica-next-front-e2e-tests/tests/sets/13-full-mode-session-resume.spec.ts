@@ -1,11 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 import {
-  generateTestPrefix,
+  cleanupCreatedData,
   captureAuthToken,
   createWordViaApiReturningId,
   createSetViaApi,
-  deleteSetViaApi,
-  deleteWordsViaApi,
   getSetNameById,
   expectSessionStored,
   expectSessionCleared,
@@ -26,6 +24,12 @@ function totalCounters(entry: FullModeCounters): number {
 
 test.describe('full mode session resume', () => {
   let authToken: string;
+  const testWordIds: string[] = [];
+  const testSetIds: string[] = [];
+
+  test.afterEach(async ({ page }) => {
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
+  });
 
   test.beforeAll(async ({ browser }, testInfo) => {
     const storageState = testInfo.project.use.storageState as string;
@@ -43,17 +47,12 @@ test.describe('full mode session resume', () => {
   async function createFullModeSet(page: Page, wordDefs: { name: string; translation: string }[]) {
     const createdWordIds: string[] = [];
     for (const def of wordDefs) {
-      const id = await createWordViaApiReturningId(page, def.name, def.translation, authToken);
+      const id = await createWordViaApiReturningId(page, def.name, def.translation, authToken, testWordIds);
       createdWordIds.push(id);
     }
-    const setId = await createSetViaApi(page, createdWordIds, authToken);
+    const setId = await createSetViaApi(page, createdWordIds, authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
     return { setName, setId, wordIds: createdWordIds };
-  }
-
-  async function cleanupSet(page: Page, setId: string, wordIds: string[]) {
-    await deleteSetViaApi(page, [setId], authToken);
-    await deleteWordsViaApi(page, wordIds, authToken);
   }
 
   async function answerCurrentQuestionCorrectly(page: Page, word: string, translation: string) {
@@ -91,10 +90,9 @@ test.describe('full mode session resume', () => {
   }
 
   test('session is persisted to localStorage after an answer', async ({ page }) => {
-    const prefix = generateTestPrefix('fm-resume-save');
-    const word = `${prefix}-mountain`;
+    const word = 'mountain';
     const translation = 'gora';
-    const { setName, setId, wordIds } = await createFullModeSet(page, [{ name: word, translation }]);
+    const { setName, setId } = await createFullModeSet(page, [{ name: word, translation }]);
 
     try {
       await page.goto(`/sets/${setId}/full-mode`);
@@ -110,15 +108,14 @@ test.describe('full mode session resume', () => {
       const entry = session.entries[0] as unknown as FullModeCounters;
       expect(totalCounters(entry)).toBeGreaterThan(0);
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('resume modal appears on reload with correct set name and mode label', async ({ page }) => {
-    const prefix = generateTestPrefix('fm-resume-modal');
-    const word = `${prefix}-ocean`;
+    const word = 'ocean';
     const translation = 'ocean';
-    const { setName, setId, wordIds } = await createFullModeSet(page, [{ name: word, translation }]);
+    const { setName, setId } = await createFullModeSet(page, [{ name: word, translation }]);
 
     try {
       await page.goto(`/sets/${setId}/full-mode`);
@@ -129,15 +126,14 @@ test.describe('full mode session resume', () => {
 
       await expectResumeModalVisible(page, setName, 'Full Mode');
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('Continue restores progress without resetting counters', async ({ page }) => {
-    const prefix = generateTestPrefix('fm-resume-continue');
-    const word = `${prefix}-valley`;
+    const word = 'valley';
     const translation = 'dolina';
-    const { setName, setId, wordIds } = await createFullModeSet(page, [{ name: word, translation }]);
+    const { setName, setId } = await createFullModeSet(page, [{ name: word, translation }]);
 
     try {
       await page.goto(`/sets/${setId}/full-mode`);
@@ -161,15 +157,14 @@ test.describe('full mode session resume', () => {
       const afterEntry = afterResume.entries[0] as unknown as FullModeCounters;
       expect(afterEntry).toEqual(beforeEntry);
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('Start Fresh clears the saved session and dismisses the modal', async ({ page }) => {
-    const prefix = generateTestPrefix('fm-resume-fresh');
-    const word = `${prefix}-island`;
+    const word = 'island';
     const translation = 'wyspa';
-    const { setId, wordIds } = await createFullModeSet(page, [{ name: word, translation }]);
+    const { setId } = await createFullModeSet(page, [{ name: word, translation }]);
 
     try {
       await page.goto(`/sets/${setId}/full-mode`);
@@ -186,16 +181,16 @@ test.describe('full mode session resume', () => {
 
       await expectSessionCleared(page, setId, 'full');
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('session is cleared on completion', async ({ page }) => {
     test.setTimeout(180000);
-    const prefix = generateTestPrefix('fm-resume-complete');
-    const word = `${prefix}-desert`;
+
+    const word = 'desert';
     const translation = 'pustynia';
-    const { setId, wordIds } = await createFullModeSet(page, [{ name: word, translation }]);
+    const { setId } = await createFullModeSet(page, [{ name: word, translation }]);
 
     try {
       await page.goto(`/sets/${setId}/full-mode`);
@@ -225,7 +220,7 @@ test.describe('full mode session resume', () => {
       await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 15000 });
       await expectSessionCleared(page, setId, 'full');
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 });

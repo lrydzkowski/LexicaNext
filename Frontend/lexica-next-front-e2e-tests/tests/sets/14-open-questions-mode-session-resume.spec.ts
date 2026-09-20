@@ -1,11 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 import {
-  generateTestPrefix,
+  cleanupCreatedData,
   captureAuthToken,
   createWordViaApiReturningId,
   createSetViaApi,
-  deleteSetViaApi,
-  deleteWordsViaApi,
   getSetNameById,
   expectSessionStored,
   expectSessionCleared,
@@ -24,6 +22,12 @@ function totalCounters(entry: OpenQuestionsCounters): number {
 
 test.describe('open questions mode session resume', () => {
   let authToken: string;
+  const testWordIds: string[] = [];
+  const testSetIds: string[] = [];
+
+  test.afterEach(async ({ page }) => {
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
+  });
 
   test.beforeAll(async ({ browser }, testInfo) => {
     const storageState = testInfo.project.use.storageState as string;
@@ -41,17 +45,12 @@ test.describe('open questions mode session resume', () => {
   async function createOpenQuestionsSet(page: Page, wordDefs: { name: string; translation: string }[]) {
     const createdWordIds: string[] = [];
     for (const def of wordDefs) {
-      const id = await createWordViaApiReturningId(page, def.name, def.translation, authToken);
+      const id = await createWordViaApiReturningId(page, def.name, def.translation, authToken, testWordIds);
       createdWordIds.push(id);
     }
-    const setId = await createSetViaApi(page, createdWordIds, authToken);
+    const setId = await createSetViaApi(page, createdWordIds, authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
     return { setName, setId, wordIds: createdWordIds };
-  }
-
-  async function cleanupSet(page: Page, setId: string, wordIds: string[]) {
-    await deleteSetViaApi(page, [setId], authToken);
-    await deleteWordsViaApi(page, wordIds, authToken);
   }
 
   async function answerCurrentQuestionCorrectly(page: Page, word: string, translation: string) {
@@ -68,10 +67,9 @@ test.describe('open questions mode session resume', () => {
   }
 
   test('session is persisted to localStorage after an answer', async ({ page }) => {
-    const prefix = generateTestPrefix('oq-resume-save');
-    const word = `${prefix}-wind`;
+    const word = 'wind';
     const translation = 'wiatr';
-    const { setName, setId, wordIds } = await createOpenQuestionsSet(page, [{ name: word, translation }]);
+    const { setName, setId } = await createOpenQuestionsSet(page, [{ name: word, translation }]);
 
     try {
       await page.goto(`/sets/${setId}/open-questions-mode`);
@@ -87,15 +85,14 @@ test.describe('open questions mode session resume', () => {
       const entry = session.entries[0] as unknown as OpenQuestionsCounters;
       expect(totalCounters(entry)).toBe(1);
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('resume modal appears on reload with correct set name and mode label', async ({ page }) => {
-    const prefix = generateTestPrefix('oq-resume-modal');
-    const word = `${prefix}-cloud`;
+    const word = 'cloud';
     const translation = 'chmura';
-    const { setName, setId, wordIds } = await createOpenQuestionsSet(page, [{ name: word, translation }]);
+    const { setName, setId } = await createOpenQuestionsSet(page, [{ name: word, translation }]);
 
     try {
       await page.goto(`/sets/${setId}/open-questions-mode`);
@@ -106,15 +103,14 @@ test.describe('open questions mode session resume', () => {
 
       await expectResumeModalVisible(page, setName, 'Open Questions Mode');
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('Continue restores progress without resetting counters', async ({ page }) => {
-    const prefix = generateTestPrefix('oq-resume-continue');
-    const word = `${prefix}-storm`;
+    const word = 'storm';
     const translation = 'burza';
-    const { setName, setId, wordIds } = await createOpenQuestionsSet(page, [{ name: word, translation }]);
+    const { setName, setId } = await createOpenQuestionsSet(page, [{ name: word, translation }]);
 
     try {
       await page.goto(`/sets/${setId}/open-questions-mode`);
@@ -137,15 +133,14 @@ test.describe('open questions mode session resume', () => {
       const afterEntry = afterResume.entries[0] as unknown as OpenQuestionsCounters;
       expect(afterEntry).toEqual(beforeEntry);
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('Start Fresh clears the saved session and dismisses the modal', async ({ page }) => {
-    const prefix = generateTestPrefix('oq-resume-fresh');
-    const word = `${prefix}-thunder`;
+    const word = 'thunder';
     const translation = 'grzmot';
-    const { setId, wordIds } = await createOpenQuestionsSet(page, [{ name: word, translation }]);
+    const { setId } = await createOpenQuestionsSet(page, [{ name: word, translation }]);
 
     try {
       await page.goto(`/sets/${setId}/open-questions-mode`);
@@ -162,16 +157,16 @@ test.describe('open questions mode session resume', () => {
 
       await expectSessionCleared(page, setId, 'open-questions');
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('session is cleared on completion', async ({ page }) => {
     test.setTimeout(60000);
-    const prefix = generateTestPrefix('oq-resume-complete');
-    const word = `${prefix}-lightning`;
+
+    const word = 'lightning';
     const translation = 'blyskawica';
-    const { setId, wordIds } = await createOpenQuestionsSet(page, [{ name: word, translation }]);
+    const { setId } = await createOpenQuestionsSet(page, [{ name: word, translation }]);
 
     try {
       await page.goto(`/sets/${setId}/open-questions-mode`);
@@ -201,7 +196,7 @@ test.describe('open questions mode session resume', () => {
       await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 10000 });
       await expectSessionCleared(page, setId, 'open-questions');
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 });

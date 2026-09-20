@@ -1,26 +1,21 @@
 import { test, expect } from '@playwright/test';
-import { generateTestPrefix, createWord, searchWord, deleteWordsByPrefix, waitForSearchResponse } from './helpers';
+import { captureAuthToken, createWord, searchWord, deleteWordsViaApi, waitForSearchResponse } from './helpers';
 
 test.describe('delete word', () => {
-  const prefixes: string[] = [];
+  const wordIds: string[] = [];
 
-  test.afterAll(async ({ browser }, testInfo) => {
-    const storageState = testInfo.project.use.storageState as string;
-    const context = await browser.newContext({ storageState });
-    const page = await context.newPage();
-    for (const prefix of prefixes) {
-      await deleteWordsByPrefix(page, prefix);
+  test.afterEach(async ({ page }) => {
+    if (wordIds.length > 0) {
+      const authToken = await captureAuthToken(page);
+      await deleteWordsViaApi(page, wordIds, authToken);
+      wordIds.length = 0;
     }
-    await page.close();
-    await context.close();
   });
 
   test('deletes a single word via action menu', async ({ page }) => {
-    const prefix = generateTestPrefix('del-single');
-    prefixes.push(prefix);
-    const wordName = `${prefix}-single`;
+    const wordName = 'bookcase';
 
-    await createWord(page, wordName, 'tymczasowy');
+    await createWord(page, wordName, 'regał', { createdWordIds: wordIds });
 
     await page.goto('/words');
     await searchWord(page, wordName);
@@ -42,17 +37,14 @@ test.describe('delete word', () => {
   });
 
   test('deletes multiple words via bulk selection', async ({ page }) => {
-    const prefix = generateTestPrefix('del-bulk');
-    prefixes.push(prefix);
-
-    await createWord(page, `${prefix}-bulk-a`, 'masowy-a');
-    await createWord(page, `${prefix}-bulk-b`, 'masowy-b');
+    await createWord(page, 'bookcase', 'regał', { createdWordIds: wordIds });
+    await createWord(page, 'bookshop', 'księgarnia', { createdWordIds: wordIds });
 
     await page.goto('/words');
-    await searchWord(page, `${prefix}-bulk`);
+    await searchWord(page, 'book');
 
-    await page.getByRole('checkbox', { name: `Select ${prefix}-bulk-a` }).check();
-    await page.getByRole('checkbox', { name: `Select ${prefix}-bulk-b` }).check();
+    await page.getByRole('checkbox', { name: `Select bookcase` }).check();
+    await page.getByRole('checkbox', { name: `Select bookshop` }).check();
 
     const deleteButton = page.getByRole('button', { name: /Delete \(2\)/ });
     await expect(deleteButton).toBeVisible();
@@ -60,23 +52,22 @@ test.describe('delete word', () => {
 
     const dialog = page.getByRole('dialog');
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByText(`${prefix}-bulk-a`)).toBeVisible();
-    await expect(dialog.getByText(`${prefix}-bulk-b`)).toBeVisible();
+    await expect(dialog.getByText('bookcase')).toBeVisible();
+    await expect(dialog.getByText('bookshop')).toBeVisible();
 
     const postDeleteRefetch = waitForSearchResponse(page);
     await dialog.getByRole('button', { name: 'Delete' }).click();
     await postDeleteRefetch;
 
     await expect(dialog).not.toBeVisible();
-    await expect(page.getByRole('cell', { name: 'No words found matching your search.' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'bookcase', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('cell', { name: 'bookshop', exact: true })).toHaveCount(0);
   });
 
   test('cancel deletion keeps the word', async ({ page }) => {
-    const prefix = generateTestPrefix('del-cancel');
-    prefixes.push(prefix);
-    const wordName = `${prefix}-cancel`;
+    const wordName = 'bookcase';
 
-    await createWord(page, wordName, 'anulowany');
+    await createWord(page, wordName, 'regał', { createdWordIds: wordIds });
 
     await page.goto('/words');
     await searchWord(page, wordName);

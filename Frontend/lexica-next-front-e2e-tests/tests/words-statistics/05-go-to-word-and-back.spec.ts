@@ -1,32 +1,26 @@
 import { test, expect } from '@playwright/test';
-import {
-  captureAuthToken,
-  deleteWordsByPrefixViaApi,
-  generateTestPrefix,
-  openStatisticsPage,
-  seedOpenQuestionAnswersViaApi,
-} from './helpers';
+import { captureAuthToken, deleteWordsViaApi, openStatisticsPage, seedOpenQuestionAnswersViaApi } from './helpers';
 
 test.describe('words statistics go-to-word and back', () => {
   test('carries filter/sort/page as returnTo and restores them on back', async ({ page }) => {
-    const prefix = generateTestPrefix('stats-return');
     const authToken = await captureAuthToken(page);
+    const wordIds: string[] = [];
 
     try {
-      await seedOpenQuestionAnswersViaApi(page, authToken, {
-        word: `${prefix}-apple`,
-        translation: 'jabłko',
+      await seedOpenQuestionAnswersViaApi(page, authToken, wordIds, {
+        word: 'bookcase',
+        translation: 'regał',
         correctCount: 2,
         incorrectCount: 3,
       });
 
       await openStatisticsPage(page, {
-        searchQuery: prefix,
+        searchQuery: 'book',
         sortingFieldName: 'correctCount',
         sortingOrder: 'desc',
       });
 
-      const row = page.getByRole('row').filter({ hasText: `${prefix}-apple` });
+      const row = page.getByRole('row').filter({ has: page.getByRole('cell', { name: 'bookcase', exact: true }) });
       await expect(row).toBeVisible();
 
       await row.getByRole('link', { name: /Edit/ }).click();
@@ -37,11 +31,11 @@ test.describe('words statistics go-to-word and back', () => {
       await page.getByRole('button', { name: 'Go back' }).click();
 
       await expect(page).toHaveURL(/\/words-statistics/);
-      await expect(page).toHaveURL(new RegExp(`searchQuery=${encodeURIComponent(prefix)}`));
+      await expect(page).toHaveURL(new RegExp(`searchQuery=${encodeURIComponent('book')}`));
       await expect(page).toHaveURL(/sortingFieldName=correctCount/);
       await expect(page).toHaveURL(/sortingOrder=desc/);
     } finally {
-      await deleteWordsByPrefixViaApi(page, prefix, authToken);
+      await deleteWordsViaApi(page, wordIds, authToken);
     }
   });
 
@@ -51,9 +45,12 @@ test.describe('words statistics go-to-word and back', () => {
 
     await expect(page).toHaveURL(/\/words\/new/);
 
-    await page.getByRole('button', { name: 'Go back' }).click().catch(async () => {
-      await page.goBack();
-    });
+    await page
+      .getByRole('button', { name: 'Go back' })
+      .click()
+      .catch(async () => {
+        await page.goBack();
+      });
 
     await expect(page).toHaveURL(/\/words/);
   });

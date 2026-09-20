@@ -1,10 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 import {
+  cleanupCreatedData,
   captureAuthToken,
   createWordViaApiReturningId,
   createSetViaApi,
-  deleteSetViaApi,
-  deleteWordsViaApi,
   getSetNameById,
   expectSessionStored,
   expectSessionCleared,
@@ -14,6 +13,12 @@ import {
 
 test.describe('spelling mode session resume', () => {
   let authToken: string;
+  const testWordIds: string[] = [];
+  const testSetIds: string[] = [];
+
+  test.afterEach(async ({ page }) => {
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
+  });
 
   test.beforeAll(async ({ browser }, testInfo) => {
     const storageState = testInfo.project.use.storageState as string;
@@ -36,11 +41,12 @@ test.describe('spelling mode session resume', () => {
         def.name,
         def.translation,
         authToken,
+        testWordIds,
         def.type ? { type: def.type } : undefined,
       );
       createdWordIds.push(id);
     }
-    const setId = await createSetViaApi(page, createdWordIds, authToken);
+    const setId = await createSetViaApi(page, createdWordIds, authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
     return { setName, setId, wordIds: createdWordIds };
   }
@@ -54,11 +60,6 @@ test.describe('spelling mode session resume', () => {
     }
   }
 
-  async function cleanupSet(page: Page, setId: string, wordIds: string[]) {
-    await deleteSetViaApi(page, [setId], authToken);
-    await deleteWordsViaApi(page, wordIds, authToken);
-  }
-
   async function answerSpelling(page: Page, answer: string) {
     const input = page.getByPlaceholder('Type the word you heard...');
     await expect(input).toBeVisible({ timeout: 10000 });
@@ -67,14 +68,14 @@ test.describe('spelling mode session resume', () => {
   }
 
   test('session is persisted to localStorage after an answer', async ({ page }) => {
-    const words = [{ name: `apple`, translation: 'jablko', type: 'noun' }];
+    const words = [{ name: 'apple', translation: 'jablko', type: 'noun' }];
     await warmUpRecordings(page, words);
-    const { setName, setId, wordIds } = await createSpellingSet(page, words);
+    const { setName, setId } = await createSpellingSet(page, words);
 
     try {
       await page.goto(`/sets/${setId}/spelling-mode`);
 
-      await answerSpelling(page, `apple`);
+      await answerSpelling(page, 'apple');
       await expect(page.getByText('Correct!')).toBeVisible();
 
       const session = await expectSessionStored(page, setId, 'spelling');
@@ -84,36 +85,36 @@ test.describe('spelling mode session resume', () => {
       expect(session.entries).toHaveLength(1);
       expect((session.entries[0] as { counter: number }).counter).toBe(1);
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('resume modal appears on reload with correct set name and mode label', async ({ page }) => {
-    const words = [{ name: `book`, translation: 'ksiazka', type: 'noun' }];
+    const words = [{ name: 'book', translation: 'ksiazka', type: 'noun' }];
     await warmUpRecordings(page, words);
-    const { setName, setId, wordIds } = await createSpellingSet(page, words);
+    const { setName, setId } = await createSpellingSet(page, words);
 
     try {
       await page.goto(`/sets/${setId}/spelling-mode`);
-      await answerSpelling(page, `book`);
+      await answerSpelling(page, 'book');
       await expect(page.getByText('Correct!')).toBeVisible();
 
       await page.reload();
 
       await expectResumeModalVisible(page, setName, 'Spelling Mode');
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('Continue restores progress and completion requires fewer answers', async ({ page }) => {
-    const words = [{ name: `river`, translation: 'rzeka', type: 'noun' }];
+    const words = [{ name: 'river', translation: 'rzeka', type: 'noun' }];
     await warmUpRecordings(page, words);
-    const { setName, setId, wordIds } = await createSpellingSet(page, words);
+    const { setName, setId } = await createSpellingSet(page, words);
 
     try {
       await page.goto(`/sets/${setId}/spelling-mode`);
-      await answerSpelling(page, `river`);
+      await answerSpelling(page, 'river');
       await expect(page.getByText('Correct!')).toBeVisible();
 
       const beforeReload = await expectSessionStored(page, setId, 'spelling');
@@ -130,25 +131,25 @@ test.describe('spelling mode session resume', () => {
       const afterResume = await expectSessionStored(page, setId, 'spelling');
       expect((afterResume.entries[0] as { counter: number }).counter).toBe(1);
 
-      await answerSpelling(page, `river`);
+      await answerSpelling(page, 'river');
       await expect(page.getByText('Correct!')).toBeVisible();
       await page.getByRole('button', { name: 'Continue' }).click();
 
       await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 10000 });
       await expectSessionCleared(page, setId, 'spelling');
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('Start Fresh clears the saved session and dismisses the modal', async ({ page }) => {
-    const words = [{ name: `tree`, translation: 'drzewo', type: 'noun' }];
+    const words = [{ name: 'tree', translation: 'drzewo', type: 'noun' }];
     await warmUpRecordings(page, words);
-    const { setId, wordIds } = await createSpellingSet(page, words);
+    const { setId } = await createSpellingSet(page, words);
 
     try {
       await page.goto(`/sets/${setId}/spelling-mode`);
-      await answerSpelling(page, `tree`);
+      await answerSpelling(page, 'tree');
       await expect(page.getByText('Correct!')).toBeVisible();
       await expectSessionStored(page, setId, 'spelling');
 
@@ -161,20 +162,20 @@ test.describe('spelling mode session resume', () => {
 
       await expectSessionCleared(page, setId, 'spelling');
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('session is cleared on completion', async ({ page }) => {
-    const words = [{ name: `stone`, translation: 'kamien', type: 'noun' }];
+    const words = [{ name: 'stone', translation: 'kamien', type: 'noun' }];
     await warmUpRecordings(page, words);
-    const { setId, wordIds } = await createSpellingSet(page, words);
+    const { setId } = await createSpellingSet(page, words);
 
     try {
       await page.goto(`/sets/${setId}/spelling-mode`);
 
       for (let i = 0; i < 2; i++) {
-        await answerSpelling(page, `stone`);
+        await answerSpelling(page, 'stone');
         await expect(page.getByText('Correct!')).toBeVisible();
         await page.getByRole('button', { name: 'Continue' }).click();
       }
@@ -182,7 +183,7 @@ test.describe('spelling mode session resume', () => {
       await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 10000 });
       await expectSessionCleared(page, setId, 'spelling');
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 });
