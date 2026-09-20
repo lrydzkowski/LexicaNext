@@ -1,13 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
-export function generateTestPrefix(context: string): string {
-  return `e2e-${context}-${Date.now()}`;
-}
-
 export async function captureAuthToken(page: Page): Promise<string> {
-  const requestPromise = page.waitForRequest(
-    (req) => req.url().includes('/api/') && !!req.headers()['authorization'],
-  );
+  const requestPromise = page.waitForRequest((req) => req.url().includes('/api/') && !!req.headers()['authorization']);
   await page.goto('/words');
   const request = await requestPromise;
   return request.headers()['authorization'];
@@ -18,7 +12,7 @@ export async function createWordViaApi(
   name: string,
   translation: string,
   authToken: string,
-  options?: { type?: string },
+  options?: { type?: string; createdWordIds?: string[] },
 ) {
   const response = await page.request.post('/api/words', {
     headers: { authorization: authToken },
@@ -32,6 +26,9 @@ export async function createWordViaApi(
   if (!response.ok()) {
     throw new Error(`Failed to create word "${name}" via API: ${response.status()}`);
   }
+  const { wordId } = await response.json();
+  options?.createdWordIds?.push(wordId);
+  return wordId as string;
 }
 
 export function waitForSearchResponse(page: Page) {
@@ -49,13 +46,13 @@ export async function createWord(
   page: Page,
   name: string,
   translation: string,
-  options?: { type?: string; secondTranslation?: string; sentence?: string },
+  options?: { type?: string; secondTranslation?: string; sentence?: string; createdWordIds?: string[] },
 ) {
   await page.goto('/words/new');
   await page.getByLabel('English Word').fill(name);
 
   if (options?.type) {
-    await page.getByRole('textbox', { name: 'Word Type' }).click();
+    await page.getByRole('combobox', { name: 'Word Type' }).click();
     await page.getByRole('option', { name: options.type }).click();
   }
 
@@ -71,8 +68,18 @@ export async function createWord(
     await page.getByPlaceholder('Enter example sentence...').fill(options.sentence);
   }
 
+  const responsePromise = page.waitForResponse(
+    (response) => new URL(response.url()).pathname === '/api/words' && response.request().method() === 'POST',
+  );
   await page.getByRole('button', { name: 'Save' }).click();
+  const response = await responsePromise;
+  if (!response.ok()) {
+    throw new Error(`Failed to create word "${name}" via UI: ${response.status()} ${await response.text()}`);
+  }
+  const { wordId } = await response.json();
+  options?.createdWordIds?.push(wordId);
   await expect(page).toHaveURL(/\/words(\?|$)/);
+  return wordId as string;
 }
 
 export async function searchWord(page: Page, term: string) {
@@ -82,26 +89,15 @@ export async function searchWord(page: Page, term: string) {
   await searchResponse;
 }
 
-export async function deleteWordsByPrefix(page: Page, prefix: string) {
-  await page.goto('/words');
-
-  await searchWord(page, prefix);
-
-  let hasWords = true;
-  while (hasWords) {
-    const rows = page.getByRole('row').filter({ has: page.getByText(prefix) });
-    const rowCount = await rows.count();
-
-    if (rowCount === 0) {
-      hasWords = false;
-      break;
-    }
-
-    const deleteRefetch = waitForSearchResponse(page);
-    await page.getByRole('checkbox', { name: 'Select all words' }).check();
-    await page.getByRole('button', { name: /Delete/ }).click();
-    await page.getByRole('dialog').getByRole('button', { name: 'Delete' }).click();
-    await deleteRefetch;
-    await expect(page.getByRole('dialog')).not.toBeVisible();
+export async function deleteWordsViaApi(page: Page, wordIds: string[], authToken: string) {
+  if (wordIds.length === 0) {
+    return;
+  }
+  const response = await page.request.delete('/api/words', {
+    headers: { authorization: authToken },
+    data: { ids: wordIds },
+  });
+  if (!response.ok()) {
+    throw new Error(`Failed to delete words via API: ${response.status()}`);
   }
 }

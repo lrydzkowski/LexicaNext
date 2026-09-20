@@ -1,7 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
-export { generateTestPrefix, captureAuthToken, createWordViaApi } from '../words/helpers';
-import { generateTestPrefix } from '../words/helpers';
+export { captureAuthToken, createWordViaApi, deleteWordsViaApi } from '../words/helpers';
+import { deleteWordsViaApi } from '../words/helpers';
 
 export type SessionMode = 'spelling' | 'full' | 'open-questions' | 'sentences';
 
@@ -66,7 +66,12 @@ export async function expectResumeModalVisible(page: Page, setName: string, mode
   await expect(modal.getByRole('button', { name: 'Continue' })).toBeVisible();
 }
 
-export async function createSetViaApi(page: Page, wordIds: string[], authToken: string): Promise<string> {
+export async function createSetViaApi(
+  page: Page,
+  wordIds: string[],
+  authToken: string,
+  createdSetIds: string[],
+): Promise<string> {
   const maxRetries = 3;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -76,13 +81,14 @@ export async function createSetViaApi(page: Page, wordIds: string[], authToken: 
     });
     if (response.ok()) {
       const body = await response.json();
-      return body.setId ?? '';
+      createdSetIds.push(body.setId);
+      return body.setId;
     }
     if (response.status() >= 500 && attempt < maxRetries) {
       await page.waitForTimeout(1000 * attempt);
       continue;
     }
-    throw new Error(`Failed to create set via API: ${response.status()}`);
+    throw new Error(`Failed to create set via API: ${response.status()} ${await response.text()}`);
   }
 
   throw new Error(`Failed to create set via API after ${maxRetries} retries`);
@@ -188,21 +194,12 @@ export async function deleteSetsByPrefix(page: Page, prefix: string) {
   }
 }
 
-export async function deleteWordsViaApi(page: Page, wordIds: string[], authToken: string) {
-  const response = await page.request.delete('/api/words', {
-    headers: { authorization: authToken },
-    data: { ids: wordIds },
-  });
-  if (!response.ok()) {
-    throw new Error(`Failed to delete words via API: ${response.status()}`);
-  }
-}
-
 export async function createWordViaApiReturningId(
   page: Page,
   name: string,
   translation: string,
   authToken: string,
+  createdWordIds: string[],
   options?: { type?: string; sentence?: string },
 ): Promise<string> {
   const wordType = options?.type ?? 'noun';
@@ -220,16 +217,14 @@ export async function createWordViaApiReturningId(
     });
     if (response.ok()) {
       const body = await response.json();
+      createdWordIds.push(body.wordId);
       return body.wordId;
-    }
-    if (response.status() === 400) {
-      return findExistingWordId(page, name, wordType, authToken);
     }
     if (response.status() >= 500 && attempt < maxRetries) {
       await page.waitForTimeout(1000 * attempt);
       continue;
     }
-    throw new Error(`Failed to create word "${name}" via API: ${response.status()}`);
+    throw new Error(`Failed to create word "${name}" via API: ${response.status()} ${await response.text()}`);
   }
 
   throw new Error(`Failed to create word "${name}" via API after ${maxRetries} retries`);
@@ -241,6 +236,7 @@ export async function createWordWithSentencesViaApi(
   translation: string,
   sentences: string[],
   authToken: string,
+  createdWordIds: string[],
   options?: { type?: string },
 ): Promise<string> {
   const wordType = options?.type ?? 'noun';
@@ -258,16 +254,14 @@ export async function createWordWithSentencesViaApi(
     });
     if (response.ok()) {
       const body = await response.json();
+      createdWordIds.push(body.wordId);
       return body.wordId;
-    }
-    if (response.status() === 400) {
-      return findExistingWordId(page, name, wordType, authToken);
     }
     if (response.status() >= 500 && attempt < maxRetries) {
       await page.waitForTimeout(1000 * attempt);
       continue;
     }
-    throw new Error(`Failed to create word "${name}" via API: ${response.status()}`);
+    throw new Error(`Failed to create word "${name}" via API: ${response.status()} ${await response.text()}`);
   }
 
   throw new Error(`Failed to create word "${name}" via API after ${maxRetries} retries`);
@@ -293,27 +287,8 @@ export async function updateWordSentencesViaApi(
     },
   });
   if (!response.ok()) {
-    throw new Error(`Failed to update word "${name}" via API: ${response.status()}`);
+    throw new Error(`Failed to update word "${name}" via API: ${response.status()} ${await response.text()}`);
   }
-}
-
-async function findExistingWordId(page: Page, name: string, wordType: string, authToken: string): Promise<string> {
-  const response = await page.request.get(`/api/words?searchQuery=${encodeURIComponent(name)}`, {
-    headers: { authorization: authToken },
-  });
-  if (!response.ok()) {
-    throw new Error(`Failed to search for word "${name}": ${response.status()}`);
-  }
-  const body = await response.json();
-  const items = body.data ?? [];
-  const match = items.find(
-    (w: { word: string; wordType: string }) =>
-      w.word?.toLowerCase() === name.toLowerCase() && w.wordType?.toLowerCase() === wordType.toLowerCase(),
-  );
-  if (!match) {
-    throw new Error(`Word "${name}" (${wordType}) not found after 400 - unexpected`);
-  }
-  return match.wordId;
 }
 
 export async function getSetIdByName(page: Page, setName: string, authToken: string): Promise<string> {
@@ -333,12 +308,15 @@ export async function getSetIdByName(page: Page, setName: string, authToken: str
 }
 
 export async function deleteSetViaApi(page: Page, setIds: string[], authToken: string) {
+  if (setIds.length === 0) {
+    return;
+  }
   const response = await page.request.delete('/api/sets', {
     headers: { authorization: authToken },
     data: { ids: setIds },
   });
   if (!response.ok()) {
-    throw new Error(`Failed to delete sets via API: ${response.status()}`);
+    throw new Error(`Failed to delete sets via API: ${response.status()} ${await response.text()}`);
   }
 }
 
@@ -351,4 +329,11 @@ export async function getSetNameById(page: Page, setId: string, authToken: strin
   }
   const body = await response.json();
   return body.name;
+}
+
+export async function cleanupCreatedData(page: Page, wordIds: string[], setIds: string[], authToken: string) {
+  await deleteSetViaApi(page, setIds, authToken);
+  setIds.length = 0;
+  await deleteWordsViaApi(page, wordIds, authToken);
+  wordIds.length = 0;
 }

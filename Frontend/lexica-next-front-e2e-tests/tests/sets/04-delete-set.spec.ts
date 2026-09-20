@@ -1,11 +1,9 @@
 import { test, expect } from '@playwright/test';
 import {
-  generateTestPrefix,
+  cleanupCreatedData,
   captureAuthToken,
   createWordViaApiReturningId,
   createSetViaApi,
-  deleteWordsViaApi,
-  deleteSetViaApi,
   searchSet,
   navigateToSetAction,
   getSetNameById,
@@ -13,9 +11,13 @@ import {
 } from './helpers';
 
 test.describe('delete set', () => {
-  const wordIds: string[] = [];
-  const setIdsToClean: string[] = [];
   let authToken: string;
+  const testWordIds: string[] = [];
+  const testSetIds: string[] = [];
+
+  test.afterEach(async ({ page }) => {
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
+  });
 
   test.beforeAll(async ({ browser }, testInfo) => {
     const storageState = testInfo.project.use.storageState as string;
@@ -26,29 +28,10 @@ test.describe('delete set', () => {
     await context.close();
   });
 
-  test.afterAll(async ({ browser }, testInfo) => {
-    const storageState = testInfo.project.use.storageState as string;
-    const context = await browser.newContext({ storageState });
-    const page = await context.newPage();
-    if (setIdsToClean.length > 0) {
-      try {
-        await deleteSetViaApi(page, setIdsToClean, authToken);
-      } catch {}
-    }
-    if (wordIds.length > 0) {
-      await deleteWordsViaApi(page, wordIds, authToken);
-    }
-    await page.close();
-    await context.close();
-  });
-
   test('deletes a single set via action menu', async ({ page }) => {
-    const prefix = generateTestPrefix('del-single');
+    const wordId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
 
-    const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
-    wordIds.push(wordId);
-
-    const setId = await createSetViaApi(page, [wordId], authToken);
+    const setId = await createSetViaApi(page, [wordId], authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
 
     await page.goto('/sets');
@@ -73,14 +56,11 @@ test.describe('delete set', () => {
   });
 
   test('deletes multiple sets via bulk selection', async ({ page }) => {
-    const prefix = generateTestPrefix('del-bulk');
+    const wordId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
 
-    const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
-    wordIds.push(wordId);
-
-    const setIdA = await createSetViaApi(page, [wordId], authToken);
+    const setIdA = await createSetViaApi(page, [wordId], authToken, testSetIds);
     const setNameA = await getSetNameById(page, setIdA, authToken);
-    const setIdB = await createSetViaApi(page, [wordId], authToken);
+    const setIdB = await createSetViaApi(page, [wordId], authToken, testSetIds);
     const setNameB = await getSetNameById(page, setIdB, authToken);
 
     await page.goto('/sets');
@@ -106,16 +86,12 @@ test.describe('delete set', () => {
   });
 
   test('select all checkbox selects all visible sets', async ({ page }) => {
-    const prefix = generateTestPrefix('del-selall');
+    const wordId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
 
-    const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
-    wordIds.push(wordId);
-
-    const setIdA = await createSetViaApi(page, [wordId], authToken);
+    const setIdA = await createSetViaApi(page, [wordId], authToken, testSetIds);
     const setNameA = await getSetNameById(page, setIdA, authToken);
-    const setIdB = await createSetViaApi(page, [wordId], authToken);
+    const setIdB = await createSetViaApi(page, [wordId], authToken, testSetIds);
     const setNameB = await getSetNameById(page, setIdB, authToken);
-    setIdsToClean.push(setIdA, setIdB);
 
     await page.goto('/sets');
     await searchSet(page, setNameA.slice(0, -2));
@@ -136,14 +112,10 @@ test.describe('delete set', () => {
   });
 
   test('cancel deletion keeps the set', async ({ page }) => {
-    const prefix = generateTestPrefix('del-cancel');
+    const wordId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
 
-    const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
-    wordIds.push(wordId);
-
-    const setId = await createSetViaApi(page, [wordId], authToken);
+    const setId = await createSetViaApi(page, [wordId], authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
-    setIdsToClean.push(setId);
 
     await page.goto('/sets');
     await navigateToSetAction(page, setName, 'Delete Set');
@@ -158,14 +130,10 @@ test.describe('delete set', () => {
   });
 
   test('delete button disabled state updates correctly with selection changes', async ({ page }) => {
-    const prefix = generateTestPrefix('del-toggle');
+    const wordId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
 
-    const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
-    wordIds.push(wordId);
-
-    const setId = await createSetViaApi(page, [wordId], authToken);
+    const setId = await createSetViaApi(page, [wordId], authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
-    setIdsToClean.push(setId);
 
     await page.goto('/sets');
     await searchSet(page, setName);

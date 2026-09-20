@@ -1,18 +1,15 @@
 import { test, expect } from '@playwright/test';
-import { generateTestPrefix, createWord, deleteWordsByPrefix } from './helpers';
+import { captureAuthToken, createWord, deleteWordsViaApi } from './helpers';
 
 test.describe('create word', () => {
-  const prefixes: string[] = [];
+  const wordIds: string[] = [];
 
-  test.afterAll(async ({ browser }, testInfo) => {
-    const storageState = testInfo.project.use.storageState as string;
-    const context = await browser.newContext({ storageState });
-    const page = await context.newPage();
-    for (const prefix of prefixes) {
-      await deleteWordsByPrefix(page, prefix);
+  test.afterEach(async ({ page }) => {
+    if (wordIds.length > 0) {
+      const authToken = await captureAuthToken(page);
+      await deleteWordsViaApi(page, wordIds, authToken);
+      wordIds.length = 0;
     }
-    await page.close();
-    await context.close();
   });
 
   test('navigates to create word form', async ({ page }) => {
@@ -22,27 +19,24 @@ test.describe('create word', () => {
     await expect(page).toHaveURL(/\/words\/new/);
     await expect(page.getByRole('heading', { name: 'Create New Word' })).toBeVisible();
     await expect(page.getByLabel('English Word')).toBeFocused();
-    await expect(page.getByRole('textbox', { name: 'Word Type' })).toHaveValue('Noun');
+    await expect(page.getByRole('combobox', { name: 'Word Type' })).toHaveValue('Noun');
     await expect(page.getByPlaceholder('Enter translation...')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
   });
 
   test('creates a word with minimal data', async ({ page }) => {
-    const prefix = generateTestPrefix('create-min');
-    prefixes.push(prefix);
-    const wordName = `${prefix}-minimal`;
+    const wordName = 'apple';
 
-    await createWord(page, wordName, 'ulotny');
+    await createWord(page, wordName, 'jabłko', { createdWordIds: wordIds });
     await expect(page.getByRole('cell', { name: wordName, exact: true })).toBeVisible();
   });
 
   test('creates a word with full data', async ({ page }) => {
-    const prefix = generateTestPrefix('create-full');
-    prefixes.push(prefix);
-    const wordName = `${prefix}-full`;
+    const wordName = 'meticulous';
 
     await createWord(page, wordName, 'drobiazgowy', {
+      createdWordIds: wordIds,
       type: 'Adjective',
       secondTranslation: 'skrupulatny',
       sentence: 'She is meticulous about her work.',
@@ -69,8 +63,7 @@ test.describe('create word', () => {
   });
 
   test('cancel word creation', async ({ page }) => {
-    const prefix = generateTestPrefix('create-cancel');
-    const wordName = `${prefix}-cancelled`;
+    const wordName = 'pear';
 
     await page.goto('/words/new');
     await page.getByLabel('English Word').fill(wordName);

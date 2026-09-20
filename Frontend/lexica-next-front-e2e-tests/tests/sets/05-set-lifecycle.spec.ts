@@ -1,10 +1,8 @@
 import { test, expect } from '@playwright/test';
 import {
-  generateTestPrefix,
+  cleanupCreatedData,
   captureAuthToken,
   createWordViaApiReturningId,
-  deleteWordsViaApi,
-  deleteSetViaApi,
   searchSet,
   navigateToSetAction,
   waitForSearchSetsResponse,
@@ -12,9 +10,13 @@ import {
 } from './helpers';
 
 test.describe('set full lifecycle', () => {
-  const setIdsToClean: string[] = [];
-  const wordIds: string[] = [];
   let authToken: string;
+  const testWordIds: string[] = [];
+  const testSetIds: string[] = [];
+
+  test.afterEach(async ({ page }) => {
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
+  });
 
   test.beforeAll(async ({ browser }, testInfo) => {
     const storageState = testInfo.project.use.storageState as string;
@@ -25,29 +27,11 @@ test.describe('set full lifecycle', () => {
     await context.close();
   });
 
-  test.afterAll(async ({ browser }, testInfo) => {
-    const storageState = testInfo.project.use.storageState as string;
-    const context = await browser.newContext({ storageState });
-    const page = await context.newPage();
-    if (setIdsToClean.length > 0) {
-      try {
-        await deleteSetViaApi(page, setIdsToClean, authToken);
-      } catch {}
-    }
-    if (wordIds.length > 0) {
-      await deleteWordsViaApi(page, wordIds, authToken);
-    }
-    await page.close();
-    await context.close();
-  });
-
   test('create, verify in list, view content, edit words, verify changes, delete, verify removal', async ({ page }) => {
     test.setTimeout(60000);
-    const prefix = generateTestPrefix('lifecycle');
 
-    const wordAId = await createWordViaApiReturningId(page, `${prefix}-word-a`, 'translation-a', authToken);
-    const wordBId = await createWordViaApiReturningId(page, `${prefix}-word-b`, 'translation-b', authToken);
-    wordIds.push(wordAId, wordBId);
+    await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, testWordIds);
+    await createWordViaApiReturningId(page, 'bookshop', 'księgarnia', authToken, testWordIds);
 
     await page.goto('/sets');
     await page.getByRole('link', { name: 'Create New Set' }).click();
@@ -67,16 +51,16 @@ test.describe('set full lifecycle', () => {
       (resp) =>
         resp.url().includes('/api/words') && resp.url().includes('searchQuery') && resp.request().method() === 'GET',
     );
-    await modalSearchInput.fill(prefix);
+    await modalSearchInput.fill('book');
     await wordsSearchResponse;
 
     await addWordsDialog
       .getByRole('row')
-      .filter({ hasText: `${prefix}-word-a` })
+      .filter({ has: page.getByRole('cell', { name: 'bookcase', exact: true }) })
       .click();
     await addWordsDialog
       .getByRole('row')
-      .filter({ hasText: `${prefix}-word-b` })
+      .filter({ has: page.getByRole('cell', { name: 'bookshop', exact: true }) })
       .click();
     await addWordsDialog.getByRole('button', { name: 'Done' }).click();
 
@@ -87,9 +71,10 @@ test.describe('set full lifecycle', () => {
     );
     await page.getByRole('button', { name: 'Save and Close' }).click();
     const postResponse = await postResponsePromise;
+    expect(postResponse.ok(), await postResponse.text()).toBeTruthy();
     const postBody = await postResponse.json();
     const setId = postBody.setId;
-    setIdsToClean.push(setId);
+    testSetIds.push(setId);
 
     const setName = await getSetNameById(page, setId, authToken);
 
@@ -102,8 +87,8 @@ test.describe('set full lifecycle', () => {
 
     await expect(page.getByRole('heading', { name: 'Content Mode' })).toBeVisible();
     await expect(page.getByText(setName).first()).toBeVisible();
-    await expect(page.getByText(`${prefix}-word-a`)).toBeVisible();
-    await expect(page.getByText(`${prefix}-word-b`)).toBeVisible();
+    await expect(page.getByText('bookcase')).toBeVisible();
+    await expect(page.getByText('bookshop')).toBeVisible();
     await expect(page.getByText('2', { exact: true })).toBeVisible();
 
     await page.goto(`/sets/${setId}/edit`);

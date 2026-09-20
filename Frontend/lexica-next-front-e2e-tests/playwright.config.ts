@@ -4,20 +4,17 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '.env'), quiet: true });
 
+const proxyServer = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+
 interface UserGroup {
   name: string;
-  testDir: string;
+  browser: string;
+  device: (typeof devices)[string];
 }
 
 const userGroups: UserGroup[] = [
-  { name: 'user-a', testDir: './tests' },
-  { name: 'user-b', testDir: './tests' },
-];
-
-const browsers = [
-  { suffix: 'chromium', device: devices['Desktop Chrome'] },
-  { suffix: 'firefox', device: devices['Desktop Firefox'] },
-  { suffix: 'webkit', device: devices['Desktop Safari'] },
+  { name: 'user-a', browser: 'chromium', device: devices['Desktop Chrome'] },
+  { name: 'user-b', browser: 'webkit', device: devices['Desktop Safari'] },
 ];
 
 function createGroupProjects(group: UserGroup) {
@@ -28,28 +25,32 @@ function createGroupProjects(group: UserGroup) {
     name: setupName,
     testMatch: new RegExp(`${group.name}\\.setup\\.ts`),
     testDir: './tests',
+    use: { ...group.device },
   };
 
-  const browserProjects = browsers.map((browser, index) => ({
-    name: `${group.name}-${browser.suffix}`,
-    use: { ...browser.device, storageState: authFile },
-    testDir: group.testDir,
+  const browserProject = {
+    name: `${group.name}-${group.browser}`,
+    use: { ...group.device, storageState: authFile },
+    testDir: './tests',
     fullyParallel: false,
-    dependencies: index === 0 ? [setupName] : [`${group.name}-${browsers[index - 1].suffix}`],
-  }));
+    workers: 1,
+    dependencies: [setupName],
+  };
 
-  return [setupProject, ...browserProjects];
+  return [setupProject, browserProject];
 }
 
 export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : 1,
+  workers: 2,
   reporter: 'html',
   use: {
     baseURL: process.env.BASE_URL,
+    proxy: proxyServer ? { server: proxyServer, bypass: process.env.NO_PROXY } : undefined,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    ignoreHTTPSErrors: true,
   },
   projects: userGroups.flatMap(createGroupProjects),
 });

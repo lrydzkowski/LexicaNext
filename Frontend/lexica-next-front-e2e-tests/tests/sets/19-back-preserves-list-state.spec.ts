@@ -5,26 +5,25 @@ import {
   createWordViaApiReturningId,
   deleteSetViaApi,
   deleteWordsViaApi,
-  generateTestPrefix,
   searchSet,
 } from './helpers';
 
 test.describe('sets list back preserves table state', () => {
-  let prefix: string;
   let authToken: string;
+  const setIds: string[] = [];
+  const wordIds: string[] = [];
   let wordId: string;
   let setId: string;
   let setName: string;
 
   test.beforeAll(async ({ browser }, testInfo) => {
-    prefix = generateTestPrefix('sets-back');
     const storageState = testInfo.project.use.storageState as string;
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
 
     authToken = await captureAuthToken(page);
-    wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
-    setId = await createSetViaApi(page, [wordId], authToken);
+    wordId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, wordIds);
+    setId = await createSetViaApi(page, [wordId], authToken, setIds);
 
     const response = await page.request.get(`/api/sets/${setId}`, {
       headers: { authorization: authToken },
@@ -40,8 +39,8 @@ test.describe('sets list back preserves table state', () => {
     const storageState = testInfo.project.use.storageState as string;
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
-    await deleteSetViaApi(page, [setId], authToken);
-    await deleteWordsViaApi(page, [wordId], authToken);
+    await deleteSetViaApi(page, setIds, authToken);
+    await deleteWordsViaApi(page, wordIds, authToken);
     await page.close();
     await context.close();
   });

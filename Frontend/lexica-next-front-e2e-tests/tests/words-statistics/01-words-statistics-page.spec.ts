@@ -1,11 +1,5 @@
 import { test, expect } from '@playwright/test';
-import {
-  captureAuthToken,
-  deleteWordsByPrefixViaApi,
-  generateTestPrefix,
-  openStatisticsPage,
-  seedOpenQuestionAnswersViaApi,
-} from './helpers';
+import { captureAuthToken, deleteWordsViaApi, openStatisticsPage, seedOpenQuestionAnswersViaApi } from './helpers';
 
 test.describe('words statistics page', () => {
   test('navigates from header and renders columns', async ({ page }) => {
@@ -18,25 +12,25 @@ test.describe('words statistics page', () => {
   });
 
   test('renders seeded rows with correct counts', async ({ page }) => {
-    const prefix = generateTestPrefix('stats-baseline');
     const authToken = await captureAuthToken(page);
+    const wordIds: string[] = [];
 
     try {
-      await seedOpenQuestionAnswersViaApi(page, authToken, {
-        word: `${prefix}-apple`,
-        translation: 'jabłko',
+      await seedOpenQuestionAnswersViaApi(page, authToken, wordIds, {
+        word: 'bookcase',
+        translation: 'regał',
         correctCount: 3,
         incorrectCount: 1,
       });
 
-      await openStatisticsPage(page, { searchQuery: prefix });
+      await openStatisticsPage(page, { searchQuery: 'book' });
 
-      const row = page.getByRole('row').filter({ hasText: `${prefix}-apple` });
+      const row = page.getByRole('row').filter({ has: page.getByRole('cell', { name: 'bookcase', exact: true }) });
       await expect(row).toBeVisible();
       await expect(row.getByText('3', { exact: true })).toBeVisible();
       await expect(row.getByText('1', { exact: true })).toBeVisible();
     } finally {
-      await deleteWordsByPrefixViaApi(page, prefix, authToken);
+      await deleteWordsViaApi(page, wordIds, authToken);
     }
   });
 

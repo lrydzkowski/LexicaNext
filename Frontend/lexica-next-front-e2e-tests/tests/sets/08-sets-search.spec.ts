@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import {
-  generateTestPrefix,
   captureAuthToken,
   createWordViaApiReturningId,
   createSetViaApi,
@@ -13,24 +12,22 @@ import {
 } from './helpers';
 
 test.describe('sets search', () => {
-  let prefix: string;
   let authToken: string;
+  const setIds: string[] = [];
   const wordIds: string[] = [];
   let setName: string;
   let setId: string;
 
   test.beforeAll(async ({ browser }, testInfo) => {
-    prefix = generateTestPrefix('search');
     const storageState = testInfo.project.use.storageState as string;
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
 
     authToken = await captureAuthToken(page);
 
-    const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
-    wordIds.push(wordId);
+    const wordId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, wordIds);
 
-    setId = await createSetViaApi(page, [wordId], authToken);
+    setId = await createSetViaApi(page, [wordId], authToken, setIds);
     setName = await getSetNameById(page, setId, authToken);
 
     await page.close();
@@ -41,7 +38,7 @@ test.describe('sets search', () => {
     const storageState = testInfo.project.use.storageState as string;
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
-    await deleteSetViaApi(page, [setId], authToken);
+    await deleteSetViaApi(page, setIds, authToken);
     await deleteWordsViaApi(page, wordIds, authToken);
     await page.close();
     await context.close();

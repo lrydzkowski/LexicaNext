@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot } from 'react-dom/client';
-import { MantineProvider } from '@mantine/core';
+import { MantineProvider, v8CssVariablesResolver } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { AppRouter } from './AppRouter';
@@ -30,9 +30,9 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <MantineProvider>
+      <MantineProvider theme={{ defaultRadius: 'sm' }} cssVariablesResolver={v8CssVariablesResolver}>
         <ModalsProvider>
-          <Notifications zIndex={210} />
+          <Notifications zIndex={210} pauseResetOnHover="notification" />
           <Auth0Provider
             domain={appConfig.auth0Domain}
             clientId={appConfig.auth0ClientId}

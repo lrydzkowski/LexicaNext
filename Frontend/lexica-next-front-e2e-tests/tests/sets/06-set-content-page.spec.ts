@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import {
-  generateTestPrefix,
   captureAuthToken,
   createWordViaApiReturningId,
   createSetViaApi,
@@ -10,30 +9,28 @@ import {
 } from './helpers';
 
 test.describe('set content page', () => {
-  let prefix: string;
   let authToken: string;
+  const setIds: string[] = [];
   const wordIds: string[] = [];
   let setName: string;
   let setId: string;
 
   test.beforeAll(async ({ browser }, testInfo) => {
-    prefix = generateTestPrefix('content');
     const storageState = testInfo.project.use.storageState as string;
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
 
     authToken = await captureAuthToken(page);
 
-    const wordAId = await createWordViaApiReturningId(page, `${prefix}-word-a`, 'translation-a', authToken, {
+    const wordAId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, wordIds, {
       type: 'noun',
-      sentence: 'This is an example sentence.',
+      sentence: 'The bookcase is full of books.',
     });
-    const wordBId = await createWordViaApiReturningId(page, `${prefix}-word-b`, 'translation-b', authToken, {
+    const wordBId = await createWordViaApiReturningId(page, 'brave', 'odważny', authToken, wordIds, {
       type: 'adjective',
     });
-    wordIds.push(wordAId, wordBId);
 
-    setId = await createSetViaApi(page, [wordAId, wordBId], authToken);
+    setId = await createSetViaApi(page, [wordAId, wordBId], authToken, setIds);
     setName = await getSetNameById(page, setId, authToken);
 
     await page.close();
@@ -44,7 +41,7 @@ test.describe('set content page', () => {
     const storageState = testInfo.project.use.storageState as string;
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
-    await deleteSetViaApi(page, [setId], authToken);
+    await deleteSetViaApi(page, setIds, authToken);
     await deleteWordsViaApi(page, wordIds, authToken);
     await page.close();
     await context.close();
@@ -63,10 +60,10 @@ test.describe('set content page', () => {
   test('word cards display word details correctly', async ({ page }) => {
     await page.goto(`/sets/${setId}/content`);
 
-    await expect(page.getByText(`${prefix}-word-a`)).toBeVisible();
+    await expect(page.getByText('bookcase', { exact: true })).toBeVisible();
     await expect(page.getByText('Noun').first()).toBeVisible();
-    await expect(page.getByText('translation-a')).toBeVisible();
-    await expect(page.getByText('This is an example sentence.')).toBeVisible();
+    await expect(page.getByText('regał')).toBeVisible();
+    await expect(page.getByText('The bookcase is full of books.')).toBeVisible();
   });
 
   test('set information card shows correct metadata', async ({ page }) => {

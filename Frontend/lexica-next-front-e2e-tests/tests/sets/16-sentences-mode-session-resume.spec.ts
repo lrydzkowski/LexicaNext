@@ -1,12 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 import {
-  generateTestPrefix,
+  cleanupCreatedData,
   captureAuthToken,
   createWordWithSentencesViaApi,
-  updateWordSentencesViaApi,
   createSetViaApi,
-  deleteSetViaApi,
-  deleteWordsViaApi,
   getSetNameById,
   expectSessionStored,
   expectSessionCleared,
@@ -29,6 +26,12 @@ interface WordWithSentences {
 
 test.describe('sentences mode session resume', () => {
   let authToken: string;
+  const testWordIds: string[] = [];
+  const testSetIds: string[] = [];
+
+  test.afterEach(async ({ page }) => {
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
+  });
 
   test.beforeAll(async ({ browser }, testInfo) => {
     const storageState = testInfo.project.use.storageState as string;
@@ -46,23 +49,24 @@ test.describe('sentences mode session resume', () => {
   async function createSentencesSet(page: Page, wordDefs: WordWithSentences[]) {
     const createdWordIds: string[] = [];
     for (const def of wordDefs) {
-      const id = await createWordWithSentencesViaApi(page, def.name, def.translation, def.sentences, authToken);
+      const id = await createWordWithSentencesViaApi(
+        page,
+        def.name,
+        def.translation,
+        def.sentences,
+        authToken,
+        testWordIds,
+      );
       createdWordIds.push(id);
     }
-    const setId = await createSetViaApi(page, createdWordIds, authToken);
+    const setId = await createSetViaApi(page, createdWordIds, authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
     return { setName, setId, wordIds: createdWordIds };
   }
 
-  async function cleanupSet(page: Page, setId: string, wordIds: string[]) {
-    await deleteSetViaApi(page, [setId], authToken);
-    await deleteWordsViaApi(page, wordIds, authToken);
-  }
-
   test('session is persisted to localStorage after one answer', async ({ page }) => {
-    const prefix = generateTestPrefix('sn-resume-save');
-    const word = `${prefix}-mat`;
-    const { setName, setId, wordIds } = await createSentencesSet(page, [
+    const word = 'mat';
+    const { setName, setId } = await createSentencesSet(page, [
       { name: word, translation: 'mata', sentences: [`The cat sat on the ${word}.`] },
     ]);
 
@@ -84,14 +88,13 @@ test.describe('sentences mode session resume', () => {
       expect(entry.selectedSentenceIndices).toEqual([0]);
       expect(entry.sentenceCounters).toEqual({ '0': 1 });
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('reload restores per-pair counters', async ({ page }) => {
-    const prefix = generateTestPrefix('sn-resume-restore');
-    const word = `${prefix}-mat`;
-    const { setName, setId, wordIds } = await createSentencesSet(page, [
+    const word = 'mat';
+    const { setName, setId } = await createSentencesSet(page, [
       { name: word, translation: 'mata', sentences: [`The cat sat on the ${word}.`] },
     ]);
 
@@ -119,15 +122,14 @@ test.describe('sentences mode session resume', () => {
       const afterEntry = after.entries[0] as unknown as SentencesEntryShape;
       expect(afterEntry.sentenceCounters).toEqual(beforeEntry.sentenceCounters);
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('only the answered (entry, sentence) pair counter advances', async ({ page }) => {
-    const prefix = generateTestPrefix('sn-resume-pair');
-    const word = `${prefix}-mat`;
+    const word = 'mat';
     const sentences = [`The cat sat on the ${word}.`, `She bought a new ${word}.`, `Wipe your feet on the ${word}.`];
-    const { setId, wordIds } = await createSentencesSet(page, [{ name: word, translation: 'mata', sentences }]);
+    const { setId } = await createSentencesSet(page, [{ name: word, translation: 'mata', sentences }]);
 
     try {
       await page.goto(`/sets/${setId}/sentences-mode`);
@@ -161,15 +163,14 @@ test.describe('sentences mode session resume', () => {
       }
       expect(othersAtZero).toBe(2);
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('reload restores counters when some entries have no eligible sentences', async ({ page }) => {
-    const prefix = generateTestPrefix('sn-resume-filtered');
-    const eligibleWord = `${prefix}-mat`;
-    const ineligibleWord = `${prefix}-dog`;
-    const { setName, setId, wordIds } = await createSentencesSet(page, [
+    const eligibleWord = 'mat';
+    const ineligibleWord = 'dog';
+    const { setName, setId } = await createSentencesSet(page, [
       { name: eligibleWord, translation: 'mata', sentences: [`The cat sat on the ${eligibleWord}.`] },
       { name: ineligibleWord, translation: 'pies', sentences: ['She loves to dance.'] },
     ]);
@@ -203,14 +204,13 @@ test.describe('sentences mode session resume', () => {
       expect(afterEntry.word).toBe(eligibleWord);
       expect(afterEntry.sentenceCounters).toEqual(beforeEntry.sentenceCounters);
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 
   test('Start Fresh clears the saved session and dismisses the modal', async ({ page }) => {
-    const prefix = generateTestPrefix('sn-resume-fresh');
-    const word = `${prefix}-mat`;
-    const { setId, wordIds } = await createSentencesSet(page, [
+    const word = 'mat';
+    const { setId } = await createSentencesSet(page, [
       { name: word, translation: 'mata', sentences: [`The cat sat on the ${word}.`] },
     ]);
 
@@ -232,7 +232,7 @@ test.describe('sentences mode session resume', () => {
 
       await expectSessionCleared(page, setId, 'sentences');
     } finally {
-      await cleanupSet(page, setId, wordIds);
+      await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
   });
 });

@@ -1,16 +1,20 @@
 import { test, expect } from '@playwright/test';
 import {
-  generateTestPrefix,
+  cleanupCreatedData,
   captureAuthToken,
   createWordViaApiReturningId,
   createSetViaApi,
-  deleteSetViaApi,
-  deleteWordsViaApi,
   getSetNameById,
 } from './helpers';
 
 test.describe('full mode', () => {
   let authToken: string;
+  const testWordIds: string[] = [];
+  const testSetIds: string[] = [];
+
+  test.afterEach(async ({ page }) => {
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
+  });
 
   test.beforeAll(async ({ browser }, testInfo) => {
     const storageState = testInfo.project.use.storageState as string;
@@ -27,26 +31,20 @@ test.describe('full mode', () => {
   ) {
     const createdWordIds: string[] = [];
     for (const def of wordDefs) {
-      const id = await createWordViaApiReturningId(page, def.name, def.translation, authToken);
+      const id = await createWordViaApiReturningId(page, def.name, def.translation, authToken, testWordIds);
       createdWordIds.push(id);
     }
-    const setId = await createSetViaApi(page, createdWordIds, authToken);
+    const setId = await createSetViaApi(page, createdWordIds, authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
     return { setName, setId, wordIds: createdWordIds, words: wordDefs };
   }
 
-  async function cleanupSet(page: import('@playwright/test').Page, setId: string, wordIds: string[]) {
-    await deleteSetViaApi(page, [setId], authToken);
-    await deleteWordsViaApi(page, wordIds, authToken);
-  }
-
   test('full mode page loads with correct structure', async ({ page }) => {
-    const prefix = generateTestPrefix('fm-struct');
-    const { setName, setId, wordIds } = await createFreshFullModeSet(page, [
-      { name: `${prefix}-cat`, translation: 'kot' },
-      { name: `${prefix}-dog`, translation: 'pies' },
-      { name: `${prefix}-bird`, translation: 'ptak' },
-      { name: `${prefix}-fish`, translation: 'ryba' },
+    const { setName, setId } = await createFreshFullModeSet(page, [
+      { name: 'cat', translation: 'kot' },
+      { name: 'dog', translation: 'pies' },
+      { name: 'bird', translation: 'ptak' },
+      { name: 'fish', translation: 'ryba' },
     ]);
 
     await page.goto(`/sets/${setId}/full-mode`);
@@ -57,16 +55,15 @@ test.describe('full mode', () => {
     await expect(page.getByText(/0 \/ \d+ words completed/)).toBeVisible();
     await expect(page.getByRole('button', { name: 'Check Answer' })).toBeVisible();
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('close-ended question displays radio button options', async ({ page }) => {
-    const prefix = generateTestPrefix('fm-radio');
-    const { setId, wordIds } = await createFreshFullModeSet(page, [
-      { name: `${prefix}-cat`, translation: 'kot' },
-      { name: `${prefix}-dog`, translation: 'pies' },
-      { name: `${prefix}-bird`, translation: 'ptak' },
-      { name: `${prefix}-fish`, translation: 'ryba' },
+    const { setId } = await createFreshFullModeSet(page, [
+      { name: 'cat', translation: 'kot' },
+      { name: 'dog', translation: 'pies' },
+      { name: 'bird', translation: 'ptak' },
+      { name: 'fish', translation: 'ryba' },
     ]);
 
     await page.goto(`/sets/${setId}/full-mode`);
@@ -94,18 +91,17 @@ test.describe('full mode', () => {
       .catch(() => false);
     expect(hasCorrect || hasIncorrect).toBeTruthy();
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('correct answer shows green feedback and advances progress', async ({ page }) => {
-    const prefix = generateTestPrefix('fm-ok');
     const words = [
-      { name: `${prefix}-cat`, translation: 'kot' },
-      { name: `${prefix}-dog`, translation: 'pies' },
-      { name: `${prefix}-bird`, translation: 'ptak' },
-      { name: `${prefix}-fish`, translation: 'ryba' },
+      { name: 'cat', translation: 'kot' },
+      { name: 'dog', translation: 'pies' },
+      { name: 'bird', translation: 'ptak' },
+      { name: 'fish', translation: 'ryba' },
     ];
-    const { setId, wordIds } = await createFreshFullModeSet(page, words);
+    const { setId } = await createFreshFullModeSet(page, words);
 
     await page.goto(`/sets/${setId}/full-mode`);
 
@@ -153,18 +149,17 @@ test.describe('full mode', () => {
       await expect(page.getByRole('button', { name: 'Continue' })).toBeVisible();
     }
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('incorrect answer shows red feedback and resets all counters for the word', async ({ page }) => {
-    const prefix = generateTestPrefix('fm-wrong');
     const words = [
-      { name: `${prefix}-cat`, translation: 'kot' },
-      { name: `${prefix}-dog`, translation: 'pies' },
-      { name: `${prefix}-bird`, translation: 'ptak' },
-      { name: `${prefix}-fish`, translation: 'ryba' },
+      { name: 'cat', translation: 'kot' },
+      { name: 'dog', translation: 'pies' },
+      { name: 'bird', translation: 'ptak' },
+      { name: 'fish', translation: 'ryba' },
     ];
-    const { setId, wordIds } = await createFreshFullModeSet(page, words);
+    const { setId } = await createFreshFullModeSet(page, words);
 
     await page.goto(`/sets/${setId}/full-mode`);
 
@@ -204,26 +199,26 @@ test.describe('full mode', () => {
       await expect(page.getByText('Correct!')).toBeVisible();
     }
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('completion screen shows after all words are fully mastered', async ({ page }) => {
     test.setTimeout(180000);
-    const prefix = generateTestPrefix('fm-done');
+
     const allWords = [
-      { name: `${prefix}-sun`, translation: 'slonce' },
-      { name: `${prefix}-moon`, translation: 'ksiezyc' },
-      { name: `${prefix}-star`, translation: 'gwiazda' },
-      { name: `${prefix}-sky`, translation: 'niebo' },
+      { name: 'sun', translation: 'slonce' },
+      { name: 'moon', translation: 'ksiezyc' },
+      { name: 'star', translation: 'gwiazda' },
+      { name: 'sky', translation: 'niebo' },
     ];
 
     const createdWordIds: string[] = [];
     for (const w of allWords) {
-      const id = await createWordViaApiReturningId(page, w.name, w.translation, authToken);
+      const id = await createWordViaApiReturningId(page, w.name, w.translation, authToken, testWordIds);
       createdWordIds.push(id);
     }
 
-    const completionSetId = await createSetViaApi(page, createdWordIds, authToken);
+    const completionSetId = await createSetViaApi(page, createdWordIds, authToken, testSetIds);
     const completionSetName = await getSetNameById(page, completionSetId, authToken);
 
     await page.goto(`/sets/${completionSetId}/full-mode`);
@@ -322,6 +317,6 @@ test.describe('full mode', () => {
     await expect(page.getByRole('button', { name: 'Back to Sets', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Practice Again' })).toBeVisible();
 
-    await cleanupSet(page, completionSetId, createdWordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 });

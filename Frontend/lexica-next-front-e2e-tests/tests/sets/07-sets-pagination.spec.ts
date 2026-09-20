@@ -1,38 +1,32 @@
 import { test, expect } from '@playwright/test';
 import {
-  generateTestPrefix,
   captureAuthToken,
   createWordViaApiReturningId,
   createSetViaApi,
   deleteSetViaApi,
   deleteWordsViaApi,
   waitForSetsResponse,
-  searchSet,
   waitForSearchSetsResponse,
 } from './helpers';
 
 const SET_COUNT = 11;
 
 test.describe('sets pagination', () => {
-  let prefix: string;
   let authToken: string;
   const wordIds: string[] = [];
   const setIds: string[] = [];
 
   test.beforeAll(async ({ browser }, testInfo) => {
-    prefix = generateTestPrefix('page');
     const storageState = testInfo.project.use.storageState as string;
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
 
     authToken = await captureAuthToken(page);
 
-    const wordId = await createWordViaApiReturningId(page, `${prefix}-word`, 'translation', authToken);
-    wordIds.push(wordId);
+    const wordId = await createWordViaApiReturningId(page, 'bookcase', 'regał', authToken, wordIds);
 
     for (let i = 0; i < SET_COUNT; i++) {
-      const setId = await createSetViaApi(page, [wordId], authToken);
-      setIds.push(setId);
+      await createSetViaApi(page, [wordId], authToken, setIds);
     }
 
     await page.close();

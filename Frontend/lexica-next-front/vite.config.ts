@@ -1,16 +1,17 @@
-import * as process from 'process';
+import { readFileSync } from 'node:fs';
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig, loadEnv } from 'vite';
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => {
+export default defineConfig(({ command, mode }) => {
   const isProduction = command === 'build';
-  const outputDir = process.env.VITE_OUTPUT_DIR || '../../LexicaNext.WebApp/wwwroot';
+  const outputDir = '../../LexicaNext.WebApp/wwwroot';
+  const env = loadEnv(mode, './env-config', 'LEXICA_');
 
   return {
-    plugins: [react(), tsconfigPaths()],
+    plugins: [react()],
     resolve: {
+      tsconfigPaths: true,
       alias: {
         '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
@@ -24,6 +25,10 @@ export default defineConfig(({ command }) => {
     server: isProduction
       ? undefined
       : {
+          https: {
+            pfx: readFileSync('./certificates/lan.pfx'),
+            passphrase: env.LEXICA_HTTPS_PASSWORD,
+          },
           proxy: {
             '/api': {
               target: 'https://localhost:7226',

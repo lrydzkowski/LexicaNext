@@ -1,4 +1,4 @@
-﻿using LexicaNext.Infrastructure.Db.Common.Options;
+using LexicaNext.Infrastructure.Db.Common.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -16,12 +16,11 @@ internal class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 
     private DbContextOptionsBuilder<AppDbContext> GetDbContextOptionsBuilder()
     {
-        IConfigurationRoot config = new ConfigurationBuilder().AddUserSecrets<AppDbContext>().Build();
-        IConfigurationProvider? secretProvider = config.Providers.FirstOrDefault();
-        string? postgresConnectionString = GetConnectionString(
-            secretProvider,
-            nameof(ConnectionStringsOptions.AppPostgresDb)
-        );
+        IConfigurationRoot config = new ConfigurationBuilder()
+            .AddUserSecrets<AppDbContext>()
+            .AddEnvironmentVariables()
+            .Build();
+        string? postgresConnectionString = config.GetConnectionString(nameof(ConnectionStringsOptions.AppPostgresDb));
 
         DbContextOptionsBuilder<AppDbContext> builder = new();
         builder.UseNpgsql(
@@ -30,20 +29,5 @@ internal class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
         );
 
         return builder;
-    }
-
-    private string? GetConnectionString(IConfigurationProvider? secretProvider, string optionName)
-    {
-        if (secretProvider is null)
-        {
-            return null;
-        }
-
-        secretProvider.TryGet(
-            $"{ConnectionStringsOptions.Position}:{optionName}",
-            out string? connectionString
-        );
-
-        return connectionString;
     }
 }

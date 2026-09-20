@@ -1,19 +1,21 @@
 import { test, expect } from '@playwright/test';
 import {
-  generateTestPrefix,
+  cleanupCreatedData,
   captureAuthToken,
   createWordViaApiReturningId,
   createSetViaApi,
-  deleteSetViaApi,
-  deleteWordsViaApi,
   navigateToSetAction,
   getSetNameById,
 } from './helpers';
 
 test.describe('edit word from set form', () => {
-  const setIds: string[] = [];
-  const wordIds: string[] = [];
   let authToken: string;
+  const testWordIds: string[] = [];
+  const testSetIds: string[] = [];
+
+  test.afterEach(async ({ page }) => {
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
+  });
 
   test.beforeAll(async ({ browser }, testInfo) => {
     const storageState = testInfo.project.use.storageState as string;
@@ -24,37 +26,22 @@ test.describe('edit word from set form', () => {
     await context.close();
   });
 
-  test.afterAll(async ({ browser }, testInfo) => {
-    const storageState = testInfo.project.use.storageState as string;
-    const context = await browser.newContext({ storageState });
-    const page = await context.newPage();
-    if (setIds.length > 0) {
-      await deleteSetViaApi(page, setIds, authToken);
-    }
-    if (wordIds.length > 0) {
-      await deleteWordsViaApi(page, wordIds, authToken);
-    }
-    await page.close();
-    await context.close();
-  });
-
   test('edits a word inline from the set edit form and persists the change', async ({ page }) => {
-    const prefix = generateTestPrefix('edit-inline');
-    const originalWordName = `${prefix}-word`;
-    const updatedWordName = `${prefix}-word-updated`;
+    const originalWordName = 'bookcase';
+    const updatedWordName = 'notebook';
 
-    const wordId = await createWordViaApiReturningId(page, originalWordName, 'translation', authToken);
-    wordIds.push(wordId);
+    const wordId = await createWordViaApiReturningId(page, originalWordName, 'regał', authToken, testWordIds);
 
-    const setId = await createSetViaApi(page, [wordId], authToken);
+    const setId = await createSetViaApi(page, [wordId], authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
-    setIds.push(setId);
 
     await page.goto('/sets');
     await navigateToSetAction(page, setName, 'Edit Set');
 
     await expect(page.getByText('Selected Words (1)')).toBeVisible();
-    await expect(page.getByRole('row').filter({ hasText: originalWordName })).toBeVisible();
+    await expect(
+      page.getByRole('row').filter({ has: page.getByRole('cell', { name: originalWordName, exact: true }) }),
+    ).toBeVisible();
 
     await page.getByRole('button', { name: 'Edit word' }).first().click();
 
@@ -75,7 +62,9 @@ test.describe('edit word from set form', () => {
 
     await expect(dialog).not.toBeVisible();
 
-    await expect(page.getByRole('row').filter({ hasText: updatedWordName })).toBeVisible();
+    await expect(
+      page.getByRole('row').filter({ has: page.getByRole('cell', { name: updatedWordName, exact: true }) }),
+    ).toBeVisible();
     await expect(page.getByText('Selected Words (1)')).toBeVisible();
 
     const setPutResponse = page.waitForResponse(
@@ -88,25 +77,26 @@ test.describe('edit word from set form', () => {
 
     await navigateToSetAction(page, setName, 'Edit Set');
 
-    await expect(page.getByRole('row').filter({ hasText: updatedWordName })).toBeVisible();
+    await expect(
+      page.getByRole('row').filter({ has: page.getByRole('cell', { name: updatedWordName, exact: true }) }),
+    ).toBeVisible();
   });
 
   test('cancelling the edit modal leaves the row unchanged', async ({ page }) => {
-    const prefix = generateTestPrefix('edit-cancel');
-    const wordName = `${prefix}-word`;
+    const wordName = 'bookcase';
 
-    const wordId = await createWordViaApiReturningId(page, wordName, 'translation', authToken);
-    wordIds.push(wordId);
+    const wordId = await createWordViaApiReturningId(page, wordName, 'regał', authToken, testWordIds);
 
-    const setId = await createSetViaApi(page, [wordId], authToken);
+    const setId = await createSetViaApi(page, [wordId], authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
-    setIds.push(setId);
 
     await page.goto('/sets');
     await navigateToSetAction(page, setName, 'Edit Set');
 
     await expect(page.getByText('Selected Words (1)')).toBeVisible();
-    await expect(page.getByRole('row').filter({ hasText: wordName })).toBeVisible();
+    await expect(
+      page.getByRole('row').filter({ has: page.getByRole('cell', { name: wordName, exact: true }) }),
+    ).toBeVisible();
 
     await page.getByRole('button', { name: 'Edit word' }).first().click();
 
@@ -117,12 +107,14 @@ test.describe('edit word from set form', () => {
     const englishWordInput = dialog.getByLabel('English Word');
     await expect(englishWordInput).toHaveValue(wordName);
     await englishWordInput.clear();
-    await englishWordInput.fill('should-not-be-saved');
+    await englishWordInput.fill('pear');
 
     await dialog.getByRole('button', { name: 'Cancel' }).click();
 
     await expect(dialog).not.toBeVisible();
-    await expect(page.getByRole('row').filter({ hasText: wordName })).toBeVisible();
-    await expect(page.getByText('should-not-be-saved')).not.toBeVisible();
+    await expect(
+      page.getByRole('row').filter({ has: page.getByRole('cell', { name: wordName, exact: true }) }),
+    ).toBeVisible();
+    await expect(page.getByText('pear')).not.toBeVisible();
   });
 });

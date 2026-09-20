@@ -1,16 +1,20 @@
 import { test, expect } from '@playwright/test';
 import {
-  generateTestPrefix,
+  cleanupCreatedData,
   captureAuthToken,
   createWordViaApiReturningId,
   createSetViaApi,
-  deleteSetViaApi,
-  deleteWordsViaApi,
   getSetNameById,
 } from './helpers';
 
 test.describe('open questions mode', () => {
   let authToken: string;
+  const testWordIds: string[] = [];
+  const testSetIds: string[] = [];
+
+  test.afterEach(async ({ page }) => {
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
+  });
 
   test.beforeAll(async ({ browser }, testInfo) => {
     const storageState = testInfo.project.use.storageState as string;
@@ -27,24 +31,18 @@ test.describe('open questions mode', () => {
   ) {
     const createdWordIds: string[] = [];
     for (const def of wordDefs) {
-      const id = await createWordViaApiReturningId(page, def.name, def.translation, authToken);
+      const id = await createWordViaApiReturningId(page, def.name, def.translation, authToken, testWordIds);
       createdWordIds.push(id);
     }
-    const setId = await createSetViaApi(page, createdWordIds, authToken);
+    const setId = await createSetViaApi(page, createdWordIds, authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
     return { setName, setId, wordIds: createdWordIds, words: wordDefs };
   }
 
-  async function cleanupSet(page: import('@playwright/test').Page, setId: string, wordIds: string[]) {
-    await deleteSetViaApi(page, [setId], authToken);
-    await deleteWordsViaApi(page, wordIds, authToken);
-  }
-
   test('open questions mode page loads with correct structure', async ({ page }) => {
-    const prefix = generateTestPrefix('oq-struct');
-    const { setName, setId, wordIds } = await createFreshOpenQSet(page, [
-      { name: `${prefix}-rain`, translation: 'deszcz' },
-      { name: `${prefix}-snow`, translation: 'snieg' },
+    const { setName, setId } = await createFreshOpenQSet(page, [
+      { name: 'rain', translation: 'deszcz' },
+      { name: 'snow', translation: 'snieg' },
     ]);
 
     await page.goto(`/sets/${setId}/open-questions-mode`);
@@ -60,16 +58,15 @@ test.describe('open questions mode', () => {
     await expect(page.getByPlaceholder('Type your answer...')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Check Answer' })).toBeVisible();
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('correct answer shows green feedback', async ({ page }) => {
-    const prefix = generateTestPrefix('oq-ok');
     const wordDefs = [
-      { name: `${prefix}-rain`, translation: 'deszcz' },
-      { name: `${prefix}-snow`, translation: 'snieg' },
+      { name: 'rain', translation: 'deszcz' },
+      { name: 'snow', translation: 'snieg' },
     ];
-    const { setId, wordIds, words } = await createFreshOpenQSet(page, wordDefs);
+    const { setId, words } = await createFreshOpenQSet(page, wordDefs);
 
     await page.goto(`/sets/${setId}/open-questions-mode`);
 
@@ -96,12 +93,11 @@ test.describe('open questions mode', () => {
     await expect(page.getByText('Correct!')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Continue' })).toBeVisible();
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('incorrect answer shows red feedback with correct answer and resets counters', async ({ page }) => {
-    const prefix = generateTestPrefix('oq-wrong');
-    const { setId, wordIds } = await createFreshOpenQSet(page, [{ name: `${prefix}-rain`, translation: 'deszcz' }]);
+    const { setId } = await createFreshOpenQSet(page, [{ name: 'rain', translation: 'deszcz' }]);
 
     await page.goto(`/sets/${setId}/open-questions-mode`);
 
@@ -116,12 +112,11 @@ test.describe('open questions mode', () => {
     await expect(page.getByText('The correct answer is:')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Continue' })).toBeVisible();
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('Enter key submits the answer', async ({ page }) => {
-    const prefix = generateTestPrefix('oq-enter');
-    const { setId, wordIds } = await createFreshOpenQSet(page, [{ name: `${prefix}-rain`, translation: 'deszcz' }]);
+    const { setId } = await createFreshOpenQSet(page, [{ name: 'rain', translation: 'deszcz' }]);
 
     await page.goto(`/sets/${setId}/open-questions-mode`);
 
@@ -140,12 +135,11 @@ test.describe('open questions mode', () => {
       .catch(() => false);
     expect(hasCorrect || hasIncorrect).toBeTruthy();
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('back arrow navigates to sets list', async ({ page }) => {
-    const prefix = generateTestPrefix('oq-back');
-    const { setId, wordIds } = await createFreshOpenQSet(page, [{ name: `${prefix}-rain`, translation: 'deszcz' }]);
+    const { setId } = await createFreshOpenQSet(page, [{ name: 'rain', translation: 'deszcz' }]);
 
     await page.goto(`/sets/${setId}/open-questions-mode`);
 
@@ -155,16 +149,16 @@ test.describe('open questions mode', () => {
 
     await expect(page).toHaveURL(/\/sets(\?|$)/);
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('completion screen shows after all words mastered (2 correct each direction)', async ({ page }) => {
     test.setTimeout(60000);
-    const prefix = generateTestPrefix('oq-done');
-    const wordName = `${prefix}-wind`;
+
+    const wordName = 'wind';
     const wordTranslation = 'wiatr';
 
-    const { setId, wordIds } = await createFreshOpenQSet(page, [{ name: wordName, translation: wordTranslation }]);
+    const { setId } = await createFreshOpenQSet(page, [{ name: wordName, translation: wordTranslation }]);
 
     await page.goto(`/sets/${setId}/open-questions-mode`);
 
@@ -212,6 +206,6 @@ test.describe('open questions mode', () => {
     await expect(page.getByRole('button', { name: 'Back', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Practice Again' })).toBeVisible();
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 });

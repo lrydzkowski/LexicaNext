@@ -1,16 +1,20 @@
 import { test, expect } from '@playwright/test';
 import {
-  generateTestPrefix,
+  cleanupCreatedData,
   captureAuthToken,
   createWordViaApiReturningId,
   createSetViaApi,
-  deleteSetViaApi,
-  deleteWordsViaApi,
   getSetNameById,
 } from './helpers';
 
 test.describe('spelling mode', () => {
   let authToken: string;
+  const testWordIds: string[] = [];
+  const testSetIds: string[] = [];
+
+  test.afterEach(async ({ page }) => {
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
+  });
 
   test.beforeAll(async ({ browser }, testInfo) => {
     const storageState = testInfo.project.use.storageState as string;
@@ -32,11 +36,12 @@ test.describe('spelling mode', () => {
         def.name,
         def.translation,
         authToken,
+        testWordIds,
         def.type ? { type: def.type } : undefined,
       );
       createdWordIds.push(id);
     }
-    const setId = await createSetViaApi(page, createdWordIds, authToken);
+    const setId = await createSetViaApi(page, createdWordIds, authToken, testSetIds);
     const setName = await getSetNameById(page, setId, authToken);
     return { setName, setId, wordIds: createdWordIds };
   }
@@ -50,18 +55,13 @@ test.describe('spelling mode', () => {
     }
   }
 
-  async function cleanupSet(page: import('@playwright/test').Page, setId: string, wordIds: string[]) {
-    await deleteSetViaApi(page, [setId], authToken);
-    await deleteWordsViaApi(page, wordIds, authToken);
-  }
-
   test('spelling mode page loads with correct structure', async ({ page }) => {
     const words = [
       { name: 'apple', translation: 'jablko', type: 'noun' },
       { name: 'brave', translation: 'odwazny', type: 'adjective' },
     ];
     await warmUpRecordings(page, words);
-    const { setName, setId, wordIds } = await createSpellingSet(page, words);
+    const { setName, setId } = await createSpellingSet(page, words);
 
     await page.goto(`/sets/${setId}/spelling-mode`);
 
@@ -73,13 +73,13 @@ test.describe('spelling mode', () => {
     await expect(page.getByRole('button', { name: 'Check Answer' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Go back to sets' })).toBeVisible();
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('correct answer shows green feedback with word details', async ({ page }) => {
     const words = [{ name: 'garden', translation: 'ogrod', type: 'noun' }];
     await warmUpRecordings(page, words);
-    const { setId, wordIds } = await createSpellingSet(page, words);
+    const { setId } = await createSpellingSet(page, words);
 
     await page.goto(`/sets/${setId}/spelling-mode`);
 
@@ -92,13 +92,13 @@ test.describe('spelling mode', () => {
     await expect(page.getByText('Correct!')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Continue' })).toBeVisible();
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('incorrect answer shows red feedback with correct spelling', async ({ page }) => {
     const words = [{ name: 'castle', translation: 'zamek', type: 'noun' }];
     await warmUpRecordings(page, words);
-    const { setId, wordIds } = await createSpellingSet(page, words);
+    const { setId } = await createSpellingSet(page, words);
 
     await page.goto(`/sets/${setId}/spelling-mode`);
 
@@ -113,7 +113,7 @@ test.describe('spelling mode', () => {
     await expect(page.getByText('The correct spelling is:')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Continue' })).toBeVisible();
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('continue button advances to the next question', async ({ page }) => {
@@ -122,7 +122,7 @@ test.describe('spelling mode', () => {
       { name: 'forest', translation: 'las', type: 'noun' },
     ];
     await warmUpRecordings(page, words);
-    const { setId, wordIds } = await createSpellingSet(page, words);
+    const { setId } = await createSpellingSet(page, words);
 
     await page.goto(`/sets/${setId}/spelling-mode`);
 
@@ -153,13 +153,13 @@ test.describe('spelling mode', () => {
       await expect(congrats).toBeVisible();
     }
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('Enter key submits the answer', async ({ page }) => {
     const words = [{ name: 'silver', translation: 'srebro', type: 'noun' }];
     await warmUpRecordings(page, words);
-    const { setId, wordIds } = await createSpellingSet(page, words);
+    const { setId } = await createSpellingSet(page, words);
 
     await page.goto(`/sets/${setId}/spelling-mode`);
 
@@ -178,13 +178,13 @@ test.describe('spelling mode', () => {
       .catch(() => false);
     expect(hasCorrect || hasIncorrect).toBeTruthy();
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 
   test('completion screen shows after all words are mastered (2 correct each)', async ({ page }) => {
     const words = [{ name: 'table', translation: 'stol', type: 'noun' }];
     await warmUpRecordings(page, words);
-    const { setId, wordIds } = await createSpellingSet(page, words);
+    const { setId } = await createSpellingSet(page, words);
 
     await page.goto(`/sets/${setId}/spelling-mode`);
 
@@ -201,6 +201,6 @@ test.describe('spelling mode', () => {
     await expect(page.getByRole('button', { name: 'Back to Sets', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Practice Again' })).toBeVisible();
 
-    await cleanupSet(page, setId, wordIds);
+    await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
   });
 });
