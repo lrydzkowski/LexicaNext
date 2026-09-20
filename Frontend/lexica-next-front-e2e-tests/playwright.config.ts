@@ -53,6 +53,7 @@ export default defineConfig({
     proxy: proxyServer ? { server: proxyServer, bypass: process.env.NO_PROXY } : undefined,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    ignoreHTTPSErrors: true,
   },
   projects: userGroups.flatMap(createGroupProjects),
 });
