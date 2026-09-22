@@ -1,6 +1,8 @@
 import type { GetTokenSilentlyOptions } from '@auth0/auth0-react';
 
 class AppConfig {
+  appVersion = import.meta.env.VITE_APP_VERSION;
+
   apiBasePath = this.getEnvironmentValue('VITE_API_BASE_PATH');
 
   auth0Domain = this.getEnvironmentValue('VITE_AUTH0_DOMAIN');

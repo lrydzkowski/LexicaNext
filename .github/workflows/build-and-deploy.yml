@@ -29,6 +29,12 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v3
 
+      - name: Validate release version
+        run: node Frontend/lexica-next-front/scripts/validate-release-version.mjs
+
+      - name: Test release version metadata
+        run: node --test Frontend/lexica-next-front/scripts/*.test.mjs
+
       - name: Setup .NET Core SDK 10
         uses: actions/setup-dotnet@v4
         with:
@@ -65,6 +71,9 @@ jobs:
         with:
           context: .
           file: ./LexicaNext.WebApp/Dockerfile
+          build-args: |
+            LEXICA_RELEASE_TAG=${{ env.VERSION_TAG }}
+            LEXICA_REQUIRE_RELEASE_TAG=true
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.APP_IMAGE_NAME }}:latest,${{ env.REGISTRY }}/${{ env.APP_IMAGE_NAME }}:${{ env.VERSION_TAG }}
 

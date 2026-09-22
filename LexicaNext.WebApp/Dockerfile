@@ -9,6 +9,8 @@ COPY ["Frontend/lexica-next-front/package.json", "Frontend/lexica-next-front/pac
 RUN npm ci
 ENV VITE_OUTPUT_DIR=dist
 COPY ["Frontend/lexica-next-front", "./"]
+ARG LEXICA_RELEASE_TAG
+ARG LEXICA_REQUIRE_RELEASE_TAG=false
 RUN npm run build
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
