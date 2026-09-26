@@ -35,6 +35,11 @@ the frontend API base path or Auth0 domain, client ID, audience, and scope. Set
 the backend's `AUTH0_DOMAIN` and `AUTH0_AUDIENCE` in this directory's `.env`
 to match `VITE_AUTH0_DOMAIN` and `VITE_AUTH0_AUDIENCE` in the frontend file.
 
+Container builds display the fixed sample release `2000.01.01-000000` by default.
+To use another value, set `LEXICA_RELEASE_TAG` in this directory's `.env` to a
+valid date and time in `YYYYMMDD-HHmmss` format. Rebuild the app image after
+changing the tag because the frontend embeds it during the build.
+
 Use single quotes around values that contain `$` or `#`, such as
 `POSTGRES_PASSWORD='a-long-random$value#with;punctuation'`. Use database names and
 usernames containing letters, digits, and underscores. Shell environment

@@ -62,7 +62,10 @@ services:
     build:
       context: ..
       dockerfile: LexicaNext.WebApp/Dockerfile
-      args: *proxy-build-args
+      args:
+        <<: *proxy-build-args
+        LEXICA_RELEASE_TAG: ${LEXICA_RELEASE_TAG:-20000101-000000}
+        LEXICA_REQUIRE_RELEASE_TAG: "true"
     depends_on:
       seq:
         condition: service_healthy
