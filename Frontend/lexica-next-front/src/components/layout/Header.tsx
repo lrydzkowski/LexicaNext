@@ -89,12 +89,23 @@ export function Header() {
             )}
           </Group>
 
-          <Burger className={classes.burgerButton} opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
+          <Burger
+            className={classes.burgerButton}
+            opened={drawerOpened}
+            onClick={(event) => {
+              event.currentTarget.focus({ preventScroll: true });
+              toggleDrawer();
+            }}
+            hiddenFrom="sm"
+            aria-label="Toggle navigation"
+            aria-expanded={drawerOpened}
+          />
         </Group>
       </header>
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}
+        closeButtonProps={{ 'aria-label': 'Close navigation' }}
         size="100%"
         padding={0}
         className={classes.drawer}

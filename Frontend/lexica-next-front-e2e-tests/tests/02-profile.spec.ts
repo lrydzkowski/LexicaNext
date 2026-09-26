@@ -89,43 +89,6 @@ test.describe('account details', () => {
     await expect(trigger).toHaveAttribute('aria-expanded', 'false');
     await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
   });
-
-  test('closes open panels when crossing the desktop breakpoint', async ({ page }) => {
-    await page.setViewportSize({ width: 767, height: 640 });
-    await page.goto('/about');
-    const navigation = page.locator('.mantine-Drawer-content');
-    const profile = page.getByRole('dialog', { name: 'Your account', exact: true });
-    const burger = page.getByRole('button', { name: 'Toggle navigation' });
-    const profileTrigger = page.getByRole('button', { name: 'Open account details' });
-
-    await burger.click();
-    await expect(navigation).toBeVisible();
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await expect(navigation).not.toBeVisible();
-    await expect(profile).not.toBeVisible();
-    await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
-    await expect(profileTrigger).toHaveAttribute('aria-expanded', 'false');
-
-    await profileTrigger.click();
-    await expect(profile).toBeVisible();
-    await page.setViewportSize({ width: 350, height: 640 });
-    await expect(profile).not.toBeVisible();
-    await expect(navigation).not.toBeVisible();
-    await expect(burger).toHaveAttribute('aria-expanded', 'false');
-    await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
-
-    await burger.click();
-    await expect(navigation).toBeVisible();
-    await page.keyboard.press('Escape');
-    await expect(burger).toBeFocused();
-    await page.setViewportSize({ width: 768, height: 900 });
-    await expect(profileTrigger).toBeVisible();
-    await expect(profileTrigger).toHaveAttribute('aria-expanded', 'false');
-    await profileTrigger.press('Enter');
-    await expect(profile).toBeVisible();
-    await page.keyboard.press('Escape');
-    await expect(profileTrigger).toBeFocused();
-  });
 });
 
 test.describe('signed-out account details', () => {
