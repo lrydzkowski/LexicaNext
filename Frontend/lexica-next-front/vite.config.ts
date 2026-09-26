@@ -7,7 +7,6 @@ import { getAppVersion } from './scripts/release-version.mjs';
 export default defineConfig(({ command, mode }) => {
   const isProduction = command === 'build';
   const outputDir = process.env.VITE_OUTPUT_DIR || '../../LexicaNext.WebApp/wwwroot';
-  const env = loadEnv(mode, './env-config', 'LEXICA_');
   const appVersion = getAppVersion(process.env.LEXICA_RELEASE_TAG, process.env.LEXICA_REQUIRE_RELEASE_TAG);
 
   return {
@@ -30,10 +29,6 @@ export default defineConfig(({ command, mode }) => {
     server: isProduction
       ? undefined
       : {
-          https: {
-            pfx: readFileSync('./certificates/lan.pfx'),
-            passphrase: env.LEXICA_HTTPS_PASSWORD,
-          },
           proxy: {
             '/api': {
               target: 'https://localhost:7226',
