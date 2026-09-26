@@ -1,0 +1,115 @@
+name: lexicanext-standalone
+
+x-proxy-build-args: &proxy-build-args
+  HTTP_PROXY: ${HTTP_PROXY:-}
+  HTTPS_PROXY: ${HTTPS_PROXY:-}
+  NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1,db,seq}
+
+services:
+  seq:
+    image: datalust/seq:2026.1
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_ADMINUSERNAME: admin
+      SEQ_FIRSTRUN_ADMINPASSWORD: ${SEQ_ADMIN_PASSWORD:?Set SEQ_ADMIN_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${SEQ_PORT:-10052}:80"
+    volumes:
+      - seq-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--show-error", "http://localhost/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-lexicanext}
+      POSTGRES_USER: ${POSTGRES_USER:-lexicanext}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+
+  migrate:
+    build:
+      context: ..
+      dockerfile: LexicaNext.WebApp/DockerfileSqlMigration
+      args: *proxy-build-args
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: ["psql", "--no-psqlrc", "--set=ON_ERROR_STOP=1", "--file=/scripts/migration.sql"]
+    command: []
+    environment:
+      PGHOST: db
+      PGPORT: "5432"
+      PGDATABASE: ${POSTGRES_DB:-lexicanext}
+      PGUSER: ${POSTGRES_USER:-lexicanext}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    restart: "no"
+
+  app:
+    build:
+      context: ..
+      dockerfile: LexicaNext.WebApp/Dockerfile
+      args: *proxy-build-args
+    depends_on:
+      seq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "${APP_BIND_ADDRESS:-127.0.0.1}:${APP_HTTPS_PORT:-10051}:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: https://+:8080
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /app/certificates/lexica-next.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: ${HTTPS_CERTIFICATE_PASSWORD:?Set HTTPS_CERTIFICATE_PASSWORD in .env}
+      AllowedHosts: ${ALLOWED_HOSTS:-*}
+      ConnectionStrings__AppPostgresDb: Host=db;Port=5432;Database=${POSTGRES_DB:-lexicanext};Username=${POSTGRES_USER:-lexicanext}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      Storage__DirectoryPath: /app/recordings
+      EnglishDictionary__BaseUrl: ${ENGLISH_DICTIONARY_BASE_URL:-https://dictionary.cambridge.org}
+      EnglishDictionary__Path: ${ENGLISH_DICTIONARY_PATH:-/dictionary/english/{word}}
+      Auth0__Domain: ${AUTH0_DOMAIN:?Set AUTH0_DOMAIN in .env}
+      Auth0__Audience: ${AUTH0_AUDIENCE:?Set AUTH0_AUDIENCE in .env}
+      Auth0__RoleClaimName: ${AUTH0_ROLE_CLAIM_NAME:-r-systems/roles}
+      ApiKey__ValidKeys__0: ${API_KEY:-}
+      Foundry__ProjectEndpoint: ${FOUNDRY_PROJECT_ENDPOINT:-}
+      Foundry__ModelDeploymentName: ${FOUNDRY_MODEL_DEPLOYMENT_NAME:-}
+      Foundry__TenantId: ${FOUNDRY_TENANT_ID:-}
+      Foundry__ClientId: ${FOUNDRY_CLIENT_ID:-}
+      Foundry__ClientSecret: ${FOUNDRY_CLIENT_SECRET:-}
+      Seq__ServerUrl: ${SEQ_SERVER_URL:-http://seq:5341}
+      Seq__ApiKey: ${SEQ_API_KEY:-}
+      RateLimiting__PermitLimit: ${RATE_LIMIT_PERMIT_LIMIT:-30}
+      RateLimiting__WindowTime: ${RATE_LIMIT_WINDOW:-00:01:00}
+      HTTP_PROXY: ${HTTP_PROXY:-}
+      HTTPS_PROXY: ${HTTPS_PROXY:-}
+      NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1},db,seq
+    volumes:
+      - recordings:/app/recordings
+      - type: bind
+        source: ${HTTPS_CERTIFICATE_PATH:?Set HTTPS_CERTIFICATE_PATH in .env}
+        target: /app/certificates/lexica-next.pfx
+        read_only: true
+        bind:
+          create_host_path: false
+    restart: unless-stopped
+
+volumes:
+  seq-data:
+  postgres-data:
+  recordings:

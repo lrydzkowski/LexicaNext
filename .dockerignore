@@ -1,5 +1,12 @@
 **/.dockerignore
 **/.env
+**/.env.*
+!Frontend/lexica-next-front/env-config/.env.production
+**/certificates
+**/*.pfx
+**/*.p12
+**/compose*.yaml
+**/compose*.yml
 **/.git
 **/.gitignore
 **/.project
