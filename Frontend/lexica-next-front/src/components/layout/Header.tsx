@@ -3,7 +3,10 @@ import { IconLogout } from '@tabler/icons-react';
 import { NavLink } from 'react-router';
 import { Box, Burger, Button, Container, Divider, Drawer, Group, Stack, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import appConfig from '@/config/app-config';
 import { links } from '@/config/links';
+import { Profile } from './Profile';
+import { ProfileDetails } from './ProfileDetails';
 import classes from './Header.module.css';
 
 const items = [
@@ -16,11 +19,12 @@ const items = [
 const publicItems = [{ label: 'Sign In', href: links.signIn.getUrl() }];
 
 export function Header() {
+  const [profileOpened, { toggle: toggleProfile, close: closeProfile }] = useDisclosure(false);
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
-  const { isAuthenticated, logout } = useAuth0();
+  const { isAuthenticated, logout, user } = useAuth0();
 
   const appTitle = 'LexicaNext';
-
+  const email = user?.email || 'Email unavailable';
   const navItems = isAuthenticated ? items : publicItems;
 
   const navigationLinks = navItems.map((item) => (
@@ -65,23 +69,43 @@ export function Header() {
               {navigationLinks}
             </Group>
             {isAuthenticated && (
-              <Button
-                color="red"
-                variant="light"
-                size="sm"
-                leftSection={<IconLogout size={16} />}
-                onClick={handleLogout}>
-                Logout
-              </Button>
+              <>
+                <Profile
+                  email={email}
+                  version={appConfig.appVersion}
+                  opened={profileOpened}
+                  onToggle={toggleProfile}
+                  onClose={closeProfile}
+                />
+                <Button
+                  color="red"
+                  variant="light"
+                  size="sm"
+                  leftSection={<IconLogout size={16} />}
+                  onClick={handleLogout}>
+                  Logout
+                </Button>
+              </>
             )}
           </Group>
 
-          <Burger className={classes.burgerButton} opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
+          <Burger
+            className={classes.burgerButton}
+            opened={drawerOpened}
+            onClick={(event) => {
+              event.currentTarget.focus({ preventScroll: true });
+              toggleDrawer();
+            }}
+            hiddenFrom="sm"
+            aria-label="Toggle navigation"
+            aria-expanded={drawerOpened}
+          />
         </Group>
       </header>
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}
+        closeButtonProps={{ 'aria-label': 'Close navigation' }}
         size="100%"
         padding={0}
         className={classes.drawer}
@@ -92,7 +116,9 @@ export function Header() {
           {mobileNavigationLinks}
           {isAuthenticated && (
             <>
-              <Divider my="sm" />
+              <Divider mt="sm" />
+              <ProfileDetails email={email} version={appConfig.appVersion} />
+              <Divider mb="sm" />
               <Container fluid>
                 <Button
                   color="red"

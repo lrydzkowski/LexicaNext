@@ -219,6 +219,11 @@ dotnet ef database update
 
 ### Docker Deployment
 
+To run the application with its own PostgreSQL and Seq containers, follow
+[Run LexicaNext with Docker Compose](containers/README.md).
+
+For the existing private deployment configuration:
+
 ```powershell
 docker compose -f ./compose.yaml -p lexica-next up --build
 ```

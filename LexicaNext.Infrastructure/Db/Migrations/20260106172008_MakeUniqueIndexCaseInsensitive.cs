@@ -14,7 +14,7 @@ namespace LexicaNext.Infrastructure.Db.Migrations
                 name: "IX_set_name",
                 table: "set");
 
-            migrationBuilder.Sql("CREATE UNIQUE INDEX \"IX_set_name\" ON set (LOWER(name)) NULLS NOT DISTINCT");
+            migrationBuilder.Sql("CREATE UNIQUE INDEX \"IX_set_name\" ON set (LOWER(name)) NULLS NOT DISTINCT;");
         }
 
         /// <inheritdoc />

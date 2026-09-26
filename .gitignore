@@ -408,6 +408,8 @@ LexicaNext.WebApp/wwwroot/*
 !LexicaNext.WebApp/wwwroot/.gitkeep
 
 compose.yaml
+/containers/.env
+/containers/certificates/
 
 .claude/*
 .specify/*

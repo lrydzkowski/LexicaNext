@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:lan": "vite --host 192.168.50.30 --port 5173 --strictPort",
     "build": "tsc -b && vite build",
+    "test": "node --test scripts/*.test.mjs",
     "lint": "oxlint .",
     "preview": "vite preview",
     "prettier": "prettier --write ."

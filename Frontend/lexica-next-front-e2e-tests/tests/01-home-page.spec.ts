@@ -12,8 +12,11 @@ test.describe('open home page', () => {
           - /url: /sets
         - link "Words":
           - /url: /words
+        - link "Words Statistics":
+          - /url: /words-statistics
         - link "About":
           - /url: /about
+        - button "Open account details"
         - button "Logout":
           - img
           - text: ""
