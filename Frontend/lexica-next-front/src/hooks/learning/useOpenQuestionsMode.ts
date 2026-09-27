@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import {
   answerQuestion,
   createEntries,
@@ -13,6 +14,8 @@ import { useRegisterAnswer, type EntryDto } from '../api';
 import { usePronunciation } from '../usePronunciation';
 
 export function useOpenQuestionsMode(sourceEntries: EntryDto[], sessionSetId: string, title: string) {
+  const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth0();
+  const userId = isAuthenticated && !isAuthLoading ? user?.sub : undefined;
   const [entries, setEntries] = useState<OpenQuestionsEntry[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
@@ -31,7 +34,7 @@ export function useOpenQuestionsMode(sourceEntries: EntryDto[], sessionSetId: st
       return;
     }
 
-    const saved = loadSession<OpenQuestionsEntry>(sessionSetId, 'open-questions');
+    const saved = loadSession<OpenQuestionsEntry>(userId, sessionSetId, 'open-questions');
     if (saved && saved.length > 0) {
       setEntries(saved);
       generateNextQuestion(saved);
@@ -41,7 +44,7 @@ export function useOpenQuestionsMode(sourceEntries: EntryDto[], sessionSetId: st
     const initialEntries = createEntries(sourceEntries);
     setEntries(initialEntries);
     generateNextQuestion(initialEntries);
-  }, [sourceEntries, sessionSetId]);
+  }, [sourceEntries, sessionSetId, userId]);
 
   useEffect(() => {
     if (showFeedback && currentQuestion) {
@@ -57,7 +60,7 @@ export function useOpenQuestionsMode(sourceEntries: EntryDto[], sessionSetId: st
     setCurrentQuestion(question);
     if (!question) {
       setIsComplete(true);
-      clearSession(sessionSetId, 'open-questions');
+      clearSession(userId, sessionSetId, 'open-questions');
     }
   };
 
@@ -72,7 +75,7 @@ export function useOpenQuestionsMode(sourceEntries: EntryDto[], sessionSetId: st
     setShowFeedback(true);
     setEntries(result.entries);
 
-    saveSession(sessionSetId, title, 'open-questions', result.entries);
+    saveSession(userId, sessionSetId, title, 'open-questions', result.entries);
   };
 
   const nextQuestion = () => {

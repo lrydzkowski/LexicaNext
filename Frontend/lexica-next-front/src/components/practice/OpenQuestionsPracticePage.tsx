@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { ActionIcon, Container, Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { links } from '@/config/links';
@@ -20,9 +21,14 @@ export interface OpenQuestionsPracticePageProps {
 }
 
 export function OpenQuestionsPracticePage({ sessionSetId, title, usePracticeQuery }: OpenQuestionsPracticePageProps) {
+  const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth0();
+  const userId = isAuthenticated && !isAuthLoading ? user?.sub : undefined;
   const goBack = useReturnTo(links.sets.getUrl());
 
-  const savedEntries = useMemo(() => loadSession<OpenQuestionsEntry>(sessionSetId, 'open-questions'), [sessionSetId]);
+  const savedEntries = useMemo(
+    () => loadSession<OpenQuestionsEntry>(userId, sessionSetId, 'open-questions'),
+    [sessionSetId, userId],
+  );
   const hasSavedSession = (savedEntries?.length ?? 0) > 0;
   const [practiceEntries, setPracticeEntries] = useState<EntryDto[] | null>(
     hasSavedSession ? (savedEntries as EntryDto[]) : null,

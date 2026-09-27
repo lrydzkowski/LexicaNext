@@ -2,6 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import {
   cleanupCreatedData,
   captureAuthToken,
+  getSessionUserId,
   createWordViaApiReturningId,
   createSetViaApi,
   getSetNameById,
@@ -22,6 +23,7 @@ function totalCounters(entry: OpenQuestionsCounters): number {
 
 test.describe('open questions mode session resume', () => {
   let authToken: string;
+  let userId: string;
   const testWordIds: string[] = [];
   const testSetIds: string[] = [];
 
@@ -34,6 +36,7 @@ test.describe('open questions mode session resume', () => {
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
     authToken = await captureAuthToken(page);
+    userId = getSessionUserId(authToken);
     await page.close();
     await context.close();
   });
@@ -77,7 +80,7 @@ test.describe('open questions mode session resume', () => {
       await answerCurrentQuestionCorrectly(page, word, translation);
       await expect(page.getByText('Correct!')).toBeVisible();
 
-      const session = await expectSessionStored(page, setId, 'open-questions');
+      const session = await expectSessionStored(page, userId, setId, 'open-questions');
       expect(session.setId).toBe(setId);
       expect(session.setName).toBe(setName);
       expect(session.mode).toBe('open-questions');
@@ -117,7 +120,7 @@ test.describe('open questions mode session resume', () => {
       await answerCurrentQuestionCorrectly(page, word, translation);
       await expect(page.getByText('Correct!')).toBeVisible();
 
-      const beforeReload = await expectSessionStored(page, setId, 'open-questions');
+      const beforeReload = await expectSessionStored(page, userId, setId, 'open-questions');
       const beforeEntry = beforeReload.entries[0] as unknown as OpenQuestionsCounters;
       expect(totalCounters(beforeEntry)).toBe(1);
 
@@ -129,7 +132,7 @@ test.describe('open questions mode session resume', () => {
       await expect(page).toHaveURL(new RegExp(`/sets/${setId}/open-questions-mode`));
       await expect(page.getByPlaceholder('Type your answer...')).toBeVisible({ timeout: 10000 });
 
-      const afterResume = await expectSessionStored(page, setId, 'open-questions');
+      const afterResume = await expectSessionStored(page, userId, setId, 'open-questions');
       const afterEntry = afterResume.entries[0] as unknown as OpenQuestionsCounters;
       expect(afterEntry).toEqual(beforeEntry);
     } finally {
@@ -146,7 +149,7 @@ test.describe('open questions mode session resume', () => {
       await page.goto(`/sets/${setId}/open-questions-mode`);
       await answerCurrentQuestionCorrectly(page, word, translation);
       await expect(page.getByText('Correct!')).toBeVisible();
-      await expectSessionStored(page, setId, 'open-questions');
+      await expectSessionStored(page, userId, setId, 'open-questions');
 
       await page.reload();
 
@@ -155,7 +158,7 @@ test.describe('open questions mode session resume', () => {
       await modal.getByRole('button', { name: 'Start Fresh' }).click();
       await expect(modal).not.toBeVisible();
 
-      await expectSessionCleared(page, setId, 'open-questions');
+      await expectSessionCleared(page, userId, setId, 'open-questions');
     } finally {
       await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
@@ -194,7 +197,7 @@ test.describe('open questions mode session resume', () => {
       }
 
       await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 10000 });
-      await expectSessionCleared(page, setId, 'open-questions');
+      await expectSessionCleared(page, userId, setId, 'open-questions');
     } finally {
       await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }

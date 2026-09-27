@@ -2,6 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import {
   cleanupCreatedData,
   captureAuthToken,
+  getSessionUserId,
   createWordViaApiReturningId,
   createSetViaApi,
   getSetNameById,
@@ -24,6 +25,7 @@ function totalCounters(entry: FullModeCounters): number {
 
 test.describe('full mode session resume', () => {
   let authToken: string;
+  let userId: string;
   const testWordIds: string[] = [];
   const testSetIds: string[] = [];
 
@@ -36,6 +38,7 @@ test.describe('full mode session resume', () => {
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
     authToken = await captureAuthToken(page);
+    userId = getSessionUserId(authToken);
     await page.close();
     await context.close();
   });
@@ -100,7 +103,7 @@ test.describe('full mode session resume', () => {
       await answerCurrentQuestionCorrectly(page, word, translation);
       await expect(page.getByText('Correct!')).toBeVisible();
 
-      const session = await expectSessionStored(page, setId, 'full');
+      const session = await expectSessionStored(page, userId, setId, 'full');
       expect(session.setId).toBe(setId);
       expect(session.setName).toBe(setName);
       expect(session.mode).toBe('full');
@@ -140,7 +143,7 @@ test.describe('full mode session resume', () => {
       await answerCurrentQuestionCorrectly(page, word, translation);
       await expect(page.getByText('Correct!')).toBeVisible();
 
-      const beforeReload = await expectSessionStored(page, setId, 'full');
+      const beforeReload = await expectSessionStored(page, userId, setId, 'full');
       const beforeEntry = beforeReload.entries[0] as unknown as FullModeCounters;
       const beforeTotal = totalCounters(beforeEntry);
       expect(beforeTotal).toBeGreaterThan(0);
@@ -153,7 +156,7 @@ test.describe('full mode session resume', () => {
       await expect(page).toHaveURL(new RegExp(`/sets/${setId}/full-mode`));
       await expect(page.getByRole('button', { name: 'Check Answer' })).toBeVisible({ timeout: 10000 });
 
-      const afterResume = await expectSessionStored(page, setId, 'full');
+      const afterResume = await expectSessionStored(page, userId, setId, 'full');
       const afterEntry = afterResume.entries[0] as unknown as FullModeCounters;
       expect(afterEntry).toEqual(beforeEntry);
     } finally {
@@ -170,7 +173,7 @@ test.describe('full mode session resume', () => {
       await page.goto(`/sets/${setId}/full-mode`);
       await answerCurrentQuestionCorrectly(page, word, translation);
       await expect(page.getByText('Correct!')).toBeVisible();
-      await expectSessionStored(page, setId, 'full');
+      await expectSessionStored(page, userId, setId, 'full');
 
       await page.reload();
 
@@ -179,7 +182,7 @@ test.describe('full mode session resume', () => {
       await modal.getByRole('button', { name: 'Start Fresh' }).click();
       await expect(modal).not.toBeVisible();
 
-      await expectSessionCleared(page, setId, 'full');
+      await expectSessionCleared(page, userId, setId, 'full');
     } finally {
       await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
@@ -218,7 +221,7 @@ test.describe('full mode session resume', () => {
       }
 
       await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 15000 });
-      await expectSessionCleared(page, setId, 'full');
+      await expectSessionCleared(page, userId, setId, 'full');
     } finally {
       await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }

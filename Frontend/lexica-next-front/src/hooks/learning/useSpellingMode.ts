@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import {
   answerQuestion,
   createEntries,
@@ -12,6 +13,8 @@ import { useRegisterAnswer, type GetSetResponse } from '../api';
 import { usePronunciation } from '../usePronunciation';
 
 export function useSpellingMode(set: GetSetResponse) {
+  const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth0();
+  const userId = isAuthenticated && !isAuthLoading ? user?.sub : undefined;
   const [entries, setEntries] = useState<SpellingEntry[]>([]);
   const [currentEntryIndex, setCurrentEntryIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
@@ -35,9 +38,9 @@ export function useSpellingMode(set: GetSetResponse) {
       return;
     }
 
-    const saved = loadSession<SpellingEntry>(set.setId, 'spelling');
+    const saved = loadSession<SpellingEntry>(userId, set.setId, 'spelling');
     setEntries(saved && saved.length > 0 ? saved : createEntries(set.entries));
-  }, [set]);
+  }, [set, userId]);
 
   useEffect(() => {
     if (!currentEntry) {
@@ -61,7 +64,7 @@ export function useSpellingMode(set: GetSetResponse) {
   const persistEntries = (updatedEntries: SpellingEntry[]) => {
     setEntries(updatedEntries);
     if (set.setId) {
-      saveSession(set.setId, set.name ?? '', 'spelling', updatedEntries);
+      saveSession(userId, set.setId, set.name ?? '', 'spelling', updatedEntries);
     }
   };
 
@@ -84,7 +87,7 @@ export function useSpellingMode(set: GetSetResponse) {
     if (nextIndex === null) {
       setIsComplete(true);
       if (set.setId) {
-        clearSession(set.setId, 'spelling');
+        clearSession(userId, set.setId, 'spelling');
       }
       return;
     }

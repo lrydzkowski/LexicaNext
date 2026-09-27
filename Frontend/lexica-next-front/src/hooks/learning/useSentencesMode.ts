@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import {
   answerQuestion,
   createEntries,
@@ -12,6 +13,8 @@ import { useRegisterAnswer, type GetSetResponse } from '../api';
 import { usePronunciation } from '../usePronunciation';
 
 export function useSentencesMode(set: GetSetResponse) {
+  const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth0();
+  const userId = isAuthenticated && !isAuthLoading ? user?.sub : undefined;
   const [entries, setEntries] = useState<SentencesEntry[]>([]);
   const [hasInitialized, setHasInitialized] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
@@ -31,7 +34,7 @@ export function useSentencesMode(set: GetSetResponse) {
       return;
     }
 
-    const saved = loadSession<SentencesEntry>(set.setId, 'sentences');
+    const saved = loadSession<SentencesEntry>(userId, set.setId, 'sentences');
     if (saved && saved.length > 0) {
       setEntries(saved);
       setHasInitialized(true);
@@ -45,7 +48,7 @@ export function useSentencesMode(set: GetSetResponse) {
     if (initialEntries.length > 0) {
       generateNextQuestion(initialEntries);
     }
-  }, [set]);
+  }, [set, userId]);
 
   useEffect(() => {
     if (showFeedback && currentQuestion) {
@@ -65,7 +68,7 @@ export function useSentencesMode(set: GetSetResponse) {
     if (!question) {
       setIsComplete(true);
       if (set.setId) {
-        clearSession(set.setId, 'sentences');
+        clearSession(userId, set.setId, 'sentences');
       }
     }
   };
@@ -82,7 +85,7 @@ export function useSentencesMode(set: GetSetResponse) {
     setEntries(result.entries);
 
     if (set?.setId) {
-      saveSession(set.setId, set.name ?? '', 'sentences', result.entries);
+      saveSession(userId, set.setId, set.name ?? '', 'sentences', result.entries);
     }
   };
 

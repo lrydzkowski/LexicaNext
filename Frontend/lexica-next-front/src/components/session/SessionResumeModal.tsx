@@ -3,12 +3,13 @@ import { Button, Group, Modal, Stack, Text } from '@mantine/core';
 import { clearSession, getModeLabel, getModeUrl, type SessionSummary } from '../../services/session-storage';
 
 interface SessionResumeModalProps {
+  userId: string | undefined;
   opened: boolean;
   session: SessionSummary | null;
   onClose: () => void;
 }
 
-export function SessionResumeModal({ opened, session, onClose }: SessionResumeModalProps) {
+export function SessionResumeModal({ userId, opened, session, onClose }: SessionResumeModalProps) {
   const navigate = useNavigate();
 
   if (!session) {
@@ -21,7 +22,7 @@ export function SessionResumeModal({ opened, session, onClose }: SessionResumeMo
   };
 
   const handleStartFresh = () => {
-    clearSession(session.setId, session.mode);
+    clearSession(userId, session.setId, session.mode);
     onClose();
   };
 

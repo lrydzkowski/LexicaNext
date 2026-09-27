@@ -7,8 +7,17 @@ export type SessionMode = 'spelling' | 'full' | 'open-questions' | 'sentences';
 
 const SESSION_KEY_PREFIX = 'lexica-session:';
 
-function buildSessionKey(setId: string, mode: SessionMode): string {
-  return `${SESSION_KEY_PREFIX}${setId}:${mode}`;
+export function buildSessionKey(userId: string, setId: string, mode: SessionMode): string {
+  return `${SESSION_KEY_PREFIX}v2:${encodeURIComponent(userId)}:${encodeURIComponent(setId)}:${mode}`;
+}
+
+export function getSessionUserId(authToken: string): string {
+  const payload = authToken.replace(/^Bearer\s+/i, '').split('.')[1];
+  const { sub } = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
+  if (typeof sub !== 'string' || !sub) {
+    throw new Error('The test account access token must contain a user subject');
+  }
+  return sub;
 }
 
 export interface StoredSession {
@@ -21,10 +30,11 @@ export interface StoredSession {
 
 export async function readSessionFromStorage(
   page: Page,
+  userId: string,
   setId: string,
   mode: SessionMode,
 ): Promise<StoredSession | null> {
-  const key = buildSessionKey(setId, mode);
+  const key = buildSessionKey(userId, setId, mode);
   const raw = await page.evaluate((k) => window.localStorage.getItem(k), key);
   if (!raw) {
     return null;
@@ -45,15 +55,25 @@ export async function clearAllSessionStorage(page: Page): Promise<void> {
   }, SESSION_KEY_PREFIX);
 }
 
-export async function expectSessionStored(page: Page, setId: string, mode: SessionMode): Promise<StoredSession> {
-  const session = await readSessionFromStorage(page, setId, mode);
-  expect(session, `expected a stored session at lexica-session:${setId}:${mode}`).not.toBeNull();
+export async function expectSessionStored(
+  page: Page,
+  userId: string,
+  setId: string,
+  mode: SessionMode,
+): Promise<StoredSession> {
+  const session = await readSessionFromStorage(page, userId, setId, mode);
+  expect(session, `expected a stored session at ${buildSessionKey(userId, setId, mode)}`).not.toBeNull();
   return session!;
 }
 
-export async function expectSessionCleared(page: Page, setId: string, mode: SessionMode): Promise<void> {
-  const session = await readSessionFromStorage(page, setId, mode);
-  expect(session, `expected no stored session at lexica-session:${setId}:${mode}`).toBeNull();
+export async function expectSessionCleared(
+  page: Page,
+  userId: string,
+  setId: string,
+  mode: SessionMode,
+): Promise<void> {
+  const session = await readSessionFromStorage(page, userId, setId, mode);
+  expect(session, `expected no stored session at ${buildSessionKey(userId, setId, mode)}`).toBeNull();
 }
 
 export async function expectResumeModalVisible(page: Page, setName: string, modeLabel: string): Promise<void> {

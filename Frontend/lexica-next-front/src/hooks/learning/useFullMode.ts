@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import {
   answerQuestion,
   createEntries,
@@ -13,6 +14,8 @@ import { useRegisterAnswer, type GetSetResponse } from '../api';
 import { usePronunciation } from '../usePronunciation';
 
 export function useFullMode(set: GetSetResponse) {
+  const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth0();
+  const userId = isAuthenticated && !isAuthLoading ? user?.sub : undefined;
   const [entries, setEntries] = useState<FullModeEntry[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
@@ -31,7 +34,7 @@ export function useFullMode(set: GetSetResponse) {
       return;
     }
 
-    const saved = loadSession<FullModeEntry>(set.setId, 'full');
+    const saved = loadSession<FullModeEntry>(userId, set.setId, 'full');
     if (saved && saved.length > 0) {
       setEntries(saved);
       generateNextQuestion(saved);
@@ -41,7 +44,7 @@ export function useFullMode(set: GetSetResponse) {
     const initialEntries = createEntries(set.entries);
     setEntries(initialEntries);
     generateNextQuestion(initialEntries);
-  }, [set]);
+  }, [set, userId]);
 
   useEffect(() => {
     if (showFeedback && currentQuestion) {
@@ -59,7 +62,7 @@ export function useFullMode(set: GetSetResponse) {
     if (!question) {
       setIsComplete(true);
       if (set.setId) {
-        clearSession(set.setId, 'full');
+        clearSession(userId, set.setId, 'full');
       }
     }
   };
@@ -76,7 +79,7 @@ export function useFullMode(set: GetSetResponse) {
     setEntries(result.entries);
 
     if (set?.setId) {
-      saveSession(set.setId, set.name ?? '', 'full', result.entries);
+      saveSession(userId, set.setId, set.name ?? '', 'full', result.entries);
     }
   };
 
