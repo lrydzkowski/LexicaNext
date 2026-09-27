@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import {
   Alert,
@@ -16,32 +16,12 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { links } from '@/config/links';
+import { useFullMode } from '@/hooks/learning/useFullMode';
 import { useReturnTo } from '@/hooks/useReturnTo';
-import { compareAnswers, serialize } from '@/utils/utils';
-import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
-import { usePronunciation } from '../../../hooks/usePronunciation';
-import { clearSession, loadSession, saveSession } from '../../../services/session-storage';
+import { serialize } from '@/utils/utils';
+import type { GetSetResponse } from '../../../hooks/api';
 import { ExampleSentences } from '../ExampleSentences';
 import { ModeWordsListModal } from './ModeWordsListModal';
-
-export interface FullModeEntry extends EntryDto {
-  englishCloseCounter: number;
-  nativeCloseCounter: number;
-  englishOpenCounter: number;
-  nativeOpenCounter: number;
-}
-
-type QuestionType = 'english-close' | 'native-close' | 'english-open' | 'native-open';
-
-interface Question {
-  entry: FullModeEntry;
-  entryIndex: number;
-  type: QuestionType;
-  question: string;
-  questionWords: string;
-  options?: string[];
-  correctAnswers: string[];
-}
 
 export interface SetFullModeProps {
   set: GetSetResponse;
@@ -49,279 +29,21 @@ export interface SetFullModeProps {
 
 export function SetFullMode({ set }: SetFullModeProps) {
   const goBack = useReturnTo(links.sets.getUrl());
-  const [entries, setEntries] = useState<FullModeEntry[]>([]);
-  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [userAnswer, setUserAnswer] = useState('');
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
+  const {
+    entries,
+    currentQuestion,
+    userAnswer,
+    setUserAnswer,
+    showFeedback,
+    isCorrect,
+    isComplete,
+    checkAnswer,
+    nextQuestion,
+    progress,
+    completedCount,
+  } = useFullMode(set);
   const optionsRef = useRef<(HTMLInputElement | null)[]>([]);
-  const registerAnswer = useRegisterAnswer();
   const [wordsModalOpened, { open: openWordsModal, close: closeWordsModal }] = useDisclosure(false);
-
-  const { playAudio } = usePronunciation(currentQuestion?.entry.word || '', currentQuestion?.entry.wordType, {
-    autoPlay: false,
-    enabled: !!currentQuestion?.entry.word,
-  });
-
-  useEffect(() => {
-    if (!set?.entries || !set.setId) {
-      return;
-    }
-
-    const saved = loadSession<FullModeEntry>(set.setId, 'full');
-    if (saved && saved.length > 0) {
-      setEntries(saved);
-      generateNextQuestion(saved);
-      return;
-    }
-
-    const initialEntries = set.entries.map((entry) => ({
-      ...entry,
-      englishCloseCounter: 0,
-      nativeCloseCounter: 0,
-      englishOpenCounter: 0,
-      nativeOpenCounter: 0,
-    }));
-    setEntries(initialEntries);
-    generateNextQuestion(initialEntries);
-  }, [set]);
-
-  useEffect(() => {
-    if (showFeedback && currentQuestion) {
-      const timer = setTimeout(() => {
-        playAudio();
-      }, 100);
-
-      return () => clearTimeout(timer);
-    }
-  }, [showFeedback, currentQuestion, playAudio]);
-
-  const generateNextQuestion = (currentEntries: FullModeEntry[], previousWord?: string) => {
-    const shuffledEntries = [...currentEntries].sort(() => Math.random() - 0.5);
-    const selectedEntries = shuffledEntries.slice(0, Math.min(7, shuffledEntries.length));
-
-    let eligibleEntries = selectedEntries.filter((entry) => {
-      return (
-        entry.englishCloseCounter < 1 ||
-        entry.nativeCloseCounter < 1 ||
-        entry.englishOpenCounter < 2 ||
-        entry.nativeOpenCounter < 2
-      );
-    });
-
-    if (eligibleEntries.length > 1 && previousWord) {
-      eligibleEntries = eligibleEntries.filter((entry) => entry.word !== previousWord);
-    }
-
-    if (eligibleEntries.length === 0) {
-      const allComplete = currentEntries.every(
-        (entry) =>
-          entry.englishCloseCounter >= 1 &&
-          entry.nativeCloseCounter >= 1 &&
-          entry.englishOpenCounter >= 2 &&
-          entry.nativeOpenCounter >= 2,
-      );
-
-      if (allComplete) {
-        setIsComplete(true);
-        if (set?.setId) {
-          clearSession(set.setId, 'full');
-        }
-        return;
-      }
-
-      generateNextQuestion(currentEntries, previousWord);
-      return;
-    }
-
-    const selectedEntry = eligibleEntries[Math.floor(Math.random() * eligibleEntries.length)];
-    const entryIndex = currentEntries.findIndex((e) => e.word === selectedEntry.word);
-
-    const availableTypes: QuestionType[] = [];
-
-    if (selectedEntry.englishCloseCounter < 1) {
-      availableTypes.push('english-close');
-    }
-
-    if (selectedEntry.nativeCloseCounter < 1) {
-      availableTypes.push('native-close');
-    }
-
-    if (availableTypes.length === 0) {
-      if (selectedEntry.englishOpenCounter < 2) {
-        availableTypes.push('english-open');
-      }
-
-      if (selectedEntry.nativeOpenCounter < 2) {
-        availableTypes.push('native-open');
-      }
-    }
-
-    const questionType: QuestionType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
-    const question = generateQuestion(selectedEntry, entryIndex, questionType, currentEntries);
-    setCurrentQuestion(question);
-  };
-
-  const generateQuestion = (
-    entry: FullModeEntry,
-    entryIndex: number,
-    type: QuestionType,
-    allEntries: FullModeEntry[],
-  ): Question => {
-    switch (type) {
-      case 'english-close': {
-        const correctTranslation = entry.translations ?? [];
-        const wrongOptions = allEntries
-          .filter((e) => e.word !== entry.word)
-          .flatMap((e) => serialize(e.translations))
-          .slice(0, 3);
-
-        const options = [serialize(correctTranslation), ...wrongOptions].sort(() => Math.random() - 0.5);
-
-        return {
-          entry,
-          entryIndex,
-          type,
-          question: `What does "${entry.word}" mean?`,
-          questionWords: entry.word ?? '',
-          options,
-          correctAnswers: correctTranslation,
-        };
-      }
-
-      case 'native-close': {
-        const correctWord = entry.word;
-        const wrongWords = allEntries
-          .filter((e) => e.word !== entry.word)
-          .map((e) => e.word || '')
-          .filter((word) => word !== '')
-          .slice(0, 3);
-
-        const wordOptions = [correctWord || '', ...wrongWords].sort(() => Math.random() - 0.5);
-        const serializedNativeCloseTranslations = serialize(entry.translations);
-
-        return {
-          entry,
-          entryIndex,
-          type,
-          question: `What is the English word for "${serializedNativeCloseTranslations}"?`,
-          questionWords: serializedNativeCloseTranslations,
-          options: wordOptions,
-          correctAnswers: correctWord ? [correctWord] : [],
-        };
-      }
-
-      case 'english-open':
-        return {
-          entry,
-          entryIndex,
-          type,
-          question: `What does "${entry.word}" mean? (Type your answer)`,
-          questionWords: entry.word ?? '',
-          correctAnswers: entry.translations ?? [],
-        };
-
-      case 'native-open': {
-        const serializedNativeOpenTranslations = serialize(entry.translations);
-
-        return {
-          entry,
-          entryIndex,
-          type,
-          question: `What is the English word for "${serializedNativeOpenTranslations}"? (Type your answer)`,
-          questionWords: serializedNativeOpenTranslations,
-          correctAnswers: entry.word ? [entry.word] : [],
-        };
-      }
-
-      default:
-        throw new Error('Invalid question type');
-    }
-  };
-
-  const checkAnswer = () => {
-    if (!currentQuestion) {
-      return;
-    }
-
-    const isCorrect = compareAnswers(userAnswer, currentQuestion.correctAnswers);
-
-    registerAnswer.mutate({
-      modeType: 'full',
-      questionType: currentQuestion.type,
-      question: currentQuestion.questionWords,
-      givenAnswer: userAnswer,
-      expectedAnswer: serialize(currentQuestion.correctAnswers),
-      isCorrect,
-      wordId: currentQuestion.entry.wordId,
-    });
-
-    setIsCorrect(isCorrect);
-    setShowFeedback(true);
-
-    const updatedEntries = [...entries];
-    const entry = updatedEntries[currentQuestion.entryIndex];
-
-    if (isCorrect) {
-      switch (currentQuestion.type) {
-        case 'english-close':
-          entry.englishCloseCounter += 1;
-          break;
-        case 'native-close':
-          entry.nativeCloseCounter += 1;
-          break;
-        case 'english-open':
-          entry.englishOpenCounter += 1;
-          break;
-        case 'native-open':
-          entry.nativeOpenCounter += 1;
-          break;
-      }
-    } else {
-      entry.englishCloseCounter = 0;
-      entry.nativeCloseCounter = 0;
-      entry.englishOpenCounter = 0;
-      entry.nativeOpenCounter = 0;
-    }
-
-    setEntries(updatedEntries);
-
-    if (set?.setId) {
-      saveSession(set.setId, set.name ?? '', 'full', updatedEntries);
-    }
-  };
-
-  const nextQuestion = () => {
-    setShowFeedback(false);
-    setUserAnswer('');
-    generateNextQuestion(entries, currentQuestion?.entry.word);
-  };
-
-  const getProgress = () => {
-    const totalRequired = entries.length * 6;
-    const currentProgress = entries.reduce((sum, entry) => {
-      return (
-        sum +
-        Math.min(entry.englishCloseCounter, 1) +
-        Math.min(entry.nativeCloseCounter, 1) +
-        Math.min(entry.englishOpenCounter, 2) +
-        Math.min(entry.nativeOpenCounter, 2)
-      );
-    }, 0);
-
-    return totalRequired > 0 ? (currentProgress / totalRequired) * 100 : 0;
-  };
-
-  const getCompletedCount = (currentEntries: FullModeEntry[]) => {
-    return currentEntries.filter(
-      (entry) =>
-        entry.englishCloseCounter >= 1 &&
-        entry.nativeCloseCounter >= 1 &&
-        entry.englishOpenCounter >= 2 &&
-        entry.nativeOpenCounter >= 2,
-    ).length;
-  };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (showFeedback) {
@@ -412,10 +134,10 @@ export function SetFullMode({ set }: SetFullModeProps) {
   return (
     <>
       <Stack gap="lg">
-        <Progress value={getProgress()} size="lg" radius="md" />
+        <Progress value={progress} size="lg" radius="md" />
         <Group justify="space-between" align="center" wrap="nowrap" gap="xs">
           <Text size="sm" c="dimmed">
-            {getCompletedCount(entries)} / {entries.length} words completed
+            {completedCount} / {entries.length} words completed
           </Text>
           <Anchor component="button" type="button" size="sm" onClick={openWordsModal}>
             Show Words

@@ -1,0 +1,12 @@
+﻿{
+  DbWords: [],
+  Url: /api/words,
+  TestCaseId: 6,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 0,
+      "data": []
+    }
+}

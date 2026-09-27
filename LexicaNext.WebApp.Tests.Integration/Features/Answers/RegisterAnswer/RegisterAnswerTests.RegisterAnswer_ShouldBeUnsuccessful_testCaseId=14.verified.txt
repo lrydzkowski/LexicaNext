@@ -1,0 +1,32 @@
+﻿{
+  DbAnswersBefore: [],
+  DbAnswersAfter: [],
+  Request: {
+    ModeType: full,
+    QuestionType: english-open,
+    Question: test,
+    GivenAnswer: test,
+    ExpectedAnswer: test,
+    IsCorrect: true,
+    WordId: Guid_Empty
+  },
+  TestCaseId: 14,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordId",
+          "errorMessage": "\u0027WordId\u0027 must be a non-empty GUID.",
+          "attemptedValue": "Guid_Empty",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

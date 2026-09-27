@@ -1,0 +1,64 @@
+﻿{
+  StatusCode: NoContent,
+  DbWordsBefore: [
+    {
+      WordId: Guid_1,
+      UserId: other-user-id,
+      Word: cherry,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_3,
+      UserId: other-user-id,
+      Word: grape,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_2,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    }
+  ],
+  DbWordsAfter: [
+    {
+      WordId: Guid_1,
+      UserId: other-user-id,
+      Word: cherry,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_3,
+      UserId: other-user-id,
+      Word: grape,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_2,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    }
+  ],
+  Request: {
+    Ids: [
+      Guid_1,
+      Guid_3
+    ]
+  },
+  Response: ,
+  TestCaseId: 3,
+  LogMessages: 
+}

@@ -2,6 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import {
   cleanupCreatedData,
   captureAuthToken,
+  getSessionUserId,
   createWordWithSentencesViaApi,
   createSetViaApi,
   getSetNameById,
@@ -26,6 +27,7 @@ interface WordWithSentences {
 
 test.describe('sentences mode session resume', () => {
   let authToken: string;
+  let userId: string;
   const testWordIds: string[] = [];
   const testSetIds: string[] = [];
 
@@ -38,6 +40,7 @@ test.describe('sentences mode session resume', () => {
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
     authToken = await captureAuthToken(page);
+    userId = getSessionUserId(authToken);
     await page.close();
     await context.close();
   });
@@ -79,7 +82,7 @@ test.describe('sentences mode session resume', () => {
       await page.getByRole('button', { name: 'Check Answer' }).click();
       await expect(page.getByText('Correct!')).toBeVisible();
 
-      const session = await expectSessionStored(page, setId, 'sentences');
+      const session = await expectSessionStored(page, userId, setId, 'sentences');
       expect(session.setId).toBe(setId);
       expect(session.setName).toBe(setName);
       expect(session.mode).toBe('sentences');
@@ -106,7 +109,7 @@ test.describe('sentences mode session resume', () => {
       await page.getByRole('button', { name: 'Check Answer' }).click();
       await expect(page.getByText('Correct!')).toBeVisible();
 
-      const before = await expectSessionStored(page, setId, 'sentences');
+      const before = await expectSessionStored(page, userId, setId, 'sentences');
       const beforeEntry = before.entries[0] as unknown as SentencesEntryShape;
       expect(beforeEntry.sentenceCounters).toEqual({ '0': 1 });
 
@@ -118,7 +121,7 @@ test.describe('sentences mode session resume', () => {
       await expect(page).toHaveURL(new RegExp(`/sets/${setId}/sentences-mode`));
       await expect(page.getByPlaceholder('Type the missing word...')).toBeVisible({ timeout: 10000 });
 
-      const after = await expectSessionStored(page, setId, 'sentences');
+      const after = await expectSessionStored(page, userId, setId, 'sentences');
       const afterEntry = after.entries[0] as unknown as SentencesEntryShape;
       expect(afterEntry.sentenceCounters).toEqual(beforeEntry.sentenceCounters);
     } finally {
@@ -148,7 +151,7 @@ test.describe('sentences mode session resume', () => {
       await page.getByRole('button', { name: 'Check Answer' }).click();
       await expect(page.getByText('Correct!')).toBeVisible();
 
-      const session = await expectSessionStored(page, setId, 'sentences');
+      const session = await expectSessionStored(page, userId, setId, 'sentences');
       const entry = session.entries[0] as unknown as SentencesEntryShape;
       expect(entry.selectedSentenceIndices).toEqual([0, 1, 2]);
       expect(entry.sentenceCounters[String(matchedIndex)]).toBe(1);
@@ -183,7 +186,7 @@ test.describe('sentences mode session resume', () => {
       await page.getByRole('button', { name: 'Check Answer' }).click();
       await expect(page.getByText('Correct!')).toBeVisible();
 
-      const before = await expectSessionStored(page, setId, 'sentences');
+      const before = await expectSessionStored(page, userId, setId, 'sentences');
       expect(before.entries).toHaveLength(1);
       const beforeEntry = before.entries[0] as unknown as SentencesEntryShape;
       expect(beforeEntry.word).toBe(eligibleWord);
@@ -198,7 +201,7 @@ test.describe('sentences mode session resume', () => {
       await expect(page.getByPlaceholder('Type the missing word...')).toBeVisible({ timeout: 10000 });
       await expect(page.getByText('0 / 1 questions completed')).toBeVisible();
 
-      const after = await expectSessionStored(page, setId, 'sentences');
+      const after = await expectSessionStored(page, userId, setId, 'sentences');
       expect(after.entries).toHaveLength(1);
       const afterEntry = after.entries[0] as unknown as SentencesEntryShape;
       expect(afterEntry.word).toBe(eligibleWord);
@@ -221,7 +224,7 @@ test.describe('sentences mode session resume', () => {
       await input.fill(word);
       await page.getByRole('button', { name: 'Check Answer' }).click();
       await expect(page.getByText('Correct!')).toBeVisible();
-      await expectSessionStored(page, setId, 'sentences');
+      await expectSessionStored(page, userId, setId, 'sentences');
 
       await page.reload();
 
@@ -230,7 +233,7 @@ test.describe('sentences mode session resume', () => {
       await modal.getByRole('button', { name: 'Start Fresh' }).click();
       await expect(modal).not.toBeVisible();
 
-      await expectSessionCleared(page, setId, 'sentences');
+      await expectSessionCleared(page, userId, setId, 'sentences');
     } finally {
       await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }

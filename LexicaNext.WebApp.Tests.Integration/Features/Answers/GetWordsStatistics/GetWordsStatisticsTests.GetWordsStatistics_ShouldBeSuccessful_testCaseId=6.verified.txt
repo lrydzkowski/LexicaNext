@@ -1,0 +1,24 @@
+﻿{
+  Url: /api/words-statistics?sortingFieldName=word&sortingOrder=asc&searchQuery=APP,
+  TestCaseId: 6,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 2,
+      "data": [
+        {
+          "wordId": "Guid_1",
+          "word": "apple",
+          "correctCount": 1,
+          "incorrectCount": 0
+        },
+        {
+          "wordId": "Guid_2",
+          "word": "pineapple",
+          "correctCount": 1,
+          "incorrectCount": 0
+        }
+      ]
+    }
+}

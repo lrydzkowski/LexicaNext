@@ -1,0 +1,23 @@
+﻿{
+  DbWords: [],
+  Url: /api/words?pageSize=201,
+  TestCaseId: 3,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "PageSize",
+          "errorMessage": "\u0027PageSize\u0027 must be less than or equal to \u0027200\u0027.",
+          "attemptedValue": 201,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

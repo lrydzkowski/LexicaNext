@@ -1,0 +1,28 @@
+﻿{
+  Word: banana,
+  WordType: noun,
+  StatusCode: OK,
+  ContentType: audio/mpeg,
+  ResponseSize: 8,
+  Response: null,
+  DbRecordings: [
+    {
+      RecordingId: Guid_1,
+      Word: banana,
+      WordTypeId: Guid_2,
+      WordType: null,
+      FileName: Guid_3
+    }
+  ],
+  RecordingStorageCalls: [
+    {
+      MethodName: SaveFileAsync,
+      Arguments: [
+        Guid_3,
+        //uQBAUGBwg=
+      ]
+    }
+  ],
+  TestCaseId: 2,
+  LogMessages: 
+}

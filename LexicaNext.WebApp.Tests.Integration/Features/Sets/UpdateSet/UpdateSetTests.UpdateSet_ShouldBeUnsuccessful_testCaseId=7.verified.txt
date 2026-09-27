@@ -1,0 +1,51 @@
+﻿{
+  DbSetsBefore: [
+    {
+      SetId: Guid_1,
+      UserId: test-user-id,
+      Name: set_0001,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      SetWords: []
+    }
+  ],
+  DbSetsAfter: [
+    {
+      SetId: Guid_1,
+      UserId: test-user-id,
+      Name: set_0001,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      SetWords: []
+    }
+  ],
+  SetId: Guid_1,
+  Request: {
+    WordIds: [
+      Guid_2,
+      Guid_3
+    ]
+  },
+  TestCaseId: 7,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "One or more word IDs do not exist.",
+          "attemptedValue": [
+            "Guid_2",
+            "Guid_3"
+          ],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

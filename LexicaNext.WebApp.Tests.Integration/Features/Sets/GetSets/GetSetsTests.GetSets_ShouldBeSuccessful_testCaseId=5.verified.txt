@@ -1,0 +1,12 @@
+﻿{
+  DbSets: [],
+  Url: /api/sets,
+  TestCaseId: 5,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 0,
+      "data": []
+    }
+}

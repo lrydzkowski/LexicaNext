@@ -1,0 +1,31 @@
+﻿{
+  DbAnswersBefore: [],
+  DbAnswersAfter: [
+    {
+      AnswerId: Guid_1,
+      UserId: test-user-id,
+      ModeType: open-questions,
+      QuestionType: native-open,
+      Question: jabłko,
+      GivenAnswer: ,
+      ExpectedAnswer: apple,
+      IsCorrect: false,
+      AnsweredAt: DateTimeOffset_1,
+      WordId: Guid_2,
+      Word: null
+    }
+  ],
+  Request: {
+    ModeType: open-questions,
+    QuestionType: native-open,
+    Question: jabłko,
+    GivenAnswer: null,
+    ExpectedAnswer: apple,
+    IsCorrect: false,
+    WordId: Guid_2
+  },
+  TestCaseId: 2,
+  LogMessages: ,
+  StatusCode: NoContent,
+  Response: 
+}

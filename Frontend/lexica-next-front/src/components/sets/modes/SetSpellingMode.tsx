@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { IconCheck, IconVolume, IconX } from '@tabler/icons-react';
 import {
   ActionIcon,
@@ -16,17 +15,12 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { links } from '@/config/links';
+import { useSpellingMode } from '@/hooks/learning/useSpellingMode';
 import { useReturnTo } from '@/hooks/useReturnTo';
 import { serialize } from '@/utils/utils';
-import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
-import { usePronunciation } from '../../../hooks/usePronunciation';
-import { clearSession, loadSession, saveSession } from '../../../services/session-storage';
+import type { GetSetResponse } from '../../../hooks/api';
 import { ExampleSentences } from '../ExampleSentences';
 import { ModeWordsListModal } from './ModeWordsListModal';
-
-export interface SpellingEntry extends EntryDto {
-  counter: number;
-}
 
 export interface SetSpellingModeProps {
   set: GetSetResponse;
@@ -34,133 +28,22 @@ export interface SetSpellingModeProps {
 
 export function SetSpellingMode({ set }: SetSpellingModeProps) {
   const goBack = useReturnTo(links.sets.getUrl());
-  const [entries, setEntries] = useState<SpellingEntry[]>([]);
-  const [currentEntryIndex, setCurrentEntryIndex] = useState(0);
-  const [userInput, setUserInput] = useState('');
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [completedCount, setCompletedCount] = useState(0);
-  const [iteration, setIteration] = useState(0);
-  const registerAnswer = useRegisterAnswer();
-  const [wordsModalOpened, { open: openWordsModal, close: closeWordsModal }] = useDisclosure(false);
-
-  const currentEntry = entries[currentEntryIndex];
   const {
+    entries,
+    currentEntry,
+    userInput,
+    setUserInput,
+    showFeedback,
+    isCorrect,
+    isComplete,
     playAudio,
-    isLoading: pronunciationLoading,
-    error: pronunciationError,
-  } = usePronunciation(currentEntry?.word || '', currentEntry?.wordType, {
-    autoPlay: false,
-    enabled: currentEntry != null,
-  });
-
-  useEffect(() => {
-    if (!set?.entries || !set.setId) {
-      return;
-    }
-
-    const saved = loadSession<SpellingEntry>(set.setId, 'spelling');
-    if (saved && saved.length > 0) {
-      setEntries(saved);
-      return;
-    }
-
-    const shuffledEntries = [...set.entries].sort(() => Math.random() - 0.5).map((entry) => ({ ...entry, counter: 0 }));
-    setEntries(shuffledEntries);
-  }, [set]);
-
-  useEffect(() => {
-    const totalPossiblePoints = entries.length * 2;
-    const currentPoints = entries.reduce((sum, entry) => sum + Math.min(entry.counter, 2), 0);
-    const progressValue = totalPossiblePoints > 0 ? (currentPoints / totalPossiblePoints) * 100 : 0;
-
-    const completed = entries.filter((entry) => entry.counter >= 2).length;
-
-    setProgress(progressValue);
-    setCompletedCount(completed);
-  }, [entries]);
-
-  useEffect(() => {
-    if (currentEntry) {
-      if (pronunciationError) {
-        console.error('Pronunciation error:', pronunciationError);
-
-        const updatedEntries = [...entries];
-        updatedEntries[currentEntryIndex].counter += 1;
-        setEntries(updatedEntries);
-        if (set?.setId) {
-          saveSession(set.setId, set.name ?? '', 'spelling', updatedEntries);
-        }
-        nextQuestion();
-
-        return;
-      }
-
-      const timer = setTimeout(() => {
-        playAudio();
-      }, 100);
-
-      return () => clearTimeout(timer);
-    }
-  }, [currentEntry, iteration, playAudio, pronunciationError]);
-
-  const checkAnswer = () => {
-    const currentEntry = entries[currentEntryIndex];
-    const correct = userInput.trim().toLowerCase() === (currentEntry.word || '').toLowerCase();
-
-    registerAnswer.mutate({
-      modeType: 'spelling',
-      questionType: 'spelling',
-      question: currentEntry.word ?? '',
-      givenAnswer: userInput,
-      expectedAnswer: currentEntry.word ?? '',
-      isCorrect: correct,
-      wordId: currentEntry.wordId,
-    });
-
-    setIsCorrect(correct);
-    setShowFeedback(true);
-
-    const updatedEntries = [...entries];
-    if (correct) {
-      updatedEntries[currentEntryIndex].counter += 1;
-    } else {
-      updatedEntries[currentEntryIndex].counter = 0;
-    }
-    setEntries(updatedEntries);
-
-    if (set?.setId) {
-      saveSession(set.setId, set.name ?? '', 'spelling', updatedEntries);
-    }
-  };
-
-  const nextQuestion = () => {
-    setShowFeedback(false);
-    setUserInput('');
-
-    let remainingEntries = entries.filter((entry) => entry.counter < 2);
-
-    if (remainingEntries.length === 0) {
-      setIsComplete(true);
-      if (set?.setId) {
-        clearSession(set.setId, 'spelling');
-      }
-      return;
-    }
-
-    if (remainingEntries.length > 1) {
-      const currentWord = entries[currentEntryIndex]?.word;
-      remainingEntries = remainingEntries.filter((entry) => entry.word !== currentWord);
-    }
-
-    const shuffled = remainingEntries.sort(() => Math.random() - 0.5);
-    const nextEntry = shuffled[0];
-    const nextIndex = entries.findIndex((entry) => entry.word === nextEntry.word);
-    setCurrentEntryIndex(nextIndex);
-    setIteration((prev) => prev + 1);
-  };
+    pronunciationLoading,
+    checkAnswer,
+    nextQuestion,
+    progress,
+    completedCount,
+  } = useSpellingMode(set);
+  const [wordsModalOpened, { open: openWordsModal, close: closeWordsModal }] = useDisclosure(false);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && !showFeedback) {

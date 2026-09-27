@@ -1,13 +1,32 @@
 ﻿using LexicaNext.Core.Common.Infrastructure.Extensions;
+using LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LexicaNext.WebApp.Tests.Integration.Api;
 
 internal static class EndpointHelpers
 {
     private const string DefaultPathParameterPlaceholder = "test";
+
+    public static async Task<TheoryData<string, string>> GetTheoryDataAsync(
+        IReadOnlyList<EndpointInfo> ignoredEndpoints
+    )
+    {
+        WebApiFactory factory = await TestContext.Current.GetFixture<WebApiFactory>()
+                                ?? throw new InvalidOperationException("The API test collection fixture is unavailable.");
+        EndpointDataSource endpointDataSource = factory.Services.GetRequiredService<EndpointDataSource>();
+        IReadOnlyList<EndpointInfo> endpoints = GetEndpointsWithAuth(endpointDataSource, ignoredEndpoints);
+        TheoryData<string, string> cases = [];
+        foreach (EndpointInfo endpoint in endpoints)
+        {
+            cases.Add(endpoint.HttpMethod.Method, endpoint.Path);
+        }
+
+        return cases;
+    }
 
     public static IReadOnlyList<EndpointInfo> GetEndpointsWithAuth(
         EndpointDataSource endpointDataSource,

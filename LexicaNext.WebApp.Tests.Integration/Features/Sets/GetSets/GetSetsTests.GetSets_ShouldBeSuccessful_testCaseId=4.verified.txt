@@ -1,0 +1,53 @@
+﻿{
+  DbSets: [
+    {
+      SetId: Guid_1,
+      UserId: test-user-id,
+      Name: charlie_set,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      SetWords: []
+    },
+    {
+      SetId: Guid_2,
+      UserId: test-user-id,
+      Name: alpha_set,
+      CreatedAt: DateTimeOffset_2,
+      UpdatedAt: null,
+      SetWords: []
+    },
+    {
+      SetId: Guid_3,
+      UserId: test-user-id,
+      Name: bravo_set,
+      CreatedAt: DateTimeOffset_3,
+      UpdatedAt: null,
+      SetWords: []
+    }
+  ],
+  Url: /api/sets?sortingFieldName=name&sortingOrder=desc,
+  TestCaseId: 4,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "setId": "Guid_1",
+          "name": "charlie_set",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_3",
+          "name": "bravo_set",
+          "createdAt": "2025-01-17T10:00:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_2",
+          "name": "alpha_set",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00"
+        }
+      ]
+    }
+}

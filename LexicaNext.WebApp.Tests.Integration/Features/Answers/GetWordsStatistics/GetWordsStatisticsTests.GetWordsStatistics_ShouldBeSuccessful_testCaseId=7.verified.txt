@@ -1,0 +1,24 @@
+﻿{
+  Url: /api/words-statistics?page=2&pageSize=2&sortingFieldName=word&sortingOrder=asc,
+  TestCaseId: 7,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 5,
+      "data": [
+        {
+          "wordId": "Guid_1",
+          "word": "charlie",
+          "correctCount": 0,
+          "incorrectCount": 1
+        },
+        {
+          "wordId": "Guid_2",
+          "word": "delta",
+          "correctCount": 0,
+          "incorrectCount": 1
+        }
+      ]
+    }
+}

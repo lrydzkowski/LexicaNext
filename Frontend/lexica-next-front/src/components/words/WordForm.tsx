@@ -1,13 +1,14 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
-import { ActionIcon, Box, Button, Divider, Group, LoadingOverlay, Select, Stack, TextInput } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { ActionIcon, Box, Button, Divider, Group, LoadingOverlay, Select, Stack, Text, TextInput } from '@mantine/core';
+import { formRootRule, useForm } from '@mantine/form';
 import { randomId } from '@mantine/hooks';
 import { links } from '@/config/links';
 import { SHORTCUT_KEYS } from '@/config/shortcuts';
+import { MAX_WORD_EXAMPLE_SENTENCES, MAX_WORD_TRANSLATIONS } from '@/config/word-limits';
 import { useReturnTo } from '@/hooks/useReturnTo';
 import { generateRowHandlers, useShortcuts } from '@/hooks/useShortcuts';
-import { showErrorNotification } from '@/services/error-notifications';
+import { showErrorNotification, showErrorTextNotification } from '@/services/error-notifications';
 import { useCreateWord, useUpdateWord, type GetWordResponse } from '../../hooks/api';
 import { DictionaryLinks } from './DictionaryLinks';
 import { GenerateSentencesButton } from './GenerateSentencesButton';
@@ -68,6 +69,8 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
           return null;
         },
         translations: {
+          [formRootRule]: (value) =>
+            value.length > MAX_WORD_TRANSLATIONS ? `Use at most ${MAX_WORD_TRANSLATIONS} translations.` : null,
           name: (value) => {
             if (!value?.trim()) {
               return 'Translation is required';
@@ -79,6 +82,10 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
           },
         },
         exampleSentences: {
+          [formRootRule]: (value) =>
+            value.length > MAX_WORD_EXAMPLE_SENTENCES
+              ? `Use at most ${MAX_WORD_EXAMPLE_SENTENCES} example sentences.`
+              : null,
           sentence: (value) => {
             if (!value?.trim()) {
               return 'Sentence is required';
@@ -131,6 +138,10 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
     }, [focusSentence]);
 
     const addTranslation = () => {
+      if (form.getValues().translations.length >= MAX_WORD_TRANSLATIONS) {
+        return;
+      }
+
       form.insertListItem('translations', { name: '', key: randomId() });
       setTimeout(() => {
         const newIndex = form.getValues().translations.length;
@@ -140,6 +151,7 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
 
     const removeTranslation = (index: number) => {
       form.removeListItem('translations', index);
+      form.clearFieldError('translations');
       setTimeout(() => {
         const remaining = form.getValues().translations.length;
         if (remaining > 0) {
@@ -149,6 +161,10 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
     };
 
     const addSentence = () => {
+      if (form.getValues().exampleSentences.length >= MAX_WORD_EXAMPLE_SENTENCES) {
+        return;
+      }
+
       form.insertListItem('exampleSentences', { sentence: '', key: randomId() });
       setTimeout(() => {
         const newIndex = form.getValues().exampleSentences.length;
@@ -158,6 +174,7 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
 
     const removeSentence = (index: number) => {
       form.removeListItem('exampleSentences', index);
+      form.clearFieldError('exampleSentences');
       setTimeout(() => {
         const remaining = form.getValues().exampleSentences.length;
         if (remaining > 0) {
@@ -168,6 +185,11 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
 
     const handleTranslationsGenerated = (newTranslations: string[]) => {
       const currentTranslations = form.getValues().translations || [];
+      if (Math.max(currentTranslations.length, newTranslations.length) > MAX_WORD_TRANSLATIONS) {
+        showErrorTextNotification('Translation limit', `Use at most ${MAX_WORD_TRANSLATIONS} translations.`);
+        return;
+      }
+
       currentTranslations.forEach((_, index) => {
         form.clearFieldError(`translations.${index}.name`);
       });
@@ -182,6 +204,14 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
 
     const handleSentencesGenerated = (newSentences: string[]) => {
       const currentSentences = form.getValues().exampleSentences || [];
+      if (Math.max(currentSentences.length, newSentences.length) > MAX_WORD_EXAMPLE_SENTENCES) {
+        showErrorTextNotification(
+          'Example sentence limit',
+          `Use at most ${MAX_WORD_EXAMPLE_SENTENCES} example sentences.`,
+        );
+        return;
+      }
+
       currentSentences.forEach((_, index) => {
         form.clearFieldError(`exampleSentences.${index}.sentence`);
       });
@@ -359,6 +389,14 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
             <Divider label="Translations" labelPosition="center" />
 
             <div>
+              <Text size="sm" c="dimmed" mb="xs">
+                Maximum {MAX_WORD_TRANSLATIONS} translations.
+              </Text>
+              {(form.errors.translations || form.getValues().translations.length > MAX_WORD_TRANSLATIONS) && (
+                <Text size="sm" c="red" role="alert" mb="xs">
+                  {form.errors.translations || `Use at most ${MAX_WORD_TRANSLATIONS} translations.`}
+                </Text>
+              )}
               {form.getValues().translations.map((item, index) => (
                 <Group key={item.key} mb="xs" wrap="nowrap" align="top">
                   <TextInput
@@ -386,7 +424,13 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
                 </Group>
               ))}
               <Group gap="xs">
-                <Button variant="light" size="xs" leftSection={<IconPlus size={14} />} onClick={addTranslation} w={180}>
+                <Button
+                  variant="light"
+                  size="xs"
+                  leftSection={<IconPlus size={14} />}
+                  onClick={addTranslation}
+                  disabled={form.getValues().translations.length >= MAX_WORD_TRANSLATIONS}
+                  w={180}>
                   Add Translation
                 </Button>
                 <GenerateTranslationsButton
@@ -400,6 +444,15 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
             <Divider label="Example Sentences (Optional)" labelPosition="center" />
 
             <div>
+              <Text size="sm" c="dimmed" mb="xs">
+                Maximum {MAX_WORD_EXAMPLE_SENTENCES} example sentences.
+              </Text>
+              {(form.errors.exampleSentences ||
+                form.getValues().exampleSentences.length > MAX_WORD_EXAMPLE_SENTENCES) && (
+                <Text size="sm" c="red" role="alert" mb="xs">
+                  {form.errors.exampleSentences || `Use at most ${MAX_WORD_EXAMPLE_SENTENCES} example sentences.`}
+                </Text>
+              )}
               {form.getValues().exampleSentences.map((item, index) => (
                 <Group key={item.key} mb="xs" wrap="nowrap" align="top">
                   <TextInput
@@ -425,7 +478,13 @@ export const WordForm = forwardRef<WordFormRef, WordFormProps>(
                 </Group>
               ))}
               <Group gap="xs">
-                <Button variant="light" size="xs" leftSection={<IconPlus size={14} />} onClick={addSentence} w={180}>
+                <Button
+                  variant="light"
+                  size="xs"
+                  leftSection={<IconPlus size={14} />}
+                  onClick={addSentence}
+                  disabled={form.getValues().exampleSentences.length >= MAX_WORD_EXAMPLE_SENTENCES}
+                  w={180}>
                   Add Sentence
                 </Button>
                 <GenerateSentencesButton

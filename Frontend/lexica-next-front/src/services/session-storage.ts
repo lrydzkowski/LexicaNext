@@ -1,10 +1,8 @@
-import { FullModeEntry } from '@/components/sets/modes/SetFullMode';
-import { OpenQuestionsEntry } from '@/components/sets/modes/SetOnlyOpenQuestionsMode';
-import { SentencesEntry } from '@/components/sets/modes/SetSentencesMode';
-import { SpellingEntry } from '@/components/sets/modes/SetSpellingMode';
 import { links } from '@/config/links';
+import type { FullModeEntry, OpenQuestionsEntry, SentencesEntry, SessionMode, SpellingEntry } from '@/learning/types';
 
-export type SessionMode = 'spelling' | 'full' | 'open-questions' | 'sentences';
+export type { SessionMode } from '@/learning/types';
+
 type ModeEntriesDto = SpellingEntry[] | OpenQuestionsEntry[] | FullModeEntry[] | SentencesEntry[];
 
 export interface SessionData {
@@ -23,13 +21,27 @@ export interface SessionSummary {
   totalEntries: number;
 }
 
-const KEY_PREFIX = 'lexica-session:';
+const KEY_PREFIX = 'lexica-session:v2:';
 
-function buildKey(setId: string, mode: SessionMode): string {
-  return `${KEY_PREFIX}${setId}:${mode}`;
+function buildUserPrefix(userId: string): string {
+  return `${KEY_PREFIX}${encodeURIComponent(userId)}:`;
 }
 
-export function saveSession(setId: string, setName: string, mode: SessionMode, entries: ModeEntriesDto): void {
+function buildKey(userId: string, setId: string, mode: SessionMode): string {
+  return `${buildUserPrefix(userId)}${encodeURIComponent(setId)}:${mode}`;
+}
+
+export function saveSession(
+  userId: string | undefined,
+  setId: string,
+  setName: string,
+  mode: SessionMode,
+  entries: ModeEntriesDto,
+): void {
+  if (!userId) {
+    return;
+  }
+
   try {
     const data: SessionData = {
       setId,
@@ -38,15 +50,19 @@ export function saveSession(setId: string, setName: string, mode: SessionMode, e
       timestamp: Date.now(),
       entries,
     };
-    localStorage.setItem(buildKey(setId, mode), JSON.stringify(data));
+    localStorage.setItem(buildKey(userId, setId, mode), JSON.stringify(data));
   } catch (error) {
     console.error('Failed to save session:', error);
   }
 }
 
-export function loadSession<T>(setId: string, mode: SessionMode): T[] | null {
+export function loadSession<T>(userId: string | undefined, setId: string, mode: SessionMode): T[] | null {
+  if (!userId) {
+    return null;
+  }
+
   try {
-    const raw = localStorage.getItem(buildKey(setId, mode));
+    const raw = localStorage.getItem(buildKey(userId, setId, mode));
     if (!raw) {
       return null;
     }
@@ -60,21 +76,30 @@ export function loadSession<T>(setId: string, mode: SessionMode): T[] | null {
   }
 }
 
-export function clearSession(setId: string, mode: SessionMode): void {
+export function clearSession(userId: string | undefined, setId: string, mode: SessionMode): void {
+  if (!userId) {
+    return;
+  }
+
   try {
-    localStorage.removeItem(buildKey(setId, mode));
+    localStorage.removeItem(buildKey(userId, setId, mode));
   } catch (error) {
     console.error('Failed to clear session:', error);
   }
 }
 
-export function findAllSessions(): SessionSummary[] {
+export function findAllSessions(userId: string | undefined): SessionSummary[] {
+  if (!userId) {
+    return [];
+  }
+
   const sessions: SessionSummary[] = [];
 
   try {
+    const userPrefix = buildUserPrefix(userId);
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (!key?.startsWith(KEY_PREFIX)) {
+      if (!key?.startsWith(userPrefix)) {
         continue;
       }
 

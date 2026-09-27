@@ -99,7 +99,6 @@ The application follows Clean Architecture principles:
 - **Infrastructure Layer** (`LexicaNext.Infrastructure`) - Data access, auth and external services
 - **Presentation Layer** (`LexicaNext.WebApp`) - API endpoints and web hosting
 - **Frontend** (`Frontend/lexica-next-front`) - React SPA with TypeScript
-- **MCP Server** (`Tools/mcp-server`) - MCP server to interact with the app through Claude Desktop
 
 ### Key Patterns
 
@@ -234,24 +233,6 @@ When running the application locally, the OpenAPI specification is available at:
 
 - Spec: <https://localhost:7226/openapi/v1.json>
 - Swagger UI: <https://localhost:7226/swagger>
-
-### MCP Server
-
-A Model Context Protocol (MCP) server that enables Claude to interact with the LexicaNext API. Provides tools for vocabulary set management operations.
-
-```powershell
-cd Tools/mcp-server
-npm install
-npm run build
-```
-
-Available MCP tools:
-
-- `get_lexica_status` - Check API status
-- `get_lexica_sets` - Retrieve vocabulary sets
-- `get_lexica_set` - Get specific set by ID
-- `create_lexica_set` - Create new vocabulary set
-- `update_lexica_set` - Update existing set
 
 ## License
 

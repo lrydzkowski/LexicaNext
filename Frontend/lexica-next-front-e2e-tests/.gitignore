@@ -1,6 +1,7 @@
 
 # Environment
 .env
+.env.dev
 
 # Playwright
 node_modules/

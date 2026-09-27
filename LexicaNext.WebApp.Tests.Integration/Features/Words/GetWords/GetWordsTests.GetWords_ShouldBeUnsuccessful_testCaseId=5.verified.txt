@@ -1,0 +1,23 @@
+﻿{
+  DbWords: [],
+  Url: /api/words?timeZoneId=Invalid%2fTimezone,
+  TestCaseId: 5,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "TimeZoneId",
+          "errorMessage": "\u0027Time Zone Id\u0027 must be a valid IANA timezone identifier.",
+          "attemptedValue": "Invalid/Timezone",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

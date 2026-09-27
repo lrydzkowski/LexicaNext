@@ -7,8 +7,6 @@ using LexicaNext.WebApp.Tests.Integration.Common.Logging;
 using LexicaNext.WebApp.Tests.Integration.Common.Services;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCollections;
 using LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 
@@ -18,9 +16,7 @@ namespace LexicaNext.WebApp.Tests.Integration.Api;
 [Trait(TestConstants.Category, ApiTestCollection.CollectionName)]
 public class ApiAuth0Tests
 {
-    private readonly EndpointDataSource _endpointDataSource;
-
-    private readonly IReadOnlyList<EndpointInfo> _endpointsToIgnore =
+    private static readonly IReadOnlyList<EndpointInfo> EndpointsToIgnore =
     [
         new() { HttpMethod = HttpMethod.Get, Path = "/openapi/test.json" }
     ];
@@ -36,89 +32,84 @@ public class ApiAuth0Tests
         _webApiFactory = webApiFactory;
         _logMessages = webApiFactory.LogMessages;
         _verifySettings = webApiFactory.VerifySettings;
-        _endpointDataSource = _webApiFactory.Services.GetRequiredService<EndpointDataSource>();
     }
 
-    [Fact]
-    public async Task SendRequest_ShouldReturn401_WhenNoAccessToken()
+    public static Task<TheoryData<string, string>> GetEndpointsAsync()
     {
-        IReadOnlyList<EndpointInfo> endpointsInfo = EndpointHelpers.GetEndpointsWithAuth(
-            _endpointDataSource,
-            _endpointsToIgnore
-        );
-        List<ApiAuth0TestsResult> results = await RunAsync(endpointsInfo);
-
-        await Verify(results, _verifySettings);
+        return EndpointHelpers.GetTheoryDataAsync(EndpointsToIgnore);
     }
 
-    [Fact]
-    public async Task SendRequest_ShouldReturn401_WhenOldAccessToken()
+    [Theory]
+    [MemberData(nameof(GetEndpointsAsync), DisableDiscoveryEnumeration = true)]
+    public async Task SendRequest_ShouldReturn401_WhenNoAccessToken(string httpMethod, string path)
     {
-        IReadOnlyList<EndpointInfo> endpointsInfo = EndpointHelpers.GetEndpointsWithAuth(
-            _endpointDataSource,
-            _endpointsToIgnore
+        ApiAuth0TestsResult result = await RunAsync(
+            new EndpointInfo { HttpMethod = new HttpMethod(httpMethod), Path = path }
         );
+
+        await Verify(result, _verifySettings).UseParameters(httpMethod, path);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetEndpointsAsync), DisableDiscoveryEnumeration = true)]
+    public async Task SendRequest_ShouldReturn401_WhenOldAccessToken(string httpMethod, string path)
+    {
         string accessToken = EmbeddedFile.GetContent(
             "Api/Assets/old_access_token.txt",
             Assembly.GetExecutingAssembly()
         );
-        List<ApiAuth0TestsResult> results = await RunAsync(endpointsInfo, accessToken);
+        ApiAuth0TestsResult result = await RunAsync(
+            new EndpointInfo { HttpMethod = new HttpMethod(httpMethod), Path = path },
+            accessToken
+        );
 
         VerifySettings verifySettings = VerifySettingsBuilder.Build();
         verifySettings.DisableDateCounting();
-        await Verify(results, verifySettings);
+        await Verify(result, verifySettings).UseParameters(httpMethod, path);
     }
 
-    [Fact]
-    public async Task SendRequest_ShouldReturn401_WhenWrongSignatureInAccessToken()
+    [Theory]
+    [MemberData(nameof(GetEndpointsAsync), DisableDiscoveryEnumeration = true)]
+    public async Task SendRequest_ShouldReturn401_WhenWrongSignatureInAccessToken(string httpMethod, string path)
     {
-        IReadOnlyList<EndpointInfo> endpointsInfo = EndpointHelpers.GetEndpointsWithAuth(
-            _endpointDataSource,
-            _endpointsToIgnore
-        );
         string accessToken = EmbeddedFile.GetContent(
             "Api/Assets/wrong_signature_access_token.txt",
             Assembly.GetExecutingAssembly()
         );
-        List<ApiAuth0TestsResult> results = await RunAsync(endpointsInfo, accessToken);
+        ApiAuth0TestsResult result = await RunAsync(
+            new EndpointInfo { HttpMethod = new HttpMethod(httpMethod), Path = path },
+            accessToken
+        );
 
-        await Verify(results, _verifySettings);
+        await Verify(result, _verifySettings).UseParameters(httpMethod, path);
     }
 
-    private async Task<List<ApiAuth0TestsResult>> RunAsync(
-        IReadOnlyList<EndpointInfo> endpointsInfo,
+    private async Task<ApiAuth0TestsResult> RunAsync(
+        EndpointInfo endpointInfo,
         string? accessToken = null
     )
     {
-        List<ApiAuth0TestsResult> results = [];
-        foreach (EndpointInfo endpointInfo in endpointsInfo)
+        await using TestContextScope contextScope = new(_webApiFactory, _logMessages);
+
+        using HttpRequestMessage requestMessage = new(endpointInfo.HttpMethod, endpointInfo.Path);
+        if (accessToken is not null)
         {
-            await using TestContextScope contextScope = new(_webApiFactory, _logMessages);
-
-            using HttpRequestMessage requestMessage = new(endpointInfo.HttpMethod, endpointInfo.Path);
-            if (accessToken is not null)
-            {
-                requestMessage.Headers.Add(HeaderNames.Authorization, $"{AuthConstants.Bearer} {accessToken}");
-            }
-
-            using HttpResponseMessage responseMessage = await _webApiFactory
-                .WithLogging(_logMessages, "Microsoft.AspNetCore.Authorization", LogLevel.Information)
-                .WithLogging(_logMessages, "Microsoft.AspNetCore.Authentication", LogLevel.Information)
-                .CreateClient()
-                .SendAsync(requestMessage, TestContext.Current.CancellationToken);
-
-            results.Add(
-                new ApiAuth0TestsResult
-                {
-                    RequestHttpMethod = endpointInfo.HttpMethod,
-                    RequestPath = endpointInfo.Path,
-                    ResponseStatusCode = responseMessage.StatusCode,
-                    LogMessages = _logMessages.GetSerialized(6)
-                }
-            );
+            requestMessage.Headers.Add(HeaderNames.Authorization, $"{AuthConstants.Bearer} {accessToken}");
         }
 
-        return results;
+        using HttpResponseMessage responseMessage = await _webApiFactory
+            .WithLogging(_logMessages, "Microsoft.AspNetCore.Authorization", LogLevel.Information)
+            .WithLogging(_logMessages, "Microsoft.AspNetCore.Authentication", LogLevel.Information)
+            .CreateClient()
+            .SendAsync(requestMessage, TestContext.Current.CancellationToken);
+
+        return new ApiAuth0TestsResult
+        {
+            RequestHttpMethod = endpointInfo.HttpMethod,
+            RequestPath = endpointInfo.Path,
+            ResponseStatusCode = responseMessage.StatusCode,
+            LogMessages = _logMessages.GetSerialized(6)
+        };
     }
 
     private class ApiAuth0TestsResult

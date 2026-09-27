@@ -1,0 +1,14 @@
+﻿{
+  DbWords: [],
+  WordId: not-a-valid-uuid,
+  TestCaseId: 2,
+  LogMessages: ,
+  StatusCode: NotFound,
+  Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    }
+}

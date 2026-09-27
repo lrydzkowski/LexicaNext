@@ -1,0 +1,43 @@
+﻿{
+  DbSetsBefore: [
+    {
+      SetId: Guid_1,
+      UserId: test-user-id,
+      Name: set_0001,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      SetWords: []
+    }
+  ],
+  DbSetsAfter: [
+    {
+      SetId: Guid_1,
+      UserId: test-user-id,
+      Name: set_0001,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      SetWords: []
+    }
+  ],
+  SetId: Guid_1,
+  Request: null,
+  TestCaseId: 3,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload",
+          "errorMessage": "\u0027Payload\u0027 must not be empty.",
+          "attemptedValue": null,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

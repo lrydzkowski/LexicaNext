@@ -1,0 +1,14 @@
+﻿{
+  StatusCode: NoContent,
+  DbWordsBefore: [],
+  DbWordsAfter: [],
+  Request: {
+    Ids: [
+      Guid_1,
+      Guid_2
+    ]
+  },
+  Response: ,
+  TestCaseId: 2,
+  LogMessages: 
+}

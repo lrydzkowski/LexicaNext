@@ -1,0 +1,18 @@
+﻿{
+  Request: {
+    Word: bright,
+    WordType: adjective,
+    Count: 3
+  },
+  TestCaseId: 1,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "sentences": [
+        "The bright sun warmed the garden.",
+        "She is a bright student who learns quickly.",
+        "The room was bright and cheerful."
+      ]
+    }
+}

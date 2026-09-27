@@ -1,0 +1,26 @@
+﻿{
+  Request: {
+    Word: bright,
+    WordType: noun,
+    Count: 11
+  },
+  TestCaseId: 5,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Count",
+          "errorMessage": "\u0027Count\u0027 must be between 1 and 10. You entered 11.",
+          "attemptedValue": 11,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

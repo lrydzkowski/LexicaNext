@@ -1,0 +1,38 @@
+﻿{
+  Url: /api/practice/open-questions/weakest,
+  TestCaseId: 2,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "entries": [
+        {
+          "wordId": "Guid_1",
+          "word": "high",
+          "wordType": "noun",
+          "translations": [
+            "wysoki"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_2",
+          "word": "mid",
+          "wordType": "noun",
+          "translations": [
+            "\u015Bredni"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_3",
+          "word": "low",
+          "wordType": "noun",
+          "translations": [
+            "niski"
+          ],
+          "exampleSentences": []
+        }
+      ]
+    }
+}

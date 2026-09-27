@@ -1,0 +1,30 @@
+﻿{
+  Url: /api/words-statistics,
+  TestCaseId: 2,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_1",
+          "word": "bright",
+          "correctCount": 2,
+          "incorrectCount": 2
+        },
+        {
+          "wordId": "Guid_2",
+          "word": "run",
+          "correctCount": 1,
+          "incorrectCount": 2
+        },
+        {
+          "wordId": "Guid_3",
+          "word": "apple",
+          "correctCount": 3,
+          "incorrectCount": 1
+        }
+      ]
+    }
+}

@@ -1,0 +1,26 @@
+﻿{
+  StatusCode: BadRequest,
+  DbSetsBefore: [],
+  DbSetsAfter: [],
+  Request: {
+    Ids: []
+  },
+  Response:
+      {
+        "type": "validation-errors",
+        "title": "Validation errors",
+        "status": 400,
+        "detail": "One or more validation errors occurred.",
+        "errors": [
+          {
+            "propertyName": "Ids",
+            "errorMessage": "\u0027Ids\u0027 must not be empty.",
+            "attemptedValue": [],
+            "severity": 0
+          }
+        ],
+        "traceId": "Scrubbed"
+      },
+  TestCaseId: 1,
+  LogMessages: 
+}

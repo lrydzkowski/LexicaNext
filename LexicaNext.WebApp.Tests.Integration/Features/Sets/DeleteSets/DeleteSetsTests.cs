@@ -31,28 +31,30 @@ public class DeleteSetsTests
         _verifySettings = webApiFactory.VerifySettings;
     }
 
-    [Fact]
-    public async Task DeleteSets_ShouldBeSuccessful()
-    {
-        List<DeleteSetsTestResult> results = [];
-        foreach (TestCaseData testCase in CorrectTestCasesGenerator.Generate())
-        {
-            results.Add(await RunAsync(testCase));
-        }
+    public static TheoryData<int> CorrectTestCases =>
+        new(CorrectTestCasesGenerator.Generate().Select(testCase => testCase.TestCaseId));
 
-        await Verify(results, _verifySettings);
+    [Theory]
+    [MemberData(nameof(CorrectTestCases))]
+    public async Task DeleteSets_ShouldBeSuccessful(int testCaseId)
+    {
+        TestCaseData testCase = CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        DeleteSetsTestResult result = await RunAsync(testCase);
+
+        await Verify(result, _verifySettings).UseParameters(testCaseId);
     }
 
-    [Fact]
-    public async Task DeleteSets_ShouldBeUnsuccessful()
-    {
-        List<DeleteSetsTestResult> results = [];
-        foreach (TestCaseData testCase in IncorrectTestCasesGenerator.Generate())
-        {
-            results.Add(await RunAsync(testCase));
-        }
+    public static TheoryData<int> IncorrectTestCases =>
+        new(IncorrectTestCasesGenerator.Generate().Select(testCase => testCase.TestCaseId));
 
-        await Verify(results, _verifySettings);
+    [Theory]
+    [MemberData(nameof(IncorrectTestCases))]
+    public async Task DeleteSets_ShouldBeUnsuccessful(int testCaseId)
+    {
+        TestCaseData testCase = IncorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        DeleteSetsTestResult result = await RunAsync(testCase);
+
+        await Verify(result, _verifySettings).UseParameters(testCaseId);
     }
 
     private async Task<DeleteSetsTestResult> RunAsync(TestCaseData testCase)

@@ -2,6 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import {
   cleanupCreatedData,
   captureAuthToken,
+  getSessionUserId,
   createWordViaApiReturningId,
   createSetViaApi,
   getSetNameById,
@@ -13,6 +14,7 @@ import {
 
 test.describe('spelling mode session resume', () => {
   let authToken: string;
+  let userId: string;
   const testWordIds: string[] = [];
   const testSetIds: string[] = [];
 
@@ -25,6 +27,7 @@ test.describe('spelling mode session resume', () => {
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
     authToken = await captureAuthToken(page);
+    userId = getSessionUserId(authToken);
     await page.close();
     await context.close();
   });
@@ -78,7 +81,7 @@ test.describe('spelling mode session resume', () => {
       await answerSpelling(page, 'apple');
       await expect(page.getByText('Correct!')).toBeVisible();
 
-      const session = await expectSessionStored(page, setId, 'spelling');
+      const session = await expectSessionStored(page, userId, setId, 'spelling');
       expect(session.setId).toBe(setId);
       expect(session.setName).toBe(setName);
       expect(session.mode).toBe('spelling');
@@ -117,7 +120,7 @@ test.describe('spelling mode session resume', () => {
       await answerSpelling(page, 'river');
       await expect(page.getByText('Correct!')).toBeVisible();
 
-      const beforeReload = await expectSessionStored(page, setId, 'spelling');
+      const beforeReload = await expectSessionStored(page, userId, setId, 'spelling');
       expect((beforeReload.entries[0] as { counter: number }).counter).toBe(1);
 
       await page.reload();
@@ -128,7 +131,7 @@ test.describe('spelling mode session resume', () => {
       await expect(page).toHaveURL(new RegExp(`/sets/${setId}/spelling-mode`));
       await expect(page.getByPlaceholder('Type the word you heard...')).toBeVisible({ timeout: 10000 });
 
-      const afterResume = await expectSessionStored(page, setId, 'spelling');
+      const afterResume = await expectSessionStored(page, userId, setId, 'spelling');
       expect((afterResume.entries[0] as { counter: number }).counter).toBe(1);
 
       await answerSpelling(page, 'river');
@@ -136,7 +139,7 @@ test.describe('spelling mode session resume', () => {
       await page.getByRole('button', { name: 'Continue' }).click();
 
       await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 10000 });
-      await expectSessionCleared(page, setId, 'spelling');
+      await expectSessionCleared(page, userId, setId, 'spelling');
     } finally {
       await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
@@ -151,7 +154,7 @@ test.describe('spelling mode session resume', () => {
       await page.goto(`/sets/${setId}/spelling-mode`);
       await answerSpelling(page, 'tree');
       await expect(page.getByText('Correct!')).toBeVisible();
-      await expectSessionStored(page, setId, 'spelling');
+      await expectSessionStored(page, userId, setId, 'spelling');
 
       await page.reload();
 
@@ -160,7 +163,7 @@ test.describe('spelling mode session resume', () => {
       await modal.getByRole('button', { name: 'Start Fresh' }).click();
       await expect(modal).not.toBeVisible();
 
-      await expectSessionCleared(page, setId, 'spelling');
+      await expectSessionCleared(page, userId, setId, 'spelling');
     } finally {
       await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }
@@ -181,7 +184,7 @@ test.describe('spelling mode session resume', () => {
       }
 
       await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 10000 });
-      await expectSessionCleared(page, setId, 'spelling');
+      await expectSessionCleared(page, userId, setId, 'spelling');
     } finally {
       await cleanupCreatedData(page, testWordIds, testSetIds, authToken);
     }

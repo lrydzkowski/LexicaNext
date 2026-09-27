@@ -1,0 +1,14 @@
+﻿{
+  Url: /api/practice/open-questions/random,
+  ExpectedCount: 2,
+  ActualCount: 2,
+  AllReturnedWordIdsAreInExpectedPool: true,
+  ReturnedWordIdsSorted: [
+    Guid_1,
+    Guid_2
+  ],
+  TestCaseId: 5,
+  LogMessages: ,
+  StatusCode: OK,
+  Response: null
+}

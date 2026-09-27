@@ -10,12 +10,18 @@ import { GlobalShortcuts } from '../shortcuts/GlobalShortcuts';
 import { Header } from './Header';
 
 export function Layout() {
+  const { isAuthenticated, isLoading, user } = useAuth0();
+  const userId = isAuthenticated && !isLoading ? user?.sub : undefined;
+
+  return <UserLayout key={userId ?? ''} userId={userId} />;
+}
+
+function UserLayout({ userId }: { userId: string | undefined }) {
   const { pathname } = useLocation();
-  const { isAuthenticated } = useAuth0();
   const [resumeSession, setResumeSession] = useState<SessionSummary | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
 
-  const sessionsSnapshot = useMemo(() => (isAuthenticated ? findAllSessions() : []), [isAuthenticated]);
+  const sessionsSnapshot = useMemo(() => findAllSessions(userId), [userId]);
   const authProcessedRef = useRef(false);
 
   useLayoutEffect(() => {
@@ -23,7 +29,7 @@ export function Layout() {
   }, [pathname]);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!userId) {
       authProcessedRef.current = false;
       setModalOpened(false);
 
@@ -35,14 +41,19 @@ export function Layout() {
       setResumeSession(sessionsSnapshot[0]);
       setModalOpened(true);
     }
-  }, [isAuthenticated, sessionsSnapshot]);
+  }, [userId, sessionsSnapshot]);
 
-  const focusClaimed = modalOpened || (isAuthenticated && !authProcessedRef.current && sessionsSnapshot.length > 0);
+  const focusClaimed = modalOpened || (!!userId && !authProcessedRef.current && sessionsSnapshot.length > 0);
 
   return (
     <FocusClaimProvider claimed={focusClaimed}>
       <GlobalShortcuts />
-      <SessionResumeModal opened={modalOpened} session={resumeSession} onClose={() => setModalOpened(false)} />
+      <SessionResumeModal
+        userId={userId}
+        opened={modalOpened}
+        session={resumeSession}
+        onClose={() => setModalOpened(false)}
+      />
       <AppShell header={{ height: 70 }} padding="md" miw={320}>
         <AppShell.Header px="md">
           <Container size="md" p={0}>

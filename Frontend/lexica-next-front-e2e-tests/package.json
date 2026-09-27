@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node --use-system-ca ./node_modules/@playwright/test/cli.js test"
+    "test": "node --use-system-ca ./node_modules/@playwright/test/cli.js test",
+    "test:dev": "node --use-system-ca --env-file=.env.dev ./node_modules/@playwright/test/cli.js test"
   },
   "keywords": [],
   "author": "",

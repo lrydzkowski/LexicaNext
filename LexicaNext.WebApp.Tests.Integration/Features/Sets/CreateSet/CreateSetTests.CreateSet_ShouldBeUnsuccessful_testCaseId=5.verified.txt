@@ -1,0 +1,36 @@
+﻿{
+  DbSetsBefore: [],
+  DbSetsAfter: [],
+  Request: {
+    WordIds: [
+      not-a-valid-uuid
+    ]
+  },
+  TestCaseId: 5,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordIds[0]",
+          "errorMessage": "\u0027not-a-valid-uuid\u0027 is not a valid word ID format.",
+          "attemptedValue": "not-a-valid-uuid",
+          "severity": 0
+        },
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "One or more word IDs do not exist.",
+          "attemptedValue": [
+            "not-a-valid-uuid"
+          ],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

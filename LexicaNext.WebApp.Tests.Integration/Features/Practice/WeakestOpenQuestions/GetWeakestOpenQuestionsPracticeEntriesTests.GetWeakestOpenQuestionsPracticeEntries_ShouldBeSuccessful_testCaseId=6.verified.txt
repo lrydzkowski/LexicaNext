@@ -1,0 +1,191 @@
+﻿{
+  Url: /api/practice/open-questions/weakest,
+  TestCaseId: 6,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "entries": [
+        {
+          "wordId": "Guid_1",
+          "word": "word00",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie00"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_2",
+          "word": "word01",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie01"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_3",
+          "word": "word02",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie02"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_4",
+          "word": "word03",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie03"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_5",
+          "word": "word04",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie04"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_6",
+          "word": "word05",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie05"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_7",
+          "word": "word06",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie06"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_8",
+          "word": "word07",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie07"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_9",
+          "word": "word08",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie08"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_10",
+          "word": "word09",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie09"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_11",
+          "word": "word10",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie10"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_12",
+          "word": "word11",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie11"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_13",
+          "word": "word12",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie12"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_14",
+          "word": "word13",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie13"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_15",
+          "word": "word14",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie14"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_16",
+          "word": "word15",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie15"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_17",
+          "word": "word16",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie16"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_18",
+          "word": "word17",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie17"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_19",
+          "word": "word18",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie18"
+          ],
+          "exampleSentences": []
+        },
+        {
+          "wordId": "Guid_20",
+          "word": "word19",
+          "wordType": "noun",
+          "translations": [
+            "t\u0142umaczenie19"
+          ],
+          "exampleSentences": []
+        }
+      ]
+    }
+}

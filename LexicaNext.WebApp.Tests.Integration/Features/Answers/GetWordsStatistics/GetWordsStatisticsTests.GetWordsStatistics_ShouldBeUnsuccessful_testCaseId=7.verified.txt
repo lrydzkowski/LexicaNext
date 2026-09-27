@@ -1,0 +1,22 @@
+﻿{
+  Url: /api/words-statistics?timeZoneId=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+  TestCaseId: 7,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "TimeZoneId",
+          "errorMessage": "The length of \u0027Time Zone Id\u0027 must be 100 characters or fewer. You entered 101 characters.",
+          "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}
