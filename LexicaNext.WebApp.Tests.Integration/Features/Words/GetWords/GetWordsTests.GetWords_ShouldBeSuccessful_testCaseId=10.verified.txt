@@ -1,0 +1,71 @@
+﻿{
+  DbWords: [
+    {
+      WordId: Guid_1,
+      UserId: test-user-id,
+      Word: cherry,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: DateTimeOffset_2,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_3,
+      UserId: test-user-id,
+      Word: apple,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_3,
+      UpdatedAt: DateTimeOffset_4,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_4,
+      UserId: test-user-id,
+      Word: banana,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_5,
+      UpdatedAt: DateTimeOffset_6,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    }
+  ],
+  Url: /api/words?sortingFieldName=updatedAt&sortingOrder=asc,
+  TestCaseId: 10,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_3",
+          "word": "apple",
+          "wordType": "noun",
+          "createdAt": "2025-01-02T10:00:00\u002B00:00",
+          "updatedAt": "2025-01-10T10:00:00\u002B00:00"
+        },
+        {
+          "wordId": "Guid_4",
+          "word": "banana",
+          "wordType": "noun",
+          "createdAt": "2025-01-03T10:00:00\u002B00:00",
+          "updatedAt": "2025-02-20T10:00:00\u002B00:00"
+        },
+        {
+          "wordId": "Guid_1",
+          "word": "cherry",
+          "wordType": "noun",
+          "createdAt": "2025-01-01T10:00:00\u002B00:00",
+          "updatedAt": "2025-03-15T10:00:00\u002B00:00"
+        }
+      ]
+    }
+}

@@ -1,0 +1,76 @@
+﻿{
+  DbWords: [
+    {
+      WordId: Guid_1,
+      UserId: test-user-id,
+      Word: alpha,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: DateTimeOffset_2,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_3,
+      UserId: test-user-id,
+      Word: bravo,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_3,
+      UpdatedAt: DateTimeOffset_4,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_4,
+      UserId: test-user-id,
+      Word: charlie,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_5,
+      UpdatedAt: DateTimeOffset_6,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_5,
+      UserId: test-user-id,
+      Word: delta,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_7,
+      UpdatedAt: DateTimeOffset_8,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    }
+  ],
+  Url: /api/words?searchQuery=2025-01-15&timeZoneId=America%2fLos_Angeles,
+  TestCaseId: 15,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 2,
+      "data": [
+        {
+          "wordId": "Guid_4",
+          "word": "charlie",
+          "wordType": "noun",
+          "createdAt": "2025-06-03T10:00:00\u002B00:00",
+          "updatedAt": "2025-01-15T20:00:00\u002B00:00"
+        },
+        {
+          "wordId": "Guid_3",
+          "word": "bravo",
+          "wordType": "noun",
+          "createdAt": "2025-06-02T10:00:00\u002B00:00",
+          "updatedAt": "2025-01-15T08:30:00\u002B00:00"
+        }
+      ]
+    }
+}

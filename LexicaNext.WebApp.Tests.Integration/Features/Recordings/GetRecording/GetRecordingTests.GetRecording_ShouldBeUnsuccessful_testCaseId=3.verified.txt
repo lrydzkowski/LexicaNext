@@ -1,0 +1,18 @@
+﻿{
+  Word: xyznotfound,
+  WordType: noun,
+  StatusCode: NotFound,
+  ContentType: application/problem+json,
+  ResponseSize: null,
+  Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    },
+  DbRecordings: [],
+  RecordingStorageCalls: [],
+  TestCaseId: 3,
+  LogMessages: 
+}

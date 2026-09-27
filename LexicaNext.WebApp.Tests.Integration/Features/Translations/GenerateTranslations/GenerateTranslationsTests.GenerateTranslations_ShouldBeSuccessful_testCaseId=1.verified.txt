@@ -1,0 +1,18 @@
+﻿{
+  Request: {
+    Word: bright,
+    WordType: adjective,
+    Count: 3
+  },
+  TestCaseId: 1,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "translations": [
+        "jasny",
+        "\u015Bwietlany",
+        "bystry"
+      ]
+    }
+}

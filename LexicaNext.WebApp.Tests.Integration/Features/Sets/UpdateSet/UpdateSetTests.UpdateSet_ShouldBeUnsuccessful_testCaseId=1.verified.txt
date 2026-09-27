@@ -1,0 +1,21 @@
+﻿{
+  DbSetsBefore: [],
+  DbSetsAfter: [],
+  SetId: Guid_1,
+  Request: {
+    WordIds: [
+      Guid_2,
+      Guid_3
+    ]
+  },
+  TestCaseId: 1,
+  LogMessages: ,
+  StatusCode: NotFound,
+  Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    }
+}

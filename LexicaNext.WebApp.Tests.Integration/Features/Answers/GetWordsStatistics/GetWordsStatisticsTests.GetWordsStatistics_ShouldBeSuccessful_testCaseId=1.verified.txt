@@ -1,0 +1,11 @@
+﻿{
+  Url: /api/words-statistics,
+  TestCaseId: 1,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 0,
+      "data": []
+    }
+}

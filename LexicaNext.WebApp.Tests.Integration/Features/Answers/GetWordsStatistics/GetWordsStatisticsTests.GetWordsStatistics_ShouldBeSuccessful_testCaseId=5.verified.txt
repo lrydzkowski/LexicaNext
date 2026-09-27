@@ -1,0 +1,30 @@
+﻿{
+  Url: /api/words-statistics?sortingFieldName=correctCount&sortingOrder=asc,
+  TestCaseId: 5,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_1",
+          "word": "run",
+          "correctCount": 1,
+          "incorrectCount": 0
+        },
+        {
+          "wordId": "Guid_2",
+          "word": "bright",
+          "correctCount": 2,
+          "incorrectCount": 0
+        },
+        {
+          "wordId": "Guid_3",
+          "word": "apple",
+          "correctCount": 3,
+          "incorrectCount": 0
+        }
+      ]
+    }
+}

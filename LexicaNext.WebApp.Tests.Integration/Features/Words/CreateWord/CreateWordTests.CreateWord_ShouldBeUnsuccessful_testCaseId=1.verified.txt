@@ -1,0 +1,23 @@
+﻿{
+  DbWordsBefore: [],
+  DbWordsAfter: [],
+  TestCaseId: 1,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload",
+          "errorMessage": "\u0027Payload\u0027 must not be empty.",
+          "attemptedValue": null,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

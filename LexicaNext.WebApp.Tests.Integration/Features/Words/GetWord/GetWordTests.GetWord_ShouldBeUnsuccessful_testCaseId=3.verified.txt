@@ -1,0 +1,27 @@
+﻿{
+  DbWords: [
+    {
+      WordId: Guid_1,
+      UserId: other-user-id,
+      Word: banana,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    }
+  ],
+  WordId: Guid_1,
+  TestCaseId: 3,
+  LogMessages: ,
+  StatusCode: NotFound,
+  Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    }
+}

@@ -27,16 +27,17 @@ public class GetProposedSetNameTests
         _verifySettings = webApiFactory.VerifySettings;
     }
 
-    [Fact]
-    public async Task GetProposedSetName_ShouldBeSuccessful()
-    {
-        List<GetProposedSetNameTestResult> results = [];
-        foreach (TestCaseData testCase in CorrectTestCasesGenerator.Generate())
-        {
-            results.Add(await RunAsync(testCase));
-        }
+    public static TheoryData<int> CorrectTestCases =>
+        new(CorrectTestCasesGenerator.Generate().Select(testCase => testCase.TestCaseId));
 
-        await Verify(results, _verifySettings);
+    [Theory]
+    [MemberData(nameof(CorrectTestCases))]
+    public async Task GetProposedSetName_ShouldBeSuccessful(int testCaseId)
+    {
+        TestCaseData testCase = CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        GetProposedSetNameTestResult result = await RunAsync(testCase);
+
+        await Verify(result, _verifySettings).UseParameters(testCaseId);
     }
 
     private async Task<GetProposedSetNameTestResult> RunAsync(TestCaseData testCase)

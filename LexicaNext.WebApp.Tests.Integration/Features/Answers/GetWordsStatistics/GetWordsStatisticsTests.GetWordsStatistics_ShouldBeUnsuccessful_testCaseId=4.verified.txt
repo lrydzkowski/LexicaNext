@@ -1,0 +1,22 @@
+﻿{
+  Url: /api/words-statistics?sortingOrder=sideways,
+  TestCaseId: 4,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "SortingOrder",
+          "errorMessage": "\u0027SortingOrder\u0027 must be one of the following: \u0027asc\u0027, \u0027desc\u0027.",
+          "attemptedValue": "sideways",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

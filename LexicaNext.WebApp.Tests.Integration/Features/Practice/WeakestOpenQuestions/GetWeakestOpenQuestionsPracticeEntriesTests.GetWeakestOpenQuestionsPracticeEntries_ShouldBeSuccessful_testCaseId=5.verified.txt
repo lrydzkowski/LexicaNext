@@ -1,0 +1,20 @@
+﻿{
+  Url: /api/practice/open-questions/weakest,
+  TestCaseId: 5,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "entries": [
+        {
+          "wordId": "Guid_1",
+          "word": "mine",
+          "wordType": "noun",
+          "translations": [
+            "moje"
+          ],
+          "exampleSentences": []
+        }
+      ]
+    }
+}

@@ -1,0 +1,56 @@
+﻿{
+  DbSets: [
+    {
+      SetId: Guid_1,
+      UserId: test-user-id,
+      Name: set_alpha,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      SetWords: []
+    },
+    {
+      SetId: Guid_2,
+      UserId: test-user-id,
+      Name: set_bravo,
+      CreatedAt: DateTimeOffset_2,
+      UpdatedAt: null,
+      SetWords: []
+    },
+    {
+      SetId: Guid_3,
+      UserId: test-user-id,
+      Name: set_charlie,
+      CreatedAt: DateTimeOffset_3,
+      UpdatedAt: null,
+      SetWords: []
+    },
+    {
+      SetId: Guid_4,
+      UserId: test-user-id,
+      Name: set_delta,
+      CreatedAt: DateTimeOffset_4,
+      UpdatedAt: null,
+      SetWords: []
+    }
+  ],
+  Url: /api/sets?sortingFieldName=createdAt&sortingOrder=asc&searchQuery=2025-01-15&timeZoneId=America%2fLos_Angeles,
+  TestCaseId: 7,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 2,
+      "data": [
+        {
+          "setId": "Guid_2",
+          "name": "set_bravo",
+          "createdAt": "2025-01-15T08:30:00\u002B00:00"
+        },
+        {
+          "setId": "Guid_3",
+          "name": "set_charlie",
+          "createdAt": "2025-01-15T20:00:00\u002B00:00"
+        }
+      ]
+    }
+}

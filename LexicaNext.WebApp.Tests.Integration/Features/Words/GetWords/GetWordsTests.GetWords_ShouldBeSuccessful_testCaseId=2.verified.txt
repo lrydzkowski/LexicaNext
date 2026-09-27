@@ -1,0 +1,64 @@
+﻿{
+  DbWords: [
+    {
+      WordId: Guid_1,
+      UserId: test-user-id,
+      Word: apple,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_3,
+      UserId: test-user-id,
+      Word: run,
+      WordTypeId: Guid_4,
+      WordType: null,
+      CreatedAt: DateTimeOffset_2,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_5,
+      UserId: test-user-id,
+      Word: pineapple,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_3,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    }
+  ],
+  Url: /api/words?searchQuery=apple,
+  TestCaseId: 2,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 2,
+      "data": [
+        {
+          "wordId": "Guid_5",
+          "word": "pineapple",
+          "wordType": "noun",
+          "createdAt": "2025-01-17T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_1",
+          "word": "apple",
+          "wordType": "noun",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00",
+          "updatedAt": null
+        }
+      ]
+    }
+}

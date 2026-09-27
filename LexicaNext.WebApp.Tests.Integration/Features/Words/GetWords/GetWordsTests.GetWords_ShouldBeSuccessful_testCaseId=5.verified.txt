@@ -1,0 +1,88 @@
+﻿{
+  DbWords: [
+    {
+      WordId: Guid_1,
+      UserId: test-user-id,
+      Word: a_word,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_3,
+      UserId: test-user-id,
+      Word: b_word,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_2,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_4,
+      UserId: test-user-id,
+      Word: c_word,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_3,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_5,
+      UserId: test-user-id,
+      Word: d_word,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_4,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_6,
+      UserId: test-user-id,
+      Word: e_word,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_5,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    }
+  ],
+  Url: /api/words?page=2&pageSize=2,
+  TestCaseId: 5,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 5,
+      "data": [
+        {
+          "wordId": "Guid_4",
+          "word": "c_word",
+          "wordType": "noun",
+          "createdAt": "2025-01-03T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_3",
+          "word": "b_word",
+          "wordType": "noun",
+          "createdAt": "2025-01-02T10:00:00\u002B00:00",
+          "updatedAt": null
+        }
+      ]
+    }
+}

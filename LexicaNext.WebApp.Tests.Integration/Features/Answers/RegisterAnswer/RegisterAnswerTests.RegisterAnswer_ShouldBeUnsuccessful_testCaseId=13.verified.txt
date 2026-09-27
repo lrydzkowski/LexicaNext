@@ -1,0 +1,32 @@
+﻿{
+  DbAnswersBefore: [],
+  DbAnswersAfter: [],
+  Request: {
+    ModeType: full,
+    QuestionType: invalid-question-type,
+    Question: test,
+    GivenAnswer: test,
+    ExpectedAnswer: test,
+    IsCorrect: true,
+    WordId: Guid_1
+  },
+  TestCaseId: 13,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.QuestionType",
+          "errorMessage": "\u0027QuestionType\u0027 must be one of: english-close, native-close, english-open, native-open, sentence-fill, spelling.",
+          "attemptedValue": "invalid-question-type",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

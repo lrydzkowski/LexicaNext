@@ -29,16 +29,17 @@ public class GetRandomOpenQuestionsPracticeEntriesTests
         _verifySettings = webApiFactory.VerifySettings;
     }
 
-    [Fact]
-    public async Task GetRandomOpenQuestionsPracticeEntries_ShouldBeSuccessful()
-    {
-        List<GetRandomOpenQuestionsPracticeEntriesTestResult> results = [];
-        foreach (TestCaseData testCase in CorrectTestCasesGenerator.Generate())
-        {
-            results.Add(await RunAsync(testCase));
-        }
+    public static TheoryData<int> CorrectTestCases =>
+        new(CorrectTestCasesGenerator.Generate().Select(testCase => testCase.TestCaseId));
 
-        await Verify(results, _verifySettings);
+    [Theory]
+    [MemberData(nameof(CorrectTestCases))]
+    public async Task GetRandomOpenQuestionsPracticeEntries_ShouldBeSuccessful(int testCaseId)
+    {
+        TestCaseData testCase = CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        GetRandomOpenQuestionsPracticeEntriesTestResult result = await RunAsync(testCase);
+
+        await Verify(result, _verifySettings).UseParameters(testCaseId);
     }
 
     private async Task<GetRandomOpenQuestionsPracticeEntriesTestResult> RunAsync(TestCaseData testCase)

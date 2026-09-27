@@ -1,0 +1,26 @@
+﻿{
+  Request: {
+    Word: bright,
+    WordType: invalid,
+    Count: 3
+  },
+  TestCaseId: 3,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "WordType",
+          "errorMessage": "\u0027WordType\u0027 must be one of the following: \u0027none\u0027, \u0027noun\u0027, \u0027verb\u0027, \u0027adjective\u0027, \u0027adverb\u0027, \u0027other\u0027.",
+          "attemptedValue": "invalid",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

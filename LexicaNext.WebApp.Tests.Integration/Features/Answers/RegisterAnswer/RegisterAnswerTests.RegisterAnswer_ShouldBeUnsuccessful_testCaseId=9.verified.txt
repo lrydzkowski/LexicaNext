@@ -1,0 +1,32 @@
+﻿{
+  DbAnswersBefore: [],
+  DbAnswersAfter: [],
+  Request: {
+    ModeType: invalid-mode,
+    QuestionType: english-open,
+    Question: test,
+    GivenAnswer: test,
+    ExpectedAnswer: test,
+    IsCorrect: true,
+    WordId: Guid_1
+  },
+  TestCaseId: 9,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.ModeType",
+          "errorMessage": "\u0027ModeType\u0027 must be one of: full, open-questions, sentences, spelling.",
+          "attemptedValue": "invalid-mode",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

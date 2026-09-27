@@ -1,0 +1,50 @@
+﻿{
+  DbWordsBefore: [
+    {
+      WordId: Guid_1,
+      UserId: test-user-id,
+      Word: apple,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    }
+  ],
+  DbWordsAfter: [
+    {
+      WordId: Guid_1,
+      UserId: test-user-id,
+      Word: apple,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    }
+  ],
+  WordId: Guid_1,
+  TestCaseId: 5,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.Word",
+          "errorMessage": "The length of \u0027Word\u0027 must be 200 characters or fewer. You entered 201 characters.",
+          "attemptedValue": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

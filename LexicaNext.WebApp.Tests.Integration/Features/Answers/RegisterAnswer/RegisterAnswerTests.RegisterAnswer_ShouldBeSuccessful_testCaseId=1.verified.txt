@@ -1,0 +1,31 @@
+﻿{
+  DbAnswersBefore: [],
+  DbAnswersAfter: [
+    {
+      AnswerId: Guid_1,
+      UserId: test-user-id,
+      ModeType: full,
+      QuestionType: english-open,
+      Question: bright,
+      GivenAnswer: jasny,
+      ExpectedAnswer: jasny, świetlany,
+      IsCorrect: true,
+      AnsweredAt: DateTimeOffset_1,
+      WordId: Guid_2,
+      Word: null
+    }
+  ],
+  Request: {
+    ModeType: full,
+    QuestionType: english-open,
+    Question: bright,
+    GivenAnswer: jasny,
+    ExpectedAnswer: jasny, świetlany,
+    IsCorrect: true,
+    WordId: Guid_2
+  },
+  TestCaseId: 1,
+  LogMessages: ,
+  StatusCode: NoContent,
+  Response: 
+}

@@ -1,0 +1,29 @@
+﻿{
+  DbWordsBefore: [],
+  DbWordsAfter: [],
+  TestCaseId: 11,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.Translations",
+          "errorMessage": "\u0027Translations\u0027 must contain 20 items or fewer.",
+          "attemptedValue": 21,
+          "severity": 0
+        },
+        {
+          "propertyName": "Payload.ExampleSentences",
+          "errorMessage": "\u0027Example Sentences\u0027 must contain 20 items or fewer.",
+          "attemptedValue": 21,
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

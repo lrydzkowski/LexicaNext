@@ -1,0 +1,30 @@
+﻿{
+  DbSetsBefore: [],
+  DbSetsAfter: [],
+  Request: {
+    WordIds: [
+      Guid_1
+    ]
+  },
+  TestCaseId: 3,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.WordIds",
+          "errorMessage": "One or more word IDs do not exist.",
+          "attemptedValue": [
+            "Guid_1"
+          ],
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

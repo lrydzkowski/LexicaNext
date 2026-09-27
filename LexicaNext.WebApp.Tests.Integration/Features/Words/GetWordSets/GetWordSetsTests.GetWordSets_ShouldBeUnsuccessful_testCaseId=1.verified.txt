@@ -1,0 +1,12 @@
+﻿{
+  DbWords: [],
+  DbSets: [],
+  WordId: Guid_1,
+  TestCaseId: 1,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "sets": []
+    }
+}

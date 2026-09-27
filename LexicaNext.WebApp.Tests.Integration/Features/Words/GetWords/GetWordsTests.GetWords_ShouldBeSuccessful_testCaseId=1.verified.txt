@@ -1,0 +1,92 @@
+﻿{
+  DbWords: [
+    {
+      WordId: Guid_1,
+      UserId: test-user-id,
+      Word: apple,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      Translations: [
+        {
+          TranslationId: Guid_3,
+          Translation: jabłko,
+          Order: 1,
+          WordId: Guid_1
+        }
+      ],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_4,
+      UserId: test-user-id,
+      Word: run,
+      WordTypeId: Guid_5,
+      WordType: null,
+      CreatedAt: DateTimeOffset_2,
+      UpdatedAt: null,
+      Translations: [
+        {
+          TranslationId: Guid_6,
+          Translation: biegać,
+          Order: 1,
+          WordId: Guid_4
+        }
+      ],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_7,
+      UserId: test-user-id,
+      Word: bright,
+      WordTypeId: Guid_8,
+      WordType: null,
+      CreatedAt: DateTimeOffset_3,
+      UpdatedAt: null,
+      Translations: [
+        {
+          TranslationId: Guid_9,
+          Translation: jasny,
+          Order: 1,
+          WordId: Guid_7
+        }
+      ],
+      ExampleSentences: [],
+      SetWords: []
+    }
+  ],
+  Url: /api/words,
+  TestCaseId: 1,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "count": 3,
+      "data": [
+        {
+          "wordId": "Guid_7",
+          "word": "bright",
+          "wordType": "adjective",
+          "createdAt": "2025-01-17T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_4",
+          "word": "run",
+          "wordType": "verb",
+          "createdAt": "2025-01-16T10:00:00\u002B00:00",
+          "updatedAt": null
+        },
+        {
+          "wordId": "Guid_1",
+          "word": "apple",
+          "wordType": "noun",
+          "createdAt": "2025-01-15T10:00:00\u002B00:00",
+          "updatedAt": null
+        }
+      ]
+    }
+}

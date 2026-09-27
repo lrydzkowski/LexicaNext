@@ -1,0 +1,81 @@
+﻿{
+  DbWordsBefore: [
+    {
+      WordId: Guid_1,
+      UserId: test-user-id,
+      Word: run,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_3,
+      UserId: test-user-id,
+      Word: walk,
+      WordTypeId: Guid_4,
+      WordType: null,
+      CreatedAt: DateTimeOffset_2,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    }
+  ],
+  DbWordsAfter: [
+    {
+      WordId: Guid_1,
+      UserId: test-user-id,
+      Word: run,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    },
+    {
+      WordId: Guid_3,
+      UserId: test-user-id,
+      Word: walk,
+      WordTypeId: Guid_4,
+      WordType: null,
+      CreatedAt: DateTimeOffset_2,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    }
+  ],
+  WordId: Guid_3,
+  TestCaseId: 10,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload",
+          "errorMessage": "The word \u0027run\u0027 with the type = \u0027verb\u0027 already exists.",
+          "attemptedValue": {
+            "word": "run",
+            "wordType": "verb",
+            "translations": [
+              "biega\u0107"
+            ],
+            "exampleSentences": []
+          },
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

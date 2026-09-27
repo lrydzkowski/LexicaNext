@@ -1,0 +1,25 @@
+﻿{
+  DbWords: [
+    {
+      WordId: Guid_1,
+      UserId: test-user-id,
+      Word: book,
+      WordTypeId: Guid_2,
+      WordType: null,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      Translations: [],
+      ExampleSentences: [],
+      SetWords: []
+    }
+  ],
+  DbSets: [],
+  WordId: Guid_1,
+  TestCaseId: 2,
+  LogMessages: ,
+  StatusCode: OK,
+  Response:
+    {
+      "sets": []
+    }
+}

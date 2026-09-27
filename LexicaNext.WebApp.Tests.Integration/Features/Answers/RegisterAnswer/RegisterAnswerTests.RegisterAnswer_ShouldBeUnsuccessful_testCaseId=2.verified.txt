@@ -1,0 +1,32 @@
+﻿{
+  DbAnswersBefore: [],
+  DbAnswersAfter: [],
+  Request: {
+    ModeType: full,
+    QuestionType: english-open,
+    Question: ,
+    GivenAnswer: test,
+    ExpectedAnswer: test,
+    IsCorrect: true,
+    WordId: Guid_1
+  },
+  TestCaseId: 2,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "Payload.Question",
+          "errorMessage": "\u0027Question\u0027 must not be empty.",
+          "attemptedValue": "",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

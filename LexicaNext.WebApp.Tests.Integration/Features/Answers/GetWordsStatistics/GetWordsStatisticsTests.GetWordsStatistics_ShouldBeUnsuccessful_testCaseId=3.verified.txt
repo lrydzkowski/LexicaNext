@@ -1,0 +1,22 @@
+﻿{
+  Url: /api/words-statistics?sortingFieldName=createdAt,
+  TestCaseId: 3,
+  LogMessages: ,
+  StatusCode: BadRequest,
+  Response:
+    {
+      "type": "validation-errors",
+      "title": "Validation errors",
+      "status": 400,
+      "detail": "One or more validation errors occurred.",
+      "errors": [
+        {
+          "propertyName": "SortingFieldName",
+          "errorMessage": "\u0027SortingFieldName\u0027 must be one of: correctCount, incorrectCount, word.",
+          "attemptedValue": "createdAt",
+          "severity": 0
+        }
+      ],
+      "traceId": "Scrubbed"
+    }
+}

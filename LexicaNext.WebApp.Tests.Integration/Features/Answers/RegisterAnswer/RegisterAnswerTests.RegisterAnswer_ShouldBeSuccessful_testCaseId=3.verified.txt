@@ -1,0 +1,31 @@
+﻿{
+  DbAnswersBefore: [],
+  DbAnswersAfter: [
+    {
+      AnswerId: Guid_1,
+      UserId: test-user-id,
+      ModeType: sentences,
+      QuestionType: sentence-fill,
+      Question: The cat sat on the _____.,
+      GivenAnswer: mat,
+      ExpectedAnswer: mat,
+      IsCorrect: true,
+      AnsweredAt: DateTimeOffset_1,
+      WordId: Guid_2,
+      Word: null
+    }
+  ],
+  Request: {
+    ModeType: sentences,
+    QuestionType: sentence-fill,
+    Question: The cat sat on the _____.,
+    GivenAnswer: mat,
+    ExpectedAnswer: mat,
+    IsCorrect: true,
+    WordId: Guid_2
+  },
+  TestCaseId: 3,
+  LogMessages: ,
+  StatusCode: NoContent,
+  Response: 
+}

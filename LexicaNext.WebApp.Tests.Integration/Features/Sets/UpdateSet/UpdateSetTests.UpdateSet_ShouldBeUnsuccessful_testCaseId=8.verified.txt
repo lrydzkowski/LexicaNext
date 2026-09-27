@@ -1,0 +1,39 @@
+﻿{
+  DbSetsBefore: [
+    {
+      SetId: Guid_1,
+      UserId: other-user-id,
+      Name: other_set,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      SetWords: []
+    }
+  ],
+  DbSetsAfter: [
+    {
+      SetId: Guid_1,
+      UserId: other-user-id,
+      Name: other_set,
+      CreatedAt: DateTimeOffset_1,
+      UpdatedAt: null,
+      SetWords: []
+    }
+  ],
+  SetId: Guid_1,
+  Request: {
+    WordIds: [
+      Guid_2,
+      Guid_3
+    ]
+  },
+  TestCaseId: 8,
+  LogMessages: ,
+  StatusCode: NotFound,
+  Response:
+    {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+      "title": "Not Found",
+      "status": 404,
+      "traceId": "Scrubbed"
+    }
+}
