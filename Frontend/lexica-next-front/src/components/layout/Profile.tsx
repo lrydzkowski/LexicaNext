@@ -14,28 +14,14 @@ interface ProfileProps {
 
 export function Profile({ email, version, opened, onToggle, onClose }: ProfileProps) {
   const titleId = useId();
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const detailsRef = useRef<HTMLDivElement>(null);
-
-  const restoreTriggerFocus = () => {
-    if (!triggerRef.current?.getClientRects().length) {
-      return;
-    }
-
-    const activeElement = document.activeElement;
-    if (!activeElement || activeElement === document.body || detailsRef.current?.contains(activeElement)) {
-      triggerRef.current?.focus({ preventScroll: true });
-    }
-  };
 
   const closeDetails = () => {
     onClose();
-    restoreTriggerFocus();
   };
 
   const accountButton = (
     <UnstyledButton
-      ref={triggerRef}
+      // ref={triggerRef}
       className={classes.accountButton}
       aria-label="Open account details"
       onClick={onToggle}
@@ -57,7 +43,6 @@ export function Profile({ email, version, opened, onToggle, onClose }: ProfilePr
       <Popover
         opened={opened}
         onDismiss={closeDetails}
-        onExitTransitionEnd={restoreTriggerFocus}
         position="bottom-end"
         width="300px"
         offset={16}
@@ -66,7 +51,7 @@ export function Profile({ email, version, opened, onToggle, onClose }: ProfilePr
         radius="md"
         trapFocus>
         <Popover.Target>{accountButton}</Popover.Target>
-        <Popover.Dropdown ref={detailsRef} p={0} className={classes.popover} aria-labelledby={titleId}>
+        <Popover.Dropdown p={0} className={classes.popover} aria-labelledby={titleId}>
           <ProfileDetails email={email} version={version} headingId={titleId} />
         </Popover.Dropdown>
       </Popover>

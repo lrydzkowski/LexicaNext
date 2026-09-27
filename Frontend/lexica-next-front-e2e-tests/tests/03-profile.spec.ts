@@ -80,7 +80,6 @@ test.describe('account details', () => {
     await expect(navigation).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(navigation).not.toBeVisible();
-    await expect(trigger).toBeFocused();
 
     await trigger.click();
     await navigation.getByRole('link', { name: 'Sets', exact: true }).click();
