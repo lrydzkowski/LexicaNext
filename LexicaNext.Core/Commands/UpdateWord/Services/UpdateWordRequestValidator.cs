@@ -115,11 +115,29 @@ internal class UpdateWordRequestPayloadValidator : AbstractValidator<UpdateWordR
     {
         RuleFor(request => request.Translations)
             .NotEmpty()
+            .DependentRules(AddValidationForTranslationCount);
+    }
+
+    private void AddValidationForTranslationCount()
+    {
+        RuleFor(request => request.Translations.Count)
+            .LessThanOrEqualTo(WordCollectionLimits.MaxTranslations)
+            .WithMessage($"'{{PropertyName}}' must contain {WordCollectionLimits.MaxTranslations} items or fewer.")
+            .OverridePropertyName(nameof(UpdateWordRequestPayload.Translations))
             .DependentRules(() => RuleForEach(request => request.Translations).NotEmpty().MaximumLength(200));
     }
 
     private void AddValidationForExampleSentences()
     {
-        RuleForEach(request => request.ExampleSentences).NotEmpty().MaximumLength(500);
+        RuleFor(request => request.ExampleSentences.Count)
+            .LessThanOrEqualTo(WordCollectionLimits.MaxExampleSentences)
+            .WithMessage($"'{{PropertyName}}' must contain {WordCollectionLimits.MaxExampleSentences} items or fewer.")
+            .OverridePropertyName(nameof(UpdateWordRequestPayload.ExampleSentences))
+            .When(request => request.ExampleSentences is not null)
+            .DependentRules(
+                () => RuleForEach(request => request.ExampleSentences)
+                    .NotEmpty()
+                    .MaximumLength(500)
+            );
     }
 }

@@ -1,0 +1,2 @@
+export const MAX_WORD_TRANSLATIONS = 20;
+export const MAX_WORD_EXAMPLE_SENTENCES = 20;

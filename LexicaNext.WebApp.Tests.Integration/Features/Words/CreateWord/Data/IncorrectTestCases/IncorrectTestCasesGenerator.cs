@@ -12,5 +12,6 @@ internal static class IncorrectTestCasesGenerator
         yield return TestCase06.Get();
         yield return TestCase07.Get();
         yield return TestCase08.Get();
+        yield return TestCase09.Get();
     }
 }
