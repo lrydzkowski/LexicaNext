@@ -1,31 +1,13 @@
-import { useEffect, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { Alert, Anchor, Button, Container, Group, Paper, Progress, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { links } from '@/config/links';
+import { useOpenQuestionsMode } from '@/hooks/learning/useOpenQuestionsMode';
 import { useReturnTo } from '@/hooks/useReturnTo';
-import { compareAnswers, serialize } from '@/utils/utils';
-import { useRegisterAnswer, type EntryDto } from '../../../hooks/api';
-import { usePronunciation } from '../../../hooks/usePronunciation';
-import { clearSession, loadSession, saveSession } from '../../../services/session-storage';
+import { serialize } from '@/utils/utils';
+import type { EntryDto } from '../../../hooks/api';
 import { ExampleSentences } from '../ExampleSentences';
 import { ModeWordsListModal } from './ModeWordsListModal';
-
-export interface OpenQuestionsEntry extends EntryDto {
-  englishOpenCounter: number;
-  nativeOpenCounter: number;
-}
-
-type QuestionType = 'english-open' | 'native-open';
-
-interface Question {
-  entry: OpenQuestionsEntry;
-  entryIndex: number;
-  type: QuestionType;
-  question: string;
-  questionWords: string;
-  correctAnswers: string[];
-}
 
 export interface SetOnlyOpenQuestionsModeProps {
   entries: EntryDto[];
@@ -39,175 +21,20 @@ export function SetOnlyOpenQuestionsMode({
   title,
 }: SetOnlyOpenQuestionsModeProps) {
   const goBack = useReturnTo(links.sets.getUrl());
-  const [entries, setEntries] = useState<OpenQuestionsEntry[]>([]);
-  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [userAnswer, setUserAnswer] = useState('');
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-  const registerAnswer = useRegisterAnswer();
+  const {
+    entries,
+    currentQuestion,
+    userAnswer,
+    setUserAnswer,
+    showFeedback,
+    isCorrect,
+    isComplete,
+    checkAnswer,
+    nextQuestion,
+    progress,
+    completedCount,
+  } = useOpenQuestionsMode(sourceEntries, sessionSetId, title);
   const [wordsModalOpened, { open: openWordsModal, close: closeWordsModal }] = useDisclosure(false);
-
-  const { playAudio } = usePronunciation(currentQuestion?.entry.word || '', currentQuestion?.entry.wordType, {
-    autoPlay: false,
-    enabled: !!currentQuestion?.entry.word,
-  });
-
-  useEffect(() => {
-    if (!sourceEntries) {
-      return;
-    }
-
-    const saved = loadSession<OpenQuestionsEntry>(sessionSetId, 'open-questions');
-    if (saved && saved.length > 0) {
-      setEntries(saved);
-      generateNextQuestion(saved);
-      return;
-    }
-
-    const initialEntries = sourceEntries.map((entry) => ({
-      ...entry,
-      englishOpenCounter: 0,
-      nativeOpenCounter: 0,
-    }));
-    setEntries(initialEntries);
-    generateNextQuestion(initialEntries);
-  }, [sourceEntries, sessionSetId]);
-
-  useEffect(() => {
-    if (showFeedback && currentQuestion) {
-      const timer = setTimeout(() => {
-        playAudio();
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [showFeedback, currentQuestion, playAudio]);
-
-  const generateNextQuestion = (currentEntries: OpenQuestionsEntry[], previousWord?: string) => {
-    const shuffledEntries = [...currentEntries].sort(() => Math.random() - 0.5);
-
-    let eligibleEntries = shuffledEntries.filter((entry) => {
-      return entry.englishOpenCounter < 2 || entry.nativeOpenCounter < 2;
-    });
-
-    if (eligibleEntries.length > 1 && previousWord) {
-      eligibleEntries = eligibleEntries.filter((entry) => entry.word !== previousWord);
-    }
-
-    if (eligibleEntries.length === 0) {
-      setIsComplete(true);
-      clearSession(sessionSetId, 'open-questions');
-      return;
-    }
-
-    const selectedEntry = eligibleEntries[0];
-    const entryIndex = currentEntries.findIndex((e) => e.word === selectedEntry.word);
-
-    const availableTypes: QuestionType[] = [];
-
-    if (selectedEntry.englishOpenCounter < 2) {
-      availableTypes.push('english-open');
-    }
-
-    if (selectedEntry.nativeOpenCounter < 2) {
-      availableTypes.push('native-open');
-    }
-
-    const questionType: QuestionType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
-    const question = generateQuestion(selectedEntry, entryIndex, questionType);
-    setCurrentQuestion(question);
-  };
-
-  const generateQuestion = (entry: OpenQuestionsEntry, entryIndex: number, type: QuestionType): Question => {
-    switch (type) {
-      case 'english-open':
-        return {
-          entry,
-          entryIndex,
-          type,
-          question: `What does "${entry.word}" mean?`,
-          questionWords: entry.word ?? '',
-          correctAnswers: entry.translations ?? [],
-        };
-
-      case 'native-open': {
-        const serializedTranslations = serialize(entry.translations);
-
-        return {
-          entry,
-          entryIndex,
-          type,
-          question: `What is the English word for "${serializedTranslations}"?`,
-          questionWords: serializedTranslations,
-          correctAnswers: entry.word ? [entry.word] : [],
-        };
-      }
-
-      default:
-        throw new Error('Invalid question type');
-    }
-  };
-
-  const checkAnswer = () => {
-    if (!currentQuestion) {
-      return;
-    }
-
-    const isCorrect = compareAnswers(userAnswer, currentQuestion.correctAnswers);
-
-    registerAnswer.mutate({
-      modeType: 'open-questions',
-      questionType: currentQuestion.type,
-      question: currentQuestion.questionWords,
-      givenAnswer: userAnswer,
-      expectedAnswer: serialize(currentQuestion.correctAnswers),
-      isCorrect,
-      wordId: currentQuestion.entry.wordId,
-    });
-
-    setIsCorrect(isCorrect);
-    setShowFeedback(true);
-
-    const updatedEntries = [...entries];
-    const entry = updatedEntries[currentQuestion.entryIndex];
-
-    if (isCorrect) {
-      switch (currentQuestion.type) {
-        case 'english-open':
-          entry.englishOpenCounter += 1;
-          break;
-        case 'native-open':
-          entry.nativeOpenCounter += 1;
-          break;
-      }
-    } else {
-      entry.englishOpenCounter = 0;
-      entry.nativeOpenCounter = 0;
-    }
-
-    setEntries(updatedEntries);
-
-    saveSession(sessionSetId, title, 'open-questions', updatedEntries);
-  };
-
-  const nextQuestion = () => {
-    setShowFeedback(false);
-    setUserAnswer('');
-    generateNextQuestion(entries, currentQuestion?.entry.word);
-  };
-
-  const getProgress = () => {
-    const totalRequired = entries.length * 4;
-    const currentProgress = entries.reduce((sum, entry) => {
-      return sum + Math.min(entry.englishOpenCounter, 2) + Math.min(entry.nativeOpenCounter, 2);
-    }, 0);
-
-    return totalRequired > 0 ? (currentProgress / totalRequired) * 100 : 0;
-  };
-
-  const getCompletedCount = (currentEntries: OpenQuestionsEntry[]) => {
-    return currentEntries.filter((entry) => entry.englishOpenCounter >= 2 && entry.nativeOpenCounter >= 2).length;
-  };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && !showFeedback) {
@@ -275,10 +102,10 @@ export function SetOnlyOpenQuestionsMode({
   return (
     <>
       <Stack gap="lg">
-        <Progress value={getProgress()} size="lg" radius="md" />
+        <Progress value={progress} size="lg" radius="md" />
         <Group justify="space-between" align="center" wrap="nowrap" gap="xs">
           <Text size="sm" c="dimmed">
-            {getCompletedCount(entries)} / {entries.length} words completed
+            {completedCount} / {entries.length} words completed
           </Text>
           <Anchor component="button" type="button" size="sm" onClick={openWordsModal}>
             Show Words

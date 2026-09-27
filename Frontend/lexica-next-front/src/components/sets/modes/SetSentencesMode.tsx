@@ -1,266 +1,36 @@
-import { useEffect, useState } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { Alert, Anchor, Button, Container, Group, Paper, Progress, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { links } from '@/config/links';
+import { useSentencesMode } from '@/hooks/learning/useSentencesMode';
 import { useReturnTo } from '@/hooks/useReturnTo';
 import { serialize } from '@/utils/utils';
-import { useRegisterAnswer, type EntryDto, type GetSetResponse } from '../../../hooks/api';
-import { usePronunciation } from '../../../hooks/usePronunciation';
-import { clearSession, loadSession, saveSession } from '../../../services/session-storage';
+import type { GetSetResponse } from '../../../hooks/api';
 import { ExampleSentences } from '../ExampleSentences';
 import { ModeWordsListModal } from './ModeWordsListModal';
-
-const MAX_SENTENCES_PER_ENTRY = 5;
-const MASTERY_THRESHOLD = 2;
-const BLANK_PLACEHOLDER = '_____';
-
-export interface SentencesEntry extends EntryDto {
-  selectedSentenceIndices: number[];
-  sentenceCounters: Record<number, number>;
-}
-
-interface Question {
-  entry: SentencesEntry;
-  entryIndex: number;
-  sentenceIndex: number;
-  originalSentence: string;
-  sentenceWithBlank: string;
-}
 
 export interface SetSentencesModeProps {
   set: GetSetResponse;
 }
 
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function buildWholeWordRegex(word: string, flags: string): RegExp {
-  return new RegExp(`\\b${escapeRegExp(word)}\\b`, flags);
-}
-
-function sentenceContainsWord(sentence: string, word: string): boolean {
-  if (!word) {
-    return false;
-  }
-
-  return buildWholeWordRegex(word, 'i').test(sentence);
-}
-
-function buildSentenceWithBlank(sentence: string, word: string): string {
-  return sentence.replace(buildWholeWordRegex(word, 'i'), BLANK_PLACEHOLDER);
-}
-
-function buildSentencesEntries(rawEntries: EntryDto[]): SentencesEntry[] {
-  return rawEntries
-    .map((entry) => {
-      const sentences = entry.exampleSentences ?? [];
-      const word = entry.word ?? '';
-      const eligibleIndices = sentences
-        .map((sentence, index) => ({ sentence, index }))
-        .filter(({ sentence }) => sentenceContainsWord(sentence, word))
-        .map(({ index }) => index);
-
-      const selectedSentenceIndices = eligibleIndices.slice(0, MAX_SENTENCES_PER_ENTRY);
-      const sentenceCounters: Record<number, number> = {};
-      for (const index of selectedSentenceIndices) {
-        sentenceCounters[index] = 0;
-      }
-
-      return {
-        ...entry,
-        selectedSentenceIndices,
-        sentenceCounters,
-      } satisfies SentencesEntry;
-    })
-    .filter((entry) => entry.selectedSentenceIndices.length > 0);
-}
-
 export function SetSentencesMode({ set }: SetSentencesModeProps) {
   const goBack = useReturnTo(links.sets.getUrl());
-  const [entries, setEntries] = useState<SentencesEntry[]>([]);
-  const [hasInitialized, setHasInitialized] = useState(false);
-  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [userAnswer, setUserAnswer] = useState('');
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-  const registerAnswer = useRegisterAnswer();
+  const {
+    entries,
+    currentQuestion,
+    userAnswer,
+    setUserAnswer,
+    showFeedback,
+    isCorrect,
+    isComplete,
+    checkAnswer,
+    nextQuestion,
+    progress,
+    hasInitialized,
+    totalQuestions,
+    masteredQuestions,
+  } = useSentencesMode(set);
   const [wordsModalOpened, { open: openWordsModal, close: closeWordsModal }] = useDisclosure(false);
-
-  const { playAudio } = usePronunciation(currentQuestion?.entry.word || '', currentQuestion?.entry.wordType, {
-    autoPlay: false,
-    enabled: !!currentQuestion?.entry.word,
-  });
-
-  useEffect(() => {
-    if (!set?.entries || !set.setId) {
-      return;
-    }
-
-    const saved = loadSession<SentencesEntry>(set.setId, 'sentences');
-    if (saved && saved.length > 0) {
-      setEntries(saved);
-      setHasInitialized(true);
-      generateNextQuestion(saved);
-      return;
-    }
-
-    const initialEntries = buildSentencesEntries(set.entries);
-    setEntries(initialEntries);
-    setHasInitialized(true);
-    if (initialEntries.length > 0) {
-      generateNextQuestion(initialEntries);
-    }
-  }, [set]);
-
-  useEffect(() => {
-    if (showFeedback && currentQuestion) {
-      const timer = setTimeout(() => {
-        playAudio();
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [showFeedback, currentQuestion, playAudio]);
-
-  const collectEligibleQuestions = (currentEntries: SentencesEntry[]): Question[] => {
-    const questions: Question[] = [];
-    currentEntries.forEach((entry, entryIndex) => {
-      for (const sentenceIndex of entry.selectedSentenceIndices) {
-        const counter = entry.sentenceCounters[sentenceIndex] ?? 0;
-        if (counter >= MASTERY_THRESHOLD) {
-          continue;
-        }
-
-        const originalSentence = entry.exampleSentences?.[sentenceIndex];
-        if (!originalSentence) {
-          continue;
-        }
-
-        questions.push({
-          entry,
-          entryIndex,
-          sentenceIndex,
-          originalSentence,
-          sentenceWithBlank: buildSentenceWithBlank(originalSentence, entry.word ?? ''),
-        });
-      }
-    });
-
-    return questions;
-  };
-
-  const generateNextQuestion = (
-    currentEntries: SentencesEntry[],
-    previous?: { word: string; sentenceIndex: number },
-  ) => {
-    let eligible = collectEligibleQuestions(currentEntries);
-
-    if (eligible.length === 0) {
-      setCurrentQuestion(null);
-      setIsComplete(true);
-      if (set?.setId) {
-        clearSession(set.setId, 'sentences');
-      }
-      return;
-    }
-
-    if (eligible.length > 1 && previous) {
-      const filteredSamePair = eligible.filter(
-        (q) => !(q.entry.word === previous.word && q.sentenceIndex === previous.sentenceIndex),
-      );
-      if (filteredSamePair.length > 0) {
-        eligible = filteredSamePair;
-      }
-
-      const filteredSameEntry = eligible.filter((q) => q.entry.word !== previous.word);
-      if (filteredSameEntry.length > 0) {
-        eligible = filteredSameEntry;
-      }
-    }
-
-    const shuffled = [...eligible].sort(() => Math.random() - 0.5);
-    setCurrentQuestion(shuffled[0]);
-  };
-
-  const checkAnswer = () => {
-    if (!currentQuestion) {
-      return;
-    }
-
-    const expected = (currentQuestion.entry.word ?? '').toLowerCase();
-    const correct = userAnswer.trim().toLowerCase() === expected;
-
-    registerAnswer.mutate({
-      modeType: 'sentences',
-      questionType: 'sentence-fill',
-      question: currentQuestion.sentenceWithBlank,
-      givenAnswer: userAnswer,
-      expectedAnswer: currentQuestion.entry.word ?? '',
-      isCorrect: correct,
-      wordId: currentQuestion.entry.wordId,
-    });
-
-    setIsCorrect(correct);
-    setShowFeedback(true);
-
-    const updatedEntries = entries.map((entry) => ({
-      ...entry,
-      sentenceCounters: { ...entry.sentenceCounters },
-    }));
-    const entry = updatedEntries[currentQuestion.entryIndex];
-    const previousCounter = entry.sentenceCounters[currentQuestion.sentenceIndex] ?? 0;
-
-    if (correct) {
-      entry.sentenceCounters[currentQuestion.sentenceIndex] = Math.min(previousCounter + 1, MASTERY_THRESHOLD);
-    } else {
-      entry.sentenceCounters[currentQuestion.sentenceIndex] = 0;
-    }
-
-    setEntries(updatedEntries);
-
-    if (set?.setId) {
-      saveSession(set.setId, set.name ?? '', 'sentences', updatedEntries);
-    }
-  };
-
-  const nextQuestion = () => {
-    setShowFeedback(false);
-    setUserAnswer('');
-    if (currentQuestion) {
-      generateNextQuestion(entries, {
-        word: currentQuestion.entry.word ?? '',
-        sentenceIndex: currentQuestion.sentenceIndex,
-      });
-    } else {
-      generateNextQuestion(entries);
-    }
-  };
-
-  const totalQuestions = entries.reduce((sum, entry) => sum + entry.selectedSentenceIndices.length, 0);
-
-  const masteredQuestions = entries.reduce((sum, entry) => {
-    return (
-      sum +
-      entry.selectedSentenceIndices.filter(
-        (sentenceIndex) => (entry.sentenceCounters[sentenceIndex] ?? 0) >= MASTERY_THRESHOLD,
-      ).length
-    );
-  }, 0);
-
-  const totalProgressPoints = totalQuestions * MASTERY_THRESHOLD;
-  const earnedProgressPoints = entries.reduce((sum, entry) => {
-    return (
-      sum +
-      entry.selectedSentenceIndices.reduce(
-        (entrySum, sentenceIndex) => entrySum + Math.min(entry.sentenceCounters[sentenceIndex] ?? 0, MASTERY_THRESHOLD),
-        0,
-      )
-    );
-  }, 0);
-
-  const progress = totalProgressPoints > 0 ? (earnedProgressPoints / totalProgressPoints) * 100 : 0;
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && !showFeedback) {
