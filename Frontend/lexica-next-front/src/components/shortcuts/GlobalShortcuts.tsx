@@ -11,6 +11,10 @@ export function GlobalShortcuts() {
   const handlers = useMemo(
     () => [
       {
+        key: SHORTCUT_KEYS.NAVIGATE_PRACTICE,
+        handler: () => navigate(links.practice.getUrl()),
+      },
+      {
         key: SHORTCUT_KEYS.NAVIGATE_SETS,
         handler: () => navigate(links.sets.getUrl()),
       },

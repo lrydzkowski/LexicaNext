@@ -1,5 +1,8 @@
 using Bogus;
-using LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
+using LexicaNext.Core.Features.Sentences.GenerateExampleSentences.Interfaces;
+using LexicaNext.Core.Features.Translations.GenerateTranslations.Interfaces;
+using LexicaNext.Core.Features.Words.GenerateWords.Interfaces;
+using LexicaNext.Core.Features.Words.GenerateWords.Models;
 using LexicaNext.Infrastructure.Db;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +22,7 @@ internal class DataSeedService : IDataSeedService
 {
     private const int MaxParallelJobs = 5;
 
-    private readonly IAiGenerationService _aiGenerationService;
+    private readonly IWordGenerationService _wordGenerationService;
     private readonly AppDbContext _context;
     private readonly ILogger<DataSeedService> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
@@ -28,13 +31,13 @@ internal class DataSeedService : IDataSeedService
         AppDbContext context,
         IServiceScopeFactory scopeFactory,
         ILogger<DataSeedService> logger,
-        IAiGenerationService aiGenerationService
+        IWordGenerationService wordGenerationService
     )
     {
         _context = context;
         _scopeFactory = scopeFactory;
         _logger = logger;
-        _aiGenerationService = aiGenerationService;
+        _wordGenerationService = wordGenerationService;
     }
 
     public async Task SeedSetsAsync(string userId, int count = 10)
@@ -132,7 +135,7 @@ internal class DataSeedService : IDataSeedService
 
         int totalWordCount = Enumerable.Range(0, setCount).Sum(_ => Random.Shared.Next(5, 25));
 
-        IReadOnlyList<GeneratedWord> generatedWords = await _aiGenerationService.GenerateWordsAsync(totalWordCount);
+        IReadOnlyList<GeneratedWord> generatedWords = await _wordGenerationService.GenerateWordsAsync(totalWordCount);
 
         Faker faker = new();
         List<WordEntity> words = [];
@@ -188,11 +191,13 @@ internal class DataSeedService : IDataSeedService
 
                     await using AsyncServiceScope scope = _scopeFactory.CreateAsyncScope();
                     AppDbContext context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    IAiGenerationService aiService =
-                        scope.ServiceProvider.GetRequiredService<IAiGenerationService>();
+                    ITranslationGenerationService translationService =
+                        scope.ServiceProvider.GetRequiredService<ITranslationGenerationService>();
+                    IExampleSentenceGenerationService sentenceService =
+                        scope.ServiceProvider.GetRequiredService<IExampleSentenceGenerationService>();
 
-                    await SeedTranslationsForWordAsync(context, aiService, word, wordTypeName, ct);
-                    await SeedExampleSentencesForWordAsync(context, aiService, word, wordTypeName, ct);
+                    await SeedTranslationsForWordAsync(context, translationService, word, wordTypeName, ct);
+                    await SeedExampleSentencesForWordAsync(context, sentenceService, word, wordTypeName, ct);
 
                     _logger.LogInformation("Seeded translations and examples for \"{Word}\"", word.Word);
                 }
@@ -239,7 +244,7 @@ internal class DataSeedService : IDataSeedService
 
     private static async Task SeedTranslationsForWordAsync(
         AppDbContext context,
-        IAiGenerationService aiService,
+        ITranslationGenerationService aiService,
         WordEntity wordEntity,
         string wordType,
         CancellationToken ct
@@ -269,7 +274,7 @@ internal class DataSeedService : IDataSeedService
 
     private static async Task SeedExampleSentencesForWordAsync(
         AppDbContext context,
-        IAiGenerationService aiService,
+        IExampleSentenceGenerationService aiService,
         WordEntity wordEntity,
         string wordType,
         CancellationToken ct

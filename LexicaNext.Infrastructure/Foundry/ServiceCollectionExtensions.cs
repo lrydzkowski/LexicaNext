@@ -1,5 +1,7 @@
 using LexicaNext.Core;
-using LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
+using LexicaNext.Core.Features.Sentences.GenerateExampleSentences.Interfaces;
+using LexicaNext.Core.Features.Translations.GenerateTranslations.Interfaces;
+using LexicaNext.Core.Features.Words.GenerateWords.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,6 +21,9 @@ internal static class ServiceCollectionExtensions
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
-        return services.AddScoped<IAiGenerationService, AzureFoundryAiService>();
+        return services.AddScoped<AzureFoundryAiService>()
+            .AddScoped<IWordGenerationService>(provider => provider.GetRequiredService<AzureFoundryAiService>())
+            .AddScoped<ITranslationGenerationService>(provider => provider.GetRequiredService<AzureFoundryAiService>())
+            .AddScoped<IExampleSentenceGenerationService>(provider => provider.GetRequiredService<AzureFoundryAiService>());
     }
 }

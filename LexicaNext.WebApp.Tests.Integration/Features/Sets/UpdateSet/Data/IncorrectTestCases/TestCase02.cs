@@ -1,4 +1,4 @@
-using LexicaNext.Core.Commands.UpdateSet;
+using LexicaNext.Core.Features.Sets.UpdateSet;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Sets.UpdateSet.Data.IncorrectTestCases;
 

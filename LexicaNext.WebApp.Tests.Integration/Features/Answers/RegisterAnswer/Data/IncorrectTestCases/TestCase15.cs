@@ -1,4 +1,4 @@
-using LexicaNext.Core.Commands.RegisterAnswer;
+using LexicaNext.Core.Features.Answers.RegisterAnswer;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Answers.RegisterAnswer.Data.IncorrectTestCases;
 

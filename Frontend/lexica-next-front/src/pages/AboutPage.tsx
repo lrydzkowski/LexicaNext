@@ -9,6 +9,7 @@ import {
 
 const SCOPE_LABELS: Record<ShortcutScope, string> = {
   global: 'Global',
+  practice: 'Practice',
   'sets-list': 'Sets List',
   'words-list': 'Words List',
   'word-form': 'Word Form',
@@ -183,6 +184,7 @@ export function AboutPage() {
             <Box maw={450}>
               <Stack gap="lg">
                 <ShortcutSection scope="global" />
+                <ShortcutSection scope="practice" />
                 <ShortcutSection scope="sets-list" />
                 <ShortcutSection scope="words-list" />
                 <ShortcutSection scope="set-form" />

@@ -1,4 +1,4 @@
-using LexicaNext.Core.Commands.CreateSet;
+using LexicaNext.Core.Features.Sets.CreateSet;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Sets.CreateSet.Data.IncorrectTestCases;
 

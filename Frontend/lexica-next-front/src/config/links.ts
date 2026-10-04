@@ -25,6 +25,9 @@ export const links: Record<string, IAppLink> = {
       return url;
     },
   },
+  practice: {
+    getUrl: () => '/practice',
+  },
   sets: {
     getUrl: (_, query) => {
       let url = '/sets';

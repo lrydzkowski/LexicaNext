@@ -1,5 +1,5 @@
 ﻿using LexicaNext.Core.Common.Models;
-using LexicaNext.Core.Queries.GetRecording.Interfaces;
+using LexicaNext.Core.Features.Recordings.GetRecording.Interfaces;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace LexicaNext.Infrastructure.EnglishDictionary;
