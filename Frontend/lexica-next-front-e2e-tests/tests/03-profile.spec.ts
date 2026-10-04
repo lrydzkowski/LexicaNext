@@ -13,6 +13,23 @@ test.describe('account details', () => {
     await expect(trigger).toBeFocused();
   });
 
+  test('preserves focus on another control when dismissed outside', async ({ page }) => {
+    await page.goto('/about');
+    const trigger = page.getByRole('button', { name: 'Open account details' });
+    await trigger.click();
+
+    const details = page.getByRole('dialog', { name: 'Your account', exact: true });
+    await expect(details).toBeFocused();
+
+    const aboutLink = page.getByRole('link', { name: 'About', exact: true });
+    await aboutLink.click();
+    await aboutLink.focus();
+
+    await expect(details).toHaveCount(0);
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    await expect(aboutLink).toBeFocused();
+  });
+
   test('shows the signed-in email and build version on desktop', async ({ page }, testInfo) => {
     const group = testInfo.project.name.startsWith('user-a') ? 'user-a' : 'user-b';
     const { email } = getAuthConfig(group);
