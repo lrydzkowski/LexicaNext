@@ -3,11 +3,15 @@ import { test, expect } from '@playwright/test';
 test.describe('open home page', () => {
   test('has correct header', async ({ page }) => {
     await page.goto('/');
+    await expect(page).toHaveURL('/practice');
+    await expect(page.getByRole('heading', { name: 'Practice', exact: true })).toBeVisible();
 
     await expect(page.locator('#root')).toMatchAriaSnapshot(`
     - banner:
       - banner:
         - heading "LexicaNext" [level=1]
+        - link "Practice":
+          - /url: /practice
         - link "Sets":
           - /url: /sets
         - link "Words":

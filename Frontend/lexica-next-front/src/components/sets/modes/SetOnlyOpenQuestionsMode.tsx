@@ -13,14 +13,17 @@ export interface SetOnlyOpenQuestionsModeProps {
   entries: EntryDto[];
   sessionSetId: string;
   title: string;
+  onBack?: () => void;
 }
 
 export function SetOnlyOpenQuestionsMode({
   entries: sourceEntries,
   sessionSetId,
   title,
+  onBack,
 }: SetOnlyOpenQuestionsModeProps) {
-  const goBack = useReturnTo(links.sets.getUrl());
+  const returnTo = useReturnTo(links.sets.getUrl());
+  const goBack = onBack ?? returnTo;
   const {
     entries,
     currentQuestion,

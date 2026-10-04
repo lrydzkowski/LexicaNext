@@ -1,4 +1,4 @@
-using LexicaNext.Core.Commands.CreateWord;
+using LexicaNext.Core.Features.Words.CreateWord;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 

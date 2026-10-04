@@ -1,6 +1,6 @@
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Models;
-using LexicaNext.Core.Queries.GetRandomOpenQuestionsPracticeEntries.Interfaces;
+using LexicaNext.Core.Features.Practice.GetRandomOpenQuestionsPracticeEntries.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace LexicaNext.Infrastructure.Db.Repositories;
@@ -27,14 +27,7 @@ internal class RandomOpenQuestionsPracticeRepository
         }
 
         List<Entry> entries = await _dbContext.Words.AsNoTracking()
-            .Where(
-                word => word.UserId == userId
-                        && _dbContext.SetWords.Any(
-                            setWord => setWord.WordId == word.WordId
-                                       && setWord.Set != null
-                                       && setWord.Set.UserId == userId
-                        )
-            )
+            .Where(word => word.UserId == userId)
             .OrderBy(_ => EF.Functions.Random())
             .Take(count)
             .Select(

@@ -1,5 +1,5 @@
 using System.Net;
-using LexicaNext.Core.Commands.GenerateExampleSentences;
+using LexicaNext.Core.Features.Sentences.GenerateExampleSentences;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.WebApp.Tests.Integration.Common;
 using LexicaNext.WebApp.Tests.Integration.Common.Context;

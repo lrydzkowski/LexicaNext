@@ -1,5 +1,5 @@
 using System.Net;
-using LexicaNext.Core.Commands.UpdateSet;
+using LexicaNext.Core.Features.Sets.UpdateSet;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common;

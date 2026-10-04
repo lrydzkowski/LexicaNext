@@ -1,12 +1,14 @@
 ﻿{
   Url: /api/practice/open-questions/random,
-  ExpectedCount: 3,
-  ActualCount: 3,
+  ExpectedCount: 5,
+  ActualCount: 5,
   AllReturnedWordIdsAreInExpectedPool: true,
   ReturnedWordIdsSorted: [
     Guid_1,
     Guid_2,
-    Guid_3
+    Guid_3,
+    Guid_4,
+    Guid_5
   ],
   TestCaseId: 6,
   LogMessages: ,

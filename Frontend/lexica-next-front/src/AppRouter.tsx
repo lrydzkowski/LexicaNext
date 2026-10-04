@@ -7,6 +7,7 @@ import { links } from './config/links';
 import { useSetLabel, useWordLabel } from './hooks/useBreadcrumbLabel';
 import { AboutPage } from './pages/AboutPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { PracticePage } from './pages/practice/PracticePage';
 import { RandomOpenQuestionsPracticePage } from './pages/practice/RandomOpenQuestionsPracticePage';
 import { WeakestOpenQuestionsPracticePage } from './pages/practice/WeakestOpenQuestionsPracticePage';
 import { SetFullModePage } from './pages/sets/modes/SetFullModePage';
@@ -60,7 +61,7 @@ const router = createBrowserRouter([
         index: true,
         element: (
           <RequireAuth>
-            <Navigate to="/sets" replace />
+            <Navigate to={links.practice.getUrl()} replace />
           </RequireAuth>
         ),
       },
@@ -309,9 +310,19 @@ const router = createBrowserRouter([
       {
         path: 'practice',
         handle: {
-          breadcrumb: () => [{ label: 'Practice' }],
+          breadcrumb: () => [{ link: links.practice.getUrl(), label: 'Practice' }],
         },
         children: [
+          {
+            index: true,
+            element: (
+              <RequireAuth>
+                <PageWithBreadcrumbs>
+                  <PracticePage />
+                </PageWithBreadcrumbs>
+              </RequireAuth>
+            ),
+          },
           {
             path: 'open-questions/random',
             handle: {

@@ -1,4 +1,4 @@
-using LexicaNext.Core.Queries.GetRecording.Interfaces;
+using LexicaNext.Core.Features.Recordings.GetRecording.Interfaces;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 using LexicaNext.WebApp.Tests.Integration.Common.WebApplication;
 using Microsoft.AspNetCore.Mvc.Testing;

@@ -1,5 +1,5 @@
 using System.Text.Json;
-using LexicaNext.Core.Commands.GenerateExampleSentences;
+using LexicaNext.Core.Features.Sentences.GenerateExampleSentences;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Sentences.GenerateExampleSentences.Data.CorrectTestCases;

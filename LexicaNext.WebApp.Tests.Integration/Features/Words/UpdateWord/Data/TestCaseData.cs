@@ -1,4 +1,4 @@
-using LexicaNext.Core.Commands.UpdateWord;
+using LexicaNext.Core.Features.Words.UpdateWord;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.UpdateWord.Data;
