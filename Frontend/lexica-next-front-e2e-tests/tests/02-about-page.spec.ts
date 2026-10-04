@@ -37,16 +37,23 @@ test.describe('open about page', () => {
       - img
       - heading "Keyboard Shortcuts" [level=2]
       - paragraph: Global
-      - paragraph: Go to Sets page
+      - paragraph: Go to Practice page
       - text: Ctrl + 1
-      - paragraph: Go to Words page
+      - paragraph: Go to Sets page
       - text: Ctrl + 2
-      - paragraph: Go to Words Statistics page
+      - paragraph: Go to Words page
       - text: Ctrl + 3
-      - paragraph: Go to About page
+      - paragraph: Go to Words Statistics page
       - text: Ctrl + 4
+      - paragraph: Go to About page
+      - text: Ctrl + 5
       - paragraph: Dismiss notifications
       - text: Escape
+      - paragraph: Practice
+      - paragraph: Start 20 random words
+      - text: Alt + 1
+      - paragraph: Start 20 weakest words
+      - text: Alt + 2
       - paragraph: Sets List
       - paragraph: Create new item
       - text: Alt + N

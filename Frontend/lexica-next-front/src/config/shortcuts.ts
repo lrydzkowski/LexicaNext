@@ -1,4 +1,5 @@
-export type ShortcutScope = 'global' | 'sets-list' | 'words-list' | 'word-form' | 'set-form' | 'select-words';
+export type ShortcutScope =
+  'global' | 'practice' | 'sets-list' | 'words-list' | 'word-form' | 'set-form' | 'select-words';
 
 export interface ShortcutDefinition {
   key: string;
@@ -7,10 +8,13 @@ export interface ShortcutDefinition {
 }
 
 export const SHORTCUT_KEYS = {
-  NAVIGATE_SETS: 'mod+1',
-  NAVIGATE_WORDS: 'mod+2',
-  NAVIGATE_WORDS_STATISTICS: 'mod+3',
-  NAVIGATE_ABOUT: 'mod+4',
+  NAVIGATE_PRACTICE: 'mod+1',
+  NAVIGATE_SETS: 'mod+2',
+  NAVIGATE_WORDS: 'mod+3',
+  NAVIGATE_WORDS_STATISTICS: 'mod+4',
+  NAVIGATE_ABOUT: 'mod+5',
+  START_PRACTICE_1: 'alt+1',
+  START_PRACTICE_2: 'alt+2',
   CREATE_NEW: 'alt+n',
   FOCUS_SEARCH: 'alt+f',
   SAVE: 'alt+s',
@@ -33,11 +37,14 @@ export const SHORTCUT_KEYS = {
 } as const;
 
 export const SHORTCUT_DEFINITIONS: ShortcutDefinition[] = [
+  { key: SHORTCUT_KEYS.NAVIGATE_PRACTICE, description: 'Go to Practice page', scope: 'global' },
   { key: SHORTCUT_KEYS.NAVIGATE_SETS, description: 'Go to Sets page', scope: 'global' },
   { key: SHORTCUT_KEYS.NAVIGATE_WORDS, description: 'Go to Words page', scope: 'global' },
   { key: SHORTCUT_KEYS.NAVIGATE_WORDS_STATISTICS, description: 'Go to Words Statistics page', scope: 'global' },
   { key: SHORTCUT_KEYS.NAVIGATE_ABOUT, description: 'Go to About page', scope: 'global' },
   { key: SHORTCUT_KEYS.DISMISS_NOTIFICATIONS, description: 'Dismiss notifications', scope: 'global' },
+  { key: SHORTCUT_KEYS.START_PRACTICE_1, description: 'Start 20 random words', scope: 'practice' },
+  { key: SHORTCUT_KEYS.START_PRACTICE_2, description: 'Start 20 weakest words', scope: 'practice' },
   { key: SHORTCUT_KEYS.CREATE_NEW, description: 'Create new item', scope: 'sets-list' },
   { key: SHORTCUT_KEYS.FOCUS_SEARCH, description: 'Focus search', scope: 'sets-list' },
   { key: SHORTCUT_KEYS.ROW_1, description: 'Focus row 1', scope: 'sets-list' },

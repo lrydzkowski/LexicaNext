@@ -69,6 +69,32 @@ test.describe('practice', () => {
     });
   }
 
+  for (const [index, mode] of ['random', 'weakest'].entries()) {
+    test(`Alt+${index + 1} starts ${mode} practice only from the Practice page`, async ({ page }) => {
+      let selections = 0;
+      await page.route('**/api/practice/open-questions/*', (route) => {
+        selections++;
+        return route.fulfill({ json: { entries: [entry] } });
+      });
+      await expect(page.getByRole('heading', { name: 'Practice', exact: true })).toBeVisible();
+      await page.keyboard.press(`Alt+${index + 1}`);
+      await expect(page).toHaveURL(`/practice/open-questions/${mode}`);
+      await expect(page.getByPlaceholder('Type your answer...')).toBeVisible();
+      expect(selections).toBe(1);
+
+      await page.keyboard.press(`Alt+${index === 0 ? 2 : 1}`);
+      await expect(page).toHaveURL(`/practice/open-questions/${mode}`);
+      await page.getByRole('button', { name: 'Go back to practice' }).click();
+      await expect(page).toHaveURL('/practice');
+      await page.getByRole('link', { name: 'About', exact: true }).click();
+      await expect(page).toHaveURL('/about');
+      await expect(page.getByRole('heading', { name: 'About LexicaNext', exact: true })).toBeVisible();
+      await page.keyboard.press(`Alt+${index + 1}`);
+      await expect(page).toHaveURL('/about');
+      expect(selections).toBe(1);
+    });
+  }
+
   for (const mode of ['random', 'weakest']) {
     test(`${mode} starts from its card and returns to Practice`, async ({ page }) => {
       await page.route(`**/api/practice/open-questions/${mode}`, (route) =>

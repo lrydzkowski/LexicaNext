@@ -1,7 +1,10 @@
+import { useMemo } from 'react';
 import { IconDice5, IconTrendingDown } from '@tabler/icons-react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { Button, Container, Group, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { links } from '@/config/links';
+import { SHORTCUT_KEYS } from '@/config/shortcuts';
+import { useShortcuts } from '@/hooks/useShortcuts';
 
 const practiceModes = [
   {
@@ -9,16 +12,26 @@ const practiceModes = [
     description: 'Practice up to 20 words chosen at random from all your words, including words outside sets.',
     to: links.randomOpenQuestionsPractice.getUrl(),
     icon: IconDice5,
+    shortcut: SHORTCUT_KEYS.START_PRACTICE_1,
   },
   {
     title: '20 weakest words',
     description: 'Practice up to 20 words with the highest incorrect-answer rates in your Open Questions history.',
     to: links.weakestOpenQuestionsPractice.getUrl(),
     icon: IconTrendingDown,
+    shortcut: SHORTCUT_KEYS.START_PRACTICE_2,
   },
 ];
 
 export function PracticePage() {
+  const navigate = useNavigate();
+  const shortcutHandlers = useMemo(
+    () => practiceModes.map(({ shortcut, to }) => ({ key: shortcut, handler: () => navigate(to) })),
+    [navigate],
+  );
+
+  useShortcuts('practice', shortcutHandlers);
+
   return (
     <Container p={0}>
       <Stack gap="lg">
