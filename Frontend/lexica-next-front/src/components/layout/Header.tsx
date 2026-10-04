@@ -10,6 +10,7 @@ import { ProfileDetails } from './ProfileDetails';
 import classes from './Header.module.css';
 
 const items = [
+  { label: 'Practice', href: links.practice.getUrl() },
   { label: 'Sets', href: links.sets.getUrl() },
   { label: 'Words', href: links.words.getUrl() },
   { label: 'Words Statistics', href: links.wordsStatistics.getUrl() },
@@ -64,7 +65,7 @@ export function Header() {
             </Title>
           </Group>
 
-          <Group h="100%" gap={0} visibleFrom="sm" justify="space-between" style={{ flex: 1 }}>
+          <Group h="100%" gap={0} visibleFrom="md" justify="space-between" style={{ flex: 1 }}>
             <Group h="100%" gap={0}>
               {navigationLinks}
             </Group>
@@ -96,7 +97,7 @@ export function Header() {
               event.currentTarget.focus({ preventScroll: true });
               toggleDrawer();
             }}
-            hiddenFrom="sm"
+            hiddenFrom="md"
             aria-label="Toggle navigation"
             aria-expanded={drawerOpened}
           />
@@ -109,7 +110,7 @@ export function Header() {
         size="100%"
         padding={0}
         className={classes.drawer}
-        hiddenFrom="sm"
+        hiddenFrom="md"
         zIndex={1000000}>
         <Stack gap="0">
           <Divider mb="sm" />

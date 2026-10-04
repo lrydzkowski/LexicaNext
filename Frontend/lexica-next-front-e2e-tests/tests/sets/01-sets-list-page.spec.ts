@@ -45,6 +45,7 @@ test.describe('sets list page', () => {
     await expect(page.getByRole('heading', { name: 'My Vocabulary Sets' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Create New Set' })).toBeVisible();
     await expect(page.getByPlaceholder('Search sets...')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Practice', exact: true })).toHaveCount(0);
   });
 
   test('renders sets table with correct columns on desktop', async ({ page }) => {

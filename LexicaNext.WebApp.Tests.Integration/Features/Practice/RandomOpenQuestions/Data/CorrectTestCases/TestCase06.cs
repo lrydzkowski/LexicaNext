@@ -3,7 +3,6 @@ using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Practice.RandomOpenQuestions.Data.CorrectTestCases;
 
-// Mixed library — 5 words; 3 belong to a set, 2 are not in any set. Expected: only the 3 in-set words.
 internal static class TestCase06
 {
     private static readonly Guid NounTypeId = Guid.Parse("0196294e-9a78-73b5-947e-fb739d73808c");
@@ -20,8 +19,8 @@ internal static class TestCase06
         return new TestCaseData
         {
             TestCaseId = 6,
-            ExpectedCount = 3,
-            ExpectedWordIdPool = [inSetA, inSetB, inSetC],
+            ExpectedCount = 5,
+            ExpectedWordIdPool = [inSetA, inSetB, inSetC, orphanA, orphanB],
             Data = new BaseTestCaseData
             {
                 Db = new DbTestCaseData

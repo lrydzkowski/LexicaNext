@@ -36,5 +36,5 @@ export async function authenticate(page: Page, config: AuthConfig): Promise<void
   await page.getByRole('textbox', { name: 'Email address' }).fill(config.email);
   await page.getByRole('textbox', { name: 'Password' }).fill(config.password);
   await page.getByRole('button', { name: 'Continue' }).click();
-  await page.waitForURL('/sets');
+  await page.waitForURL('/practice');
 }

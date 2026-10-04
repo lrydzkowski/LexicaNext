@@ -121,6 +121,9 @@ export const links: Record<string, IAppLink> = {
       return url;
     },
   },
+  practice: {
+    getUrl: () => '/practice',
+  },
   randomOpenQuestionsPractice: {
     getUrl: (_, query) => {
       let url = '/practice/open-questions/random';

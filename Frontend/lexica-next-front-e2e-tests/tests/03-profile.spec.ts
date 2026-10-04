@@ -56,6 +56,7 @@ test.describe('account details', () => {
       })
       .toBe(true);
     await expect(navigation.locator('a, p, button').filter({ hasText: /\S/ })).toHaveText([
+      'Practice',
       'Sets',
       'Words',
       'Words Statistics',
