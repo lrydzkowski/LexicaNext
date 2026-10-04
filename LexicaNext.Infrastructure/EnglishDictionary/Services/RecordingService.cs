@@ -1,7 +1,7 @@
 using HtmlAgilityPack;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Models;
-using LexicaNext.Core.Queries.GetRecording.Interfaces;
+using LexicaNext.Core.Features.Recordings.GetRecording.Interfaces;
 
 namespace LexicaNext.Infrastructure.EnglishDictionary.Services;
 

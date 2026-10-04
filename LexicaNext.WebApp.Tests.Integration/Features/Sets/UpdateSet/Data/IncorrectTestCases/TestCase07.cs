@@ -1,4 +1,4 @@
-using LexicaNext.Core.Commands.UpdateSet;
+using LexicaNext.Core.Features.Sets.UpdateSet;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 

@@ -1,5 +1,5 @@
 using System.Net;
-using LexicaNext.Core.Commands.DeleteSets;
+using LexicaNext.Core.Features.Sets.DeleteSets;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.Infrastructure.Db.Common.Entities;
 using LexicaNext.WebApp.Tests.Integration.Common;

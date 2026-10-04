@@ -1,5 +1,5 @@
 using System.Net;
-using LexicaNext.Core.Commands.GenerateTranslations;
+using LexicaNext.Core.Features.Translations.GenerateTranslations;
 using LexicaNext.Core.Common.Infrastructure.Extensions;
 using LexicaNext.WebApp.Tests.Integration.Common;
 using LexicaNext.WebApp.Tests.Integration.Common.Context;

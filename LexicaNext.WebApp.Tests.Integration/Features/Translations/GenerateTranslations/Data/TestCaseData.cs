@@ -1,4 +1,4 @@
-using LexicaNext.Core.Commands.GenerateTranslations;
+using LexicaNext.Core.Features.Translations.GenerateTranslations;
 using LexicaNext.WebApp.Tests.Integration.Common.TestCases;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Translations.GenerateTranslations.Data;

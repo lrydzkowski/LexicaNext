@@ -1,7 +1,7 @@
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Lists;
 using LexicaNext.Core.Common.Models;
-using LexicaNext.Core.Queries.GetWordsStatistics.Interfaces;
+using LexicaNext.Core.Features.Answers.GetWordsStatistics.Interfaces;
 using LexicaNext.Infrastructure.Db.Extensions;
 using Microsoft.EntityFrameworkCore;
 

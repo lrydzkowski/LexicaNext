@@ -1,4 +1,4 @@
-using LexicaNext.Core.Commands.CreateWord;
+using LexicaNext.Core.Features.Words.CreateWord;
 
 namespace LexicaNext.WebApp.Tests.Integration.Features.Words.CreateWord.Data.IncorrectTestCases;
 

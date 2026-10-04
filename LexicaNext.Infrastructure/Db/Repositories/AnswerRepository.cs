@@ -1,5 +1,5 @@
-using LexicaNext.Core.Commands.RegisterAnswer.Interface;
-using LexicaNext.Core.Commands.RegisterAnswer.Models;
+using LexicaNext.Core.Features.Answers.RegisterAnswer.Interface;
+using LexicaNext.Core.Features.Answers.RegisterAnswer.Models;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Services;
 using LexicaNext.Infrastructure.Db.Common.Entities;

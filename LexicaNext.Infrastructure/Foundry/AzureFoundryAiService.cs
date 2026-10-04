@@ -1,12 +1,16 @@
 #pragma warning disable CA2252, OPENAI001
 
-using LexicaNext.Core.Commands.GenerateTranslations.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Infrastructure.Services;
+using LexicaNext.Core.Features.Sentences.GenerateExampleSentences.Interfaces;
+using LexicaNext.Core.Features.Translations.GenerateTranslations.Interfaces;
+using LexicaNext.Core.Features.Words.GenerateWords.Interfaces;
+using LexicaNext.Core.Features.Words.GenerateWords.Models;
 
 namespace LexicaNext.Infrastructure.Foundry;
 
-internal class AzureFoundryAiService : IAiGenerationService, IScopedService
+internal class AzureFoundryAiService
+    : IWordGenerationService, ITranslationGenerationService, IExampleSentenceGenerationService, IScopedService
 {
     private readonly IAzureFoundryAiClient _azureFoundryAiClient;
     private readonly ISerializer _serializer;

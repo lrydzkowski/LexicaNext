@@ -1,5 +1,5 @@
 ﻿using LexicaNext.Core.Common.Infrastructure.Interfaces;
-using LexicaNext.Core.Queries.GetRecording.Interfaces;
+using LexicaNext.Core.Features.Recordings.GetRecording.Interfaces;
 using LexicaNext.Infrastructure.Storage.Options;
 using Microsoft.Extensions.Options;
 

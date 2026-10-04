@@ -1,6 +1,6 @@
 using LexicaNext.Core.Common.Infrastructure.Interfaces;
 using LexicaNext.Core.Common.Models;
-using LexicaNext.Core.Queries.GetRandomOpenQuestionsPracticeEntries.Interfaces;
+using LexicaNext.Core.Features.Practice.GetRandomOpenQuestionsPracticeEntries.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace LexicaNext.Infrastructure.Db.Repositories;
