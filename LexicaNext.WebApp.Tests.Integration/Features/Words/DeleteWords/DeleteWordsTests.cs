@@ -38,7 +38,8 @@ public class DeleteWordsTests
     [MemberData(nameof(CorrectTestCases))]
     public async Task DeleteWords_ShouldBeSuccessful(int testCaseId)
     {
-        TestCaseData testCase = CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase =
+            CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
         DeleteWordsTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);
@@ -51,7 +52,8 @@ public class DeleteWordsTests
     [MemberData(nameof(IncorrectTestCases))]
     public async Task DeleteWords_ShouldBeUnsuccessful(int testCaseId)
     {
-        TestCaseData testCase = IncorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase = IncorrectTestCasesGenerator.Generate()
+            .Single(testCase => testCase.TestCaseId == testCaseId);
         DeleteWordsTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);

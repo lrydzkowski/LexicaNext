@@ -36,7 +36,8 @@ public class GenerateTranslationsTests
     [MemberData(nameof(CorrectTestCases))]
     public async Task GenerateTranslations_ShouldBeSuccessful(int testCaseId)
     {
-        TestCaseData testCase = CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase =
+            CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
         GenerateTranslationsTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);
@@ -49,7 +50,8 @@ public class GenerateTranslationsTests
     [MemberData(nameof(IncorrectTestCases))]
     public async Task GenerateTranslations_ShouldBeUnsuccessful(int testCaseId)
     {
-        TestCaseData testCase = IncorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase = IncorrectTestCasesGenerator.Generate()
+            .Single(testCase => testCase.TestCaseId == testCaseId);
         GenerateTranslationsTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);
@@ -71,7 +73,10 @@ public class GenerateTranslationsTests
                 preRequest.CreateContent(testCase.RequestBody);
             }
 
-            using HttpResponseMessage preResponse = await client.SendAsync(preRequest, TestContext.Current.CancellationToken);
+            using HttpResponseMessage preResponse = await client.SendAsync(
+                preRequest,
+                TestContext.Current.CancellationToken
+            );
         }
 
         using HttpRequestMessage request = new(HttpMethod.Post, "/api/translations/generate");

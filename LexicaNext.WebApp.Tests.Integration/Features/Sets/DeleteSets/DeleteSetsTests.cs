@@ -38,7 +38,8 @@ public class DeleteSetsTests
     [MemberData(nameof(CorrectTestCases))]
     public async Task DeleteSets_ShouldBeSuccessful(int testCaseId)
     {
-        TestCaseData testCase = CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase =
+            CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
         DeleteSetsTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);
@@ -51,7 +52,8 @@ public class DeleteSetsTests
     [MemberData(nameof(IncorrectTestCases))]
     public async Task DeleteSets_ShouldBeUnsuccessful(int testCaseId)
     {
-        TestCaseData testCase = IncorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase = IncorrectTestCasesGenerator.Generate()
+            .Single(testCase => testCase.TestCaseId == testCaseId);
         DeleteSetsTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);

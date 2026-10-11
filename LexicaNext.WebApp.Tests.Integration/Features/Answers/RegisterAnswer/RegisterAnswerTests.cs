@@ -38,7 +38,8 @@ public class RegisterAnswerTests
     [MemberData(nameof(CorrectTestCases))]
     public async Task RegisterAnswer_ShouldBeSuccessful(int testCaseId)
     {
-        TestCaseData testCase = CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase =
+            CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
         RegisterAnswerTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);
@@ -51,7 +52,8 @@ public class RegisterAnswerTests
     [MemberData(nameof(IncorrectTestCases))]
     public async Task RegisterAnswer_ShouldBeUnsuccessful(int testCaseId)
     {
-        TestCaseData testCase = IncorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase = IncorrectTestCasesGenerator.Generate()
+            .Single(testCase => testCase.TestCaseId == testCaseId);
         RegisterAnswerTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);

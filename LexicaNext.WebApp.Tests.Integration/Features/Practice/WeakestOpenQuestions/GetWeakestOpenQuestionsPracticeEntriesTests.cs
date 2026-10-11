@@ -36,7 +36,8 @@ public class GetWeakestOpenQuestionsPracticeEntriesTests
     [MemberData(nameof(CorrectTestCases))]
     public async Task GetWeakestOpenQuestionsPracticeEntries_ShouldBeSuccessful(int testCaseId)
     {
-        TestCaseData testCase = CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase =
+            CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
         GetWeakestOpenQuestionsPracticeEntriesTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);

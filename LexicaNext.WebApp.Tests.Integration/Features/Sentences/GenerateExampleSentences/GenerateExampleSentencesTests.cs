@@ -36,7 +36,8 @@ public class GenerateExampleSentencesTests
     [MemberData(nameof(CorrectTestCases))]
     public async Task GenerateExampleSentences_ShouldBeSuccessful(int testCaseId)
     {
-        TestCaseData testCase = CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase =
+            CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
         GenerateExampleSentencesTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);
@@ -49,7 +50,8 @@ public class GenerateExampleSentencesTests
     [MemberData(nameof(IncorrectTestCases))]
     public async Task GenerateExampleSentences_ShouldBeUnsuccessful(int testCaseId)
     {
-        TestCaseData testCase = IncorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase = IncorrectTestCasesGenerator.Generate()
+            .Single(testCase => testCase.TestCaseId == testCaseId);
         GenerateExampleSentencesTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);
@@ -71,7 +73,10 @@ public class GenerateExampleSentencesTests
                 preRequest.CreateContent(testCase.RequestBody!);
             }
 
-            using HttpResponseMessage preResponse = await client.SendAsync(preRequest, TestContext.Current.CancellationToken);
+            using HttpResponseMessage preResponse = await client.SendAsync(
+                preRequest,
+                TestContext.Current.CancellationToken
+            );
         }
 
         using HttpRequestMessage request = new(HttpMethod.Post, "/api/sentences/generate");

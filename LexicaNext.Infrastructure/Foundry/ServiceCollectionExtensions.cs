@@ -24,6 +24,8 @@ internal static class ServiceCollectionExtensions
         return services.AddScoped<AzureFoundryAiService>()
             .AddScoped<IWordGenerationService>(provider => provider.GetRequiredService<AzureFoundryAiService>())
             .AddScoped<ITranslationGenerationService>(provider => provider.GetRequiredService<AzureFoundryAiService>())
-            .AddScoped<IExampleSentenceGenerationService>(provider => provider.GetRequiredService<AzureFoundryAiService>());
+            .AddScoped<IExampleSentenceGenerationService>(
+                provider => provider.GetRequiredService<AzureFoundryAiService>()
+            );
     }
 }
