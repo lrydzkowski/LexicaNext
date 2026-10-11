@@ -37,7 +37,8 @@ public class GetWordTests
     [MemberData(nameof(CorrectTestCases))]
     public async Task GetWord_ShouldBeSuccessful(int testCaseId)
     {
-        TestCaseData testCase = CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase =
+            CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
         GetWordTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);
@@ -50,7 +51,8 @@ public class GetWordTests
     [MemberData(nameof(IncorrectTestCases))]
     public async Task GetWord_ShouldBeUnsuccessful(int testCaseId)
     {
-        TestCaseData testCase = IncorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase = IncorrectTestCasesGenerator.Generate()
+            .Single(testCase => testCase.TestCaseId == testCaseId);
         GetWordTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);
@@ -64,7 +66,10 @@ public class GetWordTests
         List<WordEntity> dbWords = await contextScope.Db!.Context.GetWordsAsync();
 
         HttpClient client = contextScope.Factory.CreateClient();
-        using HttpResponseMessage response = await client.GetAsync($"/api/words/{testCase.WordId}", TestContext.Current.CancellationToken);
+        using HttpResponseMessage response = await client.GetAsync(
+            $"/api/words/{testCase.WordId}",
+            TestContext.Current.CancellationToken
+        );
 
         string responseBody = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 

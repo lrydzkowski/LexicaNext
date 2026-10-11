@@ -36,7 +36,8 @@ public class GetRandomOpenQuestionsPracticeEntriesTests
     [MemberData(nameof(CorrectTestCases))]
     public async Task GetRandomOpenQuestionsPracticeEntries_ShouldBeSuccessful(int testCaseId)
     {
-        TestCaseData testCase = CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase =
+            CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
         GetRandomOpenQuestionsPracticeEntriesTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);

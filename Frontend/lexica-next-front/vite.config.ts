@@ -1,10 +1,9 @@
-import { readFileSync } from 'node:fs';
 import react from '@vitejs/plugin-react';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import { getAppVersion } from './scripts/release-version.mjs';
 
 // https://vite.dev/config/
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ command }) => {
   const isProduction = command === 'build';
   const outputDir = process.env.VITE_OUTPUT_DIR || '../../LexicaNext.WebApp/wwwroot';
   const appVersion = getAppVersion(process.env.LEXICA_RELEASE_TAG, process.env.LEXICA_REQUIRE_RELEASE_TAG);

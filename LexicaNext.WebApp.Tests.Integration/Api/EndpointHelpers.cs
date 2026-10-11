@@ -16,7 +16,9 @@ internal static class EndpointHelpers
     )
     {
         WebApiFactory factory = await TestContext.Current.GetFixture<WebApiFactory>()
-                                ?? throw new InvalidOperationException("The API test collection fixture is unavailable.");
+                                ?? throw new InvalidOperationException(
+                                    "The API test collection fixture is unavailable."
+                                );
         EndpointDataSource endpointDataSource = factory.Services.GetRequiredService<EndpointDataSource>();
         IReadOnlyList<EndpointInfo> endpoints = GetEndpointsWithAuth(endpointDataSource, ignoredEndpoints);
         TheoryData<string, string> cases = [];

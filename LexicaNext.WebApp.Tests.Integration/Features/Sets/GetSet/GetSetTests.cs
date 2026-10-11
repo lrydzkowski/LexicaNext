@@ -37,7 +37,8 @@ public class GetSetTests
     [MemberData(nameof(CorrectTestCases))]
     public async Task GetSet_ShouldBeSuccessful(int testCaseId)
     {
-        TestCaseData testCase = CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase =
+            CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
         GetSetTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);
@@ -50,7 +51,8 @@ public class GetSetTests
     [MemberData(nameof(IncorrectTestCases))]
     public async Task GetSet_ShouldBeUnsuccessful(int testCaseId)
     {
-        TestCaseData testCase = IncorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase = IncorrectTestCasesGenerator.Generate()
+            .Single(testCase => testCase.TestCaseId == testCaseId);
         GetSetTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);
@@ -64,7 +66,10 @@ public class GetSetTests
         List<SetEntity> dbSets = await contextScope.Db!.Context.GetSetsAsync();
 
         HttpClient client = contextScope.Factory.CreateClient();
-        using HttpResponseMessage response = await client.GetAsync($"/api/sets/{testCase.SetId}", TestContext.Current.CancellationToken);
+        using HttpResponseMessage response = await client.GetAsync(
+            $"/api/sets/{testCase.SetId}",
+            TestContext.Current.CancellationToken
+        );
 
         string responseBody = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 

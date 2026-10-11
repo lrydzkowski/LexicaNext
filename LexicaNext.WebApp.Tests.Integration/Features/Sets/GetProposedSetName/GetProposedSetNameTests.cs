@@ -34,7 +34,8 @@ public class GetProposedSetNameTests
     [MemberData(nameof(CorrectTestCases))]
     public async Task GetProposedSetName_ShouldBeSuccessful(int testCaseId)
     {
-        TestCaseData testCase = CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
+        TestCaseData testCase =
+            CorrectTestCasesGenerator.Generate().Single(testCase => testCase.TestCaseId == testCaseId);
         GetProposedSetNameTestResult result = await RunAsync(testCase);
 
         await Verify(result, _verifySettings).UseParameters(testCaseId);
@@ -46,7 +47,10 @@ public class GetProposedSetNameTests
         await contextScope.InitializeAsync(testCase);
 
         HttpClient client = contextScope.Factory.CreateClient();
-        using HttpResponseMessage response = await client.GetAsync("/api/sets/proposed-name", TestContext.Current.CancellationToken);
+        using HttpResponseMessage response = await client.GetAsync(
+            "/api/sets/proposed-name",
+            TestContext.Current.CancellationToken
+        );
 
         string responseBody = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
