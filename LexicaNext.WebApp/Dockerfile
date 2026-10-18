@@ -17,7 +17,7 @@ RUN npm run build
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Directory.Packages.props", "NuGet.Config", "./"]
+COPY ["Directory.Build.props", "Directory.Packages.props", "NuGet.Config", "./"]
 COPY ["LexicaNext.Infrastructure/LexicaNext.Infrastructure.csproj", "LexicaNext.Infrastructure/"]
 COPY ["LexicaNext.Core/LexicaNext.Core.csproj", "LexicaNext.Core/"]
 COPY ["LexicaNext.WebApp/LexicaNext.WebApp.csproj", "LexicaNext.WebApp/"]
